@@ -1,0 +1,8 @@
+# git cz 
+/node_modules
+
+# git cz package-lock.json
+package-lock.json
+
+# git cz config.js
+changelog.config.js
