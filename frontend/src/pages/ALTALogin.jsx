@@ -1,17 +1,12 @@
 import React from 'react';
-import { Box } from '@mui/material';
 
 import ALTAInner from '../components/common/ALTAInner';
+import ALTALoginContents from '../components/login/ALTALoginContents';
 
-export default function ALTALogin () {
-	return (
-		<ALTAInner>
-			<Box className='ALTALogin'>
-			</Box>
-		</ALTAInner>
-	)
-}
-
-const ALTALogin_style = {
-	width: '100%',
+export default function ALTALogin() {
+  return (
+    <ALTAInner>
+      <ALTALoginContents />
+    </ALTAInner>
+  );
 }
