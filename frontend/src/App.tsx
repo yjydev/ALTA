@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material';
 
 import './App.css';
@@ -23,11 +23,9 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: [
-      'Spoqa Han Sans Neo', 'sans-serif'
-    ].join(','),
+    fontFamily: ['Spoqa Han Sans Neo', 'sans-serif'].join(','),
   },
-})
+});
 function App() {
   return (
     <ThemeProvider theme={theme}>
