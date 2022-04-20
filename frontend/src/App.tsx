@@ -31,7 +31,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<ALTALogin />} />
+          <Route path="/" element={<ALTALogin />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
