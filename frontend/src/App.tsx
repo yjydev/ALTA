@@ -6,7 +6,7 @@ import './App.css';
 
 import ALTA_Login from './pages/ALTA_Login';
 import ALTA_Signup from './pages/ALTA_Signup';
-import ALTACode from './pages/ALTACode';
+import ALTA_Code from './pages/ALTA_Code';
 
 const theme = createTheme({
   palette: {
@@ -35,7 +35,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ALTA_Login />} />
           <Route path="/signup" element={<ALTA_Signup />} />
-          <Route path="/code" element={<ALTACode />} />
+          <Route path="/code" element={<ALTA_Code />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

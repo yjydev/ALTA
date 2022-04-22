@@ -1,20 +1,20 @@
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 
-import ALTACodeBlock from './CodeBlock';
+import ALTA_CodeBlock from './ALTA_CodeBlock';
+import ALTA_CodeTree from './ALTA_CodeTree';
 
-export default function ALTACodeContents() {
+export default function ALTA_CodeContents() {
   return (
     <Box sx={wrapper}>
-      <Grid container direction="column" columnGap={6} spacing={2}>
+      <Grid container direction="column" columnGap={5}>
         <Grid item sx={codeTreeStyle}>
           <Box p={2}>
-            <Typography>Code Tree</Typography>
-            <Typography> &gt; Code Tree2</Typography>
+            <ALTA_CodeTree />
           </Box>
         </Grid>
         <Grid item sx={codeBlock}>
           <Box p={2}>
-            <ALTACodeBlock />
+            <ALTA_CodeBlock />
           </Box>
         </Grid>
       </Grid>
@@ -30,10 +30,8 @@ const wrapper = {
 
 const codeTreeStyle = {
   height: '100vh',
-  border: '1px solid', // 확인용
 };
 
 const codeBlock = {
-  border: '1px solid', // 확인용
   height: '100vh',
 };
