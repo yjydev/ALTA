@@ -16,7 +16,6 @@ export default function ALTA_Inner({ children }) {
 
 const ALTAInner_style = {
   maxWidth: '1200px',
-  height: '100vh',
   margin: '0 auto',
   backgroundColor: 'inherit',
 };
