@@ -1,17 +1,19 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material';
+import { ThemeProvider } from '@emotion/react';
 
 import './App.css';
 
-import ALTALogin from './pages/ALTALogin';
+import ALTA_Login from './pages/ALTA_Login';
+import ALTA_Signup from './pages/ALTA_Signup';
 import ALTACode from './pages/ALTACode';
-import { ThemeProvider } from '@emotion/react';
+
 const theme = createTheme({
   palette: {
     primary: {
       main: '#6d9886',
     },
+
     secondary: {
       main: '#d9cab3',
     },
@@ -31,7 +33,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<ALTALogin />} />
+          <Route path="/" element={<ALTA_Login />} />
+          <Route path="/signup" element={<ALTA_Signup />} />
           <Route path="/code" element={<ALTACode />} />
         </Routes>
       </BrowserRouter>
