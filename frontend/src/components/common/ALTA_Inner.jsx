@@ -6,7 +6,7 @@ import { Box } from '@mui/material';
 // 사용방법
 // <ALTAInner>children으로 사용하고 싶은 요소</ALTAInner>
 
-export default function ALTAInner({ children }) {
+export default function ALTA_Inner({ children }) {
   return (
     <Box className="ALTAInner" sx={ALTAInner_style}>
       {children}
