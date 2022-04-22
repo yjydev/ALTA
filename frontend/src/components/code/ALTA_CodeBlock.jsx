@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography, Grid, Divider } from '@mui/material';
 import { CopyBlock, dracula } from 'react-code-blocks';
 
 import TopBar from './ALTA_CodeBlock/TopBar';
@@ -11,14 +11,15 @@ export default function ALTA_CodeBlock() {
   return (
     <Grid container direction="column" spacing={2}>
       <Grid item sx={titleStyle}>
-        <Box p={3}>
+        <Box pt={3}>
           <Typography sx={problemStyle}>2021.04.13 회문</Typography>
           <Typography sx={codeTitleStyle}>Chart.vue</Typography>
           <Typography sx={codeWritterStyle}>작성자 : user</Typography>
         </Box>
       </Grid>
-      <Grid item sx={codeBlockStyle} p={0}>
-        <Box p={3}>
+      <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
+      <Grid item sx={codeBlockStyle}>
+        <Box>
           <TopBar
             language={{
               value: language,

@@ -1,21 +1,32 @@
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Divider } from '@mui/material';
 
 import ALTA_CodeBlock from './ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
+import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
 export default function ALTA_CodeContents() {
   return (
     <Box sx={wrapper}>
       <Grid container direction="column" columnGap={5}>
-        <Grid item sx={codeTreeStyle}>
-          <Box p={2}>
+        <Grid item sx={wrapper_inner}>
+          <Box pt={6} pl={2}>
             <ALTA_CodeTree />
           </Box>
         </Grid>
-        <Grid item sx={codeBlock}>
-          <Box p={2}>
-            <ALTA_CodeBlock />
-          </Box>
+        <Grid item sx={wrapper_inner}>
+          <Grid container direction="column-reverse">
+            <Grid item>
+              <Box p={2}>
+                <ALTA_CodeBlock />
+              </Box>
+            </Grid>
+          </Grid>
+          <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
+          <Grid item>
+            <Box>
+              <ALTA_CodeCommentList />
+            </Box>
+          </Grid>
         </Grid>
       </Grid>
     </Box>
@@ -28,10 +39,6 @@ const wrapper = {
   display: 'flex',
 };
 
-const codeTreeStyle = {
-  height: '100vh',
-};
-
-const codeBlock = {
+const wrapper_inner = {
   height: '100vh',
 };
