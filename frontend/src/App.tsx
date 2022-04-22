@@ -5,8 +5,8 @@ import { createTheme } from '@mui/material';
 import './App.css';
 
 import ALTALogin from './pages/ALTALogin';
+import ALTACode from './pages/ALTACode';
 import { ThemeProvider } from '@emotion/react';
-
 const theme = createTheme({
   palette: {
     primary: {
@@ -32,6 +32,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<ALTALogin />} />
+          <Route path="/code" element={<ALTACode />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
