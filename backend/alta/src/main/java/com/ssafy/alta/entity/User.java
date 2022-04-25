@@ -2,15 +2,16 @@ package com.ssafy.alta.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@DynamicInsert
+@DynamicUpdate
 @Table(name = "user")
 public class User {
     @Id
@@ -46,4 +47,10 @@ public class User {
 
     @Column(name = "user_role")
     private String role;
+
+    @PrePersist
+    private void prePersist() {
+        this.emailAlert = this.emailAlert == null ? 3 : this.emailAlert;
+        this.siteAlert = this.siteAlert == null ? 3 : this.siteAlert;
+    }
 }

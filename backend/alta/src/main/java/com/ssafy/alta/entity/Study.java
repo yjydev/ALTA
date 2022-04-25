@@ -2,12 +2,16 @@ package com.ssafy.alta.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@DynamicInsert
+@DynamicUpdate
 @Table(name = "study")
 public class Study {
     @Id
@@ -21,7 +25,7 @@ public class Study {
     @Column(name = "study_introduction")
     private String introduction;
 
-    @Column(name = "study_is_public", columnDefinition = "TINYINT(1) default 1")
+    @Column(name = "study_is_public")
     private boolean isPublic;
 
     @Column(name = "study_language")
