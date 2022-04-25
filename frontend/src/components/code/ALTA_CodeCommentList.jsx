@@ -22,7 +22,7 @@ export default function ALTA_CodeCommentList() {
       comment: '댓글 내용',
       comment_date: '2022/04/18',
       code_number: '4',
-      completed: 'True',
+      completed: true,
     },
     {
       review_id: '2',
@@ -30,14 +30,14 @@ export default function ALTA_CodeCommentList() {
       comment: '댓글 내용2',
       comment_date: '2022/04/26',
       code_number: '6',
-      completed: 'False',
+      completed: false,
     },
   ];
 
   const [isCompleted, setisCompleted] = useState(false);
 
   var reviews = isCompleted
-    ? reviews_data.filter((review) => review['completed'] === 'False')
+    ? reviews_data.filter((review) => review['completed'] === false)
     : reviews_data;
 
   return (
