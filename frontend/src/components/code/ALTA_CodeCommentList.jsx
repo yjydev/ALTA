@@ -18,7 +18,7 @@ export default function ALTA_CodeCommentList() {
           <TextField
             id="outlined-multiline-static"
             multiline
-            rows={4}
+            rows={2}
             placeholder="댓글을 입력해주세요."
             sx={addComment}
           />
@@ -35,15 +35,13 @@ export default function ALTA_CodeCommentList() {
 }
 
 const addCommentStyle = {
-  height: '10rem',
+  height: '7rem',
 };
 
 const addComment = {
   width: '85%',
-  marginBottom: '2rem',
 };
 
 const addButton = {
-  fontSize: '80',
-  marginTop: '1rem',
+  fontSize: '50',
 };
