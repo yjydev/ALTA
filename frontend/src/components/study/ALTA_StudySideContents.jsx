@@ -6,7 +6,7 @@ export default function ALTA_StudyMembers({ children }) {
 
 const wrapper = {
   width: '80%',
-  margin: '20px auto 0',
+  margin: '0 auto',
   padding: '10px',
   paddingBottom: '0.1px',
   boxSizing: 'border-box',

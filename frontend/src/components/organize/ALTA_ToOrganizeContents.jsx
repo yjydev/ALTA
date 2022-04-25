@@ -108,7 +108,7 @@ export default function ALTA_ToOrganizeContents() {
 const wrapper = {
   display: 'flex',
   width: '100%',
-  height: '100vh',
+  height: '100%',
   justifyContent: ' center',
   alignItems: 'center',
 };

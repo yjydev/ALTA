@@ -1,12 +1,12 @@
-import ALTA_StudyNotice from './ALTA_StudyNotice';
-import ALTA_StudyChat from './ALTA_StudyChat';
+import ALTA_Notice from './ALTA_Notice';
+import ALTA_Chat from './ALTA_Chat';
 import { Box } from '@mui/material';
 
 export default function ALTA_StudyBoard() {
   return (
     <Box sx={wrapper}>
-      <ALTA_StudyNotice />
-      <ALTA_StudyChat />
+      <ALTA_Notice />
+      <ALTA_Chat />
     </Box>
   );
 }

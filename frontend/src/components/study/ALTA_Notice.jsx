@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function ALTA_StudyNotice() {
+export default function ALTA_Notice() {
   return (
     <Box sx={notice}>
       <EditIcon />

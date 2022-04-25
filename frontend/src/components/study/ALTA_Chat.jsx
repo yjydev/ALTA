@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-export default function StudyChat() {
+export default function ALTA_Chat() {
   return <Box sx={chat}>notice</Box>;
 }
 

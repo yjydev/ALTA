@@ -14,23 +14,27 @@ export default function ALTA_StudyDetail() {
 
 //template에 prop로 넘겨줄 컴포넌트
 function Header() {
-  return <ALTA_Header></ALTA_Header>;
+  return <ALTA_Header />;
 }
 
 function Contents() {
   return (
-    <Grid container>
-      <Grid item xs={3}>
+    <Grid
+      sx={{ height: '100%', padding: '20px 0' }}
+      container
+      justifyContent="center"
+    >
+      <Grid item xl={3} lg={0}>
         <ALTA_StudySideContents>
           <ALTA_StudyMembers />
         </ALTA_StudySideContents>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xl={6}>
         <ALTA_Inner>
           <ALTA_StudyDetailContents />
         </ALTA_Inner>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xl={3} lg={0}>
         <ALTA_StudySideContents>
           <ALTA_StudyBoard />
         </ALTA_StudySideContents>
