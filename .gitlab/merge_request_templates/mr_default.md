@@ -1,4 +1,3 @@
-
 ## MR Description :page_facing_up:
 
 ### 목적
@@ -26,4 +25,4 @@
 ### 관련 스크린샷(없으면 삭제)  
 
 ### 이슈번호  
-
+Closes S06P31B203-
