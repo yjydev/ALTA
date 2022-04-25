@@ -1,5 +1,4 @@
 
-
 ## MR Description :page_facing_up:
 
 ### 목적
@@ -24,4 +23,7 @@
 
 ['참고한 레퍼런스명'](https://edu.ssafy.com/edu/main/index.do)
 
-### 관련 스크린샷(없으면 삭제)
+### 관련 스크린샷(없으면 삭제)  
+
+### 이슈번호  
+
