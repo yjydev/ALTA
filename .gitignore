@@ -362,3 +362,6 @@ package-lock.json
 
 # git cz config.js
 changelog.config.js
+
+# .idea
+backend/.idea/*
