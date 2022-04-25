@@ -12,21 +12,23 @@ export default function ALTA_CodeBlock() {
     <Grid container direction="column" spacing={5}>
       <Grid item>
         <Box pt={3} pb={3}>
-          <Typography sx={problemStyle}>2021.04.13 회문</Typography>
           <Box sx={titleStyle}>
-            <Typography sx={codeTitleStyle}>Chart.vue</Typography>
+            <Typography sx={problemStyle}>2021.04.13 회문</Typography>
             <Box>
               <Button>재업로드</Button>
               <Button>수정</Button>
               <Button>삭제</Button>
-              <Typography sx={codeWritterStyle} align="right">
-                작성자 : user
-              </Typography>
             </Box>
           </Box>
+          <Box sx={titleStyle}>
+            <Typography sx={codeTitleStyle}>Chart.vue</Typography>
+            <Typography sx={codeWritterStyle} align="right">
+              작성자 : user
+            </Typography>
+          </Box>
         </Box>
+        <Divider fullWidth />
       </Grid>
-      <Divider variant="fullWidth" />
       <Grid item>
         <Box sx={{ display: 'none' }}>
           <TopBar
@@ -44,7 +46,7 @@ export default function ALTA_CodeBlock() {
             }}
           />
         </Box>
-        <Box sx={codeBlockStyle}>
+        <Box sx={codeBlockStyle} className="codeBlock">
           <CopyBlock
             language={language}
             text={languageDemo}
@@ -67,11 +69,7 @@ const titleStyle = {
   minWidth: '480px',
   display: 'flex',
   justifyContent: 'space-between',
-};
-
-const infoStyle = {
-  display: 'flex',
-  justifyContent: 'baseline',
+  alignItems: 'baseline',
 };
 
 const problemStyle = {

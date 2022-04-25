@@ -6,35 +6,35 @@ import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
 export default function ALTA_CodeContents() {
   return (
-    <Box sx={wrapper}>
-      <Grid container direction="column" columnGap={5}>
-        <Grid item sx={wrapper_inner}>
-          <Box pt={6} pl={2}>
-            <ALTA_CodeTree />
-          </Box>
-        </Grid>
-        <Grid item>
-          <Grid container direction="column" rowGap={3}>
-            <Grid item sx={wrapper_inner}>
-              <ALTA_CodeBlock />
-            </Grid>
-            <Grid item sx={wrapper_inner}>
-              <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-              <ALTA_CodeCommentList />
-            </Grid>
+    <Grid container justify="center" spacing={8}>
+      <Grid item sx={codeTree_wrapper} md={2}>
+        <Box pt={4} pl={2}>
+          <ALTA_CodeTree />
+        </Box>
+      </Grid>
+      <Grid item xs={9}>
+        <Grid container direction="column" rowGap={3}>
+          <Grid item sx={codeBlock_wrapper}>
+            <ALTA_CodeBlock />
+          </Grid>
+          <Grid item sx={codeComment_wrapper}>
+            <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
+            <ALTA_CodeCommentList />
           </Grid>
         </Grid>
       </Grid>
-    </Box>
+    </Grid>
   );
 }
 
-const wrapper = {
-  height: '100%',
-  maxWidth: '1200px',
-  display: 'flex',
+const codeComment_wrapper = {
+  padding: '10px',
 };
 
-const wrapper_inner = {
-  padding: '10px',
+const codeBlock_wrapper = {
+  minWidth: '550px',
+};
+
+const codeTree_wrapper = {
+  display: { xs: 'none', md: 'block' },
 };

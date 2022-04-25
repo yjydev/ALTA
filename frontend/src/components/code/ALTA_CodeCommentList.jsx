@@ -15,16 +15,22 @@ export default function ALTA_CodeCommentList() {
       <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
       <Grid item>
         <Box sx={addCommentStyle}>
-          <TextField
-            id="outlined-multiline-static"
-            multiline
-            rows={2}
-            placeholder="댓글을 입력해주세요."
-            sx={addComment}
-          />
-          <IconButton>
-            <AddCircleIcon style={addButton} />
-          </IconButton>
+          <Grid container justify="center" align="center" columns={17}>
+            <Grid item xs={16}>
+              <TextField
+                id="outlined-multiline-static"
+                multiline
+                rows={2}
+                placeholder="댓글을 입력해주세요."
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={1}>
+              <IconButton>
+                <AddCircleIcon style={addButton} />
+              </IconButton>
+            </Grid>
+          </Grid>
         </Box>
       </Grid>
       <Grid item>
@@ -36,10 +42,6 @@ export default function ALTA_CodeCommentList() {
 
 const addCommentStyle = {
   height: '7rem',
-};
-
-const addComment = {
-  width: '85%',
 };
 
 const addButton = {
