@@ -12,6 +12,6 @@ export default function ALTA_CodeTree() {
 }
 
 const codeTreeStyle = {
-  height: '90vh',
+  height: '85vh',
   border: '1px solid', // 확인용
 };

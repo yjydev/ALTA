@@ -13,19 +13,15 @@ export default function ALTA_CodeContents() {
             <ALTA_CodeTree />
           </Box>
         </Grid>
-        <Grid item sx={wrapper_inner}>
-          <Grid container direction="column-reverse">
-            <Grid item>
-              <Box p={2}>
-                <ALTA_CodeBlock />
-              </Box>
+        <Grid item>
+          <Grid container direction="column" rowGap={3}>
+            <Grid item sx={wrapper_inner}>
+              <ALTA_CodeBlock />
             </Grid>
-          </Grid>
-          <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-          <Grid item>
-            <Box>
+            <Grid item sx={wrapper_inner}>
+              <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
               <ALTA_CodeCommentList />
-            </Box>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -34,11 +30,11 @@ export default function ALTA_CodeContents() {
 }
 
 const wrapper = {
-  height: '100vh',
+  height: '100%',
   maxWidth: '1200px',
   display: 'flex',
 };
 
 const wrapper_inner = {
-  height: '100vh',
+  padding: '10px',
 };
