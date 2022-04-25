@@ -1,10 +1,8 @@
-package com.ssafy.alta.study.entity;
+package com.ssafy.alta.domain.study.entity;
 
-import com.ssafy.alta.user.entity.UserEntity;
-import lombok.Builder;
+import com.ssafy.alta.domain.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -12,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "study")
-public class StudyEntity {
+public class Study {
     @Id
     @Column(name = "study_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,5 +39,5 @@ public class StudyEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserEntity user;
+    private User user;
 }
