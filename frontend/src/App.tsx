@@ -9,6 +9,23 @@ import ALTA_Signup from './pages/ALTA_Signup';
 import ALTA_Code from './pages/ALTA_Code';
 import ALTA_ToOrganize from './pages/ALTA_ToOrganize';
 
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<ALTA_Login />} />
+          <Route path="/signup" element={<ALTA_Signup />} />
+          <Route path="/code" element={<ALTA_Code />} />
+          <Route path="/organize" element={<ALTA_ToOrganize />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}
+
+export default App;
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -29,19 +46,3 @@ const theme = createTheme({
     fontFamily: ['Spoqa Han Sans Neo', 'sans-serif'].join(','),
   },
 });
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ALTA_Login />} />
-          <Route path="/signup" element={<ALTA_Signup />} />
-          <Route path="/code" element={<ALTA_Code />} />
-          <Route path="/organize" element={<ALTA_ToOrganize />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
-  );
-}
-
-export default App;
