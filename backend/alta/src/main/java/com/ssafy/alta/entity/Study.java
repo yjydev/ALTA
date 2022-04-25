@@ -1,6 +1,5 @@
-package com.ssafy.alta.domain.study.entity;
+package com.ssafy.alta.entity;
 
-import com.ssafy.alta.domain.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

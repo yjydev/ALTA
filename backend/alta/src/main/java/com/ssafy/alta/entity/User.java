@@ -1,4 +1,4 @@
-package com.ssafy.alta.domain.user.entity;
+package com.ssafy.alta.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
