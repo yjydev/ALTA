@@ -10,6 +10,12 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * 일정 엔티티
+ *
+ * @author 우정연
+ * created on 2022-04-26
+ */
 @Entity
 @Table(name = "schedule")
 @Getter

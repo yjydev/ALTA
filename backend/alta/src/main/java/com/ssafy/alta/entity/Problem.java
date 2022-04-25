@@ -8,7 +8,12 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-
+/**
+ * 문제 엔티티
+ *
+ * @author 우정연
+ * created on 2022-04-26
+ */
 @Entity
 @Table(name = "problem")
 @Getter
