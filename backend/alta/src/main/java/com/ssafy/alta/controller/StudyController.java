@@ -2,6 +2,7 @@ package com.ssafy.alta.controller;
 
 import com.ssafy.alta.dto.StudyRequest;
 import com.ssafy.alta.service.StudyService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class StudyController {
     StudyService studyService;
 
     @PostMapping
+    @ApiOperation(value = "스터디 그룹 생성", notes = "신규 스터디 그룹을 생성합니다.")
     public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest) {
         try {
             return new ResponseEntity<>(studyService.insertStudy(studyRequest), HttpStatus.OK);
