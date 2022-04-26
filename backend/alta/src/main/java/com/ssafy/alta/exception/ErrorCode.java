@@ -20,16 +20,18 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
-    HANDLE_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "접근이 제한됩니다."),
+    HANDLE_ACCESS_DENIED("U001", HttpStatus.UNAUTHORIZED, "접근이 제한됩니다."),  // 유저
 
     /* 500 INTERNAL_SERVER_ERROR : 서버 내부 오류 */
-    DB_NOT_FOUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "일치하는 데이터가 없습니다."),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 에러가 발생했습니다.");
+    DB_NOT_FOUND_ERROR("G001", HttpStatus.INTERNAL_SERVER_ERROR, "일치하는 데이터가 없습니다."), // 글로벌
+    INTERNAL_SERVER_ERROR("G002", HttpStatus.INTERNAL_SERVER_ERROR, "서버에 에러가 발생했습니다.");
 
+    private final String code;         // 에러 키(관리하기 위함)
     private final HttpStatus status;  // 상태 코드
     private final String message;     // 에러 메시지
 
-    ErrorCode(final HttpStatus status, final String message){
+    ErrorCode(String code, final HttpStatus status, final String message){
+        this.code = code;
         this.status = status;
         this.message = message;
     }

@@ -22,9 +22,10 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ErrorResponse {
-    private int code;
+    private int status;
     private String message;
     private LocalDateTime timestamp = LocalDateTime.now();
+    private String code;
     
 // 그 외의 항목 추가할 때 사용하면 좋을 듯
 //    public ErrorResponse(int status, String message) {
@@ -33,7 +34,8 @@ public class ErrorResponse {
 //    }
     
     public ErrorResponse(ErrorCode errorCode) {
-        this.code = errorCode.getStatus().value();
+        this.code = errorCode.getCode();
+        this.status = errorCode.getStatus().value();
         this.message = errorCode.getMessage();
     }
 }

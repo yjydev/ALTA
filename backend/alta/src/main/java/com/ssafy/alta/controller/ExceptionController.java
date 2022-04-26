@@ -32,7 +32,7 @@ public class ExceptionController {
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<ErrorResponse> handleAccessDeniedException(final AccessDeniedException e) {
         final ErrorResponse response = new ErrorResponse(ErrorCode.HANDLE_ACCESS_DENIED);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCode()));
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     // 비즈니스 로직 관련 처리
@@ -47,6 +47,6 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(final Exception e) {
         final ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCode()));
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 }
