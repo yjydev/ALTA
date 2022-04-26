@@ -18,7 +18,7 @@ export default function ALTA_MemberTable() {
     state: '초대 대기',
     score: '270',
   };
-  const member_data = new Array(8).fill(test);
+  const members = new Array(8).fill(test);
 
   const columns = [
     { id: 'username', label: '닉네임', width: 30 },
@@ -28,7 +28,7 @@ export default function ALTA_MemberTable() {
   ];
 
   return (
-    <TableContainer sx={scrollStyle}>
+    <TableContainer sx={[entireTable, scrollStyle]}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
@@ -48,7 +48,7 @@ export default function ALTA_MemberTable() {
       </Table>
       <TableContainer sx={[tableStyle, scrollStyle]}>
         <Table style={{ tableLayout: 'fixed' }}>
-          {member_data.map((member, index) => {
+          {members.map((member, index) => {
             return (
               <ALTA_MemberTableBody
                 key={index}
@@ -64,5 +64,10 @@ export default function ALTA_MemberTable() {
 }
 
 const tableStyle = {
-  maxHeight: '25vh',
+  maxHeight: '18vh',
+};
+
+const entireTable = {
+  borderBottom: '1px solid',
+  borderColor: '#D9CAB3',
 };

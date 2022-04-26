@@ -22,4 +22,6 @@ const bodyStyle = {
   // '&:nth-child(even)': {
   //   backgroundColor: '#f2f2f2',
   // },
+  borderLeft: '1px solid',
+  borderColor: '#D9CAB3',
 };
