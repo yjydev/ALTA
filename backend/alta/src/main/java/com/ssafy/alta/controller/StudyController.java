@@ -31,7 +31,7 @@ public class StudyController {
     @PostMapping
     public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest) {
         try {
-            return new ResponseEntity<>(studyService.insertStudy(studyRequest), HttpStatus.CREATED);
+            return new ResponseEntity<>(studyService.insertStudy(studyRequest), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
