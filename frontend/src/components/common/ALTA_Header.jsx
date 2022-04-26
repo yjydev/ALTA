@@ -2,11 +2,13 @@ import styled from '@emotion/styled';
 import { AppBar, Box } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
+import Logo from '../../images/logo.png';
+
 export default function ALTA_Header() {
   return (
     <Box sx={wrapper}>
       <AppBar sx={navStyle}>
-        <Img src="logo.png" alt="" />
+        <Img src={Logo} alt="" />
         <Box>
           <AccountBoxIcon sx={{ fontSize: '35px' }} />
         </Box>
