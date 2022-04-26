@@ -8,9 +8,6 @@ import javax.persistence.Column;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @ToString
 public class StudyRequest {
     private User user;
