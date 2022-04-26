@@ -1,6 +1,9 @@
 package com.ssafy.alta.entity;
 
 import com.sun.istack.NotNull;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -25,6 +28,8 @@ import javax.persistence.Table;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @DynamicInsert
 @DynamicUpdate
@@ -42,15 +47,12 @@ public class User {
     @Column(name = "user_nickname")
     private String nickname;
 
-    @NotNull
     @Column(name = "user_email")
     private String email;
 
-    @NotNull
     @Column(name = "user_email_alert")
     private Integer emailAlert;
 
-    @NotNull
     @Column(name = "user_site_alert")
     private Integer siteAlert;
 
@@ -68,4 +70,6 @@ public class User {
 
     @Column(name = "user_role")
     private String role;
+
 }
+
