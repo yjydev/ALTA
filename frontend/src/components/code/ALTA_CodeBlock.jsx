@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Grid, Divider } from '@mui/material';
+import { Box, Grid, Typography, Divider, Button } from '@mui/material';
 import { CopyBlock, dracula } from 'react-code-blocks';
 
 import TopBar from './ALTA_CodeBlock/TopBar';
@@ -9,17 +9,28 @@ export default function ALTA_CodeBlock() {
   const [language, changeLanguage] = useState('jsx');
   const [languageDemo, changeDemo] = useState(CodeTexts['jsx']);
   return (
-    <Grid container direction="column" spacing={2}>
-      <Grid item sx={titleStyle}>
-        <Box pt={3}>
-          <Typography sx={problemStyle}>2021.04.13 회문</Typography>
-          <Typography sx={codeTitleStyle}>Chart.vue</Typography>
-          <Typography sx={codeWritterStyle}>작성자 : user</Typography>
+    <Grid container direction="column" spacing={5}>
+      <Grid item>
+        <Box pt={3} pb={3}>
+          <Box sx={titleStyle}>
+            <Typography sx={problemStyle}>2021.04.13 회문</Typography>
+            <Box>
+              <Button>재업로드</Button>
+              <Button>수정</Button>
+              <Button>삭제</Button>
+            </Box>
+          </Box>
+          <Box sx={titleStyle}>
+            <Typography sx={codeTitleStyle}>Chart.vue</Typography>
+            <Typography sx={codeWritterStyle} align="right">
+              작성자 : user
+            </Typography>
+          </Box>
         </Box>
+        <Divider fullWidth />
       </Grid>
-      <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-      <Grid item sx={codeBlockStyle}>
-        <Box>
+      <Grid item>
+        <Box sx={{ display: 'none' }}>
           <TopBar
             language={{
               value: language,
@@ -34,24 +45,31 @@ export default function ALTA_CodeBlock() {
               )),
             }}
           />
-          <Box>
-            <CopyBlock
-              language={language}
-              text={languageDemo}
-              codeBlock
-              showLineNumbers={true}
-              theme={dracula}
-            />
-          </Box>
+        </Box>
+        <Box sx={codeBlockStyle} className="codeBlock">
+          <CopyBlock
+            language={language}
+            text={languageDemo}
+            codeBlock
+            showLineNumbers={true}
+            theme={dracula}
+          />
         </Box>
       </Grid>
     </Grid>
   );
 }
 
+const codeBlockStyle = {
+  height: '33rem',
+  overflowY: 'scroll',
+};
+
 const titleStyle = {
-  display: 'flex',
   minWidth: '480px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'baseline',
 };
 
 const problemStyle = {
@@ -60,15 +78,9 @@ const problemStyle = {
 
 const codeTitleStyle = {
   fontSize: '50px',
-  display: 'inline-block',
-  width: '25rem',
 };
 
 const codeWritterStyle = {
-  display: 'inline-block',
   fontSize: '20px',
-};
-
-const codeBlockStyle = {
-  height: '90%',
+  marginRight: '16px',
 };

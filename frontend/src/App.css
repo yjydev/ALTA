@@ -1,1 +1,5 @@
 @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
+
+.codeBlock::-webkit-scrollbar {
+  display: none;
+}
