@@ -28,8 +28,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class CodeRequest {
-//    @ApiModelProperty(value = "스터디 키", required = true)
-//    private long studyId;
+    @ApiModelProperty(value = "스터디 키", required = true)
+    private long studyId;
 
     @ApiModelProperty(value = "스터디 키")
     private String message;

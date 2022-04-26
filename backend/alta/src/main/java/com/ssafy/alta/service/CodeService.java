@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  * fileName 	: CodeService
  * author 	    : 우정연
  * date		    : 2022-04-26
- * description	: 코드 SErvice
+ * description	: 코드 Service
  * ===========================================================
  * DATE 		AUTHOR 		      NOTE
  * -----------------------------------------------------------
