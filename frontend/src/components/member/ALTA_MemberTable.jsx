@@ -64,7 +64,7 @@ export default function ALTA_MemberTable() {
 }
 
 const tableStyle = {
-  maxHeight: '25vh',
+  maxHeight: '24vh',
 };
 
 const entireTable = {
