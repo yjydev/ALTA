@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Box, Grid, Typography, Divider, Button } from '@mui/material';
-import { CopyBlock, dracula } from 'react-code-blocks';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import * as code_themes from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-import TopBar from './ALTA_CodeBlock/TopBar';
+// import TopBar from './ALTA_CodeBlock/TopBar';
 import CodeTexts from './ALTA_CodeBlock/CodeTexts';
+import { CodeBlockContext } from '../../context/CodeBlockContext';
+import { style } from '@mui/system';
 
 export default function ALTA_CodeBlock() {
   const [language, changeLanguage] = useState('jsx');
-  const [languageDemo, changeDemo] = useState(CodeTexts['jsx']);
+  // const [languageDemo, changeDemo] = useState(CodeTexts['jsx']);
+
+  const { codeLine, setCodeLine } = useContext(CodeBlockContext);
+  console.log(codeLine);
+
   return (
     <Grid container direction="column" spacing={5}>
       <Grid item>
@@ -30,7 +37,7 @@ export default function ALTA_CodeBlock() {
         <Divider fullWidth />
       </Grid>
       <Grid item>
-        <Box sx={{ display: 'none' }}>
+        {/* <Box sx={{ display: 'none' }}>
           <TopBar
             language={{
               value: language,
@@ -45,15 +52,26 @@ export default function ALTA_CodeBlock() {
               )),
             }}
           />
-        </Box>
+        </Box> */}
         <Box sx={codeBlockStyle} className="codeBlock">
-          <CopyBlock
+          <SyntaxHighlighter
             language={language}
-            text={languageDemo}
-            codeBlock
-            showLineNumbers={true}
-            theme={dracula}
-          />
+            style={code_themes['darcula']}
+            className="highlighter"
+            showLineNumbers="true"
+            wrapLines={true}
+            lineProps={(lineNum) => ({
+              style: {
+                display: 'block',
+                background: codeLine === lineNum ? 'rgb(41,62,98)' : 'inherit',
+              },
+              onClick() {
+                setCodeLine(lineNum);
+              },
+            })}
+          >
+            {CodeTexts[language]}
+          </SyntaxHighlighter>
         </Box>
       </Grid>
     </Grid>
