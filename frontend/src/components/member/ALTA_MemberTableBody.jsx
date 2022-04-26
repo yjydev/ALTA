@@ -9,8 +9,11 @@ export default function ALTA_MemberTableBody({ member, columns }) {
             key={column.id}
             style={{
               width: column.width,
-              padding: '10px 0px 10px 10px',
+              maxWidth: column.width,
+              padding: '10px 20px 10px 20px',
               fontSize: '12px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
             align="left"
           >
@@ -19,7 +22,7 @@ export default function ALTA_MemberTableBody({ member, columns }) {
                 강퇴
               </Button>
             ) : (
-              <span sx={cellStyle}>{member[column.id]}</span>
+              member[column.id]
             )}
           </TableCell>
         ))}
@@ -36,14 +39,11 @@ const bodyStyle = {
   borderColor: '#D9CAB3',
 };
 
-const cellStyle = {
-  maxWidth: 10,
-  textOverflow: 'ellipsis',
-};
-
 const outBtn = {
   padding: '0px',
   backgroundColor: 'error.main',
+  minWidth: '2.5rem',
+  maxWidth: '2.5rem',
   color: '#000000',
   fontSize: '12px',
 };

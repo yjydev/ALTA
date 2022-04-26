@@ -13,20 +13,36 @@ import ALTA_MemberTableBody from './ALTA_MemberTableBody';
 export default function ALTA_MemberTable() {
   const test = {
     username: 'jyj',
-    email: 'qwqqqqqqqqwwwwwwwwwwwwwwwqqq1@gmail.com',
+    email: 'qweqweqweqweqweqweqweqweqweqwe@gmail.com',
     join_date: '-',
     state: '초대 대기',
     score: '270',
   };
-  const members = new Array(6).fill(test);
+  const members = new Array(5).fill(test);
 
+  members.push({
+    username: 'jyj',
+    email: 'qwqqqqq1@gmail.com',
+    join_date: '2022-04-19',
+    state: '초대',
+    score: '300',
+  });
+
+  const study_code = 'esfsad';
+  // const study_code = null;
+
+  // gmail 은 도메인 제외 최대 30자 제한 + 기본적으론 도메인 제외 최대 64자
   const columns = [
     { id: 'username', label: '닉네임', width: 30 },
-    { id: 'email', label: '이메일', width: 140 },
+    { id: 'email', label: '이메일', width: 150 },
     { id: 'join_date', label: '가입일', width: 30 },
-    { id: 'score', label: '점수', width: 30 },
-    { id: 'out', label: '강퇴', width: 30 },
+    { id: 'score', label: '점수', width: 15 },
   ];
+
+  // 스터디 그룹장이면 강퇴 버튼 출력
+  if (study_code) {
+    columns.push({ id: 'out', label: '강퇴', width: 30 });
+  }
 
   return (
     <TableContainer sx={[entireTable, scrollStyle]}>
@@ -38,12 +54,13 @@ export default function ALTA_MemberTable() {
                 key={column.id}
                 style={{
                   width: column.width,
-                  minWidth: column.minWidth,
-                  padding: '10px 0px 10px 10px',
+                  maxWidth: column.width,
+                  padding: '10px 20px 10px 20px',
                   fontSize: '14px',
                   fontWeight: 'bold',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
-                sx={cellStyle}
                 align="left"
               >
                 {column.label}
@@ -76,10 +93,4 @@ const tableStyle = {
 const entireTable = {
   borderBottom: '1px solid',
   borderColor: '#D9CAB3',
-};
-
-const cellStyle = {
-  width: '70px',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
 };
