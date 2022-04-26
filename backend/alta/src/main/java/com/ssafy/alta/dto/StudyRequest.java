@@ -2,6 +2,7 @@ package com.ssafy.alta.dto;
 
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,6 +21,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@Builder
 @ToString
 public class StudyRequest {
     private User user;
