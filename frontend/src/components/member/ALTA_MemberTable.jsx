@@ -24,7 +24,7 @@ export default function ALTA_MemberTable() {
     { id: 'username', label: '닉네임', width: 30 },
     { id: 'email', label: '이메일', width: 130 },
     { id: 'join_date', label: '가입일', width: 30 },
-    { id: 'score', label: '점수', width: 30 },
+    // { id: 'score', label: '점수', width: 30 },
   ];
 
   return (
@@ -64,7 +64,7 @@ export default function ALTA_MemberTable() {
 }
 
 const tableStyle = {
-  maxHeight: '18vh',
+  maxHeight: '25vh',
 };
 
 const entireTable = {

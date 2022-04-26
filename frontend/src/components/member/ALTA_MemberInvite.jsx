@@ -4,7 +4,7 @@ import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList() {
   return (
-    <Box>
+    <Box pt={3}>
       <ALTA_ContentsTitle> 멤버 초대 </ALTA_ContentsTitle>
       <Grid container justifyContent="center" alignItems="center" columns={18}>
         <Grid item xs={16}>
