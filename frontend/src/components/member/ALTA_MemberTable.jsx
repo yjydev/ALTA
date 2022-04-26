@@ -60,10 +60,10 @@ export default function ALTA_MemberTable() {
                   fontWeight: 'bold',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  borderTop: '1px solid #6d9886',
                   borderBottom: '1px solid #6d9886',
                 }}
                 align="left"
+                variant="head"
               >
                 {column.label}
               </TableCell>
