@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import {
   Divider,
@@ -8,10 +8,14 @@ import {
   Box,
   Typography,
   Button,
+  Link,
 } from '@mui/material';
+
+import { CodeBlockContext } from '../../context/CodeBlockContext';
 
 export default function ALTA_CodeCommentCard({ review }) {
   const [isResolved, setisResolved] = useState(review['completed']);
+  const { codeLine, setCodeLine } = useContext(CodeBlockContext);
 
   const changeResolved = () => {
     setisResolved(!isResolved);
@@ -19,20 +23,35 @@ export default function ALTA_CodeCommentCard({ review }) {
     review['completed'] = isResolved;
   };
 
+  const moveToLine = () => {
+    setCodeLine(review['code_number']);
+    // 추후 해당 라인 스크롤링 이벤트 구현 예정
+  };
+
   return (
     <Box>
       <Paper>
-        <Grid container direction="row" px={2} py={1} columns={20}>
+        <Grid container direction="row" px={2} py={1} columns={16}>
           <Grid item pt={2} md={1} sx={profileStyle}>
             <Avatar src="profile_default.png" />
           </Grid>
-          <Grid item xs={19}>
+          <Grid item md={15}>
             <Grid sx={infoStyle}>
               <h4>{review['reviewer']}</h4>
               <p style={{ color: 'gray' }}>{review['comment_date']}</p>
             </Grid>
             <Grid sx={infoStyle}>
-              <Typography mb={2}>{review['comment']} </Typography>
+              <Grid container sx={commentStyle}>
+                <Link
+                  onClick={moveToLine}
+                  sx={commentCodeLine}
+                  underline="none"
+                  mr={1}
+                >
+                  {review['code_number']}번
+                </Link>
+                <Typography mb={2}>{review['comment']}</Typography>
+              </Grid>
               {isResolved ? (
                 <Button onClick={changeResolved}>
                   <Typography sx={resolvedStyle}>해결됨</Typography>
@@ -54,6 +73,7 @@ export default function ALTA_CodeCommentCard({ review }) {
 const infoStyle = {
   display: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'baseline',
 };
 
 const profileStyle = {
@@ -67,4 +87,15 @@ const resolvedStyle = {
 
 const unresolvedStyle = {
   color: 'primary.main',
+};
+
+const commentCodeLine = {
+  color: 'primary.main',
+  cursor: 'pointer',
+};
+
+const commentStyle = {
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'baseline',
 };
