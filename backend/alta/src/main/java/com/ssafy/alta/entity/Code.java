@@ -32,7 +32,7 @@ public class Code {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_id")
-    private long id;
+    private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "code_create_date")

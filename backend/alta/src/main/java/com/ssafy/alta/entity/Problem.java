@@ -29,7 +29,7 @@ public class Problem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "problem_id")
-    private long id;
+    private Long id;
 
     @NotNull
     @Column(name = "problem_name")
@@ -40,7 +40,7 @@ public class Problem {
     private String link;
 
     @Column(name = "problem_is_cancel")
-    private boolean isCancel;
+    private Boolean isCancel;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

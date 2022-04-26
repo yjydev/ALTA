@@ -29,7 +29,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CodeRequest {
     @ApiModelProperty(value = "스터디 키", required = true)
-    private long studyId;
+    private Long studyId;
 
     @ApiModelProperty(value = "스터디 키")
     private String message;
@@ -38,7 +38,7 @@ public class CodeRequest {
     private String path;
 
     @ApiModelProperty(value = "문제 키", required = true)
-    private long problemId;
+    private Long problemId;
 
     @ApiModelProperty(value = "코드 줄 리스트", required = true)
     private List<String> contents;

@@ -32,7 +32,7 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "schedule_id")
-    private long id;
+    private Long id;
 
 
     @Temporal(TemporalType.DATE)
@@ -45,11 +45,11 @@ public class Schedule {
 
     @NotNull
     @Column(name = "schedule_round")
-    private int round;
+    private Integer round;
 
     @NotNull
     @Column(name = "schedule_is_cancel")
-    private boolean isCancel;
+    private Boolean isCancel;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

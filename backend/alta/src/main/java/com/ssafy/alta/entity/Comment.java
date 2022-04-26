@@ -31,7 +31,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private long id;
+    private Long id;
 
     @NotNull
     @Column(name = "comment_content")
@@ -43,10 +43,10 @@ public class Comment {
 
     @NotNull
     @Column(name = "comment_line")
-    private int line;
+    private Integer line;
 
     @Column(name = "comment_is_solved")
-    private boolean isSolved;
+    private Boolean isSolved;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
