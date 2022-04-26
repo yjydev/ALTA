@@ -2,9 +2,21 @@ package com.ssafy.alta.dto;
 
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.User;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Column;
+/**
+ * packageName 	: com.ssafy.alta.dto
+ * fileName 	: StudyRequest
+ * author 	    : jisoon Lee
+ * date		    : 2022-04-26
+ * description	:
+ * ===========================================================
+ * DATE             AUTHOR              NOTE
+ * -----------------------------------------------------------
+ * 2022-04-26       jisoon Lee         최초 생성
+ */
 
 @Getter
 @Setter

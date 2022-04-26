@@ -9,6 +9,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * packageName 	: com.ssafy.alta.service
+ * fileName 	: StudyService
+ * author 	    : jisoon Lee
+ * date		    : 2022-04-26
+ * description	:
+ * ===========================================================
+ * DATE             AUTHOR              NOTE
+ * -----------------------------------------------------------
+ * 2022-04-26       jisoon Lee         최초 생성
+ */
+
 @Service
 public class StudyService {
     @Autowired
@@ -17,10 +29,10 @@ public class StudyService {
     @Autowired
     private UserRepository userRepository;
 
-    public Class<? extends Study> insertStudy(StudyRequest studyRequest) {
+    public Long insertStudy(StudyRequest studyRequest) {
         studyRequest.setUser(userRepository.getById("46081043"));
         studyRequest.setCode(UUID.randomUUID().toString().substring(0, 8));
         Study study = studyRequest.toEntity();
-        return studyRepository.save(study).getClass();
+        return studyRepository.save(study).getStudyId();
     }
 }
