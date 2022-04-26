@@ -1,13 +1,12 @@
 import { Grid, Box, Typography, Button } from '@mui/material';
 
 import ALTA_MemberTable from './ALTA_MemberTable';
-import ALTA_MemberInvite from './ALTA_MemberInvite';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
-export default function ALTA_MemberContents() {
+export default function ALTA_MemberList() {
   const study_code = 'esfsad';
   return (
-    <Box pt={3}>
+    <Box py={4}>
       <Grid container direction="row" sx={wrapper}>
         <Grid item sm={12}>
           <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
@@ -26,17 +25,12 @@ export default function ALTA_MemberContents() {
             <p></p>
           )}
         </Grid>
-        <Grid item sm={12}>
-          <ALTA_ContentsTitle> 멤버 초대 </ALTA_ContentsTitle>
-          <ALTA_MemberInvite />
-        </Grid>
       </Grid>
     </Box>
   );
 }
 
 const wrapper = {
-  height: '90vh',
   display: 'flex',
 };
 
