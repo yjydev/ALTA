@@ -12,8 +12,8 @@ export default function ALTA_MemberList() {
           <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
           <ALTA_MemberTable />
           {study_code ? (
-            <Grid container>
-              <Typography mt={3} fontSize="19px" sx={studyCode_wrapper}>
+            <Grid container pl={1}>
+              <Typography mt={3} fontSize="17px" sx={studyCode_wrapper}>
                 스터디 고유 코드 :
                 <Typography sx={studyCodeStyle} ml={2} mr={3}>
                   {study_code}
@@ -39,7 +39,7 @@ const wrapper = {
 const studyCodeStyle = {
   display: 'inline-block',
   fontWeight: 'bold',
-  fontSize: '19px',
+  fontSize: '17px',
 };
 
 const studyCode_wrapper = {
@@ -48,6 +48,9 @@ const studyCode_wrapper = {
 };
 
 const refreshBtn = {
-  backgroundColor: 'secondary.main',
-  color: '#000000',
+  'backgroundColor': 'secondary.main',
+  'color': '#000000',
+  '&:hover': {
+    backgroundColor: '#AFA291',
+  },
 };

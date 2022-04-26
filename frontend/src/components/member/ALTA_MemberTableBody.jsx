@@ -35,15 +35,17 @@ const bodyStyle = {
   // '&:nth-child(even)': {
   //   backgroundColor: '#f2f2f2',
   // },
-  borderLeft: '1px solid',
-  borderColor: '#D9CAB3',
+  backgroundColor: '#ffffff',
 };
 
 const outBtn = {
-  padding: '0px',
-  backgroundColor: 'error.main',
-  minWidth: '2.5rem',
-  maxWidth: '2.5rem',
-  color: '#000000',
-  fontSize: '12px',
+  'padding': '0px',
+  'backgroundColor': 'error.main',
+  'minWidth': '2.5rem',
+  'maxWidth': '2.5rem',
+  'color': '#000000',
+  'fontSize': '12px',
+  '&:hover': {
+    backgroundColor: '#A28080',
+  },
 };

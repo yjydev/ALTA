@@ -45,7 +45,7 @@ export default function ALTA_MemberTable() {
   }
 
   return (
-    <TableContainer sx={[entireTable, scrollStyle]}>
+    <TableContainer sx={scrollStyle}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
@@ -60,6 +60,8 @@ export default function ALTA_MemberTable() {
                   fontWeight: 'bold',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
+                  borderTop: '1px solid #6d9886',
+                  borderBottom: '1px solid #6d9886',
                 }}
                 align="left"
               >
@@ -88,9 +90,4 @@ export default function ALTA_MemberTable() {
 
 const tableStyle = {
   maxHeight: '38vh',
-};
-
-const entireTable = {
-  borderBottom: '1px solid',
-  borderColor: '#D9CAB3',
 };
