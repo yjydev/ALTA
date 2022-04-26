@@ -31,7 +31,6 @@ public class StudyController {
     @PostMapping
     public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest) {
         try {
-            System.out.println(studyRequest.isPublic());
             return new ResponseEntity<>(studyService.insertStudy(studyRequest), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

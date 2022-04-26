@@ -45,7 +45,7 @@ public class Study {
 
     @NotNull
     @Column(name = "study_is_public")
-    private boolean isPublic;
+    private Boolean isPublic;
 
     @Column(name = "study_language")
     private String language;

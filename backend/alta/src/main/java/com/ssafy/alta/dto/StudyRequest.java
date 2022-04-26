@@ -24,7 +24,7 @@ import lombok.ToString;
 public class StudyRequest {
     private User user;
     private String name;
-    private boolean isPublic;
+    private Boolean isPublic;
     private String language;
     private Integer maxPeople;
     private String code;
