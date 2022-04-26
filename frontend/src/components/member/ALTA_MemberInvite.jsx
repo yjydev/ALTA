@@ -16,9 +16,16 @@ export default function ALTA_MemberList() {
           />
         </Grid>
         <Grid item xs={2} pl={3}>
-          <Button variant="contained">초대</Button>
+          <Button variant="contained" sx={inviteBtn}>
+            초대
+          </Button>
         </Grid>
       </Grid>
     </Box>
   );
 }
+
+const inviteBtn = {
+  backgroundColor: 'secondary.main',
+  color: '#000000',
+};

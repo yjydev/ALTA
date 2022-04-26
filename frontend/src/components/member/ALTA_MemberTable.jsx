@@ -18,13 +18,14 @@ export default function ALTA_MemberTable() {
     state: '초대 대기',
     score: '270',
   };
-  const members = new Array(8).fill(test);
+  const members = new Array(6).fill(test);
 
   const columns = [
     { id: 'username', label: '닉네임', width: 30 },
-    { id: 'email', label: '이메일', width: 130 },
+    { id: 'email', label: '이메일', width: 140 },
     { id: 'join_date', label: '가입일', width: 30 },
-    // { id: 'score', label: '점수', width: 30 },
+    { id: 'score', label: '점수', width: 30 },
+    { id: 'out', label: '강퇴', width: 30 },
   ];
 
   return (
@@ -37,8 +38,13 @@ export default function ALTA_MemberTable() {
                 key={column.id}
                 style={{
                   width: column.width,
+                  minWidth: column.minWidth,
+                  padding: '10px 0px 10px 10px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
                 }}
-                align="center"
+                sx={cellStyle}
+                align="left"
               >
                 {column.label}
               </TableCell>
@@ -64,10 +70,16 @@ export default function ALTA_MemberTable() {
 }
 
 const tableStyle = {
-  maxHeight: '24vh',
+  maxHeight: '38vh',
 };
 
 const entireTable = {
   borderBottom: '1px solid',
   borderColor: '#D9CAB3',
+};
+
+const cellStyle = {
+  width: '70px',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 };

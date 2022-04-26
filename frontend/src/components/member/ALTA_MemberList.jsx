@@ -18,7 +18,9 @@ export default function ALTA_MemberList() {
                 <Typography sx={studyCodeStyle} ml={2} mr={3}>
                   {study_code}
                 </Typography>
-                <Button variant="contained">코드 갱신</Button>
+                <Button variant="contained" sx={refreshBtn}>
+                  코드 갱신
+                </Button>
               </Typography>
             </Grid>
           ) : (
@@ -43,4 +45,9 @@ const studyCodeStyle = {
 const studyCode_wrapper = {
   display: 'flex',
   alignItems: 'center',
+};
+
+const refreshBtn = {
+  backgroundColor: 'secondary.main',
+  color: '#000000',
 };
