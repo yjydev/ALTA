@@ -13,7 +13,7 @@ import ALTA_MemberTableBody from './ALTA_MemberTableBody';
 export default function ALTA_MemberTable() {
   const test = {
     username: 'jyj',
-    email: 'qw1@gmail.com',
+    email: 'qwqqqqqqqqwwwwwwwwwwwwwwwqqq1@gmail.com',
     join_date: '-',
     state: '초대 대기',
     score: '270',
@@ -21,14 +21,14 @@ export default function ALTA_MemberTable() {
   const member_data = new Array(8).fill(test);
 
   const columns = [
-    { id: 'username', label: '닉네임', minWidth: 50 },
-    { id: 'email', label: '이메일', minWidth: 100 },
-    { id: 'join_date', label: '가입일', minWidth: 70 },
-    { id: 'score', label: '점수', minWidth: 50 },
+    { id: 'username', label: '닉네임', width: 30 },
+    { id: 'email', label: '이메일', width: 130 },
+    { id: 'join_date', label: '가입일', width: 30 },
+    { id: 'score', label: '점수', width: 30 },
   ];
 
   return (
-    <TableContainer sx={[tableStyle, scrollStyle]}>
+    <TableContainer sx={scrollStyle}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
@@ -36,28 +36,33 @@ export default function ALTA_MemberTable() {
               <TableCell
                 key={column.id}
                 style={{
-                  minWidth: column.minWidth,
+                  width: column.width,
                 }}
+                align="center"
               >
                 {column.label}
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
-        {member_data.map((member, index) => {
-          return (
-            <ALTA_MemberTableBody
-              key={index}
-              member={member}
-              columns={columns}
-            />
-          );
-        })}
       </Table>
+      <TableContainer sx={[tableStyle, scrollStyle]}>
+        <Table style={{ tableLayout: 'fixed' }}>
+          {member_data.map((member, index) => {
+            return (
+              <ALTA_MemberTableBody
+                key={index}
+                member={member}
+                columns={columns}
+              />
+            );
+          })}
+        </Table>
+      </TableContainer>
     </TableContainer>
   );
 }
 
 const tableStyle = {
-  maxHeight: 300,
+  maxHeight: '25vh',
 };

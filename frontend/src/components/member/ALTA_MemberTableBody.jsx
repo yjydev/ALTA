@@ -5,7 +5,13 @@ export default function ALTA_MemberTableBody({ member, columns }) {
     <TableBody sx={bodyStyle}>
       <TableRow hover>
         {columns.map((column) => (
-          <TableCell key={column.id}>{member[column.id]}</TableCell>
+          <TableCell
+            key={column.id}
+            style={{ width: column.width }}
+            align="center"
+          >
+            {member[column.id]}
+          </TableCell>
         ))}
       </TableRow>
     </TableBody>

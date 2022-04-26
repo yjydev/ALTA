@@ -7,12 +7,12 @@ import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 export default function ALTA_MemberContents() {
   return (
     <Box pt={3}>
-      <Grid container direction="column" sx={wrapper}>
-        <Grid item xs={7}>
+      <Grid container direction="row" sx={wrapper}>
+        <Grid item sm={12}>
           <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
           <ALTA_MemberTable />
         </Grid>
-        <Grid item xs={5}>
+        <Grid item sm={12}>
           <ALTA_ContentsTitle> 멤버 초대 </ALTA_ContentsTitle>
           <ALTA_MemberInvite />
         </Grid>
