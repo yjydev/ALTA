@@ -64,8 +64,8 @@ public class StudyJoinInfo {
 
     public StudyJoinInfoResponse toDto() {
         return StudyJoinInfoResponse.builder()
-                .nickname(study.getUser().getNickname())
-                .email(study.getUser().getEmail())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
                 .position(position)
                 .state(state)
                 .registrationDate(registrationDate)

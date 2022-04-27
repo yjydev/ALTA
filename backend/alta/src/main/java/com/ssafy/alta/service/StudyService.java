@@ -54,7 +54,7 @@ public class StudyService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다.")));
 
         if(!optSJI.get().getState().equals("가입")) {
-            throw new IllegalArgumentException("가입이 요합니다.");
+            throw new IllegalArgumentException("가입이 필요합니다.");
         }
 
         HashMap<String, Object> map = new HashMap<>();
