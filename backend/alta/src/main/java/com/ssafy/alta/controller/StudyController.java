@@ -32,8 +32,6 @@ import java.util.List;
 public class StudyController {
     @Autowired
     StudyService studyService;
-    @Autowired
-    StudyJoinInfoRepository sjiRepository;
 
     @PostMapping
     @ApiOperation(value = "스터디 그룹 생성", notes = "신규 스터디 그룹을 생성합니다.")
