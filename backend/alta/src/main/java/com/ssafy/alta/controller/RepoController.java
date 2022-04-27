@@ -1,4 +1,4 @@
-package com.ssafy.alta.gitutil;
+package com.ssafy.alta.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,11 +47,13 @@ public class RepoController {
         httpHeaders.set(AUTH, "token " + config.getSecret());
 
         String jsonString = new ObjectMapper().writeValueAsString(issue);
+        System.out.println(issue.getBody());
+        System.out.println(issue.getTitle());
 
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonString, httpHeaders);
         return restTemplate
                 .exchange(
-                        "https://api.github.com/repos/ssafytest001/githubapi-springboot/issues",
+                        "https://api.github.com/repos/ssafytest001/test/issues",
                         HttpMethod.POST,
                         httpEntity,
                         String.class
