@@ -1,11 +1,4 @@
-import {
-  Grid,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  InputLabel,
-} from '@mui/material';
+import { Grid, Box, TextField, Button, InputLabel } from '@mui/material';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
