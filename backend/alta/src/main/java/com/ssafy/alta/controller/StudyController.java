@@ -35,9 +35,10 @@ public class StudyController {
 
     @PostMapping
     @ApiOperation(value = "스터디 그룹 생성", notes = "신규 스터디 그룹을 생성합니다.")
-    public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest) {
+    public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest, @RequestHeader("user_id") String user_id) {
         try {
-            return new ResponseEntity<>(studyService.insertStudy(studyRequest), HttpStatus.OK);
+            studyService.insertStudy(user_id, studyRequest);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,15 +1,18 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.StudyJoinInfoRequest;
 import com.ssafy.alta.dto.StudyJoinInfoResponse;
 import com.ssafy.alta.dto.StudyRequest;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
+import com.ssafy.alta.entity.User;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.StudyRepository;
 import com.ssafy.alta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 /**
@@ -35,11 +38,15 @@ public class StudyService {
     @Autowired
     private StudyJoinInfoRepository sjiRepository;
 
-    public Long insertStudy(StudyRequest studyRequest) {
-        studyRequest.setUser(userRepository.getById("46081043"));
+    @Transactional
+    public void insertStudy(String user_id, StudyRequest studyRequest) {
+        User user = userRepository.getById(user_id);
+        studyRequest.setUser(user);
         studyRequest.setCode(UUID.randomUUID().toString().substring(0, 8));
-        Study study = studyRequest.toEntity();
-        return studyRepository.save(study).getStudyId();
+
+        Study study = studyRepository.save(studyRequest.toEntity());
+
+        sjiRepository.save(new StudyJoinInfoRequest(user, study, "가입", "그룹장", true, new Date()).toEntity());
     }
 
     public HashMap<String, Object> selectStudyMemberList(String user_id, Long study_id) throws Exception {
@@ -47,7 +54,7 @@ public class StudyService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다.")));
 
         if(!optSJI.get().getState().equals("가입")) {
-            throw new IllegalArgumentException("가입이 필요합니다.");
+            throw new IllegalArgumentException("가입이 요합니다.");
         }
 
         HashMap<String, Object> map = new HashMap<>();

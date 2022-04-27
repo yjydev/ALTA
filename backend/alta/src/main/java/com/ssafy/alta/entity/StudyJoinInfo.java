@@ -1,6 +1,5 @@
 package com.ssafy.alta.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.alta.dto.StudyJoinInfoResponse;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -66,8 +64,8 @@ public class StudyJoinInfo {
 
     public StudyJoinInfoResponse toDto() {
         return StudyJoinInfoResponse.builder()
-                .nickname(user.getNickname())
-                .email(user.getEmail())
+                .nickname(study.getUser().getNickname())
+                .email(study.getUser().getEmail())
                 .position(position)
                 .state(state)
                 .registrationDate(registrationDate)
