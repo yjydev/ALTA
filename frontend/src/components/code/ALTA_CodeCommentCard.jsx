@@ -15,7 +15,7 @@ import { CodeBlockContext } from '../../context/CodeBlockContext';
 
 export default function ALTA_CodeCommentCard({ review }) {
   const [isResolved, setisResolved] = useState(review['completed']);
-  const { codeLine, setCodeLine } = useContext(CodeBlockContext);
+  const { setCodeLine } = useContext(CodeBlockContext);
 
   const changeResolved = () => {
     setisResolved(!isResolved);
