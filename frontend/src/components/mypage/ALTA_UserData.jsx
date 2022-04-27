@@ -1,7 +1,5 @@
 import { Box, Button, Typography } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import SaveIcon from '@mui/icons-material/Save';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 

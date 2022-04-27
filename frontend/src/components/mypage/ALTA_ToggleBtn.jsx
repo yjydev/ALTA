@@ -1,4 +1,4 @@
-import { Box, FormControlLabel, Grid, Switch, Typography } from '@mui/material';
+import { Box, FormControlLabel, Switch, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const IOSSwitch = styled((props) => (
