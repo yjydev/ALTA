@@ -6,10 +6,9 @@ import * as code_themes from 'react-syntax-highlighter/dist/esm/styles/hljs';
 // import TopBar from './ALTA_CodeBlock/TopBar';
 import CodeTexts from './ALTA_CodeBlock/CodeTexts';
 import { CodeBlockContext } from '../../context/CodeBlockContext';
-import { style } from '@mui/system';
 
 export default function ALTA_CodeBlock() {
-  const [language, changeLanguage] = useState('jsx');
+  const [language] = useState('jsx');
   // const [languageDemo, changeDemo] = useState(CodeTexts['jsx']);
 
   const { codeLine, setCodeLine } = useContext(CodeBlockContext);

@@ -9,7 +9,7 @@ const title = {
   height: '50px',
   margin: '20px 0 ',
   textAlign: 'center',
-  fontSize: '30px',
+  fontSize: '25px',
   fontWeight: 'bold',
   lineHeight: '50px',
   borderRadius: '5px',
