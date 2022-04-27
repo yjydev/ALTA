@@ -65,13 +65,12 @@ public class StudyJoinInfo {
     private Date registrationDate;
 
     public StudyJoinInfoResponse toDto() {
-        StudyJoinInfoResponse sjiResponse = StudyJoinInfoResponse.builder()
+        return StudyJoinInfoResponse.builder()
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .position(position)
                 .state(state)
                 .registrationDate(registrationDate)
                 .build();
-        return sjiResponse;
     }
 }

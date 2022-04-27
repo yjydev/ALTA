@@ -46,11 +46,14 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/members")
+    @ApiOperation(value = "스터디 멤버 조회", notes = "스터디 멤버를 조회합니다. 그룹장이라면 모든 정보를, 그룹원이라면 가입된 멤버 정보를 볼 수 있습니다.")
     public ResponseEntity selectStudyMemberList(@PathVariable Long study_id, @RequestHeader("user_id") String user_id) {
         try {
             return new ResponseEntity<>(studyService.selectStudyMemberList(user_id, study_id), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

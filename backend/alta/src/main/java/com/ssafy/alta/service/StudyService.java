@@ -10,10 +10,7 @@ import com.ssafy.alta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -45,17 +42,22 @@ public class StudyService {
         return studyRepository.save(study).getStudyId();
     }
 
-    public HashMap<String, Object> selectStudyMemberList(String user_id, Long study_id) {
+    public HashMap<String, Object> selectStudyMemberList(String user_id, Long study_id) throws Exception {
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다.")));
+
+        if(!optSJI.get().getState().equals("가입")) {
+            throw new IllegalArgumentException("가입이 필요합니다.");
+        }
+
         HashMap<String, Object> map = new HashMap<>();
         List<StudyJoinInfo> sjiList = null;
         List<StudyJoinInfoResponse> sjiResponse = new ArrayList<>();
         String study_code = null;
 
-        Study study = studyRepository.getById(study_id);
-
-        if(study.getUser().getId().equals(user_id)) {
+        if(optSJI.get().getPosition().equals("그룹장")) {
             sjiList = sjiRepository.findByStudyStudyId(study_id);
-            study_code = study.getCode();
+            study_code = sjiList.get(0).getStudy().getCode();
         } else {
             sjiList = sjiRepository.findByStudyStudyIdAndStateContains(study_id, "가입");
         }
@@ -66,6 +68,7 @@ public class StudyService {
 
         map.put("members", sjiResponse);
         map.put("study_code", study_code);
+
         return map;
     }
 
