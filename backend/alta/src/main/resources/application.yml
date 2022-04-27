@@ -1,0 +1,32 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://k6b203.p.ssafy.io:3306/alta?serverTimezone=Asia/Seoul
+    username: k6b203
+    password: k6b203ALTA@@
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github: # /oauth2/authorization/github 이 주소를 동작하게 한다.
+#            client-id: 3c388f133d2216e06569 #local :seoha test
+#            client-secret: b9d3c97ca3cdd536d733129fc193cf63d39e0680
+            client-id: d48d2214b6bcdcd5ec62
+            client-secret: b9aa9c706cab627a05d19abe6695c3332c46c800
+            scope:
+              - email
+              - profile

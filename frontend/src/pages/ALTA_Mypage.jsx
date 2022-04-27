@@ -1,9 +1,12 @@
+import { Box } from '@mui/material';
+
 import ALTA_Template from '../components/common/ALTA_Template';
 import ALTA_Inner from '../components/common/ALTA_Inner';
 import ALTA_Header from '../components/common/ALTA_Header';
-import ALTA_ToOrganizeContents from '../components/organize/ALTA_ToOrganizeContents';
+import ALTA_UserData from '../components/mypage/ALTA_UserData';
+import ALTA_StudyList from '../components/mypage/ALTA_StudyList';
 
-export default function ALTA_ToOrganize() {
+export default function ALTA_Mypage() {
   return <ALTA_Template header={<Header />} contents={<Contents />} />;
 }
 
@@ -15,7 +18,10 @@ function Header() {
 function Contents() {
   return (
     <ALTA_Inner>
-      <ALTA_ToOrganizeContents />
+      <Box sx={{ position: 'relative' }}>
+        <ALTA_UserData />
+        <ALTA_StudyList />
+      </Box>
     </ALTA_Inner>
   );
 }
