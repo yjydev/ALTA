@@ -1,25 +1,20 @@
 import { Box, Typography } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import { useState } from 'react';
 
 export default function ALTA_InputItem({
   label,
-  width = '100%',
-  right = 0,
   children,
+  focused,
+  focusHandler,
 }) {
-  const [isFold, setIsFold] = useState(true);
-
-  const openTextField = () => setIsFold(false);
   return (
-    <Box sx={wrapper}>
-      <Typography sx={labelStyle}>{label}</Typography>
-      <Box sx={[fieldStyle]}>
-        {children}
-        <Box sx={[curtain, { right }, isFold ? { width } : unfold]}>
-          {isFold ? <EditIcon onClick={openTextField} /> : null}
-        </Box>
-      </Box>
+    <Box
+      sx={[wrapper, focused ? focus : null]}
+      onClick={() => focusHandler(label)}
+    >
+      <label htmlFor={label}>
+        <Typography sx={labelStyle}>{label}</Typography>
+      </label>
+      <Box sx={[fieldStyle]}>{children}</Box>
     </Box>
   );
 }
@@ -28,6 +23,8 @@ const wrapper = {
   display: 'flex',
   margin: '10px 0',
   minHeight: '50px',
+  opacity: 0.5,
+  transition: '.2s',
 };
 
 const labelStyle = {
@@ -44,16 +41,7 @@ const fieldStyle = {
   transition: '.4s',
 };
 
-const curtain = {
-  position: 'absolute',
-  display: 'flex',
-  alignItems: 'start',
-  height: '100%',
-  transition: '.4s',
-  backgroundColor: '#fff',
-  zIndex: 100,
-};
-
-const unfold = {
-  width: '0',
+const focus = {
+  transform: 'scale(1.03)',
+  opacity: 1,
 };

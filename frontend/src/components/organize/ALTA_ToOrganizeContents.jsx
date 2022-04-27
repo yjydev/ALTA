@@ -16,82 +16,112 @@ import ALTA_InputItem from './ALTA_InputItem';
 export default function ALTA_ToOrganizeContents() {
   const languages = ['JAVA', 'Python', '기타'];
 
+  const [focusedItem, setFocusedItem] = useState('스터디 이름');
+  const [studyName, setStudyName] = useState('');
   const [language, setLanguage] = useState('JAVA');
+  const [maxMember, setMaxMember] = useState(0);
   const [open, setOpen] = useState(true);
+  const [repositoryName, setRepositoryName] = useState('');
+  const [studyIntro, setStudyIntro] = useState('');
 
+  const handleFocusedItem = (label) => setFocusedItem(label);
+  const handleStudyName = (e) => setStudyName(e.target.value);
   const handleLanguage = (e) => setLanguage(e.target.value);
+  const handleMaxMember = (e) => setMaxMember(e.target.value);
   const handleOpen = (e) => setOpen(e.target.value);
+  const handleRepositoryName = (e) => setRepositoryName(e.target.value);
+  const handleStudyIntro = (e) => setStudyIntro(e.target.value);
+
+  const itemList = [
+    {
+      label: '스터디 이름',
+      children: (
+        <TextField
+          id="스터디 이름"
+          autoFocus
+          variant="standard"
+          value={studyName}
+          onChange={handleStudyName}
+          placeholder="스터디 이름을 정해주세요"
+          sx={{ width: '100%' }}
+        />
+      ),
+    },
+    {
+      label: '풀이 언어',
+      children: (
+        <Select variant="standard" value={language} onChange={handleLanguage}>
+          {languages.map((lan) => (
+            <MenuItem key={lan} value={lan}>
+              {lan}
+            </MenuItem>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      label: '인원 수',
+      children: (
+        <TextField
+          id="인원 수"
+          type="number"
+          variant="standard"
+          value={maxMember}
+          onChange={handleMaxMember}
+        />
+      ),
+    },
+    {
+      label: '공개 여부',
+      children: (
+        <RadioGroup row value={open} onChange={handleOpen}>
+          <FormControlLabel value="true" control={<Radio />} label="공개" />
+          <FormControlLabel value="false" control={<Radio />} label="비공개" />
+        </RadioGroup>
+      ),
+    },
+    {
+      label: 'Repository 이름',
+      children: (
+        <TextField
+          id="Repository 이름"
+          variant="standard"
+          placeholder="Repository 이름을 적어주세요"
+          value={repositoryName}
+          onChange={handleRepositoryName}
+          sx={{ width: '100%' }}
+        />
+      ),
+    },
+    {
+      label: '스터디 소개',
+      children: (
+        <StyledTextArea
+          id="스터디 소개"
+          rows="4"
+          placeholder="소개글을 써주세요. (최대 100자)"
+          value={studyIntro}
+          onChange={handleStudyIntro}
+        ></StyledTextArea>
+      ),
+    },
+  ];
 
   return (
     <Box sx={wrapper}>
       <Box sx={organizationCard}>
-        <ALTA_InputItem label="스터디 이름">
-          <TextField
-            required
-            sx={{
-              width: '100%',
-            }}
-            variant="standard"
-            placeholder="스터디 이름을 정해주세요"
-          />
-        </ALTA_InputItem>
-        <ALTA_InputItem label="풀이 언어" width="60%" right={200}>
-          <Select
-            id="standard-select-currency"
-            value={language}
-            variant="standard"
-            onChange={handleLanguage}
-            sx={{
-              width: '60%',
-            }}
+        {itemList.map((item) => (
+          <ALTA_InputItem
+            key={item.label}
+            label={item.label}
+            focused={focusedItem === item.label}
+            focusHandler={handleFocusedItem}
           >
-            {languages.map((lan) => (
-              <MenuItem key={lan} value={lan}>
-                {lan}
-              </MenuItem>
-            ))}
-          </Select>
-        </ALTA_InputItem>
-        <ALTA_InputItem label="인원 수" width="20%" right={400}>
-          <TextField
-            required
-            sx={{
-              width: '20%',
-              textAlign: 'center',
-            }}
-            type="number"
-            variant="standard"
-            defaultValue={0}
-          />
-        </ALTA_InputItem>
-        <ALTA_InputItem label="공개 여부" width="40%" right={300}>
-          <RadioGroup row value={open} onChange={handleOpen}>
-            <FormControlLabel value="true" control={<Radio />} label="공개" />
-            <FormControlLabel
-              value="false"
-              control={<Radio />}
-              label="비공개"
-            />
-          </RadioGroup>
-        </ALTA_InputItem>
-        <ALTA_InputItem label="Repository 이름">
-          <TextField
-            required
-            sx={{
-              width: '100%',
-            }}
-            variant="standard"
-            placeholder="Repository 이름을 적어주세요"
-          />
-        </ALTA_InputItem>
-        <ALTA_InputItem label="스터디 소개">
-          <StyledTextArea
-            rows="4"
-            placeholder="소개글을 써주세요. (최대 100자)"
-          ></StyledTextArea>
-        </ALTA_InputItem>
+            {item.children}
+          </ALTA_InputItem>
+        ))}
         <Box sx={btnGroup}>
-          <Button variant="contained" sx={btn}>
+          <Button variant="contained" sx={btn} disabled>
             <span>생</span>
             <span>성</span>
           </Button>

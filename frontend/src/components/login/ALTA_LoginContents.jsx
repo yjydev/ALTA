@@ -6,8 +6,6 @@ import GithubButton from 'react-github-login-button';
 import Logo from '../../images/logo.png';
 
 export default function ALTA_LoginContents() {
-  const navigate = useNavigate();
-
   return (
     <Box sx={wrapper}>
       <Grid
@@ -30,12 +28,15 @@ export default function ALTA_LoginContents() {
               label="Github 계정으로 로그인하기"
               style={{ width: '100%' }}
             />
-            <Typography
-              sx={[userInput, signUpGuide]}
-              onClick={() => navigate('/signup')}
-            >
+            <Typography sx={[userInput, signUpGuide]}>
               Github 계정이 없으신가요?
-              <Link sx={{ marginLeft: '10px' }}>Github 가입하기</Link>
+              <Link
+                href="https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home"
+                target="_black"
+                sx={{ marginLeft: '10px' }}
+              >
+                Github 가입하기
+              </Link>
             </Typography>
           </Box>
         </Grid>
