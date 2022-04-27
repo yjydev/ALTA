@@ -11,10 +11,6 @@ export default function ALTA_InputItem({
   const [isFold, setIsFold] = useState(true);
 
   const openTextField = () => setIsFold(false);
-  const clearTextField = () => {
-    console.log('clear');
-  };
-
   return (
     <Box sx={wrapper}>
       <Typography sx={labelStyle}>{label}</Typography>
