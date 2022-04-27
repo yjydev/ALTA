@@ -1,8 +1,8 @@
 package com.ssafy.alta.dto;
 
-import com.ssafy.alta.entity.User;
-import lombok.*;
 
+import lombok.*;
+import com.ssafy.alta.entity.User;
 /**
  * packageName 	: com.ssafy.alta.dto
  * fileName 	: UserRequest

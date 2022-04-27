@@ -40,7 +40,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             User newUser = userRequest1.toEntity();
             userRepository.save(newUser);
         }else {
-            user.toString();
+
+            System.out.println(user.toString());
             System.out.println("already ");
         }
         return new PrincipalDetails(oAuth2User.getAttributes());

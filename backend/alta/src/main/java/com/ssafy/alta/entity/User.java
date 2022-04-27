@@ -2,10 +2,7 @@ package com.ssafy.alta.entity;
 
 import com.sun.istack.NotNull;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -34,6 +31,7 @@ import javax.persistence.Table;
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "user")
+@ToString
 public class User {
     @Id
     @Column(name = "user_id")

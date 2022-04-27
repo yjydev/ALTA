@@ -21,11 +21,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
         http.authorizeRequests()
-                    .anyRequest().authenticated()
+//                .antMatchers("/user/login").permitAll()
+//                .antMatchers("/swagger-ui.html#!/").permitAll()
+//                .antMatchers("/api/").permitAll()
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                     .oauth2Login()
                         .userInfoEndpoint()//구글 로그인이 완료된 뒤의 후처리가 필요함. Tip. 코드x , (엑세스토큰 + 사용자 정보 0)
-                            .userService(principalOauth2UserService);
+                        .userService(principalOauth2UserService);
         // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴 4. 그 정보를 토대로 회원가입을 자동으로 진행시킴
         // 4-2 이메일, 전화번호, 이름, 이이디 추가 작성
     }
