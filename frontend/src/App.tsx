@@ -10,6 +10,7 @@ import ALTA_Code from './pages/ALTA_Code';
 import ALTA_ToOrganize from './pages/ALTA_ToOrganize';
 import ALTA_StudyDetail from './pages/ALTA_StudyDetail';
 import ALTA_Member from './pages/ALTA_Member';
+import ALTA_Mypage from './pages/ALTA_Mypage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/organize" element={<ALTA_ToOrganize />} />
           <Route path="/study/detail" element={<ALTA_StudyDetail />} />
           <Route path="/study/:studyId/member" element={<ALTA_Member />} />
+          <Route path="/mypage" element={<ALTA_Mypage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

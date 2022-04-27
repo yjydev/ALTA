@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import scrollStyle from '../../modules/scrollStyle';
 
@@ -8,7 +8,15 @@ export default function ALTA_StudyDetailContents() {
   return (
     <Box sx={[wrapper, scrollStyle]}>
       {[0, 0, 0, 0, 0, 0, 0, 0].map((v, i) => (
-        <ALTA_ProblemTable key={i} sx={wrapper} />
+        <>
+          <Box sx={sectionStyle}>
+            <Typography>회차 : 0000-00-00 ~ 0000-00-00</Typography>
+            <Button variant="contained" sx={addBtnStyle}>
+              문제 추가
+            </Button>
+          </Box>
+          <ALTA_ProblemTable key={i} sx={wrapper} />
+        </>
       ))}
     </Box>
   );
@@ -23,4 +31,14 @@ const wrapper = {
   boxSizing: 'border-box',
   backgroundColor: '#fff',
   overflowY: 'scroll',
+};
+
+const sectionStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+};
+
+const addBtnStyle = {
+  height: '25px',
 };

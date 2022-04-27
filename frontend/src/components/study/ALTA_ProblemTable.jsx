@@ -35,6 +35,7 @@ export default function ALTA_ProblemTable() {
 
 const Table = styled.table`
   width: 100%;
+  margin-bottom: 40px;
   padding: 10px 0;
   border-spacing: 0px;
   border-collapse: separate;
