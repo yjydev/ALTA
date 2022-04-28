@@ -1,10 +1,10 @@
-import { Grid, Box, Typography, TextField, Button, Link } from '@mui/material';
+import { Grid, Box, Typography, Link } from '@mui/material';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import GithubButton from 'react-github-login-button';
+
+import Logo from '../../images/logo.png';
 
 export default function ALTA_LoginContents() {
-  const navigate = useNavigate();
-
   return (
     <Box sx={wrapper}>
       <Grid
@@ -18,27 +18,24 @@ export default function ALTA_LoginContents() {
             Algorithm Time
           </Typography>
           <Box>
-            <Img src="logo.png" alt="" />
+            <Img src={Logo} alt="" />
           </Box>
         </Grid>
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
           <Box sx={loginForm}>
-            <TextField label="아이디" variant="outlined" sx={userInput} />
-            <TextField
-              label="비밀번호"
-              type="password"
-              variant="outlined"
-              sx={userInput}
+            <GithubButton
+              label="Github 계정으로 로그인하기"
+              style={{ width: '100%' }}
             />
-            <Button variant="contained" sx={[userInput, loginBtn]}>
-              로그인
-            </Button>
-            <Typography
-              sx={[userInput, signUpGuide]}
-              onClick={() => navigate('/signup')}
-            >
-              아직 알타 아이디가 없나요?
-              <Link sx={{ marginLeft: '10px' }}>ALTA 가입하기</Link>
+            <Typography sx={[userInput, signUpGuide]}>
+              Github 계정이 없으신가요?
+              <Link
+                href="https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home"
+                target="_black"
+                sx={{ marginLeft: '10px' }}
+              >
+                Github 가입하기
+              </Link>
             </Typography>
           </Box>
         </Grid>
@@ -74,10 +71,6 @@ const loginForm = {
 const userInput = {
   width: '100%',
   marginTop: '10px',
-};
-
-const loginBtn = {
-  fontSize: '18px',
 };
 
 const signUpGuide = {

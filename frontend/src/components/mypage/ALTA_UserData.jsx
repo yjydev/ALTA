@@ -59,6 +59,7 @@ const userDataStyle = {
 
 const userDataTopStyle = {
   display: 'flex',
+  marginBottom: '100px',
 };
 
 const unfold = {
