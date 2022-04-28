@@ -25,7 +25,7 @@ public class CodeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{code_id")
+    @GetMapping("/{code_id}")
     public ResponseEntity selectCodeAndComments(@PathVariable("study_id") Long studyId, @PathVariable("code_id") Long codeId) throws JsonProcessingException {
         String token = "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";
         codeService.selectCodeAndComments(studyId, codeId, token);

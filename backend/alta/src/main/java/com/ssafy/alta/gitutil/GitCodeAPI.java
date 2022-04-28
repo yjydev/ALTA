@@ -25,7 +25,7 @@ import java.util.Map;
  * fileName 	: GitCodeAPI
  * author 	    : 우정연
  * date		    : 2022-04-28
- * description	:
+ * description	: code관련 Github API
  * ===========================================================
  * DATE 		AUTHOR 		      NOTE
  * -----------------------------------------------------------
@@ -49,7 +49,7 @@ public class GitCodeAPI {
         return sha;
     }
 
-    public GitCodeResponse selectFile(String token, String owner, String repo, String path) throws JsonProcessingException {
+    public GitCodeResponse selectFile(String token, String owner, String repo, String path) {
         HttpHeaders httpHeaders = setHttpHeaders(token);
 
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
@@ -57,7 +57,8 @@ public class GitCodeAPI {
 
         ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, HashMap.class);
         String sha = response.getBody().get("sha").toString();
-        String content = new String(Base64.getDecoder().decode(response.getBody().get("content").toString()));  // 디코딩
+        String base64Content = response.getBody().get("content").toString().replaceAll("\\r\\n|\\r|\\n", ""); // 개행문자 빼줌
+        String content = new String(Base64.getDecoder().decode(base64Content));  // 디코딩
 
         GitCodeResponse gitCodeResponse = GitCodeResponse.builder()
                                             .sha(sha)

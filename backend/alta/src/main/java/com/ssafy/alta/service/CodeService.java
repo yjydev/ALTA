@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.dto.request.GitCodeCreateRequest;
+import com.ssafy.alta.dto.response.CodeAndCommentResponse;
+import com.ssafy.alta.dto.response.GitCodeResponse;
 import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Problem;
 import com.ssafy.alta.entity.Study;
@@ -72,7 +74,25 @@ public class CodeService {
 
     }
 
-    public void selectCodeAndComments(Long studyId, Long codeId, String token) {
+    @Transactional(rollbackFor = Exception.class)
+    public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId, String token) {
+        Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
+                .orElseThrow(DataNotFoundException::new));
 
+        Study study = optStudy.get();
+        Code code = optCode.get();
+
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
+        String repo = study.getRepositoryName();
+        String path = code.getPath();
+
+        GitCodeResponse gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+        if(!gitCodeResponse.getSha().equals(code.getSha())) {
+            code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());
+            codeRepository.save(code);
+        }
+        return null;
     }
 }

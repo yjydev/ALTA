@@ -71,4 +71,8 @@ public class Code {
     public void changeSha(String sha) {
         this.sha = sha;
     }
+    public void changeShaAndContent(String sha, String content) {
+        this.sha = sha;
+        this.content = content;
+    }
 }
