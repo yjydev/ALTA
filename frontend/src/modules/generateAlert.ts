@@ -13,6 +13,7 @@ export function generateCheck(title: string, text: string) {
       text,
       showConfirmButton: true,
       icon: 'success',
+      iconColor: mainColor,
       confirmButtonColor: mainColor,
       confirmButtonText: '확인',
       color: blackColor,
@@ -28,12 +29,13 @@ export function generateError(title: string, text: string) {
     .fire({
       title,
       text,
+      icon: 'error',
+      iconColor: errorColor,
       color: blackColor,
       background: wightColor,
       showConfirmButton: true,
       confirmButtonColor: errorColor,
       confirmButtonText: '돌아가기',
-      icon: 'error',
     })
     .then((res) => {
       console.log('end');
@@ -45,6 +47,7 @@ export function generateTimer(title: string, text: string) {
     title,
     text,
     color: blackColor,
+    iconColor: mainColor,
     background: wightColor,
     allowOutsideClick: false,
     showCancelButton: false,
