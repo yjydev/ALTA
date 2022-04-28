@@ -1,5 +1,6 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.UserResponse;
 import com.sun.istack.NotNull;
 
 import lombok.*;
@@ -26,8 +27,8 @@ import javax.persistence.Table;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
+@Builder
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "user")
@@ -69,5 +70,21 @@ public class User {
     @Column(name = "user_role")
     private String role;
 
+    @Builder
+    public UserResponse toDto(){
+        return UserResponse.builder()
+                .userId(id)
+                .userName(name)
+                .userNickname(nickname)
+                .userEmail(email)
+                .userEmailAlert(emailAlert)
+                .userSiteAlert(siteAlert)
+                .userIntroduction(introduction)
+                .userActivityTime(activityTime)
+                .userLanguage(language==null ? -1:language)
+                .userImage(image)
+                .userRole(role)
+                .build();
+    }
 }
 
