@@ -11,7 +11,7 @@ export default function ALTA_StudyList() {
       <Grid mb={3} align="right">
         <ALTA_inviteAccordions />
       </Grid>
-      <Grid sx={studyListStyle} container spacing={3}>
+      <Grid sx={studyListStyle} container spacing={3} mb={3}>
         {[0, 0, 0].map((v, i) => (
           <Grid key={i} item xs={6}>
             <ALTA_StudyCard />
