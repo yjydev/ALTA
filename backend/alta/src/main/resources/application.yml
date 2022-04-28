@@ -1,0 +1,25 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://k6b203.p.ssafy.io:3306/alta?serverTimezone=Asia/Seoul
+    username: k6b203
+    password: k6b203ALTA@@
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+github:
+  username: ssafytest001
+  secret: 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
+  reponame: test
+  oauth-key : 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
