@@ -13,6 +13,11 @@ import styled from '@emotion/styled';
 
 import { OrganizeStudyRequset } from '../../types/StudyType';
 import { postRequest } from '../../api/request';
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
 
 import ALTA_InputItem from './ALTA_InputItem';
 
@@ -46,13 +51,19 @@ export default function ALTA_ToOrganizeContents() {
   };
 
   const organize = async () => {
-    console.log('start organizing');
-    try {
-      await postRequest('/api/study', JSON.stringify(requestData));
-      console.log('스터디 생성 성공');
-    } catch (error) {
-      console.log(error);
-    }
+    generateCheck(
+      '잠시 기다려 주세요',
+      `Github에 ${requestData.name} Repository를 생성 중입니다`,
+    );
+    // try {
+    //   await postRequest('/api/study', JSON.stringify(requestData));
+    //   generateCheck(
+    //     '스터디가 생성되었습니다',
+    //     `${requestData.name} Repository가 Github에 생성되었습니다.`,
+    //   );
+    // } catch (error) {
+    //   generateError('스터디를 생성할 수 없습니다.', ``);
+    // }
   };
 
   const itemList = [
