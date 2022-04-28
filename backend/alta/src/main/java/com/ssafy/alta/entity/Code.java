@@ -62,4 +62,8 @@ public class Code {
         this.user = user;
         this.problem = problem;
     }
+
+    public void changeSha(String sha) {
+        this.sha = sha;
+    }
 }
