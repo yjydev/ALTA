@@ -1,6 +1,5 @@
-import { Grid, Box, Typography, Button, Link } from '@mui/material';
+import { Grid, Box, Typography, Link } from '@mui/material';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
 import GithubButton from 'react-github-login-button';
 
 import Logo from '../../images/logo.png';
@@ -72,10 +71,6 @@ const loginForm = {
 const userInput = {
   width: '100%',
   marginTop: '10px',
-};
-
-const loginBtn = {
-  fontSize: '18px',
 };
 
 const signUpGuide = {

@@ -5,11 +5,11 @@ export default function ALTA_InputItem({
   children,
   focused,
   focusHandler,
-}) {
+}: Props) {
   return (
     <Box
       sx={[wrapper, focused ? focus : null]}
-      onClick={() => focusHandler(label)}
+      onFocus={() => focusHandler(label)}
     >
       <label htmlFor={label}>
         <Typography sx={labelStyle}>{label}</Typography>
@@ -18,6 +18,13 @@ export default function ALTA_InputItem({
     </Box>
   );
 }
+
+type Props = {
+  label: string;
+  children: React.ReactNode;
+  focused: boolean;
+  focusHandler: (label: string) => void;
+};
 
 const wrapper = {
   display: 'flex',

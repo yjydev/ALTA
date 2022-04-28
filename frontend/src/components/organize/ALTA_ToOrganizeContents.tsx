@@ -11,26 +11,49 @@ import {
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
+import { OrganizeStudyRequset } from '../../types/StudyType';
+import { postRequest } from '../../api/request';
+
 import ALTA_InputItem from './ALTA_InputItem';
 
 export default function ALTA_ToOrganizeContents() {
   const languages = ['JAVA', 'Python', '기타'];
 
-  const [focusedItem, setFocusedItem] = useState('스터디 이름');
-  const [studyName, setStudyName] = useState('');
-  const [language, setLanguage] = useState('JAVA');
-  const [maxMember, setMaxMember] = useState(0);
-  const [open, setOpen] = useState(true);
-  const [repositoryName, setRepositoryName] = useState('');
-  const [studyIntro, setStudyIntro] = useState('');
+  const [sumitBtn, setSumitBtn] = useState<boolean>(false);
+  const [focusedItem, setFocusedItem] = useState<string>('스터디 이름');
+  const [requestData, setReqeustData] = useState<OrganizeStudyRequset>({
+    introduction: '',
+    isPublic: 'true',
+    language: 'JAVA',
+    maxPeople: '2',
+    name: '',
+    repositoryName: '',
+  });
 
-  const handleFocusedItem = (label) => setFocusedItem(label);
-  const handleStudyName = (e) => setStudyName(e.target.value);
-  const handleLanguage = (e) => setLanguage(e.target.value);
-  const handleMaxMember = (e) => setMaxMember(e.target.value);
-  const handleOpen = (e) => setOpen(e.target.value);
-  const handleRepositoryName = (e) => setRepositoryName(e.target.value);
-  const handleStudyIntro = (e) => setStudyIntro(e.target.value);
+  const handleFocusedItem = (label: string) => setFocusedItem(label);
+  const handleRequestData = (eventValue: string, key: string) => {
+    const newData: OrganizeStudyRequset = { ...requestData };
+    newData[key] = String(eventValue);
+
+    //state 변경
+    if (!Object.values(newData).includes('')) {
+      setSumitBtn(true);
+    } else {
+      setSumitBtn(false);
+    }
+    setReqeustData(newData);
+    console.log(newData);
+  };
+
+  const organize = async () => {
+    console.log('start organizing');
+    try {
+      await postRequest('/api/study', JSON.stringify(requestData));
+      console.log('스터디 생성 성공');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const itemList = [
     {
@@ -40,8 +63,8 @@ export default function ALTA_ToOrganizeContents() {
           id="스터디 이름"
           autoFocus
           variant="standard"
-          value={studyName}
-          onChange={handleStudyName}
+          value={requestData.name}
+          onChange={(e) => handleRequestData(e.target.value, 'name')}
           placeholder="스터디 이름을 정해주세요"
           sx={{ width: '100%' }}
         />
@@ -50,7 +73,11 @@ export default function ALTA_ToOrganizeContents() {
     {
       label: '풀이 언어',
       children: (
-        <Select variant="standard" value={language} onChange={handleLanguage}>
+        <Select
+          variant="standard"
+          value={requestData.language}
+          onChange={(e) => handleRequestData(e.target.value, 'language')}
+        >
           {languages.map((lan) => (
             <MenuItem key={lan} value={lan}>
               {lan}
@@ -66,17 +93,29 @@ export default function ALTA_ToOrganizeContents() {
           id="인원 수"
           type="number"
           variant="standard"
-          value={maxMember}
-          onChange={handleMaxMember}
+          value={requestData.maxPeople}
+          onChange={(e) => handleRequestData(e.target.value, 'maxPeople')}
         />
       ),
     },
     {
       label: '공개 여부',
       children: (
-        <RadioGroup row value={open} onChange={handleOpen}>
-          <FormControlLabel value="true" control={<Radio />} label="공개" />
-          <FormControlLabel value="false" control={<Radio />} label="비공개" />
+        <RadioGroup
+          row
+          value={requestData.isPublic}
+          onChange={(e) => handleRequestData(e.target.value, 'isPublic')}
+        >
+          <FormControlLabel
+            value="true"
+            control={<Radio id="공개 여부" />}
+            label="공개"
+          />
+          <FormControlLabel
+            value="false"
+            control={<Radio id="공개 여부" />}
+            label="비공개"
+          />
         </RadioGroup>
       ),
     },
@@ -87,8 +126,8 @@ export default function ALTA_ToOrganizeContents() {
           id="Repository 이름"
           variant="standard"
           placeholder="Repository 이름을 적어주세요"
-          value={repositoryName}
-          onChange={handleRepositoryName}
+          value={requestData.repositoryName}
+          onChange={(e) => handleRequestData(e.target.value, 'repositoryName')}
           sx={{ width: '100%' }}
         />
       ),
@@ -98,10 +137,10 @@ export default function ALTA_ToOrganizeContents() {
       children: (
         <StyledTextArea
           id="스터디 소개"
-          rows="4"
+          rows={4}
           placeholder="소개글을 써주세요. (최대 100자)"
-          value={studyIntro}
-          onChange={handleStudyIntro}
+          value={requestData.introduction}
+          onChange={(e) => handleRequestData(e.target.value, 'introduction')}
         ></StyledTextArea>
       ),
     },
@@ -121,9 +160,20 @@ export default function ALTA_ToOrganizeContents() {
           </ALTA_InputItem>
         ))}
         <Box sx={btnGroup}>
-          <Button variant="contained" sx={btn} disabled>
-            <span>생</span>
-            <span>성</span>
+          <Button
+            variant="contained"
+            sx={btn}
+            disabled={!sumitBtn}
+            onClick={organize}
+          >
+            {sumitBtn ? (
+              <>
+                <span>생</span>
+                <span>성</span>
+              </>
+            ) : (
+              <span>모든 항목을 채워주세요</span>
+            )}
           </Button>
           <Button variant="contained" color="error" sx={btn}>
             <span>취</span>
