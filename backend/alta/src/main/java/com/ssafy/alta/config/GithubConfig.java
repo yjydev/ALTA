@@ -28,6 +28,7 @@ public class GithubConfig {
     public String getUsername(){return environment.getProperty("github.username");}
 
     public String getSecret(){return environment.getProperty("github.secret");}
+    public String getReponame(){return environment.getProperty("github.reponame");}
 
     @Bean
     public RestTemplate githubRestTemplate(){

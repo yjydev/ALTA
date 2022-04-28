@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.alta.config.GithubConfig;
 import com.ssafy.alta.dto.IssueTest;
+import com.ssafy.alta.dto.GithubRepoRequest;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -52,6 +53,24 @@ public class RepoController {
         return restTemplate
                 .exchange(
                         "https://api.github.com/repos/ssafytest001/test/issues",
+                        HttpMethod.POST,
+                        httpEntity,
+                        String.class
+                );
+    }
+    @PostMapping("/repo")
+    @ApiOperation(value = "repo 생성 테스트", notes = "레포지토리 생성 테스트")
+    public ResponseEntity<?> createRepo(@ModelAttribute GithubRepoRequest repo) throws JsonProcessingException {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(AUTH, "token " + config.getSecret());
+        httpHeaders.set("Accept", "application/vnd.github.v3+json");
+
+        String jsonString = new ObjectMapper().writeValueAsString(repo);
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonString, httpHeaders);
+
+        return restTemplate
+                .exchange(
+                        "https://api.github.com/repos/"+config.getUsername()+"/"+ config.getReponame()+"/generate",
                         HttpMethod.POST,
                         httpEntity,
                         String.class
