@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.file.AccessDeniedException;
 import java.sql.SQLException;
@@ -33,6 +34,14 @@ public class ExceptionController {
     protected ResponseEntity<ErrorResponse> handleAccessDeniedException(final AccessDeniedException e) {
         e.printStackTrace();
         final ErrorResponse response = new ErrorResponse(ErrorCode.HANDLE_ACCESS_DENIED);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    // Git과 통신 중 발생
+    @ExceptionHandler(HttpClientErrorException.class)
+    protected ResponseEntity<ErrorResponse> handleHttpClientErrorException(final HttpClientErrorException e) {
+        e.printStackTrace();
+        final ErrorResponse response = new ErrorResponse(ErrorCode.HTTP_CLIENT_ERROR_EXCEPTION);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
