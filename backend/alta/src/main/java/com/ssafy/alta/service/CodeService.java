@@ -71,4 +71,8 @@ public class CodeService {
         codeRepository.save(code);
 
     }
+
+    public void selectCodeAndComments(Long studyId, Long codeId, String token) {
+
+    }
 }
