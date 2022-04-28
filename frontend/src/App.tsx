@@ -4,8 +4,8 @@ import { ThemeProvider } from '@emotion/react';
 
 import './App.css';
 
+import LoginDataProvider from './context/LoginDataProvider';
 import ALTA_Login from './pages/ALTA_Login';
-import ALTA_Signup from './pages/ALTA_Signup';
 import ALTA_Code from './pages/ALTA_Code';
 import ALTA_ToOrganize from './pages/ALTA_ToOrganize';
 import ALTA_StudyDetail from './pages/ALTA_StudyDetail';
@@ -14,19 +14,20 @@ import ALTA_Mypage from './pages/ALTA_Mypage';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ALTA_Login />} />
-          <Route path="/signup" element={<ALTA_Signup />} />
-          <Route path="/code" element={<ALTA_Code />} />
-          <Route path="/organize" element={<ALTA_ToOrganize />} />
-          <Route path="/study/detail" element={<ALTA_StudyDetail />} />
-          <Route path="/study/:studyId/member" element={<ALTA_Member />} />
-          <Route path="/mypage" element={<ALTA_Mypage />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <LoginDataProvider>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ALTA_Login />} />
+            <Route path="/code" element={<ALTA_Code />} />
+            <Route path="/organize" element={<ALTA_ToOrganize />} />
+            <Route path="/study/detail" element={<ALTA_StudyDetail />} />
+            <Route path="/study/:studyId/member" element={<ALTA_Member />} />
+            <Route path="/mypage" element={<ALTA_Mypage />} />
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </LoginDataProvider>
   );
 }
 
