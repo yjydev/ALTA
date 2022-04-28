@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class IssueTest implements Serializable {
+public class GithubIssueRequest implements Serializable {
     private String title;
     private String body;
 }
