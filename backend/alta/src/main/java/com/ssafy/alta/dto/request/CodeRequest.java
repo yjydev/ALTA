@@ -40,8 +40,8 @@ public class CodeRequest {
     @ApiModelProperty(value = "문제 키", required = true)
     private Long problemId;
 
-    @ApiModelProperty(value = "코드 줄 리스트", required = true)
-    private List<String> contents;
+    @ApiModelProperty(value = "코드", required = true)
+    private String content;
 
     public Code toCode(User user, Problem problem) {
         Code code = Code.builder()

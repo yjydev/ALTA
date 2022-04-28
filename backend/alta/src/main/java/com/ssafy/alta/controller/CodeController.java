@@ -21,7 +21,8 @@ public class CodeController {
     @PostMapping
     public ResponseEntity insertCode(@PathVariable("study_id") Long studyId, CodeRequest codeRequest) {
         String userId = "aa";
-        codeService.insertCode(userId, codeRequest);
+        String token = "5ab3b5457f06377a194be6c731e2723f2fe9bf8a";
+        codeService.insertCode(userId, token, codeRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

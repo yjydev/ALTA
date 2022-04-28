@@ -4,17 +4,17 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Problem;
-import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.CodeRepository;
-import com.ssafy.alta.repository.CommentRepository;
 import com.ssafy.alta.repository.ProblemRepository;
 import com.ssafy.alta.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 /**
@@ -38,7 +38,7 @@ public class CodeService {
     private final ProblemRepository problemRepository;
 
     @Transactional(rollbackFor = Exception.class)
-    public void insertCode(String userId, CodeRequest codeRequest) {
+    public void insertCode(String userId, String token, CodeRequest codeRequest) {
         Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblemId())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
@@ -47,7 +47,12 @@ public class CodeService {
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
         codeRepository.save(code);
 
-        //JSONObject.put("", );
+        String path = codeRequest.getPath();
+        String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
+        JSONObject json = new JSONObject();
+        json.put("message", codeRequest.getMessage());
+        json.put("content", base64Content);
+        // json.put("branch", develop);
 
 
         String sha = "";
