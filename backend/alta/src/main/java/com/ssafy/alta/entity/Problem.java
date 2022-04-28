@@ -35,7 +35,7 @@ public class Problem {
     private String link;
 
     @Column(name = "problem_is_cancel")
-    private boolean isCancel;
+    private Boolean isCancel;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
