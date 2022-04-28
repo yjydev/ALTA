@@ -16,6 +16,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private UserRepository userRepository;
 
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         System.out.println("getClientRegistration :" + userRequest.getClientRegistration());
@@ -46,4 +47,6 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         }
         return new PrincipalDetails(oAuth2User.getAttributes());
     }
+
+
 }

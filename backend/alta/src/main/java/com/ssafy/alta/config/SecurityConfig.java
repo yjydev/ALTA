@@ -1,12 +1,18 @@
 package com.ssafy.alta.config;
 
+import com.ssafy.alta.config.oauth.Oauth2AuthenticationSuccessHandler;
 import com.ssafy.alta.config.oauth.PrincipalOauth2UserService;
+import com.ssafy.alta.jwt.JwtAuthenticationEntryPoint;
+import com.ssafy.alta.jwt.JwtSecurityConfig;
+import com.ssafy.alta.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터체인에 등록된다.
@@ -16,21 +22,73 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PrincipalOauth2UserService principalOauth2UserService;
 
+    private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+    private final TokenProvider tokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    public SecurityConfig(Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler, TokenProvider tokenProvider, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+        this.oauth2AuthenticationSuccessHandler = oauth2AuthenticationSuccessHandler;
+        this.tokenProvider = tokenProvider;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+//                .antMatchers("/**")
+                .antMatchers(
+                        "/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**",   // swagger
+                        "/favicon.ico"
+                )
+//                .antMatchers("/oauth2/authorization/github")
+                .antMatchers("/api/user/gitLogin/**")
+                .antMatchers("/githubLogin")
+                .antMatchers("/login/oauth2/code/github");
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.csrf().disable();
-        http.authorizeRequests()
-//                .antMatchers("/user/login").permitAll()
-//                .antMatchers("/swagger-ui.html#!/").permitAll()
-//                .antMatchers("/api/").permitAll()
-//                .anyRequest().authenticated()
-                .anyRequest().permitAll()
+        http.
+                // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
+                csrf().disable()
+
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .formLogin().disable()
+                    .httpBasic().disable()
+
+//                    .exceptionHandling() //exception 핸들링할 때, 우리가 만든 두 클래스를 사용하겠서요.
+//                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .and()
+
+                    .authorizeRequests()
+//                .antMatchers("/oauth2/authorization/github").permitAll()
+//                .antMatchers("/api/user/gitLogin/**").permitAll()
+//                .antMatchers("/githubLogin").permitAll()
+//                .antMatchers("/login/oauth2/code/github").permitAll()
+                    .anyRequest().authenticated()
+
+
+                // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴
                 .and()
                     .oauth2Login()
-                        .userInfoEndpoint()//구글 로그인이 완료된 뒤의 후처리가 필요함. Tip. 코드x , (엑세스토큰 + 사용자 정보 0)
-                        .userService(principalOauth2UserService);
-        // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴 4. 그 정보를 토대로 회원가입을 자동으로 진행시킴
-        // 4-2 이메일, 전화번호, 이름, 이이디 추가 작성
+//                        .loginPage("/githubLogin")
+//                    .authorizationEndpoint()
+//                    .baseUri("/oauth2/authorization/github")
+//                .and()
+//                    .redirectionEndpoint()
+//                    .baseUri("/login/oauth2/code/github")
+//                .and()
+                    .userInfoEndpoint()//구글 로그인이 완료된 뒤의 후처리가 필요함. Tip. 코드x , (엑세스토큰 + 사용자 정보 0)
+                    .userService(principalOauth2UserService)
+
+                // oauth 성공 후, jwt 토큰을 생성하기 위한 핸들러
+                .and()
+                    .successHandler(oauth2AuthenticationSuccessHandler)
+                .and()
+                    .apply(new JwtSecurityConfig(tokenProvider)); // jwtFilter를 addFilter로 등록했던 클래스 적용
     }
 }
