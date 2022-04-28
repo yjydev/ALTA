@@ -2,6 +2,7 @@ package com.ssafy.alta.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -21,5 +22,5 @@ import lombok.ToString;
 public class GitCodeCreateRequest {
     private String message;
     private String content;
-    private String branch = "master";
+    private String branch;
 }

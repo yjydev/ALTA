@@ -28,13 +28,10 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class CodeRequest {
-    @ApiModelProperty(value = "스터디 키", required = true)
-    private Long studyId;
-
-    @ApiModelProperty(value = "스터디 키")
+    @ApiModelProperty(value = "커밋 메시지")
     private String message;
 
-    @ApiModelProperty(value = "경로 - /스터디 레포/경로/파일이름.확장자", required = true)
+    @ApiModelProperty(value = "경로 - /경로/파일이름.확장자", required = true)
     private String path;
 
     @ApiModelProperty(value = "문제 키", required = true)

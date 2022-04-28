@@ -63,6 +63,7 @@ public class Code {
     public Code(String path, String sha, String content, User user, Problem problem) {
         this.path = path;
         this.sha = sha;
+        this.content = content;
         this.user = user;
         this.problem = problem;
     }

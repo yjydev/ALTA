@@ -22,5 +22,5 @@ public class GitCodeUpdateRequest {
     private String message;
     private String content;
     private String sha;
-    private String branch = "master";
+    private String branch;
 }
