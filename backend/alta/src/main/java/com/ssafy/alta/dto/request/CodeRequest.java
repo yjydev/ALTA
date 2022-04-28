@@ -45,8 +45,9 @@ public class CodeRequest {
 
     public Code toCode(User user, Problem problem) {
         Code code = Code.builder()
-                .user(user)
+                .content(content)
                 .path(path)
+                .user(user)
                 .problem(problem)
                 .build();
         return code;

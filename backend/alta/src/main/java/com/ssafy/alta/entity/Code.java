@@ -43,6 +43,10 @@ public class Code {
     private String path;
 
     @NotNull
+    @Column(name = "code_content")
+    private String content;
+
+    @NotNull
     @Column(name = "code_sha")
     private String sha;
 
@@ -56,7 +60,7 @@ public class Code {
     private Problem problem;
 
     @Builder
-    public Code(String path, String sha, User user, Problem problem) {
+    public Code(String path, String sha, String content, User user, Problem problem) {
         this.path = path;
         this.sha = sha;
         this.user = user;
