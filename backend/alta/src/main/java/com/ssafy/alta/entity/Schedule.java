@@ -57,7 +57,7 @@ public class Schedule {
     private Study study;
 
     @Builder
-    public Schedule(Date startDate, Date endDate, int round, boolean isCancel, Study study) {
+    public Schedule(Date startDate, Date endDate, int round, Boolean isCancel, Study study) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.round = round;
