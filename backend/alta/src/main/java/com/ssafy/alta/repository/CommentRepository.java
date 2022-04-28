@@ -1,7 +1,10 @@
 package com.ssafy.alta.repository;
 
+import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.repository
@@ -15,4 +18,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 2022-04-26	    우정연  		    최초 생성
  */
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+    List<Comment> findCommentsByCodeOrderByLineAsc(Code code);
 }

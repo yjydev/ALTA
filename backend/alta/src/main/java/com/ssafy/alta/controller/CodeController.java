@@ -2,6 +2,7 @@ package com.ssafy.alta.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.CodeRequest;
+import com.ssafy.alta.dto.response.CodeAndCommentResponse;
 import com.ssafy.alta.service.CodeService;
 import io.swagger.annotations.Api;
 import io.swagger.models.Response;
@@ -26,10 +27,10 @@ public class CodeController {
     }
 
     @GetMapping("/{code_id}")
-    public ResponseEntity selectCodeAndComments(@PathVariable("study_id") Long studyId, @PathVariable("code_id") Long codeId) throws JsonProcessingException {
+    public ResponseEntity<CodeAndCommentResponse> selectCodeAndComments(@PathVariable("study_id") Long studyId, @PathVariable("code_id") Long codeId) throws JsonProcessingException {
         String token = "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";
-        codeService.selectCodeAndComments(studyId, codeId, token);
-        return new ResponseEntity<>(HttpStatus.OK);
+        CodeAndCommentResponse codeAndCommentResponse = codeService.selectCodeAndComments(studyId, codeId, token);
+        return new ResponseEntity<>(codeAndCommentResponse, HttpStatus.OK);
     }
 
 }

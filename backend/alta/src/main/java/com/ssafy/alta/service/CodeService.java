@@ -5,11 +5,9 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.dto.request.GitCodeCreateRequest;
 import com.ssafy.alta.dto.response.CodeAndCommentResponse;
+import com.ssafy.alta.dto.response.CommentResponse;
 import com.ssafy.alta.dto.response.GitCodeResponse;
-import com.ssafy.alta.entity.Code;
-import com.ssafy.alta.entity.Problem;
-import com.ssafy.alta.entity.Study;
-import com.ssafy.alta.entity.User;
+import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.CodeRepository;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,6 +43,7 @@ public class CodeService {
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
     private final StudyRepository studyRepository;
+    private final CommentService commentService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
 
     @Transactional(rollbackFor = Exception.class)
@@ -93,6 +93,9 @@ public class CodeService {
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());
             codeRepository.save(code);
         }
-        return null;
+
+        List<CommentResponse> commentList = commentService.selectCommentList(code);
+
+        return code.toDto(commentList);
     }
 }
