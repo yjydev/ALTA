@@ -10,6 +10,7 @@ import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.BusinessException;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.exception.ErrorCode;
+import com.ssafy.alta.exception.UnAuthorizedException;
 import com.ssafy.alta.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +90,7 @@ public class ScheduleAndProblemService {
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
                 .orElseThrow(DataNotFoundException::new));
         if(!optSJI.get().getState().equals("가입"))
-            throw new BusinessException(ErrorCode.HANDLE_ACCESS_DENIED);
+            throw new UnAuthorizedException();
 
         List<Problem> preProblems = problemRequest.getProblems();
         List<Problem> problems = new ArrayList<>();
