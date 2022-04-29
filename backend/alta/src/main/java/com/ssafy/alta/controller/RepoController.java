@@ -7,12 +7,10 @@ import com.ssafy.alta.config.GithubConfig;
 import com.ssafy.alta.dto.request.GithubIssueRequest;
 import com.ssafy.alta.dto.request.GithubRepoRequest;
 import com.ssafy.alta.dto.request.GithupFileUploadRequest;
+import com.ssafy.alta.gitutil.GitRepoAPI;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,6 +60,17 @@ public class RepoController {
                         httpEntity,
                         String.class
                 );
+    }
+
+    @PostMapping("/repoCreateTest")
+    @ApiOperation(value = "repo 생성 서버내 함수로 테스트", notes = "repo 생성 서버내 함수로 테스트")
+    public ResponseEntity createTestRepo(GithubRepoRequest repo) throws JsonProcessingException {
+
+        GitRepoAPI gitRepoAPI = new GitRepoAPI();
+        System.out.println(gitRepoAPI.insertRepo(config.getOauthkey(), repo));
+
+        return new ResponseEntity("성공",HttpStatus.ACCEPTED);
+
     }
 
     @PostMapping("/repo")
