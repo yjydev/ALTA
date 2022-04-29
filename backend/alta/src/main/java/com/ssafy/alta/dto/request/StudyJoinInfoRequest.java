@@ -1,4 +1,4 @@
-package com.ssafy.alta.dto;
+package com.ssafy.alta.dto.request;
 
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;

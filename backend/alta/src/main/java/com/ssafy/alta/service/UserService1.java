@@ -1,6 +1,6 @@
 package com.ssafy.alta.service;
 
-import com.ssafy.alta.dto.UserResponse;
+import com.ssafy.alta.dto.response.UserResponse;
 import com.ssafy.alta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

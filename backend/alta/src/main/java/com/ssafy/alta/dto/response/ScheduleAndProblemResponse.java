@@ -1,4 +1,4 @@
-package com.ssafy.alta.dto;
+package com.ssafy.alta.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,27 +6,28 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.dto
- * fileName 	: StudyJoinInfoResponse
+ * fileName 	: ScheduleAndProblemResponse
  * author 	    : jisoon Lee
- * date		    : 2022-04-27
+ * date		    : 2022-04-28
  * description	:
  * ===========================================================
  * DATE             AUTHOR              NOTE
  * -----------------------------------------------------------
- * 2022-04-27       jisoon Lee         최초 생성
+ * 2022-04-28       jisoon Lee         최초 생성
  */
 
 @Getter
 @Setter
 @Builder
 @ToString
-public class StudyJoinInfoResponse {
-    private String nickname;
-    private String email;
-    private String state;
-    private String position;
-    private Date registrationDate;
+public class ScheduleAndProblemResponse {
+    private Long id;
+    private Date startDate;
+    private Date endDate;
+    private int round;
+    private List<ProblemResponse> problems;
 }
