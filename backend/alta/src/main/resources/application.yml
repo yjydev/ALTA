@@ -23,7 +23,6 @@ spring:
       client:
         registration:
           github: # /oauth2/authorization/github 이 주소를 동작하게 한다.
-#<<<<<<< HEAD
             client-id: 3c388f133d2216e06569 #local :seoha test
             client-secret: b9d3c97ca3cdd536d733129fc193cf63d39e0680
 #            client-id: d48d2214b6bcdcd5ec62
@@ -37,18 +36,10 @@ jwt:
   #echo 'silvernine-tech-spring-boot-jwt-tutorial-secret-silvernine-tech-spring-boot-jwt-tutorial-secret'|base64
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
   token-validity-in-seconds: 86400
-#=======
-#            #            client-id: 3c388f133d2216e06569 #local :seoha test
-#            #            client-secret: b9d3c97ca3cdd536d733129fc193cf63d39e0680
-#            client-id: d48d2214b6bcdcd5ec62
-#            client-secret: b9aa9c706cab627a05d19abe6695c3332c46c800
-#            scope:
-#              - email
-#              - profile
+
 
 github:
   username: ssafytest001
   secret: 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
   reponame: test
   oauth-key : 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
-#>>>>>>> dbf4880f8bef7768707a9a320b6ba5c81d1c253e

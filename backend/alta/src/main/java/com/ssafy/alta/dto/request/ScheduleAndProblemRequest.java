@@ -1,4 +1,4 @@
-package com.ssafy.alta.dto;
+package com.ssafy.alta.dto.request;
 
 import com.ssafy.alta.entity.Problem;
 import com.ssafy.alta.entity.Schedule;
