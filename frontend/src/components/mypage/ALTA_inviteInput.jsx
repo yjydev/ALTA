@@ -17,7 +17,7 @@ export default function ALTA_inviteInput() {
           disableElevation
           disableRipple
           endIcon={
-            isToggle ? <ArrowBackIosNewIcon /> : <ArrowForwardIosSharpIcon />
+            isToggle ? <ArrowForwardIosSharpIcon /> : <ArrowBackIosNewIcon />
           }
         >
           {/* {isToggle ? null : (
