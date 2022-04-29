@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.dto.request.GitCodeCreateRequest;
-import com.ssafy.alta.entity.Code;
-import com.ssafy.alta.entity.Problem;
-import com.ssafy.alta.entity.Study;
-import com.ssafy.alta.entity.User;
+import com.ssafy.alta.dto.response.CodeAndCommentResponse;
+import com.ssafy.alta.dto.response.CommentResponse;
+import com.ssafy.alta.dto.response.GitCodeResponse;
+import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.CodeRepository;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,6 +43,7 @@ public class CodeService {
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
     private final StudyRepository studyRepository;
+    private final CommentService commentService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
 
     @Transactional(rollbackFor = Exception.class)
@@ -70,5 +72,30 @@ public class CodeService {
         code.changeSha(sha);
         codeRepository.save(code);
 
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId, String token) {
+        Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
+                .orElseThrow(DataNotFoundException::new));
+
+        Study study = optStudy.get();
+        Code code = optCode.get();
+
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
+        String repo = study.getRepositoryName();
+        String path = code.getPath();
+
+        GitCodeResponse gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+        if(!gitCodeResponse.getSha().equals(code.getSha())) {
+            code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());
+            codeRepository.save(code);
+        }
+
+        List<CommentResponse> commentList = commentService.selectCommentList(code);
+
+        return code.toCodeAndCommentResponse(commentList);
     }
 }
