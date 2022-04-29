@@ -1,19 +1,12 @@
 package com.ssafy.alta.controller;
 
-import com.ssafy.alta.dto.StudyRequest;
-import com.ssafy.alta.entity.StudyJoinInfo;
-import com.ssafy.alta.repository.StudyJoinInfoRepository;
+import com.ssafy.alta.dto.request.StudyRequest;
 import com.ssafy.alta.service.StudyService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.controller

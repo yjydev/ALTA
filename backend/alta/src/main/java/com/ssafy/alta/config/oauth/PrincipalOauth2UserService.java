@@ -1,6 +1,6 @@
 package com.ssafy.alta.config.oauth;
 
-import com.ssafy.alta.dto.UserRequest;
+import com.ssafy.alta.dto.request.UserRequest;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

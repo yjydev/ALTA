@@ -31,6 +31,7 @@ public class GithubConfig {
     public String getReponame(){return environment.getProperty("github.reponame");}
     public String getOauthkey(){return environment.getProperty("github.oauth-key");}
 
+    public static final String AUTH = "Authorization";
 
     @Bean
     public RestTemplate githubRestTemplate(){

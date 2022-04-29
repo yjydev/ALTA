@@ -1,8 +1,8 @@
 package com.ssafy.alta.service;
 
-import com.ssafy.alta.dto.StudyJoinInfoRequest;
-import com.ssafy.alta.dto.StudyJoinInfoResponse;
-import com.ssafy.alta.dto.StudyRequest;
+import com.ssafy.alta.dto.request.StudyJoinInfoRequest;
+import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
+import com.ssafy.alta.dto.request.StudyRequest;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
@@ -61,6 +61,7 @@ public class StudyService {
         List<StudyJoinInfo> sjiList = null;
         List<StudyJoinInfoResponse> sjiResponse = new ArrayList<>();
         String study_code = null;
+        int study_max_people = optSJI.get().getStudy().getMaxPeople();
 
         if(optSJI.get().getPosition().equals("그룹장")) {
             sjiList = sjiRepository.findByStudyStudyId(study_id);
@@ -70,11 +71,12 @@ public class StudyService {
         }
 
         for(StudyJoinInfo sji : sjiList) {
-            sjiResponse.add(sji.toDto());
+            sjiResponse.add(sji.toStudyJoinInfoResponse());
         }
 
         map.put("members", sjiResponse);
         map.put("study_code", study_code);
+        map.put("study_max_people", study_max_people);
 
         return map;
     }
