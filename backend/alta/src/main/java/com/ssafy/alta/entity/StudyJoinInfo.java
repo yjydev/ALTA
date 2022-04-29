@@ -1,6 +1,6 @@
 package com.ssafy.alta.entity;
 
-import com.ssafy.alta.dto.StudyJoinInfoResponse;
+import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,7 +62,7 @@ public class StudyJoinInfo {
     @Column(name = "sji_registration_date")
     private Date registrationDate;
 
-    public StudyJoinInfoResponse toDto() {
+    public StudyJoinInfoResponse toStudyJoinInfoResponse() {
         return StudyJoinInfoResponse.builder()
                 .nickname(user.getNickname())
                 .email(user.getEmail())
