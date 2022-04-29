@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+
     protected void configure(HttpSecurity http) throws Exception {
 
         http.
@@ -65,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                     .antMatchers("/api/user/gitLogin/**").permitAll()
                     .anyRequest().authenticated()
+//                .anyRequest().permitAll()
 
 
                 // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴
