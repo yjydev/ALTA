@@ -73,4 +73,9 @@ public class CommentService {
             
         commentRepository.deleteById(commentId);
     }
+
+    @Transactional
+    public void updateComment(String userId, Long commentId, Comment comment) {
+
+    }
 }
