@@ -29,7 +29,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/gitLogin")
+    @GetMapping("/gitLogin/loginSucess")
     public ResponseEntity authorize(@RequestParam ("jwt") String jwt)
     {
         return new ResponseEntity<>("", HttpStatus.OK);

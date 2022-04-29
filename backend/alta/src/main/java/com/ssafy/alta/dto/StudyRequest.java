@@ -30,16 +30,19 @@ public class StudyRequest {
     private String language;
     private Integer maxPeople;
     private String code;
+    private String repositoryName;
+    private String introduction;
 
     public Study toEntity() {
-        Study study = Study.builder()
+        return Study.builder()
                 .user(user)
                 .name(name)
                 .isPublic(isPublic)
                 .language(language)
                 .maxPeople(maxPeople)
                 .code(code)
+                .repositoryName(repositoryName)
+                .introduction(introduction)
                 .build();
-        return study;
     }
 }

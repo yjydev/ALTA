@@ -39,11 +39,11 @@ public class Schedule {
 
     @NotNull
     @Column(name = "schedule_round")
-    private int round;
+    private Integer round;
 
     @NotNull
     @Column(name = "schedule_is_cancel")
-    private boolean isCancel;
+    private Boolean isCancel;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,7 +51,7 @@ public class Schedule {
     private Study study;
 
     @Builder
-    public Schedule(Date startDate, Date endDate, int round, boolean isCancel, Study study) {
+    public Schedule(Date startDate, Date endDate, int round, Boolean isCancel, Study study) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.round = round;

@@ -36,15 +36,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-//                .antMatchers("/**")
+                // 스웨거를 사용하기 위해 security 설정을 하지 않는다. -> 무조건 접근 가능!
                 .antMatchers(
                         "/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**",   // swagger
                         "/favicon.ico"
                 )
-//                .antMatchers("/oauth2/authorization/github")
-                .antMatchers("/api/user/gitLogin/**")
-                .antMatchers("/githubLogin")
-                .antMatchers("/login/oauth2/code/github");
+                .antMatchers("/githubLogin");
     }
 
     @Override
@@ -53,7 +50,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.
                 // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
                 csrf().disable()
-
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -64,12 +60,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
 //                .and()
 
+
+                // 모든 요청은 인증이 되어야 하지만, 로그인관련하여 요청은 다 권한은 허락해주어야 한다.
                     .authorizeRequests()
-//                .antMatchers("/oauth2/authorization/github").permitAll()
-//                .antMatchers("/api/user/gitLogin/**").permitAll()
-//                .antMatchers("/githubLogin").permitAll()
-//                .antMatchers("/login/oauth2/code/github").permitAll()
+                    .antMatchers("/api/user/gitLogin/**").permitAll()
                     .anyRequest().authenticated()
+
+
+
+//                .antMatchers("/git/**").permitAll()
+//                .antMatchers("/oauth2/authorization/github").permitAll()
+//                .antMatchers("https://github.com/login/**").permitAll()
+//                .antMatchers("/api/user/gitLogin").permitAll()
+//                .antMatchers("/authorization").permitAll()
+//                .antMatchers("/login/oauth2/code/github").permitAll()
+//                .antMatchers("/oauth2/authorization/github").permitAll()
+//                    .anyRequest().authenticated()
 
 
                 // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴
