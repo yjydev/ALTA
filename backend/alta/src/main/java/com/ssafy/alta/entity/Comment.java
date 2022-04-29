@@ -77,4 +77,12 @@ public class Comment {
                 .completed(isSolved)
                 .build();
     }
+
+    public void changeStateToSolved() {
+        this.isSolved = true;
+    }
+
+    public void changeStateToNotSolved() {
+        this.isSolved = false;
+    }
 }

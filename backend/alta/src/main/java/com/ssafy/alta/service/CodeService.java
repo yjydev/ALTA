@@ -89,9 +89,10 @@ public class CodeService {
         String path = code.getPath();
 
         GitCodeResponse gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
-        if(!gitCodeResponse.getSha().equals(code.getSha())) {
-            code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());
+        if(!gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
+            code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
             codeRepository.save(code);
+            commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
 
         List<CommentResponse> commentList = commentService.selectCommentList(code);

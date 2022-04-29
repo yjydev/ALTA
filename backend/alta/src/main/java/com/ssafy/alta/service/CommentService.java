@@ -57,4 +57,9 @@ public class CommentService {
         commentRepository.save(comment);
 
     }
+
+    @Transactional
+    public void updateCommentListSolved(Code code) {
+        commentRepository.updateCodeSolvedByCodeId(code, true);
+    }
 }
