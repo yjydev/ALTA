@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * packageName 	: com.ssafy.alta.dto
  * fileName 	: GihubRepoRequest
@@ -18,7 +20,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GithubRepoRequest {
+public class GithubRepoRequest  implements Serializable {
 //    private String owner;
     private String name;
 //    private String description;
