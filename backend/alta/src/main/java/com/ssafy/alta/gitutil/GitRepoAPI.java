@@ -39,9 +39,6 @@ public class GitRepoAPI {
 
         ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, HashMap.class);
 
-        for (Object key : response.getBody().keySet()) {
-            System.out.println( key + " : " + (response.getBody().get(key)));
-        }
         return  response.getStatusCode().toString();
     }
 }
