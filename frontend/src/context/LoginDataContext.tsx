@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { LoginData, defaultLoginData } from '../types/LoginDataType';
+import { ContextProps } from '../types/ContextPropsType';
 
 //Context 인스턴스 생성
-const defaultValue: defaultValueType = {
+export const defaultValue: defaultValueType = {
   loginData: defaultLoginData,
   setLoginData: () => null,
 };
 const LoginDataStore = React.createContext(defaultValue);
 
 //Context Provider 컴포넌트
-export default function LoginDataProvider({ children }: Props) {
+export default function LoginDataProvider({ children }: ContextProps) {
   const [loginData, setLoginData] = useState<LoginData>(defaultLoginData);
   const value = { loginData, setLoginData };
   return (
@@ -17,10 +18,6 @@ export default function LoginDataProvider({ children }: Props) {
   );
 }
 
-//Props타입
-type Props = {
-  children: React.ReactNode;
-};
 //Context 기본값 타입
 type defaultValueType = {
   loginData: LoginData;
