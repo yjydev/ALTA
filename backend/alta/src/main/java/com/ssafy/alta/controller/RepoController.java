@@ -51,7 +51,7 @@ public class RepoController {
 
     @PostMapping("/issue")
     @ApiOperation(value = "issue 테스트", notes = "이슈 테스트")
-    public ResponseEntity<?> createIssue(@ModelAttribute GithubIssueRequest issue) throws JsonProcessingException {
+    public ResponseEntity createIssue(@ModelAttribute GithubIssueRequest issue) throws JsonProcessingException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(AUTH, "token " + config.getOauthkey());
 
@@ -69,7 +69,7 @@ public class RepoController {
 
     @PostMapping("/repo")
     @ApiOperation(value = "repo 생성 테스트", notes = "레포지토리 생성 테스트")
-    public ResponseEntity<?> createRepo(GithubRepoRequest repo) throws JsonProcessingException {
+    public ResponseEntity createRepo(GithubRepoRequest repo) throws JsonProcessingException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(AUTH, "token " + config.getOauthkey());
         httpHeaders.set("accept", "application/vnd.github.v3+json");
@@ -89,7 +89,7 @@ public class RepoController {
 
     @PutMapping("/file")
     @ApiOperation(value = "file 업로드 하기", notes = "Oauth 주인 레포지토리에 파일 업로드하기")
-    public ResponseEntity<?> putFile(@RequestPart("codingFile") MultipartFile file, GithupFileUploadRequest githupFileUploadRequest) throws IOException, NoSuchAlgorithmException {
+    public ResponseEntity putFile(@RequestPart("codingFile") MultipartFile file, GithupFileUploadRequest githupFileUploadRequest) throws IOException, NoSuchAlgorithmException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(AUTH, "token " + config.getOauthkey());
         httpHeaders.set("accept", "application/vnd.github.v3+json");
@@ -124,7 +124,7 @@ public class RepoController {
 
     @GetMapping("/file")
     @ApiOperation(value = "repo 경로의 file 리스트 가져오기", notes = "repo 경로의 file 리스트 가져오기")
-    public ResponseEntity<?> getFile() {
+    public ResponseEntity getFile() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(AUTH, "token " + config.getOauthkey());
         httpHeaders.set("accept", "application/vnd.github.v3+json");
@@ -144,7 +144,7 @@ public class RepoController {
 
     @GetMapping("/repo")
     @ApiOperation(value = "repo 리스트 가져오기", notes = "레포지토리 리스트 가져오기 테스트 테스트")
-    public ResponseEntity<?> getRepo() throws JsonProcessingException {
+    public ResponseEntity getRepo() throws JsonProcessingException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(AUTH, "token " + config.getOauthkey());
         httpHeaders.set("Accept", "application/vnd.github.v3+json");
@@ -163,7 +163,7 @@ public class RepoController {
 
     @GetMapping("/commit")
     @ApiOperation(value = "commit 가져오기 테스트", notes = "commit 가져오기 테스트")
-    public ResponseEntity<?> getCommit() throws JsonProcessingException {
+    public ResponseEntity getCommit() throws JsonProcessingException {
         HttpHeaders httpHeaders = new HttpHeaders();
 //        httpHeaders.set(AUTH, "token " + config.getOauthkey());
         httpHeaders.set("Accept", "application/vnd.github.v3+json");

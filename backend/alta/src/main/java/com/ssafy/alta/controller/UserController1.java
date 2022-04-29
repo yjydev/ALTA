@@ -24,19 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/api/user1")
+@RequestMapping("/api/user")
 public class UserController1 {
 
     @Autowired
     private UserService1 userService1;
 
-    @GetMapping("/userinfo")
+    @GetMapping("/info")
     @ApiOperation(value = "user 정보 가져오기", notes = "user 정보 가져고익")
-    public ResponseEntity<?> getUserinfo(String user_id) {
-
+    public ResponseEntity<?> selectUserInfo(String user_id) {
 
         return new ResponseEntity<>(userService1.selectUser(user_id), HttpStatus.OK);
-
 
     }
 }

@@ -70,7 +70,6 @@ public class User {
     @Column(name = "user_role")
     private String role;
 
-    @Builder
     public UserResponse toDto(){
         return UserResponse.builder()
                 .userId(id)
