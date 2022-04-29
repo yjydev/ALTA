@@ -45,7 +45,7 @@ public class ScheduleAndProblemService {
                 .orElseThrow(DataNotFoundException::new));
 
         if(!optSJI.get().getState().equals("가입"))
-            throw new BusinessException(ErrorCode.HANDLE_ACCESS_DENIED);
+            throw new UnAuthorizedException();
 
         Study study = optSJI.get().getStudy();
         int round = 1;
@@ -72,7 +72,7 @@ public class ScheduleAndProblemService {
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
                 .orElseThrow(DataNotFoundException::new));
         if(!optSJI.get().getState().equals("가입"))
-            throw new BusinessException(ErrorCode.HANDLE_ACCESS_DENIED);
+            throw new UnAuthorizedException();
 
         Study study = optSJI.get().getStudy();
         int round = 1;
