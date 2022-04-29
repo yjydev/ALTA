@@ -105,7 +105,7 @@ public class ScheduleAndProblemService {
                 .orElseThrow(DataNotFoundException::new));
 
         if(!optSJI.get().getState().equals("가입"))
-            throw new BusinessException(ErrorCode.HANDLE_ACCESS_DENIED);
+            throw new UnAuthorizedException();
 
         HashMap<String, Object> map = new HashMap<>();
         List<Schedule> schedulesList = scheduleRepository.findByStudyStudyIdOrderByRound(study_id);
