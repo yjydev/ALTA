@@ -52,14 +52,14 @@ const Tbody = styled.tbody`
 const Tr = styled.tr`
   border: 1px solid #6d9886;
   padding: 5px;
-  &:nth-child(even) {
+  &:nth-of-type(even) {
     background-color: rgba(224, 212, 194, 0.3);
   }
 `;
 const Th = styled.th`
   width: 90px;
   max-width: 90px;
-  &:first-child {
+  &:first-of-type {
     width: 200px;
     max-width: 200px;
   }
@@ -73,7 +73,7 @@ const Th = styled.th`
 const Td = styled.td`
   width: 90px;
   max-width: 90px;
-  &:first-child {
+  &:first-of-type {
     width: 200px;
     max-width: 200px;
   }

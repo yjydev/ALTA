@@ -1,14 +1,28 @@
 import { Box, Button, Typography } from '@mui/material';
+import { useContext, useEffect } from 'react';
+import { getRequest } from '../../api/request';
 
 import scrollStyle from '../../modules/scrollStyle';
+import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 import ALTA_ProblemTable from './ALTA_ProblemTable';
 
 export default function ALTA_StudyDetailContents() {
+  const { roundTable, setRoundTable } = useContext(StudyDetailStore);
+
+  const getReadmeContents = async () => {
+    const response = await getRequest('/api');
+    setRoundTable(response.data.readme);
+  };
+
+  useEffect(() => {
+    getReadmeContents();
+  }, []);
+
   return (
     <Box sx={[wrapper, scrollStyle]}>
-      {[0, 0, 0, 0, 0, 0, 0, 0].map((v, i) => (
-        <>
+      {roundTable.map((v, i) => (
+        <div key={i}>
           <Box sx={sectionStyle}>
             <Typography>회차 : 0000-00-00 ~ 0000-00-00</Typography>
             <Button variant="contained" sx={addBtnStyle}>
@@ -16,7 +30,7 @@ export default function ALTA_StudyDetailContents() {
             </Button>
           </Box>
           <ALTA_ProblemTable key={i} sx={wrapper} />
-        </>
+        </div>
       ))}
     </Box>
   );
