@@ -1,5 +1,6 @@
 import { Grid } from '@mui/material';
 
+import StudyDetailContext from '../context/StudyDetailContext';
 import ALTA_Template from '../components/common/ALTA_Template';
 import ALTA_Inner from '../components/common/ALTA_Inner';
 import ALTA_Header from '../components/common/ALTA_Header';
@@ -19,26 +20,28 @@ function Header() {
 
 function Contents() {
   return (
-    <Grid
-      sx={{ height: '100%', padding: '20px 0' }}
-      container
-      justifyContent="center"
-    >
-      <Grid item xl={3} lg={0}>
-        <ALTA_StudySideContents>
-          <ALTA_StudyMembers />
-        </ALTA_StudySideContents>
+    <StudyDetailContext>
+      <Grid
+        sx={{ height: '100%', padding: '20px 0' }}
+        container
+        justifyContent="center"
+      >
+        <Grid item xl={3} lg={6}>
+          <ALTA_StudySideContents>
+            <ALTA_StudyMembers />
+          </ALTA_StudySideContents>
+        </Grid>
+        <Grid item xl={6}>
+          <ALTA_Inner>
+            <ALTA_StudyDetailContents />
+          </ALTA_Inner>
+        </Grid>
+        <Grid item xl={3} lg={6}>
+          <ALTA_StudySideContents>
+            <ALTA_StudyBoard />
+          </ALTA_StudySideContents>
+        </Grid>
       </Grid>
-      <Grid item xl={6}>
-        <ALTA_Inner>
-          <ALTA_StudyDetailContents />
-        </ALTA_Inner>
-      </Grid>
-      <Grid item xl={3} lg={0}>
-        <ALTA_StudySideContents>
-          <ALTA_StudyBoard />
-        </ALTA_StudySideContents>
-      </Grid>
-    </Grid>
+    </StudyDetailContext>
   );
 }

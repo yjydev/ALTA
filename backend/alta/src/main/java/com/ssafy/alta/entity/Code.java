@@ -1,6 +1,9 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.response.CodeAndCommentResponse;
 import com.ssafy.alta.dto.response.CodeResponse;
+import com.ssafy.alta.dto.response.CommentResponse;
+import com.ssafy.alta.util.FileToLanguage;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +13,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.entity
@@ -79,5 +83,17 @@ public class Code {
 
     public void changeSha(String sha) {
         this.sha = sha;
+    }
+    public void changeShaAndContent(String sha, String content) {
+        this.sha = sha;
+        this.content = content;
+    }
+
+    public CodeAndCommentResponse toCodeAndCommentResponse(List<CommentResponse> commentResponseList) {
+        return CodeAndCommentResponse.builder()
+                .code(this.content)
+                .language(FileToLanguage.getInstanse().getLanguage(this.path))
+                .reviews(commentResponseList)
+                .build();
     }
 }

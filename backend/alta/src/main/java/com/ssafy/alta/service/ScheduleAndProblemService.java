@@ -1,10 +1,16 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.request.ProblemRequest;
+import com.ssafy.alta.dto.request.ScheduleRequest;
 import com.ssafy.alta.dto.response.CodeResponse;
 import com.ssafy.alta.dto.response.ProblemResponse;
 import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
 import com.ssafy.alta.dto.response.ScheduleAndProblemResponse;
 import com.ssafy.alta.entity.*;
+import com.ssafy.alta.exception.BusinessException;
+import com.ssafy.alta.exception.DataNotFoundException;
+import com.ssafy.alta.exception.ErrorCode;
+import com.ssafy.alta.exception.UnAuthorizedException;
 import com.ssafy.alta.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,11 +42,10 @@ public class ScheduleAndProblemService {
     @Transactional
     public void saveScheduleAndProblem(String user_id, Long study_id, ScheduleAndProblemRequest scheduleAndProblemRequest) {
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다.")));
+                .orElseThrow(DataNotFoundException::new));
 
-        if(!optSJI.get().getState().equals("가입")) {
-            throw new IllegalArgumentException("가입이 필요합니다.");
-        }
+        if(!optSJI.get().getState().equals("가입"))
+            throw new UnAuthorizedException();
 
         Study study = optSJI.get().getStudy();
         int round = 1;
@@ -63,16 +68,47 @@ public class ScheduleAndProblemService {
         problemRepository.saveAll(problems);
     }
 
+    public void insertSchedule(String user_id, Long study_id, ScheduleRequest scheduleRequest) {
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
+                .orElseThrow(DataNotFoundException::new));
+        if(!optSJI.get().getState().equals("가입"))
+            throw new UnAuthorizedException();
+
+        Study study = optSJI.get().getStudy();
+        int round = 1;
+
+        Optional<Schedule> optSchedule = scheduleRepository.findTop1ByStudyStudyIdOrderByRoundDesc(study_id);
+        if(optSchedule.isPresent()) {
+            round = optSchedule.get().getRound() + 1;
+        }
+        scheduleRepository.save(scheduleRequest.toSchedule(round, false, study));
+    }
+
+    public void insertProblem(String user_id, Long study_id, ProblemRequest problemRequest) {
+        Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findByStudyStudyIdAndId(study_id, problemRequest.getScheduleId())
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
+                .orElseThrow(DataNotFoundException::new));
+        if(!optSJI.get().getState().equals("가입"))
+            throw new UnAuthorizedException();
+
+        List<Problem> preProblems = problemRequest.getProblems();
+        List<Problem> problems = new ArrayList<>();
+        for(Problem problem : preProblems) {
+            problems.add(new Problem(problem.getName(),problem.getLink(), false, optSchedule.get()));
+        }
+        problemRepository.saveAll(problems);
+    }
+
     public HashMap<String, Object> selectScheduleList(String user_id, Long study_id){
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다.")));
+                .orElseThrow(DataNotFoundException::new));
 
-        if(!optSJI.get().getState().equals("가입")) {
-            throw new IllegalArgumentException("가입이 필요합니다.");
-        }
+        if(!optSJI.get().getState().equals("가입"))
+            throw new UnAuthorizedException();
 
         HashMap<String, Object> map = new HashMap<>();
-        List<Schedule> schedulesList = scheduleRepository.findByStudyStudyId(study_id);
+        List<Schedule> schedulesList = scheduleRepository.findByStudyStudyIdOrderByRound(study_id);
         List<ScheduleAndProblemResponse> schedules = new ArrayList<>();
         for (Schedule schedule : schedulesList) {
             List<Problem> problem1List = schedule.getProblems();

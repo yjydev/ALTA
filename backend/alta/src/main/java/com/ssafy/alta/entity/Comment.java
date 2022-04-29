@@ -1,5 +1,6 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.response.CommentResponse;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,5 +66,23 @@ public class Comment {
         this.isSolved = isSolved;
         this.user = user;
         this.code = code;
+    }
+
+    public CommentResponse toDto() {
+        return CommentResponse.builder()
+                .reviewrId(user.getId())
+                .reviewerName(user.getNickname())
+                .comment(content)
+                .codeNumber(line)
+                .completed(isSolved)
+                .build();
+    }
+
+    public void changeStateToSolved() {
+        this.isSolved = true;
+    }
+
+    public void changeStateToNotSolved() {
+        this.isSolved = false;
     }
 }
