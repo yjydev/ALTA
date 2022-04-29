@@ -32,4 +32,11 @@ public class CommentController {
         commentService.insertComment(userId, commentRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/{review_id}")
+    public ResponseEntity deleteComment(@PathVariable("review_id") Long reviewId) {
+        String userId = "11";
+        commentService.deleteComment(userId, reviewId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
