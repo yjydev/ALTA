@@ -4,9 +4,11 @@ import { ContextProps } from '../types/ContextPropsType';
 
 //Context 인스턴스 생성
 const defaultValue: defaultValueType = {
+  maxPeople: 0,
+  setMaxPeople: () => null,
   members: [],
   setMembers: () => null,
-  roundTable: [],
+  roundTables: [],
   setRoundTable: () => null,
 };
 export const StudyDetailStore = React.createContext(defaultValue);
@@ -14,9 +16,17 @@ export const StudyDetailStore = React.createContext(defaultValue);
 //Context Provider 컴포넌트
 export default function StudyDetailProvider({ children }: ContextProps) {
   const [members, setMembers] = useState<Member[]>([]);
-  const [roundTable, setRoundTable] = useState<RoundTable[]>([]);
+  const [roundTables, setRoundTable] = useState<RoundTable[]>([]);
+  const [maxPeople, setMaxPeople] = useState<number>(0);
 
-  const value = { members, setMembers, roundTable, setRoundTable };
+  const value = {
+    members,
+    setMembers,
+    roundTables,
+    setRoundTable,
+    maxPeople,
+    setMaxPeople,
+  };
   return (
     <StudyDetailStore.Provider value={value}>
       {children}
@@ -25,8 +35,10 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 }
 //Context 기본값 타입
 type defaultValueType = {
+  maxPeople: number;
+  setMaxPeople: (newData: number) => void;
   members: Member[];
   setMembers: (newData: Member[]) => void;
-  roundTable: RoundTable[];
+  roundTables: RoundTable[];
   setRoundTable: (newData: RoundTable[]) => void;
 };

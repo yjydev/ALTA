@@ -9,6 +9,7 @@ export type OrganizeStudyRequset = {
 };
 
 export type Member = {
+  [index: string]: string;
   nickname: string;
   email: string;
   state: string;
@@ -16,23 +17,23 @@ export type Member = {
   resistrationData: string;
 };
 
-type Code = {
+export type Code = {
   id: number;
-  username: string;
-  filename: string;
+  nickname: string;
+  path: string;
 };
 
-type Problem = {
+export type Problem = {
   id: number;
-  title: string;
+  name: string;
   link: string;
   codes: Code[];
 };
 
 export type RoundTable = {
   id: number;
-  startData: string;
-  endData: string;
+  startDate: string;
+  endDate: string;
   round: number;
   problems: Problem[];
 };

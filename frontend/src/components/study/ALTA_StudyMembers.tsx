@@ -9,12 +9,25 @@ import { StudyDetailStore } from '../../context/StudyDetailContext';
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
 
 export default function ALTA_StudyMembers() {
-  const { members, setMembers } = useContext(StudyDetailStore);
+  const { members, setMembers, setMaxPeople } = useContext(StudyDetailStore);
 
   const getMembers = async () => {
     try {
       const response = await getRequest('/api');
-      setMembers(response.data.members);
+
+      //최대 인원 수까지 빈 멤버 추가
+      const tmpMember = [...response.data.members];
+      while (tmpMember.length < response.data.study_max_people)
+        tmpMember.push({
+          nickname: '',
+          email: '',
+          state: '',
+          position: '',
+          resistrationData: '',
+        });
+
+      setMembers(tmpMember);
+      setMaxPeople(response.data.study_max_people);
     } catch (error) {
       console.log(error);
     }
@@ -26,9 +39,9 @@ export default function ALTA_StudyMembers() {
 
   return (
     <>
-      {members.map((member: Member) => (
+      {members.map((member: Member, i: number) => (
         <ALTA_StudyMemberCard
-          key={`${member.nickname}-${member.email}`}
+          key={`${i}-${member.nickname}-${member.email}`}
           member={member}
         />
       ))}

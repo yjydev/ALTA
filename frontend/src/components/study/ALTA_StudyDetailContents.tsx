@@ -4,15 +4,18 @@ import { getRequest } from '../../api/request';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
+import { RoundTable } from '../../types/StudyType';
 
 import ALTA_ProblemTable from './ALTA_ProblemTable';
 
 export default function ALTA_StudyDetailContents() {
-  const { roundTable, setRoundTable } = useContext(StudyDetailStore);
+  const { members, roundTables, setRoundTable, maxPeople } =
+    useContext(StudyDetailStore);
 
   const getReadmeContents = async () => {
     const response = await getRequest('/api');
     setRoundTable(response.data.readme);
+    console.log(response.data.readme);
   };
 
   useEffect(() => {
@@ -21,16 +24,20 @@ export default function ALTA_StudyDetailContents() {
 
   return (
     <Box sx={[wrapper, scrollStyle]}>
-      {roundTable.map((v, i) => (
-        <div key={i}>
+      {roundTables.map((roundTable: RoundTable, i: number) => (
+        <Box sx={{ marginTop: '30px' }} key={i}>
           <Box sx={sectionStyle}>
-            <Typography>회차 : 0000-00-00 ~ 0000-00-00</Typography>
+            <Typography>{`회차 : ${roundTable.startDate} ~ ${roundTable.endDate}`}</Typography>
             <Button variant="contained" sx={addBtnStyle}>
               문제 추가
             </Button>
           </Box>
-          <ALTA_ProblemTable key={i} sx={wrapper} />
-        </div>
+          <ALTA_ProblemTable
+            problems={roundTable.problems}
+            members={members}
+            maxPeople={maxPeople}
+          />
+        </Box>
       ))}
     </Box>
   );

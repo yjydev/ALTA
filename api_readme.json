@@ -1,5 +1,6 @@
 {
   "/api": {
+    "study_max_people": 5,
     "readme": [
       {
         "id": 4,
