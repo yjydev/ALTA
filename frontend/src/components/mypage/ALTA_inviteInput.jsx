@@ -14,6 +14,8 @@ export default function ALTA_inviteInput() {
         <Button
           onClick={() => handleisToggle(!isToggle)}
           sx={inputBtn}
+          disableElevation
+          disableRipple
           endIcon={
             isToggle ? <ArrowBackIosNewIcon /> : <ArrowForwardIosSharpIcon />
           }
@@ -21,7 +23,7 @@ export default function ALTA_inviteInput() {
           {/* {isToggle ? null : (
             <Typography sx={inputText}>초대코드 입력</Typography>
           )} */}
-          <Typography sx={inputText}>초대코드 입력</Typography>
+          <Typography sx={[inputText]}>초대코드</Typography>
         </Button>
       </Box>
       <Box sx={[fieldStyle, isToggle ? { width: '250px' } : { width: '0px' }]}>
@@ -36,7 +38,7 @@ export default function ALTA_inviteInput() {
           />
         </Box>
         <Box sx={completeBtn}>
-          {isToggle ? <Button variant="outlined">완료</Button> : null}
+          {isToggle ? <Button variant="outlined">입력</Button> : null}
         </Box>
       </Box>
     </Box>
