@@ -3,6 +3,9 @@ package com.ssafy.alta.dto.request;
 
 import lombok.*;
 import com.ssafy.alta.entity.User;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+
 /**
  * packageName 	: com.ssafy.alta.dto
  * fileName 	: UserRequest
@@ -27,6 +30,9 @@ public class UserRequest {
     String name;
     String nickname;
     String role;
+    String access_token;
+    int email_alert;
+    int site_alert;
 
     public User toEntity(){
         User user = User.builder()
@@ -34,6 +40,9 @@ public class UserRequest {
                 .name(name)
                 .nickname(nickname)
                 .role(role)
+                .access_token(access_token)
+                .emailAlert(email_alert)
+                .siteAlert(site_alert)
                 .build();
         return user;
     }

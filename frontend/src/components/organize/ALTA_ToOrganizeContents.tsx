@@ -51,19 +51,19 @@ export default function ALTA_ToOrganizeContents() {
   };
 
   const organize = async () => {
-    generateCheck(
+    generateTimer(
       '잠시 기다려 주세요',
       `Github에 ${requestData.name} Repository를 생성 중입니다`,
     );
-    // try {
-    //   await postRequest('/api/study', JSON.stringify(requestData));
-    //   generateCheck(
-    //     '스터디가 생성되었습니다',
-    //     `${requestData.name} Repository가 Github에 생성되었습니다.`,
-    //   );
-    // } catch (error) {
-    //   generateError('스터디를 생성할 수 없습니다.', ``);
-    // }
+    try {
+      await postRequest('/api/study', JSON.stringify(requestData));
+      generateCheck(
+        '스터디가 생성되었습니다',
+        `${requestData.name} Repository가 Github에 생성되었습니다.`,
+      );
+    } catch (error) {
+      generateError('스터디를 생성할 수 없습니다.', ``);
+    }
   };
 
   const itemList = [

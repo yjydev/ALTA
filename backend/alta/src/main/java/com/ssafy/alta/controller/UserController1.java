@@ -32,7 +32,7 @@ public class UserController1 {
 
     @GetMapping("/info")
     @ApiOperation(value = "user 정보 가져오기", notes = "user 정보 가져고익")
-    public ResponseEntity<?> selectUserInfo(String user_id) {
+    public ResponseEntity<?> selectUserInfo(String user_id, @RequestHeader String Authorization) {
 
         return new ResponseEntity<>(userService1.selectUser(user_id), HttpStatus.OK);
 

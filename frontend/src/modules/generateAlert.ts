@@ -19,7 +19,7 @@ export function generateCheck(title: string, text: string) {
       color: blackColor,
       background: wightColor,
     })
-    .then((res) => {
+    .then(() => {
       console.log('end');
     });
 }
@@ -37,7 +37,7 @@ export function generateError(title: string, text: string) {
       confirmButtonColor: errorColor,
       confirmButtonText: '돌아가기',
     })
-    .then((res) => {
+    .then(() => {
       console.log('end');
     });
 }

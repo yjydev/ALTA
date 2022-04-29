@@ -4,7 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 
 import './App.css';
 
-import LoginDataProvider from './context/LoginDataProvider';
+import LoginDataProvider from './context/LoginDataContext';
 import ALTA_Login from './pages/ALTA_Login';
 import ALTA_Code from './pages/ALTA_Code';
 import ALTA_ToOrganize from './pages/ALTA_ToOrganize';
