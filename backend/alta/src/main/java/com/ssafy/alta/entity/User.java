@@ -1,6 +1,6 @@
 package com.ssafy.alta.entity;
 
-import com.ssafy.alta.dto.UserResponse;
+import com.ssafy.alta.dto.response.UserResponse;
 import com.sun.istack.NotNull;
 
 import lombok.*;

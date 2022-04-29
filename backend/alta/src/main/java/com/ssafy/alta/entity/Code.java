@@ -1,5 +1,6 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.response.CodeResponse;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,6 +67,14 @@ public class Code {
         this.content = content;
         this.user = user;
         this.problem = problem;
+    }
+
+    public CodeResponse toCodeResponse() {
+        return CodeResponse.builder()
+                .id(id)
+                .nickname(user.getNickname())
+                .path(path)
+                .build();
     }
 
     public void changeSha(String sha) {

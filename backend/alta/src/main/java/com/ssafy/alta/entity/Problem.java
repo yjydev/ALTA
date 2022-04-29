@@ -1,5 +1,6 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.response.ProblemResponse;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,9 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * packageName 	: com.ssafy.alta.entity
  * fileName 	: Problem
@@ -47,11 +51,23 @@ public class Problem {
     @JoinColumn(name = "fk_schedule_id")
     private Schedule schedule;
 
+    @OneToMany
+    @JoinColumn(name = "fk_problem_id")
+    private List<Code> code = new ArrayList<>();
+
     @Builder
     public Problem(String name, String link, boolean isCancel, Schedule schedule) {
         this.name = name;
         this.link = link;
         this.isCancel = isCancel;
         this.schedule = schedule;
+    }
+
+    public ProblemResponse toProblemResponse() {
+        return ProblemResponse.builder()
+                .id(id)
+                .name(name)
+                .link(link)
+                .build();
     }
 }

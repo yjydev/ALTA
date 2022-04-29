@@ -1,9 +1,9 @@
 package com.ssafy.alta.service;
 
-import com.ssafy.alta.dto.CodeResponse1;
-import com.ssafy.alta.dto.ProblemResponse;
-import com.ssafy.alta.dto.ScheduleAndProblemRequest;
-import com.ssafy.alta.dto.ScheduleAndProblemResponse;
+import com.ssafy.alta.dto.response.CodeResponse;
+import com.ssafy.alta.dto.response.ProblemResponse;
+import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
+import com.ssafy.alta.dto.response.ScheduleAndProblemResponse;
 import com.ssafy.alta.entity.*;
 import com.ssafy.alta.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,6 @@ import java.util.*;
 public class ScheduleAndProblemService {
     @Autowired
     ScheduleRepository scheduleRepository;
-    @Autowired
-    ScheduleRepository1 scheduleRepository1;
     @Autowired
     ProblemRepository problemRepository;
     @Autowired
@@ -74,22 +72,22 @@ public class ScheduleAndProblemService {
         }
 
         HashMap<String, Object> map = new HashMap<>();
-        List<Schedule1> schedulesList = scheduleRepository1.findByStudyStudyId(study_id);
+        List<Schedule> schedulesList = scheduleRepository.findByStudyStudyId(study_id);
         List<ScheduleAndProblemResponse> schedules = new ArrayList<>();
-        for (Schedule1 schedule : schedulesList) {
-            List<Problem1> problem1List = schedule.getProblems();
+        for (Schedule schedule : schedulesList) {
+            List<Problem> problem1List = schedule.getProblems();
             List<ProblemResponse> problems = new ArrayList<>();
-            for(Problem1 problem : problem1List) {
-                List<Code1> code1List = problem.getCode();
-                List<CodeResponse1> codes = new ArrayList<>();
-                for(Code1 code : code1List) {
-                    codes.add(code.toDto());
+            for(Problem problem : problem1List) {
+                List<Code> code1List = problem.getCode();
+                List<CodeResponse> codes = new ArrayList<>();
+                for(Code code : code1List) {
+                    codes.add(code.toCodeResponse());
                 }
-                ProblemResponse problemResponse = problem.toDto();
+                ProblemResponse problemResponse = problem.toProblemResponse();
                 problemResponse.setCodes(codes);
                 problems.add(problemResponse);
             }
-            ScheduleAndProblemResponse scheduleAndProblemResponse = schedule.toDto();
+            ScheduleAndProblemResponse scheduleAndProblemResponse = schedule.toScheduleAndProblemResponse();
             scheduleAndProblemResponse.setProblems(problems);
             schedules.add(scheduleAndProblemResponse);
         }

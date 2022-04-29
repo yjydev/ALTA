@@ -1,6 +1,6 @@
 package com.ssafy.alta.controller;
 
-import com.ssafy.alta.dto.ScheduleAndProblemRequest;
+import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
 import com.ssafy.alta.service.ScheduleAndProblemService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
