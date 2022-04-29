@@ -67,27 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest().authenticated()
 
 
-
-//                .antMatchers("/git/**").permitAll()
-//                .antMatchers("/oauth2/authorization/github").permitAll()
-//                .antMatchers("https://github.com/login/**").permitAll()
-//                .antMatchers("/api/user/gitLogin").permitAll()
-//                .antMatchers("/authorization").permitAll()
-//                .antMatchers("/login/oauth2/code/github").permitAll()
-//                .antMatchers("/oauth2/authorization/github").permitAll()
-//                    .anyRequest().authenticated()
-
-
                 // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴
                 .and()
                     .oauth2Login()
-//                        .loginPage("/githubLogin")
-//                    .authorizationEndpoint()
-//                    .baseUri("/oauth2/authorization/github")
-//                .and()
-//                    .redirectionEndpoint()
-//                    .baseUri("/login/oauth2/code/github")
-//                .and()
                     .userInfoEndpoint()//구글 로그인이 완료된 뒤의 후처리가 필요함. Tip. 코드x , (엑세스토큰 + 사용자 정보 0)
                     .userService(principalOauth2UserService)
 

@@ -40,6 +40,6 @@ public class Oauth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         String jwt = tokenProvider.createToken(authentication);
         System.out.println("JWT = " + jwt);
-        response.sendRedirect("/api/user/gitLogin/loginSucess?jwt="+jwt);
+        response.sendRedirect("/api/user/gitLogin/loginSuccess?jwt="+jwt);
     }
 }

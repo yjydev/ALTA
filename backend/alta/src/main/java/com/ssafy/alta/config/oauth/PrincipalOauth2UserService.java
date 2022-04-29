@@ -20,7 +20,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         System.out.println("getClientRegistration :" + userRequest.getClientRegistration());
-        System.out.println("getAccessToken :" + userRequest.getAccessToken());
+        System.out.println("getAccessToken :" + userRequest.getAccessToken().getTokenValue());
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
         //구글 로그인 버튼 클릭 -> 구글로그인창 -> 로그인완료 -> code를 리턴하나 oauth-client가 받음 -> 엑세스 토큰 요청
@@ -34,17 +34,17 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String role = "ROLE_USER";
 
         User user = userRepository.findByName(name);
+        UserRequest userRequest1 = new UserRequest(id, name, nickname, role, userRequest.getAccessToken().getTokenValue(),3 , 3);
+        User newUser = userRequest1.toEntity();
 
-        if (user == null){
-            System.out.println("fist login .");
-            UserRequest userRequest1 = new UserRequest(id, name, nickname, role);
-            User newUser = userRequest1.toEntity();
-            userRepository.save(newUser);
-        }else {
-
-            System.out.println(user.toString());
-            System.out.println("already ");
-        }
+        userRepository.save(newUser);
+//        if (user == null){
+//            System.out.println("fist login .");
+//            userRepository.save(newUser);
+//        }else {
+//            System.out.println("already! access_token change ");
+//            userRepository.save(newUser);
+//        }
         return new PrincipalDetails(oAuth2User.getAttributes());
     }
 
