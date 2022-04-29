@@ -21,9 +21,9 @@ import java.io.Serializable;
 @Setter
 @ToString
 public class GithubRepoRequest  implements Serializable {
-//    private String owner;
+    private String owner;
     private String name;
-//    private String description;
-//    private boolean include_all_branches;
+    private String description;
+    private boolean include_all_branches;
 //    private boolean private;  예약어랑 같은 경우에는 어떻게 해야하죠...?
 }
