@@ -23,9 +23,6 @@ import lombok.Getter;
 public class CommentResponse {
     @ApiModelProperty(value = "댓글 작성자 키")
     private String reviewrId;
-    
-    @ApiModelProperty(value = "코드 키")
-    private Long codeId;
 
     @ApiModelProperty(value = "댓글 작성자 이름")
     private String reviewerName;

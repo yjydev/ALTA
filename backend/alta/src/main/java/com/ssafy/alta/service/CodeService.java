@@ -96,6 +96,6 @@ public class CodeService {
 
         List<CommentResponse> commentList = commentService.selectCommentList(code);
 
-        return code.toDto(commentList);
+        return code.toCodeAndCommentResponse(commentList);
     }
 }

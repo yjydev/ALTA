@@ -29,7 +29,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     public List<CommentResponse> selectCommentList(Code code) {
-        List<Comment> commentList = commentRepository.findCommentsByCodeOrderByLineAsc(code);
+        List<Comment> commentList = commentRepository.findCommentsByCodeOrderByCreateDateDesc(code);
         List<CommentResponse> commentResponseList = new ArrayList<>();
         for(Comment comment : commentList) {
             commentResponseList.add(comment.toDto());

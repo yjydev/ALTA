@@ -18,5 +18,5 @@ import java.util.List;
  * 2022-04-26	    우정연  		    최초 생성
  */
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findCommentsByCodeOrderByLineAsc(Code code);
+    List<Comment> findCommentsByCodeOrderByCreateDateDesc(Code code);
 }

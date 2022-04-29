@@ -3,6 +3,7 @@ package com.ssafy.alta.entity;
 import com.ssafy.alta.dto.response.CodeAndCommentResponse;
 import com.ssafy.alta.dto.response.CodeResponse;
 import com.ssafy.alta.dto.response.CommentResponse;
+import com.ssafy.alta.util.FileToLanguage;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -88,10 +89,10 @@ public class Code {
         this.content = content;
     }
 
-    public CodeAndCommentResponse toDto(List<CommentResponse> commentResponseList) {
+    public CodeAndCommentResponse toCodeAndCommentResponse(List<CommentResponse> commentResponseList) {
         return CodeAndCommentResponse.builder()
                 .code(this.content)
-                .language(user.getLanguage().toString())
+                .language(FileToLanguage.getInstanse().getLanguage(this.path))
                 .reviews(commentResponseList)
                 .build();
     }
