@@ -1,6 +1,5 @@
 package com.ssafy.alta.repository;
 
-import com.ssafy.alta.entity.Problem;
 import com.ssafy.alta.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -21,4 +20,5 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findTop1ByStudyStudyIdOrderByRoundDesc(Long study_id);
+    List<Schedule> findByStudyStudyId(Long study_id);
 }

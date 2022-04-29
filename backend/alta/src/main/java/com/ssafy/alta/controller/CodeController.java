@@ -19,7 +19,7 @@ public class CodeController {
     private final CodeService codeService;
 
     @PostMapping
-    public ResponseEntity insertCode(@PathVariable("study_id") Long studyId, CodeRequest codeRequest) throws JsonProcessingException {
+    public ResponseEntity insertCode(@PathVariable("study_id") Long studyId, @RequestBody CodeRequest codeRequest) throws JsonProcessingException {
         String userId = "11";
         String token = "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";
         codeService.insertCode(studyId, userId, token, codeRequest);
@@ -27,7 +27,7 @@ public class CodeController {
     }
 
     @GetMapping("/{code_id}")
-    public ResponseEntity<CodeAndCommentResponse> selectCodeAndComments(@PathVariable("study_id") Long studyId, @PathVariable("code_id") Long codeId) throws JsonProcessingException {
+    public ResponseEntity selectCodeAndComments(@PathVariable("study_id") Long studyId, @PathVariable("code_id") Long codeId) throws JsonProcessingException {
         String token = "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";
         CodeAndCommentResponse codeAndCommentResponse = codeService.selectCodeAndComments(studyId, codeId, token);
         return new ResponseEntity<>(codeAndCommentResponse, HttpStatus.OK);

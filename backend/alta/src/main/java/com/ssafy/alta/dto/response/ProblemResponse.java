@@ -1,4 +1,4 @@
-package com.ssafy.alta.dto;
+package com.ssafy.alta.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +26,5 @@ public class ProblemResponse {
     private Long id;
     private String name;
     private String link;
-    private List<CodeResponse1> codes;
+    private List<CodeResponse> codes;
 }

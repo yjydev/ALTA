@@ -1,17 +1,13 @@
-package com.ssafy.alta.dto;
+package com.ssafy.alta.dto.response;
 
-import com.ssafy.alta.entity.Problem;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * packageName 	: com.ssafy.alta.dto
- * fileName 	: ScheduleAndProblemResponse
+ * fileName 	: CodeResponse1
  * author 	    : jisoon Lee
  * date		    : 2022-04-28
  * description	:
@@ -20,15 +16,12 @@ import java.util.List;
  * -----------------------------------------------------------
  * 2022-04-28       jisoon Lee         최초 생성
  */
-
 @Getter
 @Setter
 @Builder
 @ToString
-public class ScheduleAndProblemResponse {
-    private Long id;
-    private Date startDate;
-    private Date endDate;
-    private int round;
-    private List<ProblemResponse> problems;
+public class CodeResponse {
+    private long id;
+    private String nickname;
+    private String path;
 }
