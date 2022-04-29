@@ -71,10 +71,18 @@ public class Comment {
     public CommentResponse toDto() {
         return CommentResponse.builder()
                 .reviewrId(user.getId())
-                .reviewerName(user.getName())
+                .reviewerName(user.getNickname())
                 .comment(content)
                 .codeNumber(line)
                 .completed(isSolved)
                 .build();
+    }
+
+    public void changeStateToSolved() {
+        this.isSolved = true;
+    }
+
+    public void changeStateToNotSolved() {
+        this.isSolved = false;
     }
 }
