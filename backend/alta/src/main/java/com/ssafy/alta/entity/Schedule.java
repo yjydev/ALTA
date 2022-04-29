@@ -37,7 +37,6 @@ public class Schedule {
     @Column(name = "schedule_id")
     private Long id;
 
-
     @Temporal(TemporalType.DATE)
     @Column(name = "schedule_start_date")
     private Date startDate;
@@ -64,7 +63,7 @@ public class Schedule {
     private List<Problem> problems = new ArrayList<>();
 
     @Builder
-    public Schedule(Date startDate, Date endDate, int round, Boolean isCancel, Study study) {
+    public Schedule(Date startDate, Date endDate, Integer round, Boolean isCancel, Study study) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.round = round;
