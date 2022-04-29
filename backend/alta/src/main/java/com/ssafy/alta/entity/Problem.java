@@ -9,10 +9,15 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 /**
- * 문제 엔티티
- *
- * @author 우정연
- * created on 2022-04-26
+ * packageName 	: com.ssafy.alta.entity
+ * fileName 	: Problem
+ * author 	    : 우정연
+ * date		    : 2022-04-26
+ * description	: 문제 엔티티
+ * ===========================================================
+ * DATE 		AUTHOR 		      NOTE
+ * -----------------------------------------------------------
+ * 2022-04-26	    우정연  		    최초 생성
  */
 @Entity
 @Table(name = "problem")
@@ -24,7 +29,7 @@ public class Problem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "problem_id")
-    private long id;
+    private Long id;
 
     @NotNull
     @Column(name = "problem_name")

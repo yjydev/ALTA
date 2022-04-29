@@ -11,10 +11,15 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 코드 엔티티
- *
- * @author 우정연
- * created on 2022-04-26
+ * packageName 	: com.ssafy.alta.entity
+ * fileName 	: Code
+ * author 	    : 우정연
+ * date		    : 2022-04-26
+ * description	: 코드 엔티티
+ * ===========================================================
+ * DATE 		AUTHOR 		      NOTE
+ * -----------------------------------------------------------
+ * 2022-04-26	    우정연  		    최초 생성
  */
 
 @Entity
@@ -27,7 +32,7 @@ public class Code {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_id")
-    private long id;
+    private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "code_create_date")
@@ -36,6 +41,10 @@ public class Code {
     @NotNull
     @Column(name = "code_path")
     private String path;
+
+    @NotNull
+    @Column(name = "code_content")
+    private String content;
 
     @NotNull
     @Column(name = "code_sha")
@@ -51,10 +60,15 @@ public class Code {
     private Problem problem;
 
     @Builder
-    public Code(String path, String sha, User user, Problem problem) {
+    public Code(String path, String sha, String content, User user, Problem problem) {
         this.path = path;
         this.sha = sha;
+        this.content = content;
         this.user = user;
         this.problem = problem;
+    }
+
+    public void changeSha(String sha) {
+        this.sha = sha;
     }
 }

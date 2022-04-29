@@ -24,7 +24,9 @@ public enum ErrorCode {
 
     /* 500 INTERNAL_SERVER_ERROR : 서버 내부 오류 */
     DB_NOT_FOUND_ERROR("G001", HttpStatus.INTERNAL_SERVER_ERROR, "일치하는 데이터가 없습니다."), // 글로벌
-    INTERNAL_SERVER_ERROR("G002", HttpStatus.INTERNAL_SERVER_ERROR, "서버에 에러가 발생했습니다.");
+    INTERNAL_SERVER_ERROR("G002", HttpStatus.INTERNAL_SERVER_ERROR, "서버에 에러가 발생했습니다."),
+
+    HTTP_CLIENT_ERROR_EXCEPTION("A001", HttpStatus.BAD_REQUEST, "Git과 통신 중 에러가 발생했습니다.");
 
     private final String code;         // 에러 키(관리하기 위함)
     private final HttpStatus status;  // 상태 코드

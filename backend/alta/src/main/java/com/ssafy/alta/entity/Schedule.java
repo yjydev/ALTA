@@ -11,11 +11,17 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 일정 엔티티
- *
- * @author 우정연
- * created on 2022-04-26
+ * packageName 	: com.ssafy.alta.entity
+ * fileName 	: Schedule
+ * author 	    : 우정연
+ * date		    : 2022-04-26
+ * description	: 일정 엔티티
+ * ===========================================================
+ * DATE 		AUTHOR 		      NOTE
+ * -----------------------------------------------------------
+ * 2022-04-26	    우정연  		    최초 생성
  */
+
 @Entity
 @Table(name = "schedule")
 @Getter
@@ -26,7 +32,7 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "schedule_id")
-    private long id;
+    private Long id;
 
 
     @Temporal(TemporalType.DATE)
