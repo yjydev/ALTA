@@ -1,10 +1,12 @@
 import { Button, Grid, Typography } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Box } from '@mui/system';
 
+import styled from '@emotion/styled';
 import { Member, Problem, Code } from '../../types/StudyType';
-import { subColor } from '../../modules/colorChart';
-import { useEffect, useState } from 'react';
-import path from 'path';
+import { blackColor, subColor, wightColor } from '../../modules/colorChart';
+
+import ALTA_AddBar from './ALTA_AddBar';
 
 export default function ALTA_ProblemTable({
   problems,
@@ -19,9 +21,13 @@ export default function ALTA_ProblemTable({
   };
 
   const SellBtn = (path: string | null) => (
-    <Button sx={path ? null : omisstionBtnStyle}>
-      {path ? '코드 보기' : '코드 제출'}
-    </Button>
+    <>
+      {path ? (
+        <Button>코드 보기</Button>
+      ) : (
+        <Button sx={omisstionBtnStyle}>코드 제출</Button>
+      )}
+    </>
   );
 
   return (
@@ -47,31 +53,38 @@ export default function ALTA_ProblemTable({
         </Box>
       </Box>
       <Box>
-        {problems.map((problem) => (
-          <Box key={problem.id} sx={tableBodyStyle}>
-            <Box>
-              <Grid container>
-                <Grid item xs={5} sx={sellStyle}>
-                  <Typography>{problem.name}</Typography>
-                </Grid>
-                <Grid item xs={7} sx={sellStyle}>
-                  <Grid container>
-                    {members.map((member, i) => (
-                      <Grid item key={i} xs={12 / maxPeople} sx={sellStyle}>
-                        <Typography>
-                          {member.nickname
-                            ? SellBtn(findCode(member.nickname, problem.codes))
-                            : '-'}
-                        </Typography>
-                      </Grid>
-                    ))}
+        {problems.length > 0 ? (
+          problems.map((problem) => (
+            <Box key={problem.id} sx={tableBodyStyle}>
+              <Box>
+                <Grid container>
+                  <Grid item xs={5} sx={sellStyle}>
+                    <Typography>{problem.name}</Typography>
+                  </Grid>
+                  <Grid item xs={7} sx={sellStyle}>
+                    <Grid container>
+                      {members.map((member, i) => (
+                        <Grid item key={i} xs={12 / maxPeople} sx={sellStyle}>
+                          <Typography>
+                            {member.nickname
+                              ? SellBtn(
+                                  findCode(member.nickname, problem.codes),
+                                )
+                              : '-'}
+                          </Typography>
+                        </Grid>
+                      ))}
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
+              </Box>
             </Box>
-          </Box>
-        ))}
+          ))
+        ) : (
+          <></>
+        )}
       </Box>
+      <ALTA_AddBar height="40px" front={<Front />} back={<Back />} />
     </Box>
   );
 }
@@ -106,3 +119,38 @@ const sellStyle = {
 const omisstionBtnStyle = {
   color: 'error.main',
 };
+
+function Front() {
+  return <AddCircleIcon sx={{ color: blackColor, opacity: '0.5' }} />;
+}
+
+function Back() {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        height: 'inherit',
+        width: '100%',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
+        <Typography sx={{ marginRight: '10px' }}>문제 이름</Typography>
+        <Input type="text" />
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
+        <Typography sx={{ marginRight: '10px' }}>링크</Typography>
+        <Input type="text" style={{ width: '350px' }} />
+      </Box>
+    </Box>
+  );
+}
+
+const Input = styled.input`
+  all: unset;
+  width: 200px;
+  font-size: 14px;
+  font-weight: 400;
+  border-bottom: 1px solid ${subColor};
+  background-color: ${wightColor};
+`;
