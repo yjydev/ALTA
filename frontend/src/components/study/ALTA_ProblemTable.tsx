@@ -20,16 +20,6 @@ export default function ALTA_ProblemTable({
     return null;
   };
 
-  const SellBtn = (path: string | null) => (
-    <>
-      {path ? (
-        <Button>코드 보기</Button>
-      ) : (
-        <Button sx={omisstionBtnStyle}>코드 제출</Button>
-      )}
-    </>
-  );
-
   return (
     <Box sx={tableStyle}>
       <Box>
@@ -55,9 +45,9 @@ export default function ALTA_ProblemTable({
       <Box>
         {problems.length > 0 ? (
           problems.map((problem) => (
-            <Box key={problem.id} sx={tableBodyStyle}>
+            <Box key={problem.id}>
               <Box>
-                <Grid container>
+                <Grid container sx={tableBodyStyle}>
                   <Grid item xs={5} sx={sellStyle}>
                     <Typography>{problem.name}</Typography>
                   </Grid>
@@ -66,11 +56,13 @@ export default function ALTA_ProblemTable({
                       {members.map((member, i) => (
                         <Grid item key={i} xs={12 / maxPeople} sx={sellStyle}>
                           <Typography>
-                            {member.nickname
-                              ? SellBtn(
-                                  findCode(member.nickname, problem.codes),
-                                )
-                              : '-'}
+                            {member.nickname ? (
+                              <SellBtn
+                                path={findCode(member.nickname, problem.codes)}
+                              />
+                            ) : (
+                              '-'
+                            )}
                           </Typography>
                         </Grid>
                       ))}
@@ -93,31 +85,6 @@ type Props = {
   problems: Problem[];
   members: Member[];
   maxPeople: number;
-};
-const tableStyle = {
-  marginTop: '10px',
-};
-
-const tableHeaderStyle = {
-  height: '40px',
-  backgroundColor: subColor,
-};
-
-const tableBodyStyle = {
-  'height': '40px',
-  '&:nth-of-type(even)': {
-    backgroundColor: 'rgba(224, 212, 194, 0.3)',
-  },
-};
-
-const sellStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
-
-const omisstionBtnStyle = {
-  color: 'error.main',
 };
 
 function Front() {
@@ -145,6 +112,44 @@ function Back() {
     </Box>
   );
 }
+
+function SellBtn({ path }: { path: string | null }) {
+  return (
+    <>
+      {path ? (
+        <Button>코드 보기</Button>
+      ) : (
+        <Button sx={omisstionBtnStyle}>코드 제출</Button>
+      )}
+    </>
+  );
+}
+
+const tableStyle = {
+  marginTop: '10px',
+};
+
+const tableHeaderStyle = {
+  height: '40px',
+  backgroundColor: subColor,
+};
+
+const tableBodyStyle = {
+  'height': '40px',
+  '&:nth-of-type(even)': {
+    backgroundColor: 'rgba(224, 212, 194, 0.3)',
+  },
+};
+
+const sellStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
+const omisstionBtnStyle = {
+  color: 'error.main',
+};
 
 const Input = styled.input`
   all: unset;
