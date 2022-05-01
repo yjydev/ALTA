@@ -1,6 +1,7 @@
 package com.ssafy.alta.service;
 
 import com.ssafy.alta.dto.request.CommentRequest;
+import com.ssafy.alta.dto.request.CommentUpdateRequest;
 import com.ssafy.alta.dto.response.CommentResponse;
 import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Comment;
@@ -75,7 +76,20 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(String userId, Long commentId, Comment comment) {
+    public void updateComment(String userId, Long commentId, CommentUpdateRequest commentUpdateRequestment) {
+        Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
+        Comment comment = optComment.get();
+        if(!userId.equals(comment.getUser().getId()))
+            throw new CommentWriterNotMatchException();
+        comment.updateComment(commentUpdateRequestment);
+    }
 
+    @Transactional
+    public void updateCommentSolved(String userId, Long commentId, boolean isSolved) {
+        Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
+        Comment comment = optComment.get();
+        if(!userId.equals(comment.getUser().getId()))
+            throw new CommentWriterNotMatchException();
+        comment.changeState(isSolved);
     }
 }

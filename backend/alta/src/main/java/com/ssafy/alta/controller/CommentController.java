@@ -1,6 +1,8 @@
 package com.ssafy.alta.controller;
 
 import com.ssafy.alta.dto.request.CommentRequest;
+import com.ssafy.alta.dto.request.CommentUpdateRequest;
+import com.ssafy.alta.dto.request.CommentUpdateSolvedRequest;
 import com.ssafy.alta.service.CommentService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,19 @@ public class CommentController {
     public ResponseEntity deleteComment(@PathVariable("review_id") Long reviewId) {
         String userId = "11";
         commentService.deleteComment(userId, reviewId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/{review_id}")
+    public ResponseEntity updateComment(@PathVariable("review_id")Long reviewId, @RequestBody CommentUpdateRequest commentUpdateRequest, @RequestHeader(required = false) String Authorization) {
+        String userId = "11";
+        commentService.updateComment(userId, reviewId, commentUpdateRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PutMapping("/{review_id}/solved")
+    public ResponseEntity updateCommentSolved(@PathVariable("review_id") Long reviewId, @RequestBody CommentUpdateSolvedRequest request, @RequestHeader(required = false) String Authorization ) {
+        String userId = "11";
+        commentService.updateCommentSolved(userId, reviewId, request.isSolved());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
