@@ -1,6 +1,6 @@
 package com.ssafy.alta.service;
 
-import com.ssafy.alta.dto.request.CommentRequest;
+import com.ssafy.alta.dto.request.CommentCreateRequest;
 import com.ssafy.alta.dto.request.CommentUpdateRequest;
 import com.ssafy.alta.dto.response.CommentResponse;
 import com.ssafy.alta.entity.Code;
@@ -48,7 +48,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void insertComment(String userId, CommentRequest commentRequest) {
+    public void insertComment(String userId, CommentCreateRequest commentRequest) {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCodeId())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)).orElseThrow(DataNotFoundException::new);

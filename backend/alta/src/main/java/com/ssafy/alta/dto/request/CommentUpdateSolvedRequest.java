@@ -1,5 +1,7 @@
 package com.ssafy.alta.dto.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,9 +17,11 @@ import lombok.ToString;
  * -----------------------------------------------------------
  * 2022-05-02	    우정연  		    최초 생성
  */
+@ApiModel(value = "댓글 상태 변경 요청 정보")
 @Getter
 @Setter
 @ToString
 public class CommentUpdateSolvedRequest {
+    @ApiModelProperty(value = "해결 여부", required = true)
     private boolean isSolved;
 }
