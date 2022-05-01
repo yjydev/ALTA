@@ -124,18 +124,22 @@ public class CodeService {
             System.out.println("git 통신 에러");
         }
 
-        if(!gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
+        // git에 해당 코드가 있다면 - 그 코드도 삭제
+        if(gitCodeResponse != null && !gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
+
+            GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
+                    .message("삭제")
+                    .branch("main")
+                    .sha(code.getSha())
+                    .build();
+
+            gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, request);
+
         }
-        GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
-                .message("삭제")
-                .branch("main")
-                .sha(code.getSha())
-                .build();
-
-        gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, request);
-
+        
+        // DB에서 삭제
         codeRepository.deleteById(codeId);
 
     }

@@ -46,7 +46,9 @@ public class GitCodeAPI {
         String url = "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
 
         ResponseEntity<HashMap> response = restTemplate.exchange(url, method, httpEntity, HashMap.class);
-        String sha = (((HashMap)(response.getBody().get("content"))).get("sha")).toString();
+        String sha = "";
+        if(method != HttpMethod.DELETE)
+            sha = (((HashMap)(response.getBody().get("content"))).get("sha")).toString();
 
         return sha;
     }
