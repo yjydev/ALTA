@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.alta.config.GithubConfig;
 import com.ssafy.alta.dto.request.GitCodeCreateRequest;
+import com.ssafy.alta.dto.request.GitCodeDeleteRequest;
+import com.ssafy.alta.dto.request.GitCodeUpdateRequest;
 import com.ssafy.alta.dto.response.GitCodeResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -35,15 +37,15 @@ import java.util.Map;
 public class GitCodeAPI {
     private RestTemplate restTemplate = new RestTemplate();
 
-    public String insertFile(String token, String owner, String repo, String path, GitCodeCreateRequest request) throws JsonProcessingException {
+    public String manipulate(String token, String owner, String repo, String path, HttpMethod method, Object request) throws JsonProcessingException {
         HttpHeaders httpHeaders = setHttpHeaders(token);
 
-        String jsonBody = new ObjectMapper().writeValueAsString(request);
+        String jsonBody = new ObjectMapper().writeValueAsString(request);  // 이거 Object로 바로 된다!
 
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonBody, httpHeaders);
         String url = "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
 
-        ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, HashMap.class);
+        ResponseEntity<HashMap> response = restTemplate.exchange(url, method, httpEntity, HashMap.class);
         String sha = (((HashMap)(response.getBody().get("content"))).get("sha")).toString();
 
         return sha;

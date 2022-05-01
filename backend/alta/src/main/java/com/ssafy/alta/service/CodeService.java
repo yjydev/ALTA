@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.dto.request.GitCodeCreateRequest;
+import com.ssafy.alta.dto.request.GitCodeDeleteRequest;
 import com.ssafy.alta.dto.response.CodeAndCommentResponse;
 import com.ssafy.alta.dto.response.CommentResponse;
 import com.ssafy.alta.dto.response.GitCodeResponse;
@@ -15,8 +16,10 @@ import com.ssafy.alta.repository.ProblemRepository;
 import com.ssafy.alta.repository.StudyRepository;
 import com.ssafy.alta.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -67,7 +70,7 @@ public class CodeService {
                 .branch("main")
                 .build();
 
-        String sha = gitCodeAPI.insertFile(token, studyLeaderUserName, study.getRepositoryName(), path, request);
+        String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
 
         code.changeSha(sha);
         codeRepository.save(code);
@@ -76,22 +79,6 @@ public class CodeService {
 
     @Transactional(rollbackFor = Exception.class)
     public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId, String token) {
-        Code code = this.updateCodeByGit(studyId, codeId, token);
-        List<CommentResponse> commentList = commentService.selectCommentList(code);
-
-        return code.toCodeAndCommentResponse(commentList);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteCode(Long studyId, Long codeId, String token) {
-        this.updateCodeByGit(studyId, codeId, token);
-        codeRepository.deleteById(codeId);
-
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    Code updateCodeByGit(Long studyId, Long codeId, String token) {
-        updateCodeByGit(studyId, codeId, token);
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
@@ -105,10 +92,52 @@ public class CodeService {
         String path = code.getPath();
 
         GitCodeResponse gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+
         if(!gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
-        return code;
+        List<CommentResponse> commentList = commentService.selectCommentList(code);
+
+        return code.toCodeAndCommentResponse(commentList);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteCode(Long studyId, Long codeId, String token) throws JsonProcessingException {
+        Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
+                .orElseThrow(DataNotFoundException::new));
+
+        Study study = optStudy.get();
+        Code code = optCode.get();
+
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
+        String repo = study.getRepositoryName();
+        String path = code.getPath();
+
+        GitCodeResponse gitCodeResponse = null;
+        // 삭제의 경우, 서버에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
+        try {
+            gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+        } catch(HttpClientErrorException e) {
+            System.out.println("git 통신 에러");
+        }
+
+        if(!gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
+            code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
+            commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
+        }
+        GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
+                .message("삭제")
+                .branch("main")
+                .sha(code.getSha())
+                .build();
+
+        gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, request);
+
+        codeRepository.deleteById(codeId);
+
+    }
+
 }
