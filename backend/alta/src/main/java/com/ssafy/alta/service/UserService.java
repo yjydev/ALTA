@@ -23,11 +23,11 @@ public class UserService {
         return Optional.ofNullable(userRepository.findByName(username));
     }
 
-    public Optional<String> getCurrentUsername() {
+    public String getCurrentUsername() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            return Optional.empty();
+            return "인증 정보를 찾을 수 없습니다.";// 추후 exception으로 만들어 던지가
         }
 
         String username = null;
@@ -38,6 +38,6 @@ public class UserService {
             username = (String) authentication.getPrincipal();
         }
 
-        return Optional.ofNullable(username);
+        return username;
     }
 }

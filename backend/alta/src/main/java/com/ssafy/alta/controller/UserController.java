@@ -1,6 +1,7 @@
 package com.ssafy.alta.controller;
 
 import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.service.RedisService;
 import com.ssafy.alta.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,9 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private RedisService redisService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @GetMapping("/gitLogin/loginSuccess")
@@ -24,9 +28,14 @@ public class UserController {
     }
 
 
+//    @GetMapping("/test")
+//    public ResponseEntity getUserInfo( @RequestHeader String Authorization) {
+//        return new ResponseEntity<>(userService.getCurrentUsername(), HttpStatus.OK);
+//    }
+
     @GetMapping("/test")
-    public ResponseEntity getUserInfo( @RequestHeader String Authorization) {
-        return new ResponseEntity<>(userService.getCurrentUsername(), HttpStatus.OK);
+    public void getUserInfo2( @RequestHeader String Authorization) {
+        redisService.getAccessToken();
     }
 
 }
