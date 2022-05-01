@@ -33,4 +33,12 @@ public class CodeController {
         return new ResponseEntity<>(codeAndCommentResponse, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{code_id}")
+    public ResponseEntity deleteCode(@PathVariable("study_id") Long studyId, @PathVariable("code_id") Long codeId) throws JsonProcessingException {
+        String userId = "11";
+        String token = "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";
+        codeService.deleteCode(studyId, codeId, token);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

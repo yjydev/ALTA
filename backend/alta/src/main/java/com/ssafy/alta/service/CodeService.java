@@ -76,6 +76,22 @@ public class CodeService {
 
     @Transactional(rollbackFor = Exception.class)
     public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId, String token) {
+        Code code = this.updateCodeByGit(studyId, codeId, token);
+        List<CommentResponse> commentList = commentService.selectCommentList(code);
+
+        return code.toCodeAndCommentResponse(commentList);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteCode(Long studyId, Long codeId, String token) {
+        this.updateCodeByGit(studyId, codeId, token);
+        codeRepository.deleteById(codeId);
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    Code updateCodeByGit(Long studyId, Long codeId, String token) {
+        updateCodeByGit(studyId, codeId, token);
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
@@ -91,12 +107,8 @@ public class CodeService {
         GitCodeResponse gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
         if(!gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
-            codeRepository.save(code);
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
-
-        List<CommentResponse> commentList = commentService.selectCommentList(code);
-
-        return code.toCodeAndCommentResponse(commentList);
+        return code;
     }
 }
