@@ -23,3 +23,7 @@ export const getRequest = async (url) => {
 
   return response.data;
 };
+
+export const loginRequset = async () => {
+  await axiosInstance.get('/githubLogin');
+};
