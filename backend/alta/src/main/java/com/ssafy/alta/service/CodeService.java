@@ -64,15 +64,17 @@ public class CodeService {
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
         codeRepository.save(code);
 
-        if(codeRequest.getCommit_message().equals("")) {
-            codeRequest.setCommit_message(CREATE_MESSAGE);
+        String commit_message = codeRequest.getCommit_message();
+
+        if(commit_message.equals("")) {
+            commit_message = CREATE_MESSAGE;
         }
 
         String path = codeRequest.getPath();
         String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeCreateRequest request = GitCodeCreateRequest.builder()
                 .content(base64Content)
-                .message(codeRequest.getCommit_message())
+                .message(commit_message)
                 .branch("main")
                 .build();
 
@@ -97,9 +99,17 @@ public class CodeService {
         String repo = study.getRepositoryName();
         String path = code.getPath();
 
-        GitCodeResponse gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+        GitCodeResponse gitCodeResponse = null;
+        // 조회의 경우, git에서 찾았는데 없으면 새로 생성해줌
+        try {
+            gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+        } catch(HttpClientErrorException e) {
+            System.out.println("조회할 파일이 github에 없음");
+        }
 
-        if(!gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
+        // if(gitCodeResponse == null) {}
+
+        if(gitCodeResponse != null && !gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
@@ -123,11 +133,11 @@ public class CodeService {
         String path = code.getPath();
 
         GitCodeResponse gitCodeResponse = null;
-        // 삭제의 경우, 서버에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
+        // 삭제의 경우, git에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
         try {
             gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
         } catch(HttpClientErrorException e) {
-            System.out.println("git 통신 에러");
+            System.out.println("삭제할 파일이 github에 없음");
         }
 
         // git에 해당 코드가 있다면 - 그 코드도 삭제
@@ -149,5 +159,4 @@ public class CodeService {
         codeRepository.deleteById(codeId);
 
     }
-
 }
