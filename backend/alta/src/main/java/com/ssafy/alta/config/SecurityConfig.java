@@ -67,6 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/user/gitLogin/**", "/").permitAll()
 //                    .anyRequest().authenticated()
                 .anyRequest().permitAll()
+                .antMatchers("/mypage").authenticated()
 
 
 
