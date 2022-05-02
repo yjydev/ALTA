@@ -7,6 +7,16 @@ spring:
     url: jdbc:mysql://k6b203.p.ssafy.io:3306/alta?serverTimezone=Asia/Seoul
     username: k6b203
     password: k6b203ALTA@@
+
+  redis:
+    host: k6b203.p.ssafy.io
+    port: 6379
+    pool:
+      max-idle: 8
+      min-idle: 0
+      max-active: 8
+      max-wait: -1
+
   jpa:
     show-sql: true
     hibernate:
@@ -43,3 +53,6 @@ github:
   secret: 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
   reponame: test
   oauth-key : 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
+
+
+
