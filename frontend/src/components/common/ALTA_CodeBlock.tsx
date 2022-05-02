@@ -13,8 +13,14 @@ export default function ALTA_CodeBlock({
   const [codeLine, setCodeLine] = useState(0);
 
   return (
-    <Grid container direction="column" spacing={5}>
-      <Box sx={codeBlockStyle} className="codeBlock">
+    <Grid
+      container
+      direction="column"
+      spacing={5}
+      sx={codeBlockStyle}
+      className="codeBlock"
+    >
+      <Box>
         <SyntaxHighlighter
           language={language}
           style={code_themes['darcula']}
@@ -39,9 +45,9 @@ export default function ALTA_CodeBlock({
 }
 
 const codeBlockStyle = {
-  marginTop: '5rem',
   height: '33rem',
   overflowY: 'scroll',
-  minWidth: '900px',
-  maxWidth: '900px',
+  width: '100%',
+  margin: '0 auto',
+  boxSizing: 'content-box',
 };
