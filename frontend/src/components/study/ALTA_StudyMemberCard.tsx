@@ -5,7 +5,10 @@ import { Member } from '../../types/StudyType';
 
 export default function ALTA_StudyMemberCard({ member }: Props) {
   return (
-    <Card variant="outlined" sx={card}>
+    <Card
+      variant="outlined"
+      sx={[card, { opacity: `${member.email === '' ? '.5' : ''}` }]}
+    >
       <Box sx={profile}></Box>
       <Typography sx={nickname}>
         <span>{member.nickname}</span>

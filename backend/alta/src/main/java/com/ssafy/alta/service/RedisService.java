@@ -28,7 +28,7 @@ public class RedisService {
 
     public String getAccessToken(){
 
-        String key = userService.getCurrentUsername();
+        String key = userService.getCurrentUserId();
 
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         String accesstoken = valueOperations.get(key);

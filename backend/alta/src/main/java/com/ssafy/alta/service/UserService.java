@@ -1,7 +1,6 @@
 package com.ssafy.alta.service;
 
 import com.ssafy.alta.entity.User;
-import com.ssafy.alta.jwt.util.SecurityUtil;
 import com.ssafy.alta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,21 +22,21 @@ public class UserService {
         return Optional.ofNullable(userRepository.findByName(username));
     }
 
-    public String getCurrentUsername() {
+    public String getCurrentUserId() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
             return "인증 정보를 찾을 수 없습니다.";// 추후 exception으로 만들어 던지가
         }
 
-        String username = null;
+        String userId = null;
         if (authentication.getPrincipal() instanceof UserDetails) {
             UserDetails springSecurityUser = (UserDetails) authentication.getPrincipal();
-            username = springSecurityUser.getUsername();
+            userId = springSecurityUser.getUsername();
         } else if (authentication.getPrincipal() instanceof String) {
-            username = (String) authentication.getPrincipal();
+            userId = (String) authentication.getPrincipal();
         }
 
-        return username;
+        return userId;
     }
 }
