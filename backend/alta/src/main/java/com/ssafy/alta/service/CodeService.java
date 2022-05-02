@@ -48,6 +48,8 @@ public class CodeService {
     private final StudyRepository studyRepository;
     private final CommentService commentService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
+    private static final String DELETE_MESSAGE = "파일 삭제";
+    private static final String CREATE_MESSAGE = "파일 생성";
 
     @Transactional(rollbackFor = Exception.class)
     public void insertCode(Long studyId, String userId, String token, CodeRequest codeRequest) throws JsonProcessingException {
@@ -61,6 +63,10 @@ public class CodeService {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
         codeRepository.save(code);
+
+        if(codeRequest.getCommit_message().equals("")) {
+            codeRequest.setCommit_message(CREATE_MESSAGE);
+        }
 
         String path = codeRequest.getPath();
         String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
@@ -130,7 +136,7 @@ public class CodeService {
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
 
             GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
-                    .message("삭제")
+                    .message(DELETE_MESSAGE)
                     .branch("main")
                     .sha(code.getSha())
                     .build();
