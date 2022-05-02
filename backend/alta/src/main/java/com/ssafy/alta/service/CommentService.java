@@ -49,7 +49,7 @@ public class CommentService {
 
     @Transactional
     public void insertComment(String userId, CommentCreateRequest commentRequest) {
-        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCodeId())
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCode_id())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)).orElseThrow(DataNotFoundException::new);
         Code code = optCode.get();

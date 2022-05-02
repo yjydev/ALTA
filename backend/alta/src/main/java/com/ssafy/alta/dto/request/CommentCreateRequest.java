@@ -27,7 +27,7 @@ import lombok.ToString;
 @ToString
 public class CommentCreateRequest {
     @ApiModelProperty(value = "코드 키", required = true)
-    private Long codeId;
+    private Long code_id;
     @ApiModelProperty(value = "댓글 내용", required = true)
     private String content;
     @ApiModelProperty(value = "코드 줄", required = true)

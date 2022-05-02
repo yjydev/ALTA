@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.dto.response.CodeAndCommentResponse;
 import com.ssafy.alta.service.CodeService;
+import com.ssafy.alta.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,10 +20,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CodeController {
     private final CodeService codeService;
+    private final UserService userservice;
 
     @PostMapping
     @ApiOperation(value = "코드 추가", notes = "새 코드를 DB에 생성하고 Github에 commit합니다.")
-    public ResponseEntity insertCode(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId, @ApiParam(value = "코드 추가 요청 정보", required = true)  @RequestBody CodeRequest codeRequest) throws JsonProcessingException {
+    public ResponseEntity insertCode(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId,
+                                     @ApiParam(value = "코드 추가 요청 정보", required = true)  @RequestBody CodeRequest codeRequest
+                                     ) throws JsonProcessingException {
         String userId = "11";
         String token = "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";
         codeService.insertCode(studyId, userId, token, codeRequest);

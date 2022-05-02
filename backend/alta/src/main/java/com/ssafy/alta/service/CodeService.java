@@ -53,7 +53,7 @@ public class CodeService {
     public void insertCode(Long studyId, String userId, String token, CodeRequest codeRequest) throws JsonProcessingException {
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblemId())
+        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -66,7 +66,7 @@ public class CodeService {
         String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeCreateRequest request = GitCodeCreateRequest.builder()
                 .content(base64Content)
-                .message(codeRequest.getMessage())
+                .message(codeRequest.getCommit_message())
                 .branch("main")
                 .build();
 
