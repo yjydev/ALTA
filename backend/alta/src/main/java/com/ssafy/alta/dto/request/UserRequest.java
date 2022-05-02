@@ -30,7 +30,6 @@ public class UserRequest {
     String name;
     String nickname;
     String role;
-    String access_token;
     int email_alert;
     int site_alert;
 
@@ -40,7 +39,6 @@ public class UserRequest {
                 .name(name)
                 .nickname(nickname)
                 .role(role)
-                .access_token(access_token)
                 .emailAlert(email_alert)
                 .siteAlert(site_alert)
                 .build();

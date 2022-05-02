@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button, Typography, TextField, Box, Grid } from '@mui/material';
+import { Button, Typography, TextField, Box } from '@mui/material';
 
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
