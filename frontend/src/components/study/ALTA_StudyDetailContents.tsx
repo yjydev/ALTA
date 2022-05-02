@@ -20,8 +20,7 @@ export default function ALTA_StudyDetailContents() {
 
   const getReadmeContents = async () => {
     const response = await getRequest('/api');
-    setStudyData(response.data.readme);
-    console.log(response.data.readme);
+    setRoundTable(response.data.readme);
   };
 
   useEffect(() => {
