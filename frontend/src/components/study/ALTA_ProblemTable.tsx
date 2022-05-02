@@ -1,4 +1,4 @@
-import { Button, Grid, Typography, Modal } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Box } from '@mui/system';
 import styled from '@emotion/styled';
