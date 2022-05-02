@@ -1,5 +1,6 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.request.CommentUpdateRequest;
 import com.ssafy.alta.dto.response.CommentResponse;
 import com.sun.istack.NotNull;
 import lombok.Builder;
@@ -78,11 +79,13 @@ public class Comment {
                 .build();
     }
 
-    public void changeStateToSolved() {
-        this.isSolved = true;
+    public void updateComment(CommentUpdateRequest commentUpdateRequest) {
+        this.line = commentUpdateRequest.getLine();
+        this.content = commentUpdateRequest.getContent();
+        this.isSolved = commentUpdateRequest.getIsSolved();
     }
 
-    public void changeStateToNotSolved() {
-        this.isSolved = false;
+    public void changeState(boolean isSolved) {
+        this.isSolved = isSolved;
     }
 }

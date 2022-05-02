@@ -37,7 +37,7 @@ public class CodeRequest {
     @ApiModelProperty(value = "문제 키", required = true)
     private Long problemId;
 
-    @ApiModelProperty(value = "코드", required = true)
+    @ApiModelProperty(value = "코드 내용", required = true)
     private String content;
 
     public Code toCode(User user, Problem problem) {
