@@ -2,12 +2,8 @@ package com.ssafy.alta.jwt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.DefaultSecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -46,7 +42,7 @@ public class JwtFilter extends GenericFilterBean {
     //토큰의 인증정보를 securityContext에 저장하는 역할 수행
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        System.out.println("filter enter");
+//        System.out.println("filter enter");
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String jwt = resolveToken(httpServletRequest); // resolveToken함수를 실행하여, request header에서 토큰을 꺼내온다.
         String requestURI = httpServletRequest.getRequestURI();
@@ -56,7 +52,7 @@ public class JwtFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(authentication); // authentication 객체를 securitycontext에 set한다.
             logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
         } else {
-            System.out.println("fail!!!!");
+//            System.out.println("fail!!!!");
             logger.debug("Invalid JWT, uri: {}", requestURI);
         }
 

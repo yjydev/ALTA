@@ -8,14 +8,14 @@ import DatePicker from '@mui/lab/DatePicker';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
-import { RoundTable } from '../../types/StudyType';
+import { StudyData } from '../../types/StudyType';
 import { blackColor } from '../../modules/colorChart';
 
 import ALTA_ProblemTable from './ALTA_ProblemTable';
 import ALTA_AddBar from './ALTA_AddBar';
 
 export default function ALTA_StudyDetailContents() {
-  const { members, roundTables, setRoundTable, maxPeople } =
+  const { members, studyData, setStudyData, maxPeople } =
     useContext(StudyDetailStore);
 
   const getReadmeContents = async () => {
@@ -29,7 +29,7 @@ export default function ALTA_StudyDetailContents() {
 
   return (
     <Box sx={[wrapper, scrollStyle]}>
-      {roundTables.map((roundTable: RoundTable, i: number) => (
+      {studyData.map((roundTable: StudyData, i: number) => (
         <Box sx={{ margin: '30px 0 60px' }} key={i}>
           <Box sx={sectionStyle}>
             <Typography>{`${roundTable.round} 회차 : ${roundTable.startDate} ~ ${roundTable.endDate}`}</Typography>

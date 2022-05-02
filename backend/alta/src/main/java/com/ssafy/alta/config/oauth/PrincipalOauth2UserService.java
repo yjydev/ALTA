@@ -3,6 +3,7 @@ package com.ssafy.alta.config.oauth;
 import com.ssafy.alta.dto.request.UserRequest;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,6 +17,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -34,17 +37,16 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String role = "ROLE_USER";
 
         User user = userRepository.findByName(name);
-        UserRequest userRequest1 = new UserRequest(id, name, nickname, role, userRequest.getAccessToken().getTokenValue(),3 , 3);
+        UserRequest userRequest1 = new UserRequest(id, name, nickname, role ,3 , 3);
         User newUser = userRequest1.toEntity();
 
-        userRepository.save(newUser);
-//        if (user == null){
-//            System.out.println("fist login .");
-//            userRepository.save(newUser);
-//        }else {
-//            System.out.println("already! access_token change ");
-//            userRepository.save(newUser);
-//        }
+        if (user == null){
+            System.out.println("fist login .");
+            userRepository.save(newUser);
+        }
+
+        redisService.setAccessToken(id,userRequest.getAccessToken().getTokenValue());
+
         return new PrincipalDetails(oAuth2User.getAttributes());
     }
 
