@@ -19,7 +19,7 @@ import {
   generateTimer,
 } from '../../modules/generateAlert';
 
-import ALTA_InputItem from './ALTA_InputItem';
+import ALTA_InputItem from '../common/ALTA_InputItem';
 
 export default function ALTA_ToOrganizeContents() {
   const languages = ['JAVA', 'Python', '기타'];
