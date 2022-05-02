@@ -163,58 +163,6 @@ const omisstionBtnStyle = {
   color: 'error.main',
 };
 
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  backgroundColor: wightColor,
-  color: blackColor,
-  border: `2px solid ${blackColor}`,
-  borderRadius: '5px',
-  boxShadow: 24,
-  p: '40px',
-};
-
-function SellBtn({ path }: { path: string | null }) {
-  return (
-    <>
-      {path ? (
-        <Button>코드 보기</Button>
-      ) : (
-        <Button sx={omisstionBtnStyle}>코드 제출</Button>
-      )}
-    </>
-  );
-}
-
-const tableStyle = {
-  marginTop: '10px',
-};
-
-const tableHeaderStyle = {
-  height: '40px',
-  backgroundColor: subColor,
-};
-
-const tableBodyStyle = {
-  'height': '40px',
-  '&:nth-of-type(even)': {
-    backgroundColor: 'rgba(224, 212, 194, 0.3)',
-  },
-};
-
-const sellStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
-
-const omisstionBtnStyle = {
-  color: 'error.main',
-};
-
 const Input = styled.input`
   all: unset;
   width: 200px;
