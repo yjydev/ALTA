@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 // 스웨거를 사용하기 위해 security 설정을 하지 않는다. -> 무조건 접근 가능!
-                .antMatchers(
+                .antMatchers("/",
                         "/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**",   // swagger
                         "/favicon.ico"
                 )
@@ -64,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 모든 요청은 인증이 되어야 하지만, 로그인관련하여 요청은 다 권한은 허락해주어야 한다.
                     .authorizeRequests()
-                    .antMatchers("/api/user/gitLogin/**").permitAll()
+                    .antMatchers("/api/user/gitLogin/**", "/").permitAll()
                     .anyRequest().authenticated()
 //                .anyRequest().permitAll()
 
