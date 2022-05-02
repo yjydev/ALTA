@@ -7,7 +7,7 @@ export const defaultValue: defaultValueType = {
   loginData: defaultLoginData,
   setLoginData: () => null,
 };
-const LoginDataStore = React.createContext(defaultValue);
+export const LoginDataStore = React.createContext(defaultValue);
 
 //Context Provider 컴포넌트
 export default function LoginDataProvider({ children }: ContextProps) {

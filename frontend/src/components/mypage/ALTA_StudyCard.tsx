@@ -1,6 +1,8 @@
 import { Grid, Typography } from '@mui/material';
 
-export default function ALTA_StudyCard() {
+import { Study } from '../../types/LoginDataType';
+
+export default function ALTA_StudyCard({ study }: Props) {
   return (
     <Grid container sx={studyCardStyle}>
       <Grid item xs={9}>
@@ -10,21 +12,27 @@ export default function ALTA_StudyCard() {
             lineHeight: '50px',
           }}
         >
-          Algorithm Study
+          {study.name}
         </Typography>
       </Grid>
       <Grid item xs={3}>
-        <Typography sx={{ lineHeight: '50px' }}>인원수 3/6</Typography>
+        <Typography sx={{ lineHeight: '50px' }}>
+          인원수 {study.joined}/{study.maxPeople}
+        </Typography>
       </Grid>
       <Grid item xs={9}>
-        <Typography>테스트용 스터디 그룹</Typography>
+        <Typography>{study.introduction}</Typography>
       </Grid>
       <Grid item xs={3}>
-        <Typography>Java</Typography>
+        <Typography>{study.language}</Typography>
       </Grid>
     </Grid>
   );
 }
+
+type Props = {
+  study: Study;
+};
 
 const studyCardStyle = {
   width: '100%',

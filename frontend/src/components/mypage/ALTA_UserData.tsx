@@ -3,29 +3,30 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
+import { LoginData } from '../../types/LoginDataType';
+
 import ALTA_AlertSetting from './ALTA_AlertSetting';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
-export default function ALTA_UserData() {
-  const languages = ['JAVA', 'Python'];
-
+export default function ALTA_UserData({ loginData }: Props) {
   const [fold, setFold] = useState(true);
 
-  const time = '새벽';
   return (
     <Box sx={wrapper}>
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
-      <Box sx={[userDataStyle, fold ? '' : unfold]}>
+      <Box sx={[userDataStyle, fold ? null : unfold]}>
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}></Box>
           <Box sx={prifileDataStyle}>
             <Typography sx={nicknameStyle}>
-              닉네임
+              {loginData.nickname}
               <GitHubIcon sx={{ marginLeft: '10px' }} />
             </Typography>
             <TextArea disabled></TextArea>
-            <Typography>사용 언어 : {languages.join(' ')}</Typography>
-            <Typography>활동 시간 : {time}</Typography>
+            <Typography>
+              사용 언어 : {loginData.languageList.join(' ')}
+            </Typography>
+            <Typography>활동 시간 : {loginData.time}</Typography>
           </Box>
         </Box>
         <Box>
@@ -38,6 +39,10 @@ export default function ALTA_UserData() {
     </Box>
   );
 }
+
+type Props = {
+  loginData: LoginData;
+};
 
 const wrapper = {
   position: 'absolute',

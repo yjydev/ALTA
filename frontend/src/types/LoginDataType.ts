@@ -4,11 +4,13 @@ type Alert = {
   read: boolean;
 };
 
-type Study = {
+export type Study = {
   id: number;
   name: string;
   introduction: string;
   language: string;
+  maxPeople: number;
+  joined: number;
 };
 
 export type LoginData = {

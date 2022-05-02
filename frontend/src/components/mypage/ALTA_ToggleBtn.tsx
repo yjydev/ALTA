@@ -51,14 +51,18 @@ const IOSSwitch = styled((props) => (
   },
 }));
 
-export default function ALTA_ToggleBtn({ children }) {
+export default function ALTA_ToggleBtn({ children }: Props) {
   return (
     <Box sx={toggleButtonStyle}>
       <Typography sx={toggleLabelStyle}>{children}</Typography>
-      <FormControlLabel control={<IOSSwitch sx={switchStyle} />} />
+      <FormControlLabel label="" control={<IOSSwitch sx={switchStyle} />} />
     </Box>
   );
 }
+
+type Props = {
+  children: React.ReactNode;
+};
 
 const switchStyle = {
   margin: '5px 0 0 10px',
