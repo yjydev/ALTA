@@ -1,10 +1,12 @@
 package com.ssafy.alta.service;
 
-import com.ssafy.alta.dto.request.CommentRequest;
+import com.ssafy.alta.dto.request.CommentCreateRequest;
+import com.ssafy.alta.dto.request.CommentUpdateRequest;
 import com.ssafy.alta.dto.response.CommentResponse;
 import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Comment;
 import com.ssafy.alta.entity.User;
+import com.ssafy.alta.exception.CommentWriterNotMatchException;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.CodeRepository;
 import com.ssafy.alta.repository.CommentRepository;
@@ -46,7 +48,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void insertComment(String userId, CommentRequest commentRequest) {
+    public void insertComment(String userId, CommentCreateRequest commentRequest) {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCodeId())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)).orElseThrow(DataNotFoundException::new);
@@ -61,5 +63,33 @@ public class CommentService {
     @Transactional
     public void updateCommentListSolved(Code code) {
         commentRepository.updateCodeSolvedByCodeId(code, true);
+    }
+
+    @Transactional
+    public void deleteComment(String userId, Long commentId) {
+        Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
+        Comment comment = optComment.get();
+        if(!userId.equals(comment.getUser().getId())) // 댓글 작성자가 맞는지를 확인 -> 아니라면 exception 발생
+            throw new CommentWriterNotMatchException();
+            
+        commentRepository.deleteById(commentId);
+    }
+
+    @Transactional
+    public void updateComment(String userId, Long commentId, CommentUpdateRequest commentUpdateRequestment) {
+        Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
+        Comment comment = optComment.get();
+        if(!userId.equals(comment.getUser().getId()))
+            throw new CommentWriterNotMatchException();
+        comment.updateComment(commentUpdateRequestment);
+    }
+
+    @Transactional
+    public void updateCommentSolved(String userId, Long commentId, boolean isSolved) {
+        Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
+        Comment comment = optComment.get();
+        if(!userId.equals(comment.getUser().getId()))
+            throw new CommentWriterNotMatchException();
+        comment.changeState(isSolved);
     }
 }
