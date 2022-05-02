@@ -37,6 +37,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final CodeRepository codeRepository;
+    private final UserService userService;
 
     public List<CommentResponse> selectCommentList(Code code) {
         List<Comment> commentList = commentRepository.findCommentsByCodeOrderByCreateDateDesc(code);
@@ -48,7 +49,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void insertComment(String userId, CommentCreateRequest commentRequest) {
+    public void insertComment(CommentCreateRequest commentRequest) {
+        String userId = userService.getCurrentUserId();
+
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCode_id())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)).orElseThrow(DataNotFoundException::new);
@@ -66,7 +69,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(String userId, Long commentId) {
+    public void deleteComment(Long commentId) {
+        String userId = userService.getCurrentUserId();
+
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId())) // 댓글 작성자가 맞는지를 확인 -> 아니라면 exception 발생
@@ -76,7 +81,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(String userId, Long commentId, CommentUpdateRequest commentUpdateRequestment) {
+    public void updateComment(Long commentId, CommentUpdateRequest commentUpdateRequestment) {
+        String userId = userService.getCurrentUserId();
+
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId()))
