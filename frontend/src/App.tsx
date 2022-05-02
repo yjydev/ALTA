@@ -19,7 +19,10 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<ALTA_Login />} />
-            <Route path="/code" element={<ALTA_Code />} />
+            <Route
+              path="/study/:studyId/code/:codeId"
+              element={<ALTA_Code />}
+            />
             <Route path="/organize" element={<ALTA_ToOrganize />} />
             <Route path="/study/detail" element={<ALTA_StudyDetail />} />
             <Route path="/study/:studyId/member" element={<ALTA_Member />} />
