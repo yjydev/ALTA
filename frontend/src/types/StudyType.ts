@@ -30,7 +30,7 @@ export type Problem = {
   codes: Code[];
 };
 
-export type RoundTable = {
+export type StudyData = {
   id: number;
   startDate: string;
   endDate: string;

@@ -1,18 +1,26 @@
 import { Button, Grid, Typography } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Box } from '@mui/system';
-
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+
 import { Member, Problem, Code } from '../../types/StudyType';
 import { blackColor, subColor, wightColor } from '../../modules/colorChart';
 
 import ALTA_AddBar from './ALTA_AddBar';
 
+type Props = {
+  problems: Problem[];
+  members: Member[];
+  maxPeople: number;
+};
 export default function ALTA_ProblemTable({
   problems,
   members,
   maxPeople,
 }: Props) {
+  const navigate = useNavigate();
+
   const findCode = (nickname: string, codes: Code[]): string | null => {
     for (const code of codes) {
       if (code.nickname === nickname) return code.path;
@@ -20,15 +28,47 @@ export default function ALTA_ProblemTable({
     return null;
   };
 
-  const SellBtn = (path: string | null) => (
-    <>
-      {path ? (
-        <Button>코드 보기</Button>
-      ) : (
-        <Button sx={omisstionBtnStyle}>코드 제출</Button>
-      )}
-    </>
-  );
+  function Front() {
+    return <AddCircleIcon sx={{ color: blackColor, opacity: '0.5' }} />;
+  }
+
+  function Back() {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          height: 'inherit',
+          width: '100%',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
+          <Typography sx={{ marginRight: '10px' }}>문제 이름</Typography>
+          <Input type="text" />
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
+          <Typography sx={{ marginRight: '10px' }}>링크</Typography>
+          <Input type="text" style={{ width: '350px' }} />
+        </Box>
+      </Box>
+    );
+  }
+
+  function SellBtn({ path, problemId }: SellBtnProps) {
+    const submitCode = () => navigate('/code-submit', { state: { problemId } });
+
+    return (
+      <>
+        {path ? (
+          <Button>코드 보기</Button>
+        ) : (
+          <Button sx={omisstionBtnStyle} onClick={submitCode}>
+            코드 제출
+          </Button>
+        )}
+      </>
+    );
+  }
 
   return (
     <Box sx={tableStyle}>
@@ -55,9 +95,9 @@ export default function ALTA_ProblemTable({
       <Box>
         {problems.length > 0 ? (
           problems.map((problem) => (
-            <Box key={problem.id} sx={tableBodyStyle}>
+            <Box key={problem.id}>
               <Box>
-                <Grid container>
+                <Grid container sx={tableBodyStyle}>
                   <Grid item xs={5} sx={sellStyle}>
                     <Typography>{problem.name}</Typography>
                   </Grid>
@@ -66,11 +106,14 @@ export default function ALTA_ProblemTable({
                       {members.map((member, i) => (
                         <Grid item key={i} xs={12 / maxPeople} sx={sellStyle}>
                           <Typography>
-                            {member.nickname
-                              ? SellBtn(
-                                  findCode(member.nickname, problem.codes),
-                                )
-                              : '-'}
+                            {member.nickname ? (
+                              <SellBtn
+                                path={findCode(member.nickname, problem.codes)}
+                                problemId={problem.id}
+                              />
+                            ) : (
+                              '-'
+                            )}
                           </Typography>
                         </Grid>
                       ))}
@@ -89,11 +132,11 @@ export default function ALTA_ProblemTable({
   );
 }
 
-type Props = {
-  problems: Problem[];
-  members: Member[];
-  maxPeople: number;
+type SellBtnProps = {
+  path: string | null;
+  problemId: number;
 };
+
 const tableStyle = {
   marginTop: '10px',
 };
@@ -119,32 +162,6 @@ const sellStyle = {
 const omisstionBtnStyle = {
   color: 'error.main',
 };
-
-function Front() {
-  return <AddCircleIcon sx={{ color: blackColor, opacity: '0.5' }} />;
-}
-
-function Back() {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        height: 'inherit',
-        width: '100%',
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
-        <Typography sx={{ marginRight: '10px' }}>문제 이름</Typography>
-        <Input type="text" />
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
-        <Typography sx={{ marginRight: '10px' }}>링크</Typography>
-        <Input type="text" style={{ width: '350px' }} />
-      </Box>
-    </Box>
-  );
-}
 
 const Input = styled.input`
   all: unset;
