@@ -59,10 +59,8 @@ export default function ALTA_CodeEditor({
           </Box>
           <Box sx={titleStyle}>
             <TextField
+              sx={titleInput}
               defaultValue={problemName}
-              style={{
-                width: '30rem',
-              }}
               inputProps={{ style: { fontSize: 35 } }}
               onChange={(e) => handleEditData(e.target.value, 'file_name')}
             />
@@ -76,6 +74,7 @@ export default function ALTA_CodeEditor({
       <Grid item>
         <Box sx={codeBlockStyle} className="codeBlock">
           <MonacoEditor
+            id="code-monaco-editor"
             language={language}
             value={code}
             options={{
@@ -102,6 +101,10 @@ const titleStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'baseline',
+};
+
+const titleInput = {
+  width: '30rem',
 };
 
 const problemStyle = {

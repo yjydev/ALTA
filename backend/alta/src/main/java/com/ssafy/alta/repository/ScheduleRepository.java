@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    Optional<Schedule> findTop1ByStudyStudyIdOrderByRoundDesc(Long study_id);
-    List<Schedule> findByStudyStudyIdOrderByRound(Long study_id);
-    Optional<Schedule> findByStudyStudyIdAndId(Long study_id, Long schedule_id);
+    Optional<Schedule> findTop1ByStudyStudyIdOrderByRoundDesc(Long studyId);
+    List<Schedule> findByStudyStudyIdOrderByRound(Long studyId);
+    Optional<Schedule> findByStudyStudyIdAndId(Long studyId, Long scheduleId);
 }

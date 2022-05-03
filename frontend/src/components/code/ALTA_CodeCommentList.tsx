@@ -1,5 +1,4 @@
-import { useState } from 'react';
-
+import { useState, useContext } from 'react';
 import {
   Divider,
   Grid,
@@ -11,18 +10,49 @@ import {
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
 
-import { Review } from '../../types/CodeBlockType';
+import { postRequest } from '../../api/request';
+import { CodeReviewStore } from '../../context/CodeReviewContext';
+import { Review, PostReview } from '../../types/CodeBlockType';
 
 import ALTA_CodeCommentCard from './ALTA_CodeCommentCard';
 
-export default function ALTA_CodeCommentList({ reviews_data }: Props) {
-  const [isCompleted, setisCompleted] = useState(false);
+export default function ALTA_CodeCommentList({
+  reviews_data,
+  codeId,
+}: {
+  reviews_data: Review[];
+  codeId: string;
+}) {
+  const [isCompleted, setisCompleted] = useState<boolean>(false);
+
+  const { codeLine } = useContext(CodeReviewStore);
 
   const reviews = isCompleted
-    ? reviews_data.filter((review) => review['completed'] === false)
-    : reviews_data;
+    ? reviews_data
+    : reviews_data.filter((review) => review['completed'] === false);
 
   // console.log(reviews_data);
+  const [newReview, setNewReview] = useState<PostReview>({
+    code_id: parseInt(codeId),
+    content: '',
+    line: codeLine,
+  });
+
+  const handleRequest = (e: string, key: string) => {
+    const newRequest: PostReview = { ...newReview };
+    // newReview[key] = String(e);
+    // console.log(newReview);
+  };
+
+  const handleNewReview = async () => {
+    const startIdx: number = newReview.content.lastIndexOf(`${codeLine}`) + 5;
+    const review: string = newReview.content.substring(startIdx);
+    // try {
+    //   await postRequest('/api/code/review', JSON.stringify);
+    // } catch (err) {
+    //   console.log(err);
+    // }
+  };
 
   return (
     <Grid container direction="column">
@@ -38,7 +68,7 @@ export default function ALTA_CodeCommentList({ reviews_data }: Props) {
               name="isCompleted"
             />
             <Typography sx={{ display: 'inline-block' }}>
-              UnResolved View
+              전체 댓글 보기
             </Typography>
           </Grid>
         </Grid>
@@ -53,11 +83,14 @@ export default function ALTA_CodeCommentList({ reviews_data }: Props) {
                 multiline
                 rows={2}
                 placeholder="댓글을 입력해주세요."
+                defaultValue={codeLine === 0 ? null : `${codeLine}번 줄 `}
                 fullWidth
+                required
+                onChange={(e) => handleRequest(e.target.value, 'content')}
               />
             </Grid>
             <Grid item xs={1}>
-              <IconButton>
+              <IconButton onClick={handleNewReview}>
                 <AddCircleIcon style={addButton} />
               </IconButton>
             </Grid>
@@ -84,8 +117,4 @@ const addButton = {
 const comment_wrapper = {
   justifyContent: 'center',
   alignItems: 'center',
-};
-
-type Props = {
-  reviews_data: Review[];
 };
