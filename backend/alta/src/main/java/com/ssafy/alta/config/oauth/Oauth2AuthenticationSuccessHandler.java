@@ -43,10 +43,12 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        String jwt = tokenProvider.createAccessToken(authentication);
-        System.out.println("JWT = " + jwt);
+        String jwtAt = tokenProvider.createAccessToken(authentication);
+        String jwtRt = tokenProvider.createRefreshToken(authentication);
+        System.out.println("jwtAt = " + jwtAt);
+        System.out.println("jwtRt = " + jwtRt);
 
-        getRedirectStrategy().sendRedirect(request, response, address+"?jwtAT="+jwt);
+        getRedirectStrategy().sendRedirect(request, response, address+"?jwtAT="+jwtAt+"?jwtRT="+jwtRt);
 //        getRedirectStrategy().sendRedirect(request, response, addr+"?jwtAT="+jwt);
     }
 }

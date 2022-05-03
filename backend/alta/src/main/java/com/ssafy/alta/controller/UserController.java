@@ -34,7 +34,7 @@ public class UserController {
 //    }
 
     @GetMapping("/test")
-    public void getUserInfo2( @RequestHeader String Authorization) {
+    public void getUserInfo2( @RequestHeader String ACCESS_TOKEN) {
         redisService.getAccessToken();
     }
 

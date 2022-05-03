@@ -23,6 +23,9 @@ public enum ErrorCode {
     HANDLE_ACCESS_DENIED("U001", HttpStatus.UNAUTHORIZED, "접근이 제한됩니다."),  // 유저
     DB_NOT_FOUND_ERROR("G001", HttpStatus.NOT_FOUND, "일치하는 데이터가 없습니다."), // 글로벌
 
+    /* JWT REFRESH TOKEN 기간 만료 에러 */
+    EXPIRED_REFRESH_TOKEN("JWT001", HttpStatus.FORBIDDEN, "리프레시 토큰 기한이 만료되어 재로그인이 필요합니다."),
+
     /* 500 INTERNAL_SERVER_ERROR : 서버 내부 오류 */
     INTERNAL_SERVER_ERROR("G002", HttpStatus.INTERNAL_SERVER_ERROR, "서버에 에러가 발생했습니다."),
 
