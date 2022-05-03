@@ -12,7 +12,7 @@ import { StudyData } from '../../types/StudyType';
 import { blackColor } from '../../modules/colorChart';
 
 import ALTA_ProblemTable from './ALTA_ProblemTable';
-import ALTA_AddBar from './ALTA_AddBar';
+import ALTA_AddBar from '../common/ALTA_AddBar';
 
 export default function ALTA_StudyDetailContents() {
   const { members, studyData, setStudyData, maxPeople } =
@@ -21,7 +21,6 @@ export default function ALTA_StudyDetailContents() {
   const getReadmeContents = async () => {
     const response = await getRequest('/api');
     setStudyData(response.data.readme);
-    console.log(response.data.readme);
   };
 
   useEffect(() => {
