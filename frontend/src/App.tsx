@@ -3,7 +3,6 @@ import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 
 import './App.css';
-import LoginTokenChecker from './modules/LoginTokenChecker';
 
 import LoginDataProvider from './context/LoginDataContext';
 import ALTA_Login from './pages/ALTA_Login';
@@ -16,10 +15,6 @@ import ALTA_Member from './pages/ALTA_Member';
 import ALTA_Mypage from './pages/ALTA_Mypage';
 
 function App() {
-  LoginTokenChecker(
-    'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1MzM0OTI4NCIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE2NTE0NjY5NzN9.rnC5PSPaEWxUjqEtcn0cuH3N-GnV55tcZNhawtgB4FAx-2-Pmg9CowsYJV8_bEJrxsN1EMi21zIlRPJw4V_-Wg',
-  );
-
   return (
     <LoginDataProvider>
       <ThemeProvider theme={theme}>

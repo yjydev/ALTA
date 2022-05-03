@@ -2,8 +2,13 @@ import ALTA_Template from '../components/common/ALTA_Template';
 import ALTA_Inner from '../components/common/ALTA_Inner';
 import ALTA_Header from '../components/common/ALTA_Header';
 import ALTA_MypageContents from '../components/mypage/ALTA_MypageContents';
+import { useEffect } from 'react';
+import LoginTokenChecker from '../modules/LoginTokenChecker';
 
 export default function ALTA_Mypage() {
+  useEffect(() => {
+    LoginTokenChecker();
+  }, []);
   return <ALTA_Template header={<Header />} contents={<Contents />} />;
 }
 

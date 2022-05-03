@@ -28,22 +28,25 @@ type Props = {
 
 const wrapper = {
   display: 'flex',
+  justifyContent: 'space-between',
+  width: '100%',
   margin: '10px 0',
   minHeight: '50px',
   transition: '.2s',
 };
 
 const labelStyle = {
-  width: '200px',
+  width: '120px',
+  marginRight: '10px',
   fontSize: '21px',
 };
 
 const fieldStyle = {
   display: 'flex',
+  flex: '1 1 auto',
   flexDirection: 'column',
   alignItems: 'start',
   position: 'relative',
-  width: '500px',
   transition: '.4s',
 };
 
