@@ -1,5 +1,7 @@
 package com.ssafy.alta.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.alta.dto.request.GithubRepoRequest;
 import com.ssafy.alta.dto.request.StudyJoinInfoRequest;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
 import com.ssafy.alta.dto.request.StudyRequest;
@@ -7,6 +9,8 @@ import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
+import com.ssafy.alta.exception.UnAuthorizedException;
+import com.ssafy.alta.gitutil.GitRepoAPI;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.StudyRepository;
 import com.ssafy.alta.repository.UserRepository;
@@ -36,9 +40,10 @@ public class StudyService {
     private final StudyJoinInfoRepository sjiRepository;
     private final UserService userService;
     private final RedisService redisService;
+    private final GitRepoAPI gitRepoAPI = new GitRepoAPI();
 
     @Transactional(rollbackFor = Exception.class)
-    public void insertStudy(StudyRequest studyRequest) {
+    public void insertStudy(StudyRequest studyRequest) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
@@ -49,8 +54,19 @@ public class StudyService {
         studyRequest.setUser(user);
         studyRequest.setCode(UUID.randomUUID().toString().substring(0, 8));
 
+        String repoName = studyRequest.getRepositoryName().trim();
+        studyRequest.setRepositoryName(repoName);
+
         Study study = studyRepository.save(studyRequest.toEntity());
         sjiRepository.save(new StudyJoinInfoRequest(user, study, "가입", "그룹장", true, new Date()).toEntity());
+
+        GithubRepoRequest githubRepoRequest = GithubRepoRequest.builder()
+                .name(study.getRepositoryName())
+                .description(study.getIntroduction())
+                .auto_init(true)
+                .build();
+
+        gitRepoAPI.insertRepo(token, githubRepoRequest);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -59,10 +75,10 @@ public class StudyService {
         String token = redisService.getAccessToken();
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다.")));
+                .orElseThrow(DataNotFoundException::new));
 
         if(!optSJI.get().getState().equals("가입")) {
-            throw new IllegalArgumentException("가입이 필요합니다.");
+            throw new UnAuthorizedException();
         }
 
         HashMap<String, Object> map = new HashMap<>();
