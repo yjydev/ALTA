@@ -1,48 +1,69 @@
-import { Box, Button, Typography } from '@mui/material';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import styled from '@emotion/styled';
+import { Box, Button } from '@mui/material';
 import { useState } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { LoginData } from '../../types/LoginDataType';
 
 import ALTA_AlertSetting from './ALTA_AlertSetting';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
+import ALTA_UserDataEdit from './ALTA_UserDataEdit';
+import ALTA_UserDataDisplay from './ALTA_UserDataDisplay';
+
+type Props = {
+  loginData: LoginData;
+};
 
 export default function ALTA_UserData({ loginData }: Props) {
-  const [fold, setFold] = useState(true);
+  const [alertFold, setAlertFold] = useState<boolean>(true);
+  const [isEditPage, setIsEditPage] = useState<boolean>(false);
+
+  const openEditPage = () => {
+    setAlertFold(true);
+    setIsEditPage(!isEditPage);
+  };
+  const submitUserData = () => {
+    setIsEditPage(false);
+  };
 
   return (
     <Box sx={wrapper}>
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
-      <Box sx={[userDataStyle, fold ? null : unfold]}>
+      <Box sx={[userDataStyle, alertFold ? null : unfold]}>
+        {isEditPage ? null : (
+          <EditIcon sx={[editButtonStyle, inTop]} onClick={openEditPage} />
+        )}
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}></Box>
-          <Box sx={prifileDataStyle}>
-            <Typography sx={nicknameStyle}>
-              {loginData.nickname}
-              <GitHubIcon sx={{ marginLeft: '10px' }} />
-            </Typography>
-            <TextArea disabled></TextArea>
-            <Typography>
-              사용 언어 : {loginData.languageList.join(' ')}
-            </Typography>
-            <Typography>활동 시간 : {loginData.time}</Typography>
+          <Box sx={profileDataStyle}>
+            {isEditPage ? (
+              <ALTA_UserDataEdit loginData={loginData} />
+            ) : (
+              <ALTA_UserDataDisplay loginData={loginData} />
+            )}
           </Box>
         </Box>
         <Box>
           <ALTA_AlertSetting />
         </Box>
-        <Button sx={editButtonStyle} onClick={() => setFold(!fold)}>
-          {fold ? '알림 설정' : '설정 완료'}
-        </Button>
+        {isEditPage ? (
+          <Box sx={[editButtonStyle, inBottom]}>
+            <Button onClick={submitUserData}>수정 완료</Button>
+            <Button onClick={submitUserData} color="error">
+              수정 취소
+            </Button>
+          </Box>
+        ) : (
+          <Button
+            sx={[editButtonStyle, inBottom]}
+            onClick={() => setAlertFold(!alertFold)}
+          >
+            {alertFold ? '알림 설정' : '설정 완료'}
+          </Button>
+        )}
       </Box>
     </Box>
   );
 }
-
-type Props = {
-  loginData: LoginData;
-};
 
 const wrapper = {
   position: 'absolute',
@@ -53,17 +74,19 @@ const wrapper = {
 
 const userDataStyle = {
   position: 'relative',
-  height: '200px',
+  height: '300px',
   marginBottom: '100px',
   padding: '40px 20px',
   borderRadius: '10px',
-  transition: '.3s',
+  transition: 'height .3s',
   backgroundColor: '#fff',
   overflow: 'hidden',
+  boxSizing: 'border-box',
 };
 
 const userDataTopStyle = {
   display: 'flex',
+  position: 'relative',
   marginBottom: '100px',
 };
 
@@ -78,28 +101,19 @@ const profileImgStyle = {
   backgroundColor: 'black',
 };
 
-const prifileDataStyle = {
-  marginLeft: '50px',
+const profileDataStyle = {
   flex: '1 1 auto',
+  marginLeft: '50px',
 };
-
-const nicknameStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  marginBottom: '20px',
-  fontSize: '20px',
-  fontWeight: 'bold',
-};
-
 const editButtonStyle = {
   position: 'absolute',
+};
+
+const inTop = {
+  top: '10px',
+  right: '10px',
+};
+const inBottom = {
   bottom: '10px',
   right: '10px',
 };
-
-const TextArea = styled.textarea`
-  all: unset;
-  width: 80%;
-  margin-bottom: 20px;
-  background-color: orange;
-`;

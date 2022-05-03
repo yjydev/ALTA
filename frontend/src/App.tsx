@@ -1,10 +1,8 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 
 import './App.css';
-import LoginTokenChecker from './modules/LoginTokenChecker';
 
 import LoginDataProvider from './context/LoginDataContext';
 import ALTA_Login from './pages/ALTA_Login';
