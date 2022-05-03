@@ -92,7 +92,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateCommentSolved(String userId, Long commentId, boolean isSolved) {
+    public void updateCommentSolved(Long commentId, boolean isSolved) {
+        String userId = userService.getCurrentUserId();
+
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId()))

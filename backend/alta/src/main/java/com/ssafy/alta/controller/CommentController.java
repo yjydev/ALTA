@@ -56,7 +56,7 @@ public class CommentController {
     @ApiOperation(value = "코드 댓글 상태 변경", notes = "댓글 해결 여부를 변경합니다.")
     public ResponseEntity updateCommentSolved(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id") Long reviewId, @ApiParam(value = "댓글 상태", required = true) @RequestBody CommentUpdateSolvedRequest request) {
         String userId = "11";
-        commentService.updateCommentSolved(userId, reviewId, request.is_solved());
+        commentService.updateCommentSolved(reviewId, request.getIs_solved());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

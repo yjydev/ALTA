@@ -121,6 +121,7 @@ public class CodeService {
             gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
         } catch(HttpClientErrorException e) {
             System.out.println("조회할 파일이 github에 없음");
+            e.printStackTrace();
         }
 
         // if(gitCodeResponse == null) {}
@@ -160,6 +161,7 @@ public class CodeService {
         try {
             gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
         } catch(HttpClientErrorException e) {
+            e.printStackTrace();
             System.out.println("삭제할 파일이 github에 없음");
         }
 
