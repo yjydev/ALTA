@@ -47,12 +47,17 @@ public class CodeService {
     private final ProblemRepository problemRepository;
     private final StudyRepository studyRepository;
     private final CommentService commentService;
+    private final UserService userService;
+    private final RedisService redisService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
 
     @Transactional(rollbackFor = Exception.class)
-    public void insertCode(Long studyId, String userId, String token, CodeRequest codeRequest) throws JsonProcessingException {
+    public void insertCode(Long studyId, CodeRequest codeRequest) throws JsonProcessingException {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
@@ -86,7 +91,9 @@ public class CodeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId, String token) {
+    public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId) {
+        String token = redisService.getAccessToken();
+
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
@@ -119,7 +126,9 @@ public class CodeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCode(Long studyId, Long codeId, String token) throws JsonProcessingException {
+    public void deleteCode(Long studyId, Long codeId) throws JsonProcessingException {
+        String token = redisService.getAccessToken();
+
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)

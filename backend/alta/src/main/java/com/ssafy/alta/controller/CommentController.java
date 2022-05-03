@@ -41,7 +41,6 @@ public class CommentController {
     @DeleteMapping("/{review_id}")
     @ApiOperation(value = "코드 댓글 삭제", notes = "댓글을 삭제합니다.")
     public ResponseEntity deleteComment(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id") Long reviewId) {
-        String userId = "11";
         commentService.deleteComment(reviewId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
