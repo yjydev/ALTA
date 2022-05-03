@@ -10,6 +10,7 @@ type Props = {
 };
 
 export default function ALTA_UserDataEdit({ loginData }: Props) {
+  console.log(loginData);
   return (
     <Box>
       <ALTA_InputItem label="닉네임">
