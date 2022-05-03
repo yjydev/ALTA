@@ -9,6 +9,7 @@ import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
+import com.ssafy.alta.exception.DuplicateRepoException;
 import com.ssafy.alta.exception.UnAuthorizedException;
 import com.ssafy.alta.gitutil.GitRepoAPI;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
@@ -17,6 +18,7 @@ import com.ssafy.alta.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.*;
 
@@ -56,6 +58,10 @@ public class StudyService {
 
         String repoName = studyRequest.getRepositoryName().trim();
         studyRequest.setRepositoryName(repoName);
+
+        if (!gitRepoAPI.selectRepo(token, user.getName(), repoName)) {
+            throw new DuplicateRepoException();
+        }
 
         Study study = studyRepository.save(studyRequest.toEntity());
         sjiRepository.save(new StudyJoinInfoRequest(user, study, "가입", "그룹장", true, new Date()).toEntity());
