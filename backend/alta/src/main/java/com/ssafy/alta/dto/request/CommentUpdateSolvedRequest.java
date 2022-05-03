@@ -23,5 +23,5 @@ import lombok.ToString;
 @ToString
 public class CommentUpdateSolvedRequest {
     @ApiModelProperty(value = "해결 여부", required = true)
-    private boolean is_solved;
+    private Boolean is_solved;
 }

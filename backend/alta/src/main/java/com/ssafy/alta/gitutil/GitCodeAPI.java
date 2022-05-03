@@ -44,6 +44,7 @@ public class GitCodeAPI {
 
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonBody, httpHeaders);
         String url = "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
+        System.out.println(url);
 
         ResponseEntity<HashMap> response = restTemplate.exchange(url, method, httpEntity, HashMap.class);
         String sha = "";
@@ -58,6 +59,7 @@ public class GitCodeAPI {
 
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
         String url = "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
+        System.out.println(url);
 
         ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, HashMap.class);
         String sha = response.getBody().get("sha").toString();
