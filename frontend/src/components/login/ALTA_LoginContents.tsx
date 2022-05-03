@@ -3,15 +3,8 @@ import styled from '@emotion/styled';
 import GithubButton from 'react-github-login-button';
 
 import Logo from '../../images/logo.png';
-import { useNavigate } from 'react-router-dom';
 
 export default function ALTA_LoginContents() {
-  const navigate = useNavigate();
-  const login = () => {
-    console.log('login');
-    navigate('/auth');
-  };
-
   return (
     <Box sx={wrapper}>
       <Grid
@@ -30,11 +23,12 @@ export default function ALTA_LoginContents() {
         </Grid>
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
           <Box sx={loginForm}>
-            <GithubButton
-              label="Github 계정으로 로그인하기"
-              style={{ width: '100%' }}
-              onClick={login}
-            />
+            <A href="http://localhost:8000/githubLogin">
+              <GithubButton
+                label="Github 계정으로 로그인하기"
+                style={{ width: '100%' }}
+              />
+            </A>
             <Typography sx={[userInput, signUpGuide]}>
               Github 계정이 없으신가요?
               <Link
@@ -89,4 +83,8 @@ const signUpGuide = {
 
 const Img = styled.img`
   width: 150px;
+`;
+
+const A = styled.a`
+  all: unset;
 `;
