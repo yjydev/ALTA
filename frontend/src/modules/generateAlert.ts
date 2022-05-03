@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 
 import '../style/AlertStyle.css';
-import { mainColor, wightColor, blackColor, errorColor } from './colorChart';
+import { mainColor, whiteColor, blackColor, errorColor } from './colorChart';
 
 export function generateCheck(title: string, text: string) {
   Swal.fire({
@@ -13,7 +13,7 @@ export function generateCheck(title: string, text: string) {
     confirmButtonColor: mainColor,
     confirmButtonText: '확인',
     color: blackColor,
-    background: wightColor,
+    background: whiteColor,
   }).then(() => {
     console.log('end');
   });
@@ -26,7 +26,7 @@ export function generateError(title: string, text: string) {
     icon: 'error',
     iconColor: errorColor,
     color: blackColor,
-    background: wightColor,
+    background: whiteColor,
     showConfirmButton: true,
     confirmButtonColor: errorColor,
     confirmButtonText: '돌아가기',
@@ -41,7 +41,7 @@ export function generateTimer(title: string, text: string) {
     text,
     color: blackColor,
     iconColor: mainColor,
-    background: wightColor,
+    background: whiteColor,
     allowOutsideClick: false,
     showCancelButton: false,
     timerProgressBar: true,

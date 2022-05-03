@@ -11,34 +11,18 @@ import {
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
 
+import { Review } from '../../types/CodeBlockType';
+
 import ALTA_CodeCommentCard from './ALTA_CodeCommentCard';
 
-export default function ALTA_CodeCommentList() {
-  // 테스트용 데이터
-  const reviews_data = [
-    {
-      review_id: '1',
-      reviewer: 'jyj',
-      comment: '댓글 내용',
-      comment_date: '2022/04/18',
-      code_number: '4',
-      completed: true,
-    },
-    {
-      review_id: '2',
-      reviewer: 'jyj2',
-      comment: '댓글 내용2',
-      comment_date: '2022/04/26',
-      code_number: '6',
-      completed: false,
-    },
-  ];
-
+export default function ALTA_CodeCommentList({ reviews_data }: Props) {
   const [isCompleted, setisCompleted] = useState(false);
 
-  var reviews = isCompleted
+  const reviews = isCompleted
     ? reviews_data.filter((review) => review['completed'] === false)
     : reviews_data;
+
+  // console.log(reviews_data);
 
   return (
     <Grid container direction="column">
@@ -62,7 +46,7 @@ export default function ALTA_CodeCommentList() {
       <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
       <Grid item>
         <Box sx={addCommentStyle}>
-          <Grid container justify="center" align="center" columns={17}>
+          <Grid container sx={comment_wrapper} columns={17}>
             <Grid item xs={16}>
               <TextField
                 id="outlined-multiline-static"
@@ -95,4 +79,13 @@ const addCommentStyle = {
 
 const addButton = {
   fontSize: '50',
+};
+
+const comment_wrapper = {
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
+type Props = {
+  reviews_data: Review[];
 };

@@ -23,10 +23,12 @@ export default function ALTA_LoginContents() {
         </Grid>
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
           <Box sx={loginForm}>
-            <GithubButton
-              label="Github 계정으로 로그인하기"
-              style={{ width: '100%' }}
-            />
+            <A href="http://localhost:8000/githubLogin">
+              <GithubButton
+                label="Github 계정으로 로그인하기"
+                style={{ width: '100%' }}
+              />
+            </A>
             <Typography sx={[userInput, signUpGuide]}>
               Github 계정이 없으신가요?
               <Link
@@ -81,4 +83,8 @@ const signUpGuide = {
 
 const Img = styled.img`
   width: 150px;
+`;
+
+const A = styled.a`
+  all: unset;
 `;

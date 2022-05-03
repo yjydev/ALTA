@@ -11,11 +11,9 @@ import {
   Link,
 } from '@mui/material';
 
-import { CodeBlockContext } from '../../context/CodeBlockContext';
-
 export default function ALTA_CodeCommentCard({ review }) {
   const [isResolved, setisResolved] = useState(review['completed']);
-  const { setCodeLine } = useContext(CodeBlockContext);
+  // const { setCodeLine } = useContext(CodeBlockContext);
 
   const changeResolved = () => {
     setisResolved(!isResolved);
@@ -24,20 +22,20 @@ export default function ALTA_CodeCommentCard({ review }) {
   };
 
   const moveToLine = () => {
-    setCodeLine(review['code_number']);
+    // setCodeLine(review['code_number']);
     // 추후 해당 라인 스크롤링 이벤트 구현 예정
   };
 
   return (
     <Box>
-      <Paper>
+      <Paper style={{ margin: '30px 0' }}>
         <Grid container direction="row" px={2} py={1} columns={16}>
           <Grid item pt={2} md={1} sx={profileStyle}>
             <Avatar src="profile_default.png" />
           </Grid>
           <Grid item md={15}>
             <Grid sx={infoStyle}>
-              <h4>{review['reviewer']}</h4>
+              <h4>{review['reviewer_name']}</h4>
               <p style={{ color: 'gray' }}>{review['comment_date']}</p>
             </Grid>
             <Grid sx={infoStyle}>
@@ -65,7 +63,6 @@ export default function ALTA_CodeCommentCard({ review }) {
           </Grid>
         </Grid>
       </Paper>
-      <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
     </Box>
   );
 }
