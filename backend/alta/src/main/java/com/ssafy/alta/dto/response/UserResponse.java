@@ -2,6 +2,8 @@ package com.ssafy.alta.dto.response;
 
 import lombok.*;
 
+import java.util.HashMap;
+
 /**
  * packageName 	: com.ssafy.alta.dto
  * fileName 	: UserResponse
@@ -16,22 +18,19 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class UserResponse {
 
-    private String userId;
-    private String userName;
-    private String userNickname;
-    private String userEmail;
-    private int userEmailAlert;
-    private int userSiteAlert;
-    private String userIntroduction;
-    private String userActivityTime;
-    private int userLanguage;
-    private String userImage;
-    private String userRole;
+    private HashMap<String, Object> userData;
+    private boolean status;
+    private String jwt;
+
+    public UserResponse() {
+        this.userData = null;
+        this.status = false;
+        this.jwt = "";
+    }
 
 
 }
