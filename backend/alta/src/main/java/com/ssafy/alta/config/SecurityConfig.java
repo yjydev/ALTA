@@ -38,9 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 // 스웨거를 사용하기 위해 security 설정을 하지 않는다. -> 무조건 접근 가능!
 
-                .antMatchers(
-                "/", "/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**",   // swagger
-
                 .antMatchers("/",
                         "/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**",   // swagger
                         "/favicon.ico"
