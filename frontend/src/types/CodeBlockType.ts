@@ -18,3 +18,9 @@ export const defaultCodeReviewData = {
   reviews: [],
   language: '',
 };
+
+export type PostReview = {
+  code_id: number;
+  content: string;
+  line: number;
+};

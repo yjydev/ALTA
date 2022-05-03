@@ -3,7 +3,7 @@ import { getRequest } from '../../api/request';
 
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 
-import { CodeReviewStore } from '../../context/CodeReviewProvider';
+import { CodeReviewStore } from '../../context/CodeReviewContext';
 
 import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
@@ -79,7 +79,10 @@ export default function ALTA_CodeContents({ param }: { param: any }) {
             )}
             <Grid item sx={codeComment_wrapper}>
               <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-              <ALTA_CodeCommentList reviews_data={codeReview.reviews} />
+              <ALTA_CodeCommentList
+                reviews_data={codeReview.reviews}
+                codeId={codeId}
+              />
             </Grid>
           </Grid>
         </Grid>
