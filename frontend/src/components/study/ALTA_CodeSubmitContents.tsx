@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
