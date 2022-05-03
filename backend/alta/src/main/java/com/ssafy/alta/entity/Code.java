@@ -44,8 +44,8 @@ public class Code {
     private Date createDate;
 
     @NotNull
-    @Column(name = "code_path")
-    private String path;
+    @Column(name = "code_file_name")
+    private String fileName;
 
     @NotNull
     @Column(name = "code_content")
@@ -65,8 +65,8 @@ public class Code {
     private Problem problem;
 
     @Builder
-    public Code(String path, String sha, String content, User user, Problem problem) {
-        this.path = path;
+    public Code(String fileName, String sha, String content, User user, Problem problem) {
+        this.fileName = fileName;
         this.sha = sha;
         this.content = content;
         this.user = user;
@@ -77,7 +77,7 @@ public class Code {
         return CodeResponse.builder()
                 .id(id)
                 .nickname(user.getNickname())
-                .path(path)
+                .path(fileName)
                 .build();
     }
 
@@ -92,7 +92,7 @@ public class Code {
     public CodeAndCommentResponse toCodeAndCommentResponse(List<CommentResponse> commentResponseList) {
         return CodeAndCommentResponse.builder()
                 .code(this.content)
-                .language(FileToLanguage.getInstanse().getLanguage(this.path))
+                .language(FileToLanguage.getInstanse().getLanguage(this.fileName))
                 .reviews(commentResponseList)
                 .build();
     }

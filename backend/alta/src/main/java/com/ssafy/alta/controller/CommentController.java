@@ -34,15 +34,14 @@ public class CommentController {
     @ApiOperation(value = "코드 댓글 추가", notes = "새 댓글을 생성합니다.")
     public ResponseEntity insertComment(@ApiParam(value = "댓글 정보", required = true) @RequestBody CommentCreateRequest commentRequest) {
         String userId = "11";
-        commentService.insertComment(userId, commentRequest);
+        commentService.insertComment(commentRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{review_id}")
     @ApiOperation(value = "코드 댓글 삭제", notes = "댓글을 삭제합니다.")
     public ResponseEntity deleteComment(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id") Long reviewId) {
-        String userId = "11";
-        commentService.deleteComment(userId, reviewId);
+        commentService.deleteComment(reviewId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -50,14 +49,14 @@ public class CommentController {
     @ApiOperation(value = "코드 댓글 업데이터", notes = "댓글의 내용, 줄, 상태를 변경합니다.(변경 안할 값은 값을 그대로 보냄)")
     public ResponseEntity updateComment(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id")Long reviewId, @ApiParam(value = "변경할 댓글 정보", required = true) @RequestBody CommentUpdateRequest commentUpdateRequest) {
         String userId = "11";
-        commentService.updateComment(userId, reviewId, commentUpdateRequest);
+        commentService.updateComment(reviewId, commentUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping("/{review_id}/solved")
     @ApiOperation(value = "코드 댓글 상태 변경", notes = "댓글 해결 여부를 변경합니다.")
     public ResponseEntity updateCommentSolved(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id") Long reviewId, @ApiParam(value = "댓글 상태", required = true) @RequestBody CommentUpdateSolvedRequest request) {
         String userId = "11";
-        commentService.updateCommentSolved(userId, reviewId, request.isSolved());
+        commentService.updateCommentSolved(userId, reviewId, request.is_solved());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

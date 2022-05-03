@@ -71,10 +71,10 @@ public class Comment {
 
     public CommentResponse toDto() {
         return CommentResponse.builder()
-                .reviewrId(user.getId())
-                .reviewerName(user.getNickname())
+                .review_id(user.getId())
+                .reviewer_name(user.getNickname())
                 .comment(content)
-                .codeNumber(line)
+                .code_number(line)
                 .completed(isSolved)
                 .build();
     }
@@ -82,7 +82,7 @@ public class Comment {
     public void updateComment(CommentUpdateRequest commentUpdateRequest) {
         this.line = commentUpdateRequest.getLine();
         this.content = commentUpdateRequest.getContent();
-        this.isSolved = commentUpdateRequest.getIsSolved();
+        this.isSolved = commentUpdateRequest.getIs_solved();
     }
 
     public void changeState(boolean isSolved) {

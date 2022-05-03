@@ -47,26 +47,43 @@ public class CodeService {
     private final ProblemRepository problemRepository;
     private final StudyRepository studyRepository;
     private final CommentService commentService;
+    private final UserService userService;
+    private final RedisService redisService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
+    private static final String DELETE_MESSAGE = "파일 삭제";
+    private static final String CREATE_MESSAGE = "파일 생성";
 
     @Transactional(rollbackFor = Exception.class)
-    public void insertCode(Long studyId, String userId, String token, CodeRequest codeRequest) throws JsonProcessingException {
+    public void insertCode(Long studyId, CodeRequest codeRequest) throws JsonProcessingException {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblemId())
+        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
+
         Study study = optStudy.get();
-        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
+        User user = optUser.get();
+
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         codeRepository.save(code);
 
-        String path = codeRequest.getPath();
+        String commit_message = codeRequest.getCommit_message();
+
+        // 커밋 메시지 빈 경우 default값 달아주기
+        if(commit_message.equals("")) {
+            commit_message = CREATE_MESSAGE;
+        }
+        String path = this.getPath(code.getProblem().getName(), user.getName(), codeRequest.getFile_name());
+        System.out.println(path);
         String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeCreateRequest request = GitCodeCreateRequest.builder()
                 .content(base64Content)
-                .message(codeRequest.getMessage())
+                .message(commit_message)
                 .branch("main")
                 .build();
 
@@ -78,22 +95,37 @@ public class CodeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId, String token) {
+    public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId) {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
+        User user = optUser.get();
 
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String repo = study.getRepositoryName();
-        String path = code.getPath();
 
-        GitCodeResponse gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+        String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
 
-        if(!gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
+        GitCodeResponse gitCodeResponse = null;
+        // 조회의 경우, git에서 찾았는데 없으면 새로 생성해줌
+        try {
+            gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+        } catch(HttpClientErrorException e) {
+            System.out.println("조회할 파일이 github에 없음");
+        }
+
+        // if(gitCodeResponse == null) {}
+
+        if(gitCodeResponse != null && !gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
@@ -103,34 +135,41 @@ public class CodeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCode(Long studyId, Long codeId, String token) throws JsonProcessingException {
+    public void deleteCode(Long studyId, Long codeId) throws JsonProcessingException {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
+        User user = optUser.get();
 
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String repo = study.getRepositoryName();
-        String path = code.getPath();
+
+        String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
 
         GitCodeResponse gitCodeResponse = null;
-        // 삭제의 경우, 서버에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
+        // 삭제의 경우, git에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
         try {
             gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
         } catch(HttpClientErrorException e) {
-            System.out.println("git 통신 에러");
+            System.out.println("삭제할 파일이 github에 없음");
         }
 
         // git에 해당 코드가 있다면 - 그 코드도 삭제
-        if(gitCodeResponse != null && !gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
-            code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
-            commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
+        if(gitCodeResponse != null) {   // 해당 코드가 있고
+            if(!gitCodeResponse.getSha().equals(code.getSha()))   // 서버에서 변경이 발생하면
+                code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
 
             GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
-                    .message("삭제")
+                    .message(DELETE_MESSAGE)
                     .branch("main")
                     .sha(code.getSha())
                     .build();
@@ -144,4 +183,7 @@ public class CodeService {
 
     }
 
+    public String getPath(String problemName, String userName, String fileName) {
+        return "/" + problemName + "/" + problemName + "_" + userName + "/" + fileName;
+    }
 }
