@@ -2,13 +2,11 @@ package com.ssafy.alta.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.CodeRequest;
-import com.ssafy.alta.dto.response.CodeAndCommentResponse;
+import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.service.CodeService;
-import com.ssafy.alta.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +29,10 @@ public class CodeController {
     }
 
     @GetMapping("/{code_id}")
-    @ApiOperation(value = "코드와 댓글 조회", notes = "Github에서 일어난 코드 변경을 반영하고 코드와 관련 댓글들을 조회합니다.")
+    @ApiOperation(value = "코드 조회", notes = "Github에서 일어난 코드 변경을 반영하고 코드를 조회합니다.")
     public ResponseEntity selectCodeAndComments(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId, @ApiParam(value = "코드 키", required = true) @PathVariable("code_id") Long codeId) throws JsonProcessingException {
-        CodeAndCommentResponse codeAndCommentResponse = codeService.selectCodeAndComments(studyId, codeId);
-        return new ResponseEntity<>(codeAndCommentResponse, HttpStatus.OK);
+        CodeInfoResponse codeInfoResponse = codeService.selectCode(studyId, codeId);
+        return new ResponseEntity<>(codeInfoResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{code_id}")
