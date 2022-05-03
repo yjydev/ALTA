@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
 import { Member, Problem, Code } from '../../types/StudyType';
-import { blackColor, subColor, wightColor } from '../../modules/colorChart';
+import { blackColor, subColor, whiteColor } from '../../modules/colorChart';
 
 import ALTA_AddBar from '../common/ALTA_AddBar';
 
@@ -174,5 +174,5 @@ const Input = styled.input`
   font-size: 14px;
   font-weight: 400;
   border-bottom: 1px solid ${subColor};
-  background-color: ${wightColor};
+  background-color: ${whiteColor};
 `;
