@@ -3,3 +3,7 @@
 .codeBlock::-webkit-scrollbar {
   display: none;
 }
+
+.monaco-editor {
+  padding-top: 15px;
+}

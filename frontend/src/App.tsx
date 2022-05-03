@@ -26,8 +26,11 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<ALTA_Login />} />
+            <Route
+              path="/study/:studyId/code/:codeId"
+              element={<ALTA_Code />}
+            />
             <Route path="/auth" element={<ALTA_AuthPage />} />
-            <Route path="/code" element={<ALTA_Code />} />
             <Route path="/code-submit" element={<ALTA_CodeSubmit />} />
             <Route path="/organize" element={<ALTA_ToOrganize />} />
             <Route path="/study/detail" element={<ALTA_StudyDetail />} />
