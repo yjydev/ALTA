@@ -22,9 +22,9 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/gitLogin/loginSuccess")
-    public ResponseEntity authorize(@RequestParam ("jwt") String jwt)
+    public ResponseEntity<String> authorize(@RequestParam ("jwt") String jwt)
     {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
 

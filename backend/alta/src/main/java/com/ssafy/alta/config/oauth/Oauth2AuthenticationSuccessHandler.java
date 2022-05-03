@@ -1,10 +1,9 @@
 package com.ssafy.alta.config.oauth;
 
 import com.ssafy.alta.jwt.TokenProvider;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 
@@ -27,19 +26,27 @@ import java.io.IOException;
 
 @Component
 //@RequiredArgsConstructor
-public class Oauth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final TokenProvider tokenProvider;
 
-    public Oauth2AuthenticationSuccessHandler(TokenProvider tokenProvider) {
+    private final String address;
+
+    //로컬로 테스트하는 경우 다음 addr로 반환하세요.
+    private final String addr = "http://localhost:3000/auth";
+
+    public Oauth2AuthenticationSuccessHandler(TokenProvider tokenProvider, @Value("${jwt.url}") String address) {
         this.tokenProvider = tokenProvider;
+        this.address = address;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        String jwt = tokenProvider.createToken(authentication);
+        String jwt = tokenProvider.createAccessToken(authentication);
         System.out.println("JWT = " + jwt);
-        response.sendRedirect("/api/user/gitLogin/loginSuccess?jwt="+jwt);
+
+        getRedirectStrategy().sendRedirect(request, response, address+"?jwtAT="+jwt);
+//        getRedirectStrategy().sendRedirect(request, response, addr+"?jwtAT="+jwt);
     }
 }

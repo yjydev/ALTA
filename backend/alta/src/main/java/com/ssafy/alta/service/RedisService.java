@@ -32,8 +32,6 @@ public class RedisService {
 
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         String accesstoken = valueOperations.get(key);
-//        System.out.println("userid= " + key);
-//        System.out.println("access_token = " + valueOperations.get(key));
         return accesstoken;
     }
 
