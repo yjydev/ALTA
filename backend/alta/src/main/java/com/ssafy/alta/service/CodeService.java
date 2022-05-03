@@ -64,18 +64,22 @@ public class CodeService {
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
+
         Study study = optStudy.get();
-        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
+        User user = optUser.get();
+
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         codeRepository.save(code);
 
         String commit_message = codeRequest.getCommit_message();
 
+        // 커밋 메시지 빈 경우 default값 달아주기
         if(commit_message.equals("")) {
             commit_message = CREATE_MESSAGE;
         }
-
-        String path = codeRequest.getPath();
+        String path = this.getPath(code.getProblem().getName(), user.getName(), codeRequest.getFile_name());
+        System.out.println(path);
         String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeCreateRequest request = GitCodeCreateRequest.builder()
                 .content(base64Content)
@@ -92,19 +96,24 @@ public class CodeService {
 
     @Transactional(rollbackFor = Exception.class)
     public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId) {
+        String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
+        User user = optUser.get();
 
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String repo = study.getRepositoryName();
-        String path = code.getPath();
+
+        String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
 
         GitCodeResponse gitCodeResponse = null;
         // 조회의 경우, git에서 찾았는데 없으면 새로 생성해줌
@@ -127,19 +136,24 @@ public class CodeService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteCode(Long studyId, Long codeId) throws JsonProcessingException {
+        String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
+        User user = optUser.get();
 
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String repo = study.getRepositoryName();
-        String path = code.getPath();
+
+        String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
 
         GitCodeResponse gitCodeResponse = null;
         // 삭제의 경우, git에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
@@ -167,5 +181,9 @@ public class CodeService {
         // DB에서 삭제
         codeRepository.deleteById(codeId);
 
+    }
+
+    public String getPath(String problemName, String userName, String fileName) {
+        return "/" + problemName + "/" + problemName + "_" + userName + "/" + fileName;
     }
 }

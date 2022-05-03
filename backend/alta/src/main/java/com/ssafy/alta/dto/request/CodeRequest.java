@@ -31,8 +31,8 @@ public class CodeRequest {
     @ApiModelProperty(value = "커밋 메시지")
     private String commit_message;
 
-    @ApiModelProperty(value = "경로 - /경로/파일이름.확장자", required = true)
-    private String path;
+    @ApiModelProperty(value = "파일이름.확장자", required = true)
+    private String file_name;
 
     @ApiModelProperty(value = "문제 키", required = true)
     private Long problem_id;
@@ -43,7 +43,7 @@ public class CodeRequest {
     public Code toCode(User user, Problem problem) {
         Code code = Code.builder()
                 .content(content)
-                .path(path)
+                .fileName(file_name)
                 .user(user)
                 .problem(problem)
                 .build();
