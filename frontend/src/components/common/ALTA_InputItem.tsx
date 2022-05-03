@@ -9,7 +9,7 @@ export default function ALTA_InputItem({
   return (
     <Box
       sx={[wrapper, focused ? focus : null]}
-      onFocus={() => focusHandler(label)}
+      onFocus={() => (focusHandler ? focusHandler(label) : null)}
     >
       <label htmlFor={label}>
         <Typography sx={labelStyle}>{label}</Typography>
@@ -22,15 +22,14 @@ export default function ALTA_InputItem({
 type Props = {
   label: string;
   children: React.ReactNode;
-  focused: boolean;
-  focusHandler: (label: string) => void;
+  focused?: boolean;
+  focusHandler?: (label: string) => void;
 };
 
 const wrapper = {
   display: 'flex',
   margin: '10px 0',
   minHeight: '50px',
-  opacity: 0.5,
   transition: '.2s',
 };
 
@@ -50,5 +49,4 @@ const fieldStyle = {
 
 const focus = {
   transform: 'scale(1.03)',
-  opacity: 1,
 };

@@ -7,13 +7,20 @@ import { useNavigate } from 'react-router-dom';
 import { Member, Problem, Code } from '../../types/StudyType';
 import { blackColor, subColor, wightColor } from '../../modules/colorChart';
 
-import ALTA_AddBar from './ALTA_AddBar';
+import ALTA_AddBar from '../common/ALTA_AddBar';
 
 type Props = {
   problems: Problem[];
   members: Member[];
   maxPeople: number;
 };
+
+type SellBtnProps = {
+  path: string | null;
+  problem: Problem;
+  memberName: string;
+};
+
 export default function ALTA_ProblemTable({
   problems,
   members,
@@ -54,9 +61,12 @@ export default function ALTA_ProblemTable({
     );
   }
 
-  function SellBtn({ path, problemId }: SellBtnProps) {
-    const submitCode = () => navigate('/code-submit', { state: { problemId } });
-
+  function SellBtn({ path, problem, memberName }: SellBtnProps) {
+    const submitCode = () => {
+      const path = `${problem.name}/${memberName}`;
+      const problemId = problem.id;
+      navigate('/code-submit', { state: { problemId, path } });
+    };
     return (
       <>
         {path ? (
@@ -109,7 +119,8 @@ export default function ALTA_ProblemTable({
                             {member.nickname ? (
                               <SellBtn
                                 path={findCode(member.nickname, problem.codes)}
-                                problemId={problem.id}
+                                problem={problem}
+                                memberName={member.nickname}
                               />
                             ) : (
                               '-'
@@ -131,12 +142,6 @@ export default function ALTA_ProblemTable({
     </Box>
   );
 }
-
-type SellBtnProps = {
-  path: string | null;
-  problemId: number;
-};
-
 const tableStyle = {
   marginTop: '10px',
 };
