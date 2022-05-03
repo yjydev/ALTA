@@ -31,28 +31,28 @@ public class ScheduleAndProblemController {
 
     @GetMapping
     @ApiOperation(value = "스터디 상세 조회", notes = "스터디 상세를 조회합니다. 회차, 문제, 코드")
-    public ResponseEntity selectScheduleList(@PathVariable Long study_id, @RequestHeader("user_id") String user_id) {
-        return new ResponseEntity<>(scheduleAndProblemService.selectScheduleList(user_id, study_id), HttpStatus.OK);
+    public ResponseEntity selectScheduleList(@PathVariable("study_id") Long studyId) {
+        return new ResponseEntity<>(scheduleAndProblemService.selectScheduleList(studyId), HttpStatus.OK);
     }
 
     @PostMapping("/schedule-problem")
     @ApiOperation(value = "스터디 회차, 문제 입력", notes = "스터디 회차, 문제 등록을 합니다. 회차와 문제를 모두 입력받습니다.")
-    public ResponseEntity saveScheduleAndProblem(@PathVariable Long study_id, @RequestHeader("user_id") String user_id, @RequestBody ScheduleAndProblemRequest scheduleAndProblemRequest) {
-        scheduleAndProblemService.saveScheduleAndProblem(user_id, study_id, scheduleAndProblemRequest);
+    public ResponseEntity saveScheduleAndProblem(@PathVariable("study_id") Long studyId, @RequestBody ScheduleAndProblemRequest scheduleAndProblemRequest) {
+        scheduleAndProblemService.saveScheduleAndProblem(studyId, scheduleAndProblemRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/schedule")
     @ApiOperation(value = "스케줄 입력", notes = "스터디 회차 정보를 등록합니다.")
-    public ResponseEntity insertSchedule(@PathVariable Long study_id, @RequestHeader("user_id") String user_id, @RequestBody ScheduleRequest scheduleRequest) {
-        scheduleAndProblemService.insertSchedule(user_id, study_id, scheduleRequest);
+    public ResponseEntity insertSchedule(@PathVariable("study_id") Long studyId, @RequestBody ScheduleRequest scheduleRequest) {
+        scheduleAndProblemService.insertSchedule(studyId, scheduleRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/problem")
     @ApiOperation(value = "문제 입력", notes = "회차별 문제리스트를 등록합니다.")
-    public ResponseEntity insertProblem(@PathVariable Long study_id, @RequestHeader("user_id") String user_id, @RequestBody ProblemRequest problemRequest) {
-        scheduleAndProblemService.insertProblem(user_id, study_id, problemRequest);
+    public ResponseEntity insertProblem(@PathVariable("study_id") Long studyId, @RequestBody ProblemRequest problemRequest) {
+        scheduleAndProblemService.insertProblem(studyId, problemRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

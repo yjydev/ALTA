@@ -28,24 +28,14 @@ public class StudyController {
 
     @PostMapping
     @ApiOperation(value = "스터디 그룹 생성", notes = "신규 스터디 그룹을 생성합니다.")
-    public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest, @RequestHeader("user_id") String user_id) {
-        try {
-            studyService.insertStudy(user_id, studyRequest);
-            return new ResponseEntity<>("success", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest) {
+        studyService.insertStudy(studyRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{study_id}/members")
     @ApiOperation(value = "스터디 멤버 조회", notes = "스터디 멤버를 조회합니다. 그룹장이라면 모든 정보를, 그룹원이라면 가입된 멤버 정보를 볼 수 있습니다.")
-    public ResponseEntity selectStudyMemberList(@PathVariable Long study_id, @RequestHeader("user_id") String user_id) {
-        try {
-            return new ResponseEntity<>(studyService.selectStudyMemberList(user_id, study_id), HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity selectStudyMemberList(@PathVariable("study_id") Long studyId) {
+        return new ResponseEntity<>(studyService.selectStudyMemberList(studyId), HttpStatus.OK);
     }
 }

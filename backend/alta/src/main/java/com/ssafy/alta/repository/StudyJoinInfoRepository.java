@@ -22,5 +22,5 @@ import java.util.Optional;
 public interface StudyJoinInfoRepository extends JpaRepository<StudyJoinInfo, Long> {
     List<StudyJoinInfo> findByStudyStudyId(Long studyId);
     List<StudyJoinInfo> findByStudyStudyIdAndStateContains(Long studyId, String position);
-    Optional<StudyJoinInfo> findByStudyStudyIdAndUserId(Long studyId, String user_id);
+    Optional<StudyJoinInfo> findByStudyStudyIdAndUserId(Long studyId, String userId);
 }

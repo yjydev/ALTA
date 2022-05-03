@@ -6,13 +6,15 @@ import com.ssafy.alta.dto.request.StudyRequest;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
+import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.StudyRepository;
 import com.ssafy.alta.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 /**
@@ -28,29 +30,36 @@ import java.util.*;
  */
 
 @Service
+@RequiredArgsConstructor
 public class StudyService {
-    @Autowired
-    private StudyRepository studyRepository;
+    private final StudyRepository studyRepository;
+    private final UserRepository userRepository;
+    private final StudyJoinInfoRepository sjiRepository;
+    private final UserService userService;
+    private final RedisService redisService;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Transactional(rollbackFor = Exception.class)
+    public void insertStudy(StudyRequest studyRequest) {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
 
-    @Autowired
-    private StudyJoinInfoRepository sjiRepository;
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
 
-    @Transactional
-    public void insertStudy(String user_id, StudyRequest studyRequest) {
-        User user = userRepository.getById(user_id);
+        User user = optUser.get();
         studyRequest.setUser(user);
         studyRequest.setCode(UUID.randomUUID().toString().substring(0, 8));
 
         Study study = studyRepository.save(studyRequest.toEntity());
-
         sjiRepository.save(new StudyJoinInfoRequest(user, study, "가입", "그룹장", true, new Date()).toEntity());
     }
 
-    public HashMap<String, Object> selectStudyMemberList(String user_id, Long study_id) throws Exception {
-        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, user_id)
+    @Transactional(rollbackFor = Exception.class)
+    public HashMap<String, Object> selectStudyMemberList(Long studyId){
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다.")));
 
         if(!optSJI.get().getState().equals("가입")) {
@@ -64,10 +73,10 @@ public class StudyService {
         int study_max_people = optSJI.get().getStudy().getMaxPeople();
 
         if(optSJI.get().getPosition().equals("그룹장")) {
-            sjiList = sjiRepository.findByStudyStudyId(study_id);
+            sjiList = sjiRepository.findByStudyStudyId(studyId);
             study_code = sjiList.get(0).getStudy().getCode();
         } else {
-            sjiList = sjiRepository.findByStudyStudyIdAndStateContains(study_id, "가입");
+            sjiList = sjiRepository.findByStudyStudyIdAndStateContains(studyId, "가입");
         }
 
         for(StudyJoinInfo sji : sjiList) {
