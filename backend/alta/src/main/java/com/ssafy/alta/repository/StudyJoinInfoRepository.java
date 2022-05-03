@@ -23,4 +23,6 @@ public interface StudyJoinInfoRepository extends JpaRepository<StudyJoinInfo, Lo
     List<StudyJoinInfo> findByStudyStudyId(Long studyId);
     List<StudyJoinInfo> findByStudyStudyIdAndStateContains(Long studyId, String position);
     Optional<StudyJoinInfo> findByStudyStudyIdAndUserId(Long studyId, String userId);
+    List<StudyJoinInfo> findByUserId(String userId);
+    Long countStudyJoinInfoByUserIdAndStudyStudyId(String userId, Long studyId);
 }
