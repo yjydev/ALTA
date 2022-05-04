@@ -2,14 +2,24 @@ import { Box, Button, TextField } from '@mui/material';
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_InputItem from '../common/ALTA_InputItem';
 import { blackColor } from '../../modules/colorChart';
+import { generateError } from '../../modules/generateAlert';
+import { postRequest } from '../../api/request';
 
 export default function ALTA_CodeSubmitContents() {
+  const navigate = useNavigate();
+
+  const state = JSON.stringify(useLocation().state);
+  const problemId = JSON.parse(state).problemId;
+  const fileName = JSON.parse(state).fileName;
+  const studyId = JSON.parse(state).studyId;
+
   const [commit, setCommit] = useState<string>('');
-  const [test, setTest] = useState<string>('코드를 업로드 해주세요.');
+  const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const files = e.target.files;
@@ -17,9 +27,33 @@ export default function ALTA_CodeSubmitContents() {
     if (files) {
       const reader = new FileReader();
 
-      reader.onload = () => setTest(String(reader.result));
+      reader.onload = () => setCode(String(reader.result));
       reader.readAsText(files[0]);
     }
+  };
+
+  const goStudyDetail = () => navigate('/study/detail', { state: { studyId } });
+
+  const summitCode = async () => {
+    if (code === '코드를 업로드 해주세요.') {
+      generateError('코드를 업로드 해주세요', '');
+      return;
+    }
+
+    if (!commit) {
+      generateError('커밋 메세지가 없습니다', '');
+      return;
+    }
+
+    const requestBody = {
+      commit_message: commit,
+      file_name: fileName,
+      problem_id: problemId,
+      content: code,
+    };
+
+    await postRequest(`/api/study/${studyId}/code`, requestBody);
+    goStudyDetail();
   };
 
   return (
@@ -56,7 +90,20 @@ export default function ALTA_CodeSubmitContents() {
           </Label>
         </Button>
       </ALTA_InputItem>
-      <ALTA_CodeBlock code={test} language="javascript" />
+      <ALTA_CodeBlock code={code} language="javascript" />
+      <Box sx={{ textAlign: 'right' }}>
+        <Button variant="contained" sx={btnStyle} onClick={summitCode}>
+          제 출
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          sx={btnStyle}
+          onClick={goStudyDetail}
+        >
+          취 소
+        </Button>
+      </Box>
     </Box>
   );
 }
@@ -74,6 +121,13 @@ const uploadBtnStyle = {
   width: '100%',
   height: '30px',
   padding: 0,
+};
+
+const btnStyle = {
+  width: '100px',
+  color: '#fff',
+  fontSize: '18px',
+  marginLeft: '20px',
 };
 
 const FileInput = styled.input`

@@ -80,6 +80,7 @@ export default function ALTA_ProblemTable({
                                 path={findCode(member.nickname, problem.codes)}
                                 problem={problem}
                                 memberName={member.nickname}
+                                studyId={studyId}
                               />
                             ) : (
                               '-'
@@ -187,14 +188,15 @@ type SellBtnProps = {
   path: string | null;
   problem: Problem;
   memberName: string;
+  studyId: number;
 };
-function SellBtn({ path, problem, memberName }: SellBtnProps) {
+function SellBtn({ path, problem, memberName, studyId }: SellBtnProps) {
   const navigate = useNavigate();
 
   const submitCode = () => {
-    const path = `${problem.name}/${memberName}`;
     const problemId = problem.id;
-    navigate('/code-submit', { state: { problemId, path } });
+    const fileName = `${problem.name}/${problem.name}_${memberName}.txt`;
+    navigate('/code-submit', { state: { problemId, fileName, studyId } });
   };
   return (
     <>
