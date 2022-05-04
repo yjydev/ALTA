@@ -1,21 +1,12 @@
 import styled from '@emotion/styled';
-
-import { useContext, useEffect } from 'react';
-import { UserDataStore } from '../context/UserDataContext';
-import { getRequest } from '../api/request';
-
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 import { whiteColor } from '../modules/colorChart';
 
 export default function ALTA_AuthPage() {
   const navigate = useNavigate();
-
-  const getUserData = async () => {
-    const response = await getRequest('/api/user/info');
-    localStorage.setItem('UserData', JSON.stringify(response.userData));
-  };
 
   useEffect(() => {
     const params = new URL(String(window.location)).searchParams;
@@ -24,7 +15,6 @@ export default function ALTA_AuthPage() {
 
     localStorage.setItem('jwt', jwt);
     localStorage.setItem('refresh', refresh);
-    getUserData();
 
     navigate('/mypage');
   });
