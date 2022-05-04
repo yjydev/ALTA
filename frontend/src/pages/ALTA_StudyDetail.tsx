@@ -22,7 +22,6 @@ function Header() {
 function Contents() {
   //useLocation type 오류로 인한 임시 방편
   const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
-  console.log(studyId);
   return (
     <StudyDetailContext>
       <Grid

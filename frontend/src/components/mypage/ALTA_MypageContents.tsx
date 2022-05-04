@@ -1,15 +1,13 @@
 import { Box } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { getRequest } from '../../api/request';
-import { defaultUserData, UserData } from '../../types/UserDataType';
 import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_UserData from './ALTA_UserData';
 import ALTA_StudyList from './ALTA_StudyList';
 
 export default function ALTA_MypageContents() {
-  const [userData, setUserData] = useState<UserData>(defaultUserData);
   const { userDataContext, setUserDataContext } = useContext(UserDataStore);
 
   const getUserData = async () => {

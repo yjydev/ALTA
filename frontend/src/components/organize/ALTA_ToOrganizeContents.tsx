@@ -100,6 +100,8 @@ export default function ALTA_ToOrganizeContents() {
     }
   };
 
+  const cancel = () => navigate('/mypage');
+
   return (
     <Box sx={wrapper}>
       <Box sx={organizationCard}>
@@ -255,7 +257,7 @@ export default function ALTA_ToOrganizeContents() {
               <span>모든 항목을 채워주세요</span>
             )}
           </Button>
-          <Button variant="contained" color="error" sx={btn}>
+          <Button variant="contained" color="error" sx={btn} onClick={cancel}>
             <span>취</span>
             <span>소</span>
           </Button>

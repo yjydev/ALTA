@@ -1,16 +1,16 @@
 import { Box, Button } from '@mui/material';
 import styled from '@emotion/styled';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function ALTA_AddBar({ height, front, back }: Props) {
   const [flip, setFlip] = useState<number>(180);
 
-  const filpBar = () => setFlip(flip > 0 ? 0 : 180);
+  const flipBar = () => setFlip(flip > 0 ? 0 : 180);
 
   return (
     <Box sx={wrapper}>
       <Box sx={[frontStyle, { transform: `rotateX(${180 - flip}deg)` }]}>
-        <PlainBtn onClick={filpBar}>
+        <PlainBtn onClick={flipBar}>
           <Box sx={[addBtnStyle, { height }]}>{front}</Box>
         </PlainBtn>
       </Box>
@@ -18,7 +18,7 @@ export default function ALTA_AddBar({ height, front, back }: Props) {
         sx={[backStyle, { height }, { transform: `rotateX(${0 - flip}deg)` }]}
       >
         {back}
-        <Button sx={cancelBtnStyle} onClick={filpBar}>
+        <Button color="error" onClick={flipBar}>
           취소
         </Button>
       </Box>
@@ -63,12 +63,6 @@ const addBtnStyle = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-};
-
-const cancelBtnStyle = {
-  position: 'absolute',
-  right: 20,
-  color: '#212121',
 };
 
 const PlainBtn = styled.button`
