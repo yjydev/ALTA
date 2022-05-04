@@ -1,12 +1,15 @@
 import { Box, Grid } from '@mui/material';
 
-import { Study } from '../../types/LoginDataType';
+import { Study } from '../../types/UserDataType';
+import { useContext } from 'react';
+import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_StudyCard from './ALTA_StudyCard';
 import ALTA_inviteInput from './ALTA_inviteInput';
 
-export default function ALTA_StudyList({ studyList }: Props) {
+export default function ALTA_StudyList() {
+  const { userData } = useContext(UserDataStore);
   return (
     <Box sx={wrapper}>
       <ALTA_ContentsTitle>스터디 그룹 목록</ALTA_ContentsTitle>
@@ -14,7 +17,7 @@ export default function ALTA_StudyList({ studyList }: Props) {
         <ALTA_inviteInput />
       </Grid>
       <Grid sx={studyListStyle} container spacing={3} mb={3}>
-        {studyList.map((study: Study) => (
+        {userData.studyList.map((study: Study) => (
           <Grid key={study.id} item xs={6}>
             <ALTA_StudyCard study={study} />
           </Grid>
@@ -23,10 +26,6 @@ export default function ALTA_StudyList({ studyList }: Props) {
     </Box>
   );
 }
-
-type Props = {
-  studyList: Study[];
-};
 
 const wrapper = {
   position: 'absolute',

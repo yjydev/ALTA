@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 
-import { Study } from '../../types/LoginDataType';
+import { Study } from '../../types/UserDataType';
 
 export default function ALTA_StudyCard({ study }: Props) {
   return (

@@ -1,19 +1,18 @@
 import { useContext, useEffect } from 'react';
 import { Box } from '@mui/material';
 
-import { LoginDataStore } from '../../context/LoginDataContext';
+import { UserDataStore } from '../../context/UserDataContext';
 import { getRequest } from '../../api/request';
 
 import ALTA_UserData from './ALTA_UserData';
 import ALTA_StudyList from './ALTA_StudyList';
 
 export default function ALTA_MypageContents() {
-  const { loginData, setLoginData } = useContext(LoginDataStore);
+  const { setUserData } = useContext(UserDataStore);
 
   const getUserData = async () => {
     const response = await getRequest('/api/user/info');
-    console.log(response);
-    setLoginData(response.data.userData);
+    setUserData(response.userData);
   };
 
   useEffect(() => {
@@ -23,8 +22,8 @@ export default function ALTA_MypageContents() {
   return (
     <>
       <Box sx={{ position: 'relative' }}>
-        <ALTA_UserData loginData={loginData} />
-        <ALTA_StudyList studyList={loginData.studyList} />
+        <ALTA_UserData />
+        <ALTA_StudyList />
       </Box>
     </>
   );
