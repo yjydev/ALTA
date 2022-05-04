@@ -136,7 +136,6 @@ function Back({
 
     const requestBody = {
       problems: [
-        ...problems,
         {
           name: problemName,
           link: problemLink,
@@ -148,6 +147,8 @@ function Back({
     console.log(requestBody);
 
     await postRequest(`/api/study/${studyId}/problem`, requestBody);
+    setPropblemName('');
+    setPropblemLink('');
     getReadmeContents(studyId);
   };
   return (

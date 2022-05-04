@@ -49,11 +49,11 @@ export default function ALTA_CodeSubmitContents() {
       commit_message: commit,
       file_name: fileName,
       problem_id: problemId,
-      content: code,
+      content: window.btoa(code),
     };
-
-    await postRequest(`/api/study/${studyId}/code`, requestBody);
-    goStudyDetail();
+    console.log(requestBody);
+    // await postRequest(`/api/study/${studyId}/code`, requestBody);
+    // goStudyDetail();
   };
 
   return (
