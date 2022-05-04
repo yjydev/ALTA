@@ -21,16 +21,11 @@ export default function ALTA_StudyDetailContents({
 }: {
   studyId: number;
 }) {
-  const { members, studyData, setStudyData, maxPeople } =
+  const { members, studyData, maxPeople, getReadmeContents } =
     useContext(StudyDetailStore);
 
-  const getReadmeContents = async () => {
-    const response = await getRequest(`/api/study/${studyId}`);
-    setStudyData(response.readme);
-  };
-
   useEffect(() => {
-    getReadmeContents();
+    getReadmeContents(studyId);
   }, []);
 
   return (
@@ -52,6 +47,8 @@ export default function ALTA_StudyDetailContents({
                 <Typography>{`${roundTable.round} 회차 : ${roundTable.startDate} ~ ${roundTable.endDate}`}</Typography>
               </Box>
               <ALTA_ProblemTable
+                studyId={studyId}
+                scheduleId={roundTable.id}
                 problems={roundTable.problems}
                 members={members}
                 maxPeople={maxPeople}
