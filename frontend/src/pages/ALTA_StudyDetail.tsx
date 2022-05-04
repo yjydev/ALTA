@@ -8,6 +8,7 @@ import ALTA_StudyDetailContents from '../components/study/ALTA_StudyDetailConten
 import ALTA_StudySideContents from '../components/study/ALTA_StudySideContents';
 import ALTA_StudyMembers from '../components/study/ALTA_StudyMembers';
 import ALTA_StudyBoard from '../components/study/ALTA_StudyBoard';
+import { useLocation } from 'react-router-dom';
 
 export default function ALTA_StudyDetail() {
   return <ALTA_Template header={<Header />} contents={<Contents />} />;
@@ -19,6 +20,9 @@ function Header() {
 }
 
 function Contents() {
+  //useLocation type 오류로 인한 임시 방편
+  const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
+  console.log(studyId);
   return (
     <StudyDetailContext>
       <Grid
@@ -28,12 +32,12 @@ function Contents() {
       >
         <Grid item xl={3} lg={6}>
           <ALTA_StudySideContents>
-            <ALTA_StudyMembers />
+            <ALTA_StudyMembers studyId={studyId} />
           </ALTA_StudySideContents>
         </Grid>
         <Grid item xl={6}>
           <ALTA_Inner>
-            <ALTA_StudyDetailContents />
+            <ALTA_StudyDetailContents studyId={studyId} />
           </ALTA_Inner>
         </Grid>
         <Grid item xl={3} lg={6}>
