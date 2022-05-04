@@ -15,6 +15,7 @@ export default function ALTA_UserData() {
     setAlertFold(true);
     setIsEditPage(!isEditPage);
   };
+
   const submitUserData = () => {
     setIsEditPage(false);
   };

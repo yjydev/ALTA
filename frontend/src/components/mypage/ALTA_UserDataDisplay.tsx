@@ -1,33 +1,33 @@
-import { useContext } from 'react';
 import { Box, Typography } from '@mui/material';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 
 import { UserDataStore } from '../../context/UserDataContext';
 
 export default function ALTA_UserDataDisplay() {
-  const { userData } = useContext(UserDataStore);
-  console.log(userData);
+  const { userDataContext } = useContext(UserDataStore);
+
   return (
     <Box sx={userDataStyle}>
       <Box sx={userDataTopStyle}>
         <Box sx={prifileDataStyle}>
           <Typography sx={nicknameStyle}>
-            {userData.nickname}
+            {userDataContext.nickname}
             <br />
-            <Span>이메일</Span>
+            <Span>{userDataContext.email}</Span>
           </Typography>
           <TextArea
             disabled
             defaultValue={
-              userData.introduction === null
+              userDataContext.introduction === null
                 ? '자기소개를 작성해주세요'
-                : `사용 언어 : ${userData.introduction}`
+                : `사용 언어 : ${userDataContext.introduction}`
             }
           ></TextArea>
           <Typography>
-            {userData.languageList === null
+            {userDataContext.languageList === null
               ? '사용 언어를 설정해주세요'
-              : `사용 언어 : ${userData.languageList}`}
+              : `사용 언어 : ${userDataContext.languageList}`}
           </Typography>
         </Box>
       </Box>
