@@ -8,6 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -27,10 +28,7 @@ public class GitRepoAPI {
     private RestTemplate restTemplate = new RestTemplate();
 
     public String insertRepo(String token, GithubRepoRequest githubRepoRequest) throws JsonProcessingException {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set(GithubConfig.AUTH, "token " + token);
-        httpHeaders.set("Accept", "application/vnd.github.v3+json");
-        httpHeaders.set("Content-Type", "application/json");
+        HttpHeaders httpHeaders = setHttpHeaders(token);
 
         String jsonBody = new ObjectMapper().writeValueAsString(githubRepoRequest);
 
@@ -40,5 +38,28 @@ public class GitRepoAPI {
         ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, HashMap.class);
 
         return  response.getStatusCode().toString();
+    }
+
+    public boolean selectRepo(String token, String owner, String repoName) {
+        HttpHeaders httpHeaders = setHttpHeaders(token);
+
+        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+        String url = "https://api.github.com/repos/" + owner + "/" + repoName;
+
+        try {
+            ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, HashMap.class);
+            return false;
+        } catch (HttpClientErrorException e) {
+            return true;
+        }
+    }
+
+    private HttpHeaders setHttpHeaders(String token) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(GithubConfig.AUTH, "token " + token);
+        httpHeaders.set("Accept", "application/vnd.github.v3+json");
+        httpHeaders.set("Content-Type", "application/json");
+
+        return httpHeaders;
     }
 }

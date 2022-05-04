@@ -131,10 +131,10 @@ export default function ALTA_ToOrganizeContents() {
       ),
     },
     {
-      label: 'Repository 이름',
+      label: 'Repo 이름',
       children: (
         <TextField
-          id="Repository 이름"
+          id="Repo 이름"
           variant="standard"
           placeholder="Repository 이름을 적어주세요"
           value={requestData.repositoryName}
@@ -205,8 +205,9 @@ const wrapper = {
 };
 
 const organizationCard = {
+  width: '100%',
   backgroundColor: '#fff',
-  padding: '50px 20px',
+  padding: '50px',
   borderRadius: '5px',
 };
 const btnGroup = {

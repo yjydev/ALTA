@@ -39,7 +39,10 @@ public class CommentService {
     private final CodeRepository codeRepository;
     private final UserService userService;
 
-    public List<CommentResponse> selectCommentList(Code code) {
+    public List<CommentResponse> selectCommentList(Long codeId) {
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
+                .orElseThrow(DataNotFoundException::new));
+        Code code = optCode.get();
         List<Comment> commentList = commentRepository.findCommentsByCodeOrderByCreateDateDesc(code);
         List<CommentResponse> commentResponseList = new ArrayList<>();
         for(Comment comment : commentList) {
@@ -92,7 +95,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateCommentSolved(String userId, Long commentId, boolean isSolved) {
+    public void updateCommentSolved(Long commentId, boolean isSolved) {
+        String userId = userService.getCurrentUserId();
+
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId()))

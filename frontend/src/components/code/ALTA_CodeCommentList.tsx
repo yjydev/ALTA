@@ -21,9 +21,10 @@ export default function ALTA_CodeCommentList({
   codeId,
 }: {
   reviews_data: Review[];
-  codeId: string;
+  codeId: string | undefined;
 }) {
   const [isCompleted, setisCompleted] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   const { codeLine } = useContext(CodeReviewStore);
 
@@ -32,26 +33,30 @@ export default function ALTA_CodeCommentList({
     : reviews_data.filter((review) => review['completed'] === false);
 
   // console.log(reviews_data);
-  const [newReview, setNewReview] = useState<PostReview>({
-    code_id: parseInt(codeId),
-    content: '',
-    line: codeLine,
-  });
-
-  const handleRequest = (e: string, key: string) => {
-    const newRequest: PostReview = { ...newReview };
-    // newReview[key] = String(e);
-    // console.log(newReview);
-  };
+  const [newReview, setNewReview] = useState<string>('');
 
   const handleNewReview = async () => {
-    const startIdx: number = newReview.content.lastIndexOf(`${codeLine}`) + 5;
-    const review: string = newReview.content.substring(startIdx);
-    // try {
-    //   await postRequest('/api/code/review', JSON.stringify);
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    const startIdx: number = newReview.lastIndexOf(`${codeLine}`) + 5;
+    const review: string = newReview.substring(startIdx);
+    if (typeof codeId !== 'undefined') {
+      const codeIdx = parseInt(codeId);
+      const newRequest: PostReview = {
+        code_id: codeIdx,
+        content: review,
+        line: codeLine,
+      };
+
+      try {
+        await postRequest('/api/code/review', JSON.stringify(newRequest));
+        setNewReview('');
+        console.log(newRequest);
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      console.log('fail');
+      // 추후 예외처리 추가 예정
+    }
   };
 
   return (
@@ -83,14 +88,22 @@ export default function ALTA_CodeCommentList({
                 multiline
                 rows={2}
                 placeholder="댓글을 입력해주세요."
-                defaultValue={codeLine === 0 ? null : `${codeLine}번 줄 `}
                 fullWidth
                 required
-                onChange={(e) => handleRequest(e.target.value, 'content')}
+                defaultValue={
+                  codeLine === 0 ? null : `${codeLine}번 줄 ${newReview}`
+                }
+                onChange={(e) => {
+                  setNewReview(e.target.value);
+                  console.log(e.target.value);
+                  if (newReview !== '') {
+                    setIsDisabled(false);
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={1}>
-              <IconButton onClick={handleNewReview}>
+              <IconButton onClick={handleNewReview} disabled={isDisabled}>
                 <AddCircleIcon style={addButton} />
               </IconButton>
             </Grid>

@@ -70,20 +70,5 @@ public class User {
     @Column(name = "user_role")
     private String role;
 
-    public UserResponse toDto(){
-        return UserResponse.builder()
-                .userId(id)
-                .userName(name)
-                .userNickname(nickname)
-                .userEmail(email)
-                .userEmailAlert(emailAlert)
-                .userSiteAlert(siteAlert)
-                .userIntroduction(introduction)
-                .userActivityTime(activityTime)
-                .userLanguage(language==null ? -1:language)
-                .userImage(image)
-                .userRole(role)
-                .build();
-    }
 }
 

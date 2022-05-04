@@ -1,7 +1,6 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 
 import {
-  Divider,
   Avatar,
   Grid,
   Paper,

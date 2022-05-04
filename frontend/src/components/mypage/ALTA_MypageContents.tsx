@@ -11,13 +11,14 @@ export default function ALTA_MypageContents() {
   const { loginData, setLoginData } = useContext(LoginDataStore);
 
   const getUserData = async () => {
-    const response = await getRequest('/api');
+    const response = await getRequest('/api/user/info');
+    console.log(response);
     setLoginData(response.data.userData);
   };
 
   useEffect(() => {
     getUserData();
-  });
+  }, []);
 
   return (
     <>

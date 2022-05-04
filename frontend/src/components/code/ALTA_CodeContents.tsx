@@ -10,16 +10,21 @@ import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
-export default function ALTA_CodeContents({ param }: { param: any }) {
+export default function ALTA_CodeContents({
+  studyId,
+  codeId,
+}: {
+  studyId: string | undefined;
+  codeId: string | undefined;
+}) {
   const { codeReview, setCodeReview } = useContext(CodeReviewStore);
-  const { studyId, codeId } = param;
-
+  // const { studyId, codeId } = param;
   const [isCodeEdit, setIsCodeEdit] = useState(false);
 
   const getCode = async () => {
     const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
     // console.log(res);
-    setCodeReview(res.data);
+    setCodeReview(res);
   };
 
   useEffect(() => {

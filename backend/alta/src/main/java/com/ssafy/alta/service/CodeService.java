@@ -1,14 +1,15 @@
 package com.ssafy.alta.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nimbusds.jose.shaded.json.JSONObject;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.dto.request.GitCodeCreateRequest;
 import com.ssafy.alta.dto.request.GitCodeDeleteRequest;
-import com.ssafy.alta.dto.response.CodeAndCommentResponse;
-import com.ssafy.alta.dto.response.CommentResponse;
+import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.GitCodeResponse;
-import com.ssafy.alta.entity.*;
+import com.ssafy.alta.entity.Code;
+import com.ssafy.alta.entity.Problem;
+import com.ssafy.alta.entity.Study;
+import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.CodeRepository;
@@ -23,7 +24,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -95,7 +95,7 @@ public class CodeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CodeAndCommentResponse selectCodeAndComments(Long studyId, Long codeId) {
+    public CodeInfoResponse selectCode(Long studyId, Long codeId) {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
@@ -121,6 +121,7 @@ public class CodeService {
             gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
         } catch(HttpClientErrorException e) {
             System.out.println("조회할 파일이 github에 없음");
+            e.printStackTrace();
         }
 
         // if(gitCodeResponse == null) {}
@@ -129,9 +130,8 @@ public class CodeService {
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
-        List<CommentResponse> commentList = commentService.selectCommentList(code);
 
-        return code.toCodeAndCommentResponse(commentList);
+        return code.toCodeAndCommentResponse();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -160,6 +160,7 @@ public class CodeService {
         try {
             gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
         } catch(HttpClientErrorException e) {
+            e.printStackTrace();
             System.out.println("삭제할 파일이 github에 없음");
         }
 
