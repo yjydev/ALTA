@@ -1,6 +1,8 @@
 package com.ssafy.alta.config.oauth;
 
 import com.ssafy.alta.jwt.TokenProvider;
+import com.ssafy.alta.service.RedisService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -32,6 +34,9 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final String address;
 
+    @Autowired
+    private RedisService redisService;
+
     //로컬로 테스트하는 경우 다음 addr로 반환하세요.
     private final String addr = "http://localhost:3000/auth";
 
@@ -43,10 +48,13 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        String jwt = tokenProvider.createAccessToken(authentication);
-        System.out.println("JWT = " + jwt);
+        String jwtAt = tokenProvider.createAccessToken(authentication);
+        String jwtRt = tokenProvider.createRefreshToken(authentication);
+        System.out.println("jwtAt = " + jwtAt);
+        System.out.println("jwtRt = " + jwtRt);
 
-        getRedirectStrategy().sendRedirect(request, response, address+"?jwtAT="+jwt);
+        redisService.setJWTRefreshToken(authentication.getName(), jwtRt);
+        getRedirectStrategy().sendRedirect(request, response, address+"?jwtAT="+jwtAt+"?jwtRT="+jwtRt);
 //        getRedirectStrategy().sendRedirect(request, response, addr+"?jwtAT="+jwt);
     }
 }
