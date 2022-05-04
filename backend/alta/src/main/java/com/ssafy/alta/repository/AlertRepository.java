@@ -17,5 +17,5 @@ import java.util.List;
  * 2022-05-03	        김유진  		        최초 생성
  */
 public interface AlertRepository extends JpaRepository<Alert, Long> {
-    public List<Alert> findByReceiver_IdOrderByIdAsc(String userId);
+    List<Alert> findByReceiver_IdOrderByIdAsc(String userId);
 }

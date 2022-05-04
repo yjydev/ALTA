@@ -29,16 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController1 {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private UserService1 userService1;
 
     @GetMapping("/info")
     @ApiOperation(value = "user 정보 가져오기", notes = "user 정보 가져고익")
-    public ResponseEntity<?> selectUserInfo(@RequestHeader String authorization) {
-        String user_id = userService.getCurrentUserId();
-        return new ResponseEntity<>(userService1.selectUser(user_id,authorization), HttpStatus.OK);
+    public ResponseEntity selectUserInfo(@RequestHeader String authorization) {
+
+        return new ResponseEntity<>(userService1.selectUser(authorization), HttpStatus.OK);
 
     }
 }
