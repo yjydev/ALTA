@@ -3,12 +3,6 @@ import axios from 'axios';
 // const BASE_URL = 'http://k6b203.p.ssafy.io:8000';
 // const BASE_URL = 'http://localhost:9000';
 const BASE_URL = 'http://localhost:8000';
-export const headers = {
-  headers: {
-    'Content-Type': 'application/json',
-    'ACCESS_TOKEN': `Bearer ${localStorage.getItem('jwt')}`,
-  },
-};
 
 const createAxiosInstance = () => {
   const axiosInstance = axios.create({
