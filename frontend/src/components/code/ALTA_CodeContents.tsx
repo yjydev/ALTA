@@ -4,27 +4,21 @@ import { getRequest } from '../../api/request';
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 
 import { CodeReviewStore } from '../../context/CodeReviewContext';
+import { CodeProps } from '../../types/CodeBlockType';
 
 import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
-export default function ALTA_CodeContents({
-  studyId,
-  codeId,
-}: {
-  studyId: string | undefined;
-  codeId: string | undefined;
-}) {
-  const { codeReview, setCodeReview } = useContext(CodeReviewStore);
-  // const { studyId, codeId } = param;
+export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
+  const { code, setCode } = useContext(CodeReviewStore);
   const [isCodeEdit, setIsCodeEdit] = useState(false);
 
   const getCode = async () => {
     const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
     // console.log(res);
-    setCodeReview(res);
+    setCode(res);
   };
 
   useEffect(() => {
@@ -43,8 +37,8 @@ export default function ALTA_CodeContents({
           <Grid item sx={codeBlock_wrapper}>
             {isCodeEdit ? (
               <ALTA_CodeEditor
-                code={codeReview.code}
-                language={codeReview.language}
+                code={code.code}
+                language={code.language}
                 setIsCodeEdit={setIsCodeEdit}
               />
             ) : (
@@ -66,7 +60,9 @@ export default function ALTA_CodeContents({
                       </Box>
                     </Box>
                     <Box sx={titleStyle}>
-                      <Typography sx={codeTitleStyle}>Chart.vue</Typography>
+                      <Typography sx={codeTitleStyle}>
+                        {code.file_name}
+                      </Typography>
                       <Typography sx={codeWritterStyle} align="right">
                         작성자 : user
                       </Typography>
@@ -75,19 +71,13 @@ export default function ALTA_CodeContents({
                   <Divider style={{ width: '100%' }} />
                 </Grid>
                 <Grid item>
-                  <ALTA_CodeBlock
-                    code={codeReview.code}
-                    language={codeReview.language}
-                  />
+                  <ALTA_CodeBlock code={code.code} language={code.language} />
                 </Grid>
               </Grid>
             )}
             <Grid item sx={codeComment_wrapper}>
               <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-              <ALTA_CodeCommentList
-                reviews_data={codeReview.reviews}
-                codeId={codeId}
-              />
+              <ALTA_CodeCommentList codeId={codeId} />
             </Grid>
           </Grid>
         </Grid>

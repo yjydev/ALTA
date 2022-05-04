@@ -23,7 +23,7 @@ export default function ALTA_LoginContents() {
         </Grid>
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
           <Box sx={loginForm}>
-            <A href="http://localhost:8000/githubLogin">
+            <A href="http://k6b203.p.ssafy.io:8000/githubLogin">
               <GithubButton
                 label="Github 계정으로 로그인하기"
                 style={{ width: '100%' }}
