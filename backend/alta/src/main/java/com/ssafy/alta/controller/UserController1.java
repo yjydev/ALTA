@@ -2,12 +2,14 @@ package com.ssafy.alta.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.service.UserService;
 import com.ssafy.alta.service.UserService1;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * packageName 	: com.ssafy.alta.controller
@@ -36,7 +38,7 @@ public class UserController1 {
 
     @PatchMapping("/info")
     @ApiOperation(value = "user 개인정보 수정", notes ="user 개인 정보 수정")
-    public ResponseEntity updateUserInfo(@RequestBody UserUpdateRequest userUpdateRequest) {
-        return new ResponseEntity(userUpdateRequest, )
+    public ResponseEntity updateUserInfo(@RequestPart("profileImage") MultipartFile profileImageFile ,@RequestBody UserUpdateRequest userUpdateRequest) {
+        return new ResponseEntity<>(userService1.updateUser(userUpdateRequest, profileImageFile), HttpStatus.OK);
     }
 }
