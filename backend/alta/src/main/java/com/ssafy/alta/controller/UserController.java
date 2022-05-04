@@ -21,6 +21,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+
     @GetMapping("/gitLogin/loginSuccess")
     public ResponseEntity<String> authorize(@RequestParam ("jwt") String jwt)
     {
@@ -28,14 +29,12 @@ public class UserController {
     }
 
 
-//    @GetMapping("/test")
-//    public ResponseEntity getUserInfo( @RequestHeader String Authorization) {
-//        return new ResponseEntity<>(userService.getCurrentUsername(), HttpStatus.OK);
-//    }
-
     @GetMapping("/test")
     public void getUserInfo2( @RequestHeader String ACCESS_TOKEN) {
-        redisService.getAccessToken();
+
+        System.out.println("ref = " + redisService.getJWTRefreshToken());
+        System.out.println("acc = " + redisService.getAccessToken());
+
     }
 
 }

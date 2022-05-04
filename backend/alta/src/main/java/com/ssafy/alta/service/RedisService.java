@@ -1,9 +1,14 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.entity.UserRedis;
+import com.ssafy.alta.repository.UserRedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -24,19 +29,37 @@ public class RedisService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
+    private UserRedisRepository userRedisRepository;
+
+    @Autowired
     private UserService userService;
 
     public String getAccessToken(){
 
-        String key = userService.getCurrentUserId();
+        String id = userService.getCurrentUserId();
 
-        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
-        String accesstoken = valueOperations.get(key);
-        return accesstoken;
+        Optional<UserRedis> user = userRedisRepository.findById(id);
+        return user.get().getGithub_access_token();
     }
 
-    public void setAccessToken(String key, String value){
-        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
-        valueOperations.set(key, value);
+    public String getJWTRefreshToken(){
+
+        String id = userService.getCurrentUserId();
+
+        Optional<UserRedis> user = userRedisRepository.findById(id);
+        return user.get().getJwt_refresh_token();
+    }
+
+    public void setJWTRefreshToken(String id, String jwt_ref){
+
+        Optional<UserRedis> user = userRedisRepository.findById(id);
+        user.get().setJwt_refresh_token(jwt_ref);
+        userRedisRepository.save(user.get());
+    }
+
+    public void insertUser(String id, String github_acc){
+        UserRedis userRedis = new UserRedis(id, github_acc);
+
+        userRedisRepository.save(userRedis);
     }
 }

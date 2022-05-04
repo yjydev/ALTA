@@ -11,6 +11,7 @@ spring:
   redis:
     host: k6b203.p.ssafy.io
     port: 6379
+    password: k6b203ALTA@@
     pool:
       max-idle: 8
       min-idle: 0

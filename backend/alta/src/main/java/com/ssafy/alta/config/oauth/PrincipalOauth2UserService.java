@@ -45,8 +45,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             userRepository.save(newUser);
         }
 
-        redisService.setAccessToken(id,userRequest.getAccessToken().getTokenValue());
+//        redisService.setAccessToken(id,userRequest.getAccessToken().getTokenValue());
 
+        redisService.insertUser(id, userRequest.getAccessToken().getTokenValue());
         return new PrincipalDetails(oAuth2User.getAttributes());
     }
 
