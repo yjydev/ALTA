@@ -1,5 +1,6 @@
 package com.ssafy.alta.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.response.ErrorResponse;
 import com.ssafy.alta.exception.BusinessException;
 import com.ssafy.alta.exception.ErrorCode;
@@ -52,6 +53,14 @@ public class ExceptionController {
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse response = new ErrorResponse(errorCode);
         return new ResponseEntity<>(response, errorCode.getStatus());
+    }
+
+    // Json Processing 처리
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<ErrorResponse> handleJsonProcessingException(final JsonProcessingException e) {
+        e.printStackTrace();
+        final ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     // 그 외의 Exception들 처리
