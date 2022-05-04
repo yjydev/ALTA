@@ -12,12 +12,9 @@ import { whiteColor } from '../modules/colorChart';
 export default function ALTA_AuthPage() {
   const navigate = useNavigate();
 
-  const { setUserData } = useContext(UserDataStore);
-
   const getUserData = async () => {
     const response = await getRequest('/api/user/info');
-    console.log(response);
-    setUserData(response.userData);
+    localStorage.setItem('UserData', JSON.stringify(response.userData));
   };
 
   useEffect(() => {
@@ -26,10 +23,9 @@ export default function ALTA_AuthPage() {
     const refresh = String(params.get('jwtRT'));
 
     localStorage.setItem('jwt', jwt);
-    console.log(localStorage.getItem('jwt'));
     localStorage.setItem('refresh', refresh);
-    console.log(localStorage.getItem('refresh'));
     getUserData();
+
     navigate('/mypage');
   });
   return (
