@@ -3,14 +3,7 @@ package com.ssafy.alta.gitutil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.alta.config.GithubConfig;
-import com.ssafy.alta.dto.request.GitCodeCreateRequest;
-import com.ssafy.alta.dto.request.GitCodeDeleteRequest;
-import com.ssafy.alta.dto.request.GitCodeUpdateRequest;
 import com.ssafy.alta.dto.response.GitCodeResponse;
-import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,8 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * packageName 	: com.ssafy.alta.gitutil

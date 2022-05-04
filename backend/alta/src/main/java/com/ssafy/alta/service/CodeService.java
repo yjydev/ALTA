@@ -75,7 +75,7 @@ public class CodeService {
         String commit_message = codeRequest.getCommit_message();
 
         // 커밋 메시지 빈 경우 default값 달아주기
-        if(commit_message.equals("")) {
+        if(commit_message == null || commit_message.equals("")) {
             commit_message = CREATE_MESSAGE;
         }
         String path = this.getPath(code.getProblem().getName(), user.getName(), codeRequest.getFile_name());
