@@ -40,4 +40,5 @@ const studyCardStyle = {
   padding: '10px 20px',
   borderRadius: '5px',
   backgroundColor: 'secondary.main',
+  cursor: 'pointer',
 };

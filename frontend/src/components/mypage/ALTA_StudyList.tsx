@@ -12,9 +12,13 @@ import { useNavigate } from 'react-router-dom';
 export default function ALTA_StudyList() {
   const { userData } = useContext(UserDataStore);
   const navigate = useNavigate();
+  console.log(userData);
 
   const goOrganize = () => {
     navigate('/organize');
+  };
+  const goStudyDetail = (studyId: number) => {
+    navigate('/study/detail', { state: { studyId } });
   };
 
   return (
@@ -29,7 +33,9 @@ export default function ALTA_StudyList() {
       <Grid sx={studyListStyle} container spacing={3} mb={3}>
         {userData.studyList.map((study: Study) => (
           <Grid key={study.id} item xs={6}>
-            <ALTA_StudyCard study={study} />
+            <Box onClick={() => goStudyDetail(study.id)}>
+              <ALTA_StudyCard study={study} />
+            </Box>
           </Grid>
         ))}
       </Grid>
