@@ -14,12 +14,16 @@ import { blackColor } from '../../modules/colorChart';
 import ALTA_ProblemTable from './ALTA_ProblemTable';
 import ALTA_AddBar from '../common/ALTA_AddBar';
 
-export default function ALTA_StudyDetailContents() {
+export default function ALTA_StudyDetailContents({
+  studyId,
+}: {
+  studyId: number;
+}) {
   const { members, studyData, setStudyData, maxPeople } =
     useContext(StudyDetailStore);
 
   const getReadmeContents = async () => {
-    const response = await getRequest('/api');
+    const response = await getRequest(`/api/study/${studyId}`);
     setStudyData(response.data.readme);
   };
 
