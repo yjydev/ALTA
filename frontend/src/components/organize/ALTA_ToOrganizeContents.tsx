@@ -35,7 +35,7 @@ export default function ALTA_ToOrganizeContents() {
     repositoryName: '',
   });
 
-  const handleFocusedItem = (label: string) => setFocusedItem(label);
+  const changeFocus = (label: string) => setFocusedItem(label);
   const handleRequestData = (eventValue: string, key: string) => {
     const newData: OrganizeStudyRequset = { ...requestData };
     newData[key] = String(eventValue);
@@ -47,16 +47,20 @@ export default function ALTA_ToOrganizeContents() {
       setSumitBtn(false);
     }
     setReqeustData(newData);
-    console.log(newData);
   };
 
   const organize = async () => {
+    for (const key in requestData) {
+      if (requestData[key] === '') {
+        generateError('모든 항목을 채워주세요', ``);
+      }
+    }
     generateTimer(
       '잠시 기다려 주세요',
       `Github에 ${requestData.name} Repository를 생성 중입니다`,
     );
     try {
-      await postRequest('/api/study', JSON.stringify(requestData));
+      await postRequest('/api/study', requestData);
       generateCheck(
         '스터디가 생성되었습니다',
         `${requestData.name} Repository가 Github에 생성되었습니다.`,
@@ -165,7 +169,7 @@ export default function ALTA_ToOrganizeContents() {
             key={item.label}
             label={item.label}
             focused={focusedItem === item.label}
-            focusHandler={handleFocusedItem}
+            focusHandler={changeFocus}
           >
             {item.children}
           </ALTA_InputItem>
