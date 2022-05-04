@@ -1,20 +1,33 @@
-import { Box, Grid } from '@mui/material';
+import { Box, Button, Grid } from '@mui/material';
 
-import { Study } from '../../types/LoginDataType';
+import { Study } from '../../types/UserDataType';
+import { useContext } from 'react';
+import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_StudyCard from './ALTA_StudyCard';
 import ALTA_inviteInput from './ALTA_inviteInput';
+import { useNavigate } from 'react-router-dom';
 
-export default function ALTA_StudyList({ studyList }: Props) {
+export default function ALTA_StudyList() {
+  const { userData } = useContext(UserDataStore);
+  const navigate = useNavigate();
+
+  const goOrganize = () => {
+    navigate('/organize');
+  };
+
   return (
     <Box sx={wrapper}>
       <ALTA_ContentsTitle>스터디 그룹 목록</ALTA_ContentsTitle>
-      <Grid mb={3}>
+      <Box sx={Btns}>
+        <Button variant="contained" onClick={goOrganize}>
+          스터디 생성하기
+        </Button>
         <ALTA_inviteInput />
-      </Grid>
+      </Box>
       <Grid sx={studyListStyle} container spacing={3} mb={3}>
-        {studyList.map((study: Study) => (
+        {userData.studyList.map((study: Study) => (
           <Grid key={study.id} item xs={6}>
             <ALTA_StudyCard study={study} />
           </Grid>
@@ -24,19 +37,22 @@ export default function ALTA_StudyList({ studyList }: Props) {
   );
 }
 
-type Props = {
-  studyList: Study[];
-};
-
 const wrapper = {
   position: 'absolute',
   minWidth: '100%',
   top: '450px',
 };
 
+const Btns = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  height: '50px',
+};
+
 const studyListStyle = {
   'height': '250px',
   'overflowY': 'scroll',
+  'margin-top': 0,
   '&::-webkit-scrollbar': {
     display: 'none',
   },

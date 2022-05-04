@@ -27,5 +27,4 @@ public class UserResponse {
     public UserResponse() {
         this.userData = null;
     }
-
 }

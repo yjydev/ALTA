@@ -34,6 +34,7 @@ public class GitEmailAPI {
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, List.class);
 
         String email = response.getBody().get(1).toString();
+
         return email.split(",")[0].split("=")[1];
     }
 }

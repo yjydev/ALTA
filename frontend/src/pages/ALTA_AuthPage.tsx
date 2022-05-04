@@ -10,8 +10,7 @@ export default function ALTA_AuthPage() {
   useEffect(() => {
     const params = new URL(String(window.location)).searchParams;
     const jwt = String(params.get('jwtAT'));
-    console.log(params);
-    console.log(jwt);
+
     localStorage.setItem('jwt', jwt);
     navigate('/mypage');
   });

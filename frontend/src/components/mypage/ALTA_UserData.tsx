@@ -2,18 +2,12 @@ import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { LoginData } from '../../types/LoginDataType';
-
 import ALTA_AlertSetting from './ALTA_AlertSetting';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_UserDataEdit from './ALTA_UserDataEdit';
 import ALTA_UserDataDisplay from './ALTA_UserDataDisplay';
 
-type Props = {
-  loginData: LoginData;
-};
-
-export default function ALTA_UserData({ loginData }: Props) {
+export default function ALTA_UserData() {
   const [alertFold, setAlertFold] = useState<boolean>(true);
   const [isEditPage, setIsEditPage] = useState<boolean>(false);
 
@@ -35,11 +29,7 @@ export default function ALTA_UserData({ loginData }: Props) {
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}></Box>
           <Box sx={profileDataStyle}>
-            {isEditPage ? (
-              <ALTA_UserDataEdit loginData={loginData} />
-            ) : (
-              <ALTA_UserDataDisplay loginData={loginData} />
-            )}
+            {isEditPage ? <ALTA_UserDataEdit /> : <ALTA_UserDataDisplay />}
           </Box>
         </Box>
         <Box>
@@ -87,7 +77,7 @@ const userDataStyle = {
 const userDataTopStyle = {
   display: 'flex',
   position: 'relative',
-  marginBottom: '100px',
+  marginBottom: '120px',
 };
 
 const unfold = {
