@@ -44,13 +44,13 @@ public class CodeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{code_id}")
-    @ApiOperation(value = "코드 수정", notes = "코드를 수정해서 DB와 Github에 반영합니다.")
-    public ResponseEntity updateCode(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId,
-                                     @ApiParam(value = "코드 키", required = true) @PathVariable("code_id") Long codeId,
-                                     @ApiParam(value = "코드 수정 요청 정보", required = true)  @RequestBody CodeRequest codeRequest) throws JsonProcessingException {
-        codeService.updateCode(studyId, codeId, codeRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @PutMapping("/{code_id}")
+//    @ApiOperation(value = "코드 수정", notes = "코드를 수정해서 DB와 Github에 반영합니다.")
+//    public ResponseEntity updateCode(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId,
+//                                     @ApiParam(value = "코드 키", required = true) @PathVariable("code_id") Long codeId,
+//                                     @ApiParam(value = "코드 수정 요청 정보", required = true)  @RequestBody CodeRequest codeRequest) throws JsonProcessingException {
+//        codeService.updateCode(studyId, codeId, codeRequest);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
 }
