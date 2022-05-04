@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 
 export default function ALTA_InputItem({
   label,
+  labelSize = 'm',
   children,
   focused,
   focusHandler,
@@ -12,7 +13,9 @@ export default function ALTA_InputItem({
       onFocus={() => (focusHandler ? focusHandler(label) : null)}
     >
       <label htmlFor={label}>
-        <Typography sx={labelStyle}>{label}</Typography>
+        <Typography sx={labelSize === 'm' ? labelstyle_m : labelstyle_s}>
+          {label}
+        </Typography>
       </label>
       <Box sx={[fieldStyle]}>{children}</Box>
     </Box>
@@ -21,6 +24,7 @@ export default function ALTA_InputItem({
 
 type Props = {
   label: string;
+  labelSize?: string;
   children: React.ReactNode;
   focused?: boolean;
   focusHandler?: (label: string) => void;
@@ -35,10 +39,16 @@ const wrapper = {
   transition: '.2s',
 };
 
-const labelStyle = {
+const labelstyle_m = {
   width: '120px',
   marginRight: '10px',
   fontSize: '21px',
+};
+
+const labelstyle_s = {
+  width: '80px',
+  marginRight: '10px',
+  fontSize: '18px',
 };
 
 const fieldStyle = {

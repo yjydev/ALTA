@@ -4,7 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 
 import './App.css';
 
-import LoginDataProvider from './context/LoginDataContext';
+import UserDataProvider from './context/UserDataContext';
 import ALTA_Login from './pages/ALTA_Login';
 import ALTA_AuthPage from './pages/ALTA_AuthPage';
 import ALTA_Code from './pages/ALTA_Code';
@@ -16,7 +16,7 @@ import ALTA_Mypage from './pages/ALTA_Mypage';
 
 function App() {
   return (
-    <LoginDataProvider>
+    <UserDataProvider>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
@@ -34,7 +34,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
-    </LoginDataProvider>
+    </UserDataProvider>
   );
 }
 

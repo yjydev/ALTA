@@ -1,85 +1,40 @@
-import * as React from 'react';
-import { Theme, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
+import { languages } from '../../modules/languageSources';
 
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
-function getStyles(name: string, personName: readonly string[], theme: Theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
+export default function ALTA_LanguageSelector({
+  languageList,
+}: {
+  languageList: string[] | null;
+}) {
+  return (
+    <Stack spacing={3} sx={{ width: 470 }}>
+      <Autocomplete
+        multiple
+        color="primary"
+        defaultValue={makeDefaultList(languageList)}
+        options={languages}
+        getOptionLabel={(option) => option.language}
+        renderInput={(params) => <TextField {...params} variant="standard" />}
+      />
+    </Stack>
+  );
 }
 
-export default function ALTA_LanguageSelector() {
-  const theme = useTheme();
-  const [personName, setPersonName] = React.useState<string[]>([]);
+type OptionItem = {
+  language: string;
+  img: string;
+};
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(typeof value === 'string' ? value.split(',') : value);
-  };
+function makeDefaultList(languageList: string[] | null) {
+  let result;
+  if (languageList) {
+    result = languages.filter((language: OptionItem) =>
+      languageList.includes(language.language),
+    );
+  }
 
-  return (
-    <div>
-      <FormControl sx={{ width: 300 }}>
-        <Select
-          sx={{ width: '450px' }}
-          multiple
-          value={personName}
-          onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} color="secondary" />
-              ))}
-            </Box>
-          )}
-          MenuProps={MenuProps}
-        >
-          {names.map((name) => (
-            <MenuItem
-              key={name}
-              value={name}
-              style={getStyles(name, personName, theme)}
-            >
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </div>
-  );
+  return result;
 }

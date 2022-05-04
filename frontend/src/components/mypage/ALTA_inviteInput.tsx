@@ -20,9 +20,6 @@ export default function ALTA_inviteInput() {
             isToggle ? <ArrowForwardIosSharpIcon /> : <ArrowBackIosNewIcon />
           }
         >
-          {/* {isToggle ? null : (
-            <Typography sx={inputText}>초대코드 입력</Typography>
-          )} */}
           <Typography sx={[inputText]}>초대코드</Typography>
         </Button>
       </Box>

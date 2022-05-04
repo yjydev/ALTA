@@ -4,8 +4,10 @@ const BASE_URL = 'http://k6b203.p.ssafy.io:8000';
 // const BASE_URL = 'http://localhost:9000';
 // const BASE_URL = 'http://localhost:8000';
 export const headers = {
-  'Content-Type': 'application/json',
-  'Authorization': localStorage.getItem('jwt'),
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+  },
 };
 
 const createAxiosInstance = () => {

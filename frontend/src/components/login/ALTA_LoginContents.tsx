@@ -1,10 +1,20 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Grid, Box, Typography, Link } from '@mui/material';
 import styled from '@emotion/styled';
 import GithubButton from 'react-github-login-button';
 
+import LoginTokenChecker from '../../modules/LoginTokenChecker';
+
 import Logo from '../../images/logo.png';
 
 export default function ALTA_LoginContents() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (LoginTokenChecker()) navigate('/mypage');
+  }, []);
+
   return (
     <Box sx={wrapper}>
       <Grid
