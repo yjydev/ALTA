@@ -54,7 +54,7 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         System.out.println("jwtRt = " + jwtRt);
 
         redisService.setJWTRefreshToken(authentication.getName(), jwtRt);
-        getRedirectStrategy().sendRedirect(request, response, address+"?jwtAT="+jwtAt+"?jwtRT="+jwtRt);
-//        getRedirectStrategy().sendRedirect(request, response, addr+"?jwtAT="+jwt);
+        getRedirectStrategy().sendRedirect(request, response, addr+"?jwtAT="+jwtAt+"&jwtRT="+jwtRt);
+
     }
 }
