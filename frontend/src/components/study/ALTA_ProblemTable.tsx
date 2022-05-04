@@ -28,9 +28,12 @@ export default function ALTA_ProblemTable({
   studyId,
   scheduleId,
 }: Props) {
-  const findCode = (nickname: string, codes: Code[]): string | null => {
+  const findCode = (
+    nickname: string,
+    codes: Code[],
+  ): { id: number; path: string } | null => {
     for (const code of codes) {
-      if (code.nickname === nickname) return code.path;
+      if (code.nickname === nickname) return { id: code.id, path: code.path };
     }
     return null;
   };
@@ -77,7 +80,7 @@ export default function ALTA_ProblemTable({
                           <Typography>
                             {member.nickname ? (
                               <SellBtn
-                                path={findCode(member.nickname, problem.codes)}
+                                code={findCode(member.nickname, problem.codes)}
                                 problem={problem}
                                 memberName={member.nickname}
                                 studyId={studyId}
@@ -186,25 +189,30 @@ function Back({
 }
 
 type SellBtnProps = {
-  path: string | null;
+  code: { id: number; path: string } | null;
   problem: Problem;
   memberName: string;
   studyId: number;
 };
-function SellBtn({ path, problem, memberName, studyId }: SellBtnProps) {
+function SellBtn({ code, problem, memberName, studyId }: SellBtnProps) {
   const navigate = useNavigate();
 
-  const submitCode = () => {
+  const goCodeSumbit = () => {
     const problemId = problem.id;
     const fileName = `${problem.name}/${problem.name}_${memberName}.txt`;
     navigate('/code-submit', { state: { problemId, fileName, studyId } });
   };
+
+  const goCodeDetail = () => {
+    if (code) navigate(`/study/${studyId}/code/${code.id}`);
+  };
+
   return (
     <>
-      {path ? (
-        <Button>코드 보기</Button>
+      {code ? (
+        <Button onClick={goCodeDetail}>코드 보기</Button>
       ) : (
-        <Button sx={omisstionBtnStyle} onClick={submitCode}>
+        <Button sx={omisstionBtnStyle} onClick={goCodeSumbit}>
           코드 제출
         </Button>
       )}
