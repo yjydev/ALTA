@@ -178,9 +178,48 @@ public class CodeService {
             gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, request);
 
         }
-        
+
         // DB에서 삭제
         codeRepository.deleteById(codeId);
+
+    }
+
+    public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest) {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
+        Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+
+        Study study = optStudy.get();
+        Code code = optCode.get();
+        User user = optUser.get();
+
+        // 파일 이름, 내용 변경 -> DB에 적용
+        String lastFileName = code.getFileName();
+        code.changeFile(codeRequest.getFile_name(), codeRequest.getContent());
+
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
+        String repo = study.getRepositoryName();
+
+        String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
+
+        String commit_message = codeRequest.getCommit_message();
+
+        // 커밋 메시지 빈 경우 default값 달아주기
+        if(commit_message == null || commit_message.equals("")) {
+            commit_message = CREATE_MESSAGE;
+        }
+        
+        if(code.getFileName() == lastFileName) {
+
+        } else {
+
+        }
 
     }
 
