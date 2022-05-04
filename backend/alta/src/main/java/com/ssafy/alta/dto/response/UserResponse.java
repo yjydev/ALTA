@@ -23,14 +23,8 @@ import java.util.HashMap;
 public class UserResponse {
 
     private HashMap<String, Object> userData;
-    private boolean status;
-    private String jwt;
 
     public UserResponse() {
         this.userData = null;
-        this.status = false;
-        this.jwt = "";
     }
-
-
 }

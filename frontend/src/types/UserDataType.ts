@@ -13,26 +13,26 @@ export type Study = {
   joined: number;
 };
 
-export type LoginData = {
+export type UserData = {
   nickname: string;
   githubMail: string;
   email: string;
   alertList: Alert[];
-  introduction: string;
+  introduction: string | null;
   time: string;
-  languageList: string[];
+  languageList: string[] | null;
   profileUrl: string;
   studyList: Study[];
 };
 
-export const defaultLoginData = {
+export const defaultUserData = {
   nickname: '',
   githubMail: '',
   email: '',
   alertList: [],
-  introduction: '',
+  introduction: null,
   time: '',
-  languageList: [],
+  languageList: null,
   profileUrl: '',
   studyList: [],
 };
