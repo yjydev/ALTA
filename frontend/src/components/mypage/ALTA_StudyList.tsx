@@ -58,7 +58,7 @@ const Btns = {
 const studyListStyle = {
   'height': '250px',
   'overflowY': 'scroll',
-  'margin-top': 0,
+  'marginTop': 0,
   '&::-webkit-scrollbar': {
     display: 'none',
   },

@@ -1,4 +1,4 @@
-import { axiosInstance, headers } from './index';
+import { axiosInstance } from './index';
 
 const makeHeaders = () => {
   return {

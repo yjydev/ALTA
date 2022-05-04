@@ -6,7 +6,7 @@ import { UserDataStore } from '../../context/UserDataContext';
 
 export default function ALTA_UserDataDisplay() {
   const { userData } = useContext(UserDataStore);
-
+  console.log(userData);
   return (
     <Box sx={userDataStyle}>
       <Box sx={userDataTopStyle}>
