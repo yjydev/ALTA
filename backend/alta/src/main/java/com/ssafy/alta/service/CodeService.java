@@ -214,9 +214,18 @@ public class CodeService {
         if(commit_message == null || commit_message.equals("")) {
             commit_message = CREATE_MESSAGE;
         }
-        
-        if(code.getFileName() == lastFileName) {
 
+        GitCodeResponse gitCodeResponse = null;
+        if(code.getFileName() == lastFileName) {
+            try {
+                gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+            } catch(HttpClientErrorException e) {
+                System.out.println("조회할 파일이 github에 없음");
+                e.printStackTrace();
+            }
+            if(gitCodeResponse != null) {
+                //throw new
+            }
         } else {
 
         }
