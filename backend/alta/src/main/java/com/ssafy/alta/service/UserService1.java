@@ -32,17 +32,17 @@ public class UserService1 {
     @Autowired
     private StudyJoinInfoRepository studyJoinInfoRepository;
 
-    public UserResponse selectUser(String jwt) {
+    public UserResponse selectUser(String authorization) {
         String user_id = userService.getCurrentUserId();
+        String jwt = authorization.split(" ")[1];
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
                 .orElseThrow(DataNotFoundException::new));
-
         User user = optUser.get();
 
         UserResponse userResponse = new UserResponse();
         userResponse.setUserData(new HashMap<>());
-        userResponse.setJwt(jwt.split(" ")[1]);
+        userResponse.setJwt(jwt);
 
         List<Alert> alertList = alertRepository.findByReceiver_IdOrderByIdAsc(user.getId());
         List<StudyJoinInfo> sjiList = studyJoinInfoRepository.findByUserId(user.getId());
