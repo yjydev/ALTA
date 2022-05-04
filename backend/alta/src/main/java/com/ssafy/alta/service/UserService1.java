@@ -8,12 +8,14 @@ import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitEmailAPI;
+import com.ssafy.alta.jwt.JwtFilter;
 import com.ssafy.alta.repository.AlertRepository;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +41,8 @@ public class UserService1 {
     @Autowired
     private RedisService redisService;
 
-    public UserResponse selectUser(String authorization)  {
+    public UserResponse selectUser()  {
         String user_id = userService.getCurrentUserId();
-        String jwt = authorization.split(" ")[1];
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
                 .orElseThrow(DataNotFoundException::new));
@@ -49,7 +50,6 @@ public class UserService1 {
 
         UserResponse userResponse = new UserResponse();
         userResponse.setUserData(new HashMap<>());
-        userResponse.setJwt(jwt);
 
         List<Alert> alertList = alertRepository.findByReceiver_IdOrderByIdAsc(user.getId());
         List<StudyJoinInfo> sjiList = studyJoinInfoRepository.findByUserId(user.getId());
@@ -63,13 +63,7 @@ public class UserService1 {
 
 
         ArrayList<HashMap<String, Object>> arrayAlertList = new ArrayList<>();
-        String gitEmailData = "";
-        try {
-            gitEmailData = gitEmailAPI.selectGithubEmail(redisService.getAccessToken());
-        }
-        catch(JsonProcessingException jpe) {
-            System.out.println(jpe.getMessage());
-        }
+        String gitEmailData = gitEmailAPI.selectGithubEmail(redisService.getAccessToken());
 
         for (Alert alert : alertList) {
             int type = alert.getType();

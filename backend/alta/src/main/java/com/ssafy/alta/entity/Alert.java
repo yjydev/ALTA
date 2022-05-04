@@ -35,13 +35,11 @@ public class Alert {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @Column(name = "fk_receiver_id")
     @JoinColumn(name = "fk_receiver_id")
     private User receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_sender_id")
-//    @Column(name = "fk_sender_id")
     private User sender;
 
     @NonNull
@@ -60,7 +58,7 @@ public class Alert {
     private String redirect_url;
 
     @NonNull
-    @Column(name = "alert_is_checked")
+    @Column(name = "alert_is_checked", columnDefinition = "TINYINT", length = 1)
     @ColumnDefault("0")
     private int isChecked;
 }

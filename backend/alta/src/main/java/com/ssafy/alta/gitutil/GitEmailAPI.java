@@ -1,6 +1,5 @@
 package com.ssafy.alta.gitutil;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.config.GithubConfig;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -8,7 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,20 +23,17 @@ import java.util.List;
 public class GitEmailAPI {
     private RestTemplate restTemplate = new RestTemplate();
 
-    public String selectGithubEmail(String token) throws JsonProcessingException {
+    public String selectGithubEmail(String token) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(GithubConfig.AUTH, "token " + token);
         httpHeaders.set("Accept", "application/vnd.github.v3+json");
 
-        HttpEntity<String> httpEntity = new HttpEntity<>( httpHeaders);
+        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
         String url = "https://api.github.com/user/emails";
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, List.class);
 
         String email = response.getBody().get(0).toString();
-        email = email.split(",")[0];
-        email = email.split("=")[1];
-        System.out.println(email);
-        return  email;
+        return email.split(",")[0].split("=")[1];
     }
 }
