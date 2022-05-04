@@ -1,11 +1,13 @@
 package com.ssafy.alta.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.response.UserResponse;
 import com.ssafy.alta.entity.Alert;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
+import com.ssafy.alta.gitutil.GitEmailAPI;
 import com.ssafy.alta.repository.AlertRepository;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
@@ -32,7 +34,12 @@ public class UserService1 {
     @Autowired
     private StudyJoinInfoRepository studyJoinInfoRepository;
 
-    public UserResponse selectUser(String authorization) {
+    private GitEmailAPI gitEmailAPI = new GitEmailAPI();
+
+    @Autowired
+    private RedisService redisService;
+
+    public UserResponse selectUser(String authorization)  {
         String user_id = userService.getCurrentUserId();
         String jwt = authorization.split(" ")[1];
 
@@ -54,7 +61,15 @@ public class UserService1 {
                 siteAlert / 2 == 1 ? true : false,
                 siteAlert % 2 == 1 ? true : false};
 
+
         ArrayList<HashMap<String, Object>> arrayAlertList = new ArrayList<>();
+        String gitEmailData = "";
+        try {
+            gitEmailData = gitEmailAPI.selectGithubEmail(redisService.getAccessToken());
+        }
+        catch(JsonProcessingException jpe) {
+            System.out.println(jpe.getMessage());
+        }
 
         for (Alert alert : alertList) {
             int type = alert.getType();
@@ -81,7 +96,7 @@ public class UserService1 {
         }
 
         userResponse.getUserData().put("nickname", user.getNickname());
-        userResponse.getUserData().put("githubMail", ""); // 유저 github 정보로부터 이메일 가져오기
+        userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
         userResponse.getUserData().put("email", user.getEmail());
         userResponse.getUserData().put("alertList", arrayAlertList);
         userResponse.getUserData().put("introduction", user.getIntroduction());
