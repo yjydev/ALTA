@@ -56,7 +56,8 @@ public class StudyService {
         studyRequest.setUser(user);
         studyRequest.setCode(UUID.randomUUID().toString().substring(0, 8));
 
-        String repoName = studyRequest.getRepositoryName().trim();
+        String repoName = studyRequest.getRepositoryName().toString();
+        repoName = repoName.replaceAll("\\p{Z}", "-");
         studyRequest.setRepositoryName(repoName);
 
         if (!gitRepoAPI.selectRepo(token, user.getName(), repoName)) {
