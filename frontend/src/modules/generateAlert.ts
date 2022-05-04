@@ -3,7 +3,11 @@ import Swal from 'sweetalert2';
 import '../style/AlertStyle.css';
 import { mainColor, whiteColor, blackColor, errorColor } from './colorChart';
 
-export function generateCheck(title: string, text: string) {
+export function generateCheck(
+  title: string,
+  text: string,
+  callback: () => void | null,
+) {
   Swal.fire({
     title,
     text,
@@ -15,7 +19,7 @@ export function generateCheck(title: string, text: string) {
     color: blackColor,
     background: whiteColor,
   }).then(() => {
-    console.log('end');
+    if (callback) callback();
   });
 }
 

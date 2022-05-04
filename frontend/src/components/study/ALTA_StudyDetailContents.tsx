@@ -24,7 +24,7 @@ export default function ALTA_StudyDetailContents({
 
   const getReadmeContents = async () => {
     const response = await getRequest(`/api/study/${studyId}`);
-    setStudyData(response.data.readme);
+    setStudyData(response.readme);
   };
 
   useEffect(() => {
