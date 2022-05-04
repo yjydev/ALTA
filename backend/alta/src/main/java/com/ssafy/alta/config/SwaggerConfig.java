@@ -57,11 +57,11 @@ public class SwaggerConfig {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+        return Arrays.asList(new SecurityReference("ACCESS_TOKEN", authorizationScopes));
     }
 
     // 버튼 클릭했을 때 입력하는 값에 대한 설정 -> 헤더네임 Authorization
     private ApiKey apiKey() {
-        return new ApiKey("Authorization", "Authorization", "header");
+        return new ApiKey("ACCESS_TOKEN", "ACCESS_TOKEN", "header");
     }
 }
