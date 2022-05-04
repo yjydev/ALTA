@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.CodeRequest;
 import com.ssafy.alta.dto.request.GitCodeCreateRequest;
 import com.ssafy.alta.dto.request.GitCodeDeleteRequest;
+import com.ssafy.alta.dto.request.GitCodeUpdateRequest;
 import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.GitCodeResponse;
 import com.ssafy.alta.entity.Code;
@@ -11,6 +12,7 @@ import com.ssafy.alta.entity.Problem;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
+import com.ssafy.alta.exception.DuplicateFileException;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.CodeRepository;
 import com.ssafy.alta.repository.ProblemRepository;
@@ -165,14 +167,11 @@ public class CodeService {
         }
 
         // git에 해당 코드가 있다면 - 그 코드도 삭제
-        if(gitCodeResponse != null) {   // 해당 코드가 있고
-            if(!gitCodeResponse.getSha().equals(code.getSha()))   // 서버에서 변경이 발생하면
-                code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
-
+        if(gitCodeResponse != null) {   // 해당 코드가 있다면
             GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
                     .message(DELETE_MESSAGE)
                     .branch("main")
-                    .sha(code.getSha())
+                    .sha(gitCodeResponse.getSha())  // 조회한 코드의 sha값으로 삭제
                     .build();
 
             gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, request);
@@ -184,7 +183,8 @@ public class CodeService {
 
     }
 
-    public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
@@ -210,13 +210,16 @@ public class CodeService {
 
         String commit_message = codeRequest.getCommit_message();
 
+
+        commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
+
         // 커밋 메시지 빈 경우 default값 달아주기
         if(commit_message == null || commit_message.equals("")) {
             commit_message = CREATE_MESSAGE;
         }
 
         GitCodeResponse gitCodeResponse = null;
-        if(code.getFileName() == lastFileName) {
+        if(code.getFileName() != lastFileName) {
             try {
                 gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
             } catch(HttpClientErrorException e) {
@@ -224,10 +227,63 @@ public class CodeService {
                 e.printStackTrace();
             }
             if(gitCodeResponse != null) {
-                //throw new
+                throw new DuplicateFileException();
+            }
+
+            // 새로운거 git 생성
+            String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
+            GitCodeCreateRequest request = GitCodeCreateRequest.builder()
+                    .content(base64Content)
+                    .message(commit_message)
+                    .branch("main")
+                    .build();
+
+            String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
+            code.changeSha(sha);
+
+            // 이전거 git에서 삭제
+            path = this.getPath(code.getProblem().getName(), user.getName(), lastFileName);
+
+            // 삭제의 경우, git에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
+            try {
+                gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+            } catch(HttpClientErrorException e) {
+                e.printStackTrace();
+                System.out.println("삭제할 파일이 github에 없음");
+            }
+            // git에 해당 코드가 있다면 - 그 코드도 삭제
+            if(gitCodeResponse != null) {   // 해당 코드가 있고
+                
+                GitCodeDeleteRequest gitCodeDeleteRequest = GitCodeDeleteRequest.builder()
+                        .message(DELETE_MESSAGE)
+                        .branch("main")
+                        .sha(gitCodeResponse.getSha())
+                        .build();
+
+                gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, gitCodeDeleteRequest);
+
             }
         } else {
+            try {
+                gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+            } catch(HttpClientErrorException e) {
+                System.out.println("조회할 파일이 github에 없음");
+                e.printStackTrace();
+            }
 
+            String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
+            GitCodeUpdateRequest request = GitCodeUpdateRequest.builder()
+                    .content(base64Content)
+                    .message(commit_message)
+                    .sha("")
+                    .branch("main")
+                    .build();
+
+            if(gitCodeResponse != null) {   // 서버에서 변경이 발생하면
+                request.setSha(gitCodeResponse.getSha());
+            }
+            String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
+            code.changeSha(sha);
         }
 
     }
