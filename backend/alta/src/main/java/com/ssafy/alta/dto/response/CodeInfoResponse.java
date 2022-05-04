@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,23 +15,27 @@ import java.util.List;
  * fileName 	: CodeAndCommentResponse
  * author 	    : 우정연
  * date		    : 2022-04-26
- * description	: 코드와 코드 댓글 응답 정보
+ * description	: 코드 응답 정보
  * ===========================================================
  * DATE 		AUTHOR 		      NOTE
  * -----------------------------------------------------------
  * 2022-04-26	    우정연  		    최초 생성
+ * 2022-05-03       우정연           코드만 조회로 변경
  */
 
-@ApiModel(value = "코드 추가 요청 정보")
+@ApiModel(value = "코드 요청 정보")
 @Getter
 @Setter
 @Builder
-public class CodeAndCommentResponse {
+public class CodeInfoResponse {
     @ApiModelProperty(value = "디코딩된 코드")
     private String code;
     
-    @ApiModelProperty(value = "댓글 목록 정보")
-    private List<CommentResponse> reviews;
+    @ApiModelProperty(value = "코드 업로드 날짜")
+    private Date create_date;
+
+    @ApiModelProperty(value = "파일 이름")
+    private String file_name;
     
     @ApiModelProperty(value = "코드 사용 언어")
     private String language;

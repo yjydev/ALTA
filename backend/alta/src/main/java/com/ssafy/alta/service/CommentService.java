@@ -39,7 +39,10 @@ public class CommentService {
     private final CodeRepository codeRepository;
     private final UserService userService;
 
-    public List<CommentResponse> selectCommentList(Code code) {
+    public List<CommentResponse> selectCommentList(Long codeId) {
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
+                .orElseThrow(DataNotFoundException::new));
+        Code code = optCode.get();
         List<Comment> commentList = commentRepository.findCommentsByCodeOrderByCreateDateDesc(code);
         List<CommentResponse> commentResponseList = new ArrayList<>();
         for(Comment comment : commentList) {

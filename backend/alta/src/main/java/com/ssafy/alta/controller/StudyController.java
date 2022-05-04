@@ -1,5 +1,6 @@
 package com.ssafy.alta.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.StudyRequest;
 import com.ssafy.alta.service.StudyService;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +29,7 @@ public class StudyController {
 
     @PostMapping
     @ApiOperation(value = "스터디 그룹 생성", notes = "신규 스터디 그룹을 생성합니다.")
-    public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest) {
+    public ResponseEntity insertStudy(@RequestBody StudyRequest studyRequest) throws JsonProcessingException {
         studyService.insertStudy(studyRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }

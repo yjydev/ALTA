@@ -1,8 +1,7 @@
 package com.ssafy.alta.entity;
 
-import com.ssafy.alta.dto.response.CodeAndCommentResponse;
+import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.CodeResponse;
-import com.ssafy.alta.dto.response.CommentResponse;
 import com.ssafy.alta.util.FileToLanguage;
 import com.sun.istack.NotNull;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.entity
@@ -89,11 +87,12 @@ public class Code {
         this.content = content;
     }
 
-    public CodeAndCommentResponse toCodeAndCommentResponse(List<CommentResponse> commentResponseList) {
-        return CodeAndCommentResponse.builder()
+    public CodeInfoResponse toCodeAndCommentResponse() {
+        return CodeInfoResponse.builder()
                 .code(this.content)
+                .create_date(this.createDate)
+                .file_name(this.fileName)
                 .language(FileToLanguage.getInstanse().getLanguage(this.fileName))
-                .reviews(commentResponseList)
                 .build();
     }
 }

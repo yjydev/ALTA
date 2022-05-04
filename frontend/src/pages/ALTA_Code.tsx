@@ -8,11 +8,14 @@ import ALTA_Header from '../components/common/ALTA_Header';
 import CodeReviewContext from '../context/CodeReviewContext';
 
 export default function ALTA_Code() {
-  const param = useParams();
+  const { studyId, codeId } = useParams<{
+    studyId: string | undefined;
+    codeId: string | undefined;
+  }>();
   const Header = () => <ALTA_Header />;
   const Contents = () => (
     <CodeReviewContext>
-      <ALTA_CodeContents param={param} />
+      <ALTA_CodeContents studyId={studyId} codeId={codeId} />
     </CodeReviewContext>
   );
   return <ALTA_Template header={<Header />} contents={<Contents />} />;
