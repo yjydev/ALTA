@@ -80,7 +80,7 @@ public class UserService1 {
         for (StudyJoinInfo sji : sjiList) {
             HashMap<String, Object> tmp = new HashMap<>();
             Study tmpStudy = sji.getStudy();
-            tmp.put("id", sji.getId());
+            tmp.put("id", tmpStudy.getStudyId());
             tmp.put("name", tmpStudy.getName());
             tmp.put("introduction", tmpStudy.getIntroduction());
             tmp.put("language", tmpStudy.getLanguage());
