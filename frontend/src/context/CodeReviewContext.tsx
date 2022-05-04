@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { CodeReviewData, defaultCodeReviewData } from '../types/CodeBlockType';
+import { ReviewData, CodeData, defaultCodeData } from '../types/CodeBlockType';
 
 type defaultValueType = {
-  codeReview: CodeReviewData;
-  setCodeReview: (newData: CodeReviewData) => void;
+  code: CodeData;
+  setCode: (newCode: CodeData) => void;
+  reviews: ReviewData[];
+  setReviews: (newReview: ReviewData[]) => void;
   codeLine: number;
   setCodeLine: (newLine: number) => void;
 };
 
 const defaultValue: defaultValueType = {
-  codeReview: defaultCodeReviewData,
-  setCodeReview: () => null,
+  code: defaultCodeData,
+  setCode: () => null,
+  reviews: [],
+  setReviews: () => null,
   codeLine: 0,
   setCodeLine: () => null,
 };
@@ -21,12 +25,11 @@ type Props = {
 };
 
 export default function CodeReviewContext({ children }: Props) {
-  const [codeReview, setCodeReview] = useState<CodeReviewData>(
-    defaultCodeReviewData,
-  );
+  const [code, setCode] = useState<CodeData>(defaultCodeData);
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [codeLine, setCodeLine] = useState<number>(0);
 
-  const value = { codeReview, setCodeReview, codeLine, setCodeLine };
+  const value = { code, reviews, setCode, setReviews, codeLine, setCodeLine };
   return (
     <CodeReviewStore.Provider value={value}>
       {children}
