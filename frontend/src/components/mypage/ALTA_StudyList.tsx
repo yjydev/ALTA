@@ -1,18 +1,14 @@
 import { Box, Button, Grid } from '@mui/material';
 
 import { Study } from '../../types/UserDataType';
-import { useContext } from 'react';
-import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_StudyCard from './ALTA_StudyCard';
 import ALTA_inviteInput from './ALTA_inviteInput';
 import { useNavigate } from 'react-router-dom';
 
-export default function ALTA_StudyList() {
-  const { userData } = useContext(UserDataStore);
+export default function ALTA_StudyList({ studyList }: { studyList: Study[] }) {
   const navigate = useNavigate();
-  console.log(userData);
 
   const goOrganize = () => {
     navigate('/organize');
@@ -31,7 +27,7 @@ export default function ALTA_StudyList() {
         <ALTA_inviteInput />
       </Box>
       <Grid sx={studyListStyle} container spacing={3} mb={3}>
-        {userData.studyList.map((study: Study) => (
+        {studyList.map((study: Study) => (
           <Grid key={study.id} item xs={6}>
             <Box onClick={() => goStudyDetail(study.id)}>
               <ALTA_StudyCard study={study} />
