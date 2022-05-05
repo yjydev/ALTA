@@ -41,6 +41,10 @@ spring:
             scope:
               - repo
               - user
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 jwt:
   header: Authorization
   #HS512 ????? ??? ??? ??? 512bit, ? 64byte ??? secret key? ???? ??.
@@ -57,4 +61,7 @@ github:
   reponame: test
   oauth-key : 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
 
+image:
+  basePath: C:\Github\altaImage\
+#  basePath: C:\Github\altaImage\
 
