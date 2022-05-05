@@ -8,16 +8,16 @@ import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
 
-export default function ALTA_StudyMembers() {
+export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
   const { members, setMembers, setMaxPeople } = useContext(StudyDetailStore);
 
   const getMembers = async () => {
     try {
-      const response = await getRequest('/api');
+      const response = await getRequest(`/api/study/${studyId}/members`);
 
       //최대 인원 수까지 빈 멤버 추가
-      const tmpMember = [...response.data.members];
-      while (tmpMember.length < response.data.study_max_people)
+      const tmpMember = [...response.members];
+      while (tmpMember.length < response.study_max_people)
         tmpMember.push({
           nickname: '',
           email: '',
@@ -27,7 +27,7 @@ export default function ALTA_StudyMembers() {
         });
 
       setMembers(tmpMember);
-      setMaxPeople(response.data.study_max_people);
+      setMaxPeople(response.study_max_people);
     } catch (error) {
       console.log(error);
     }

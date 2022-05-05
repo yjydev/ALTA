@@ -1,6 +1,8 @@
 import { Grid } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 import StudyDetailContext from '../context/StudyDetailContext';
+
 import ALTA_Template from '../components/common/ALTA_Template';
 import ALTA_Inner from '../components/common/ALTA_Inner';
 import ALTA_Header from '../components/common/ALTA_Header';
@@ -19,6 +21,8 @@ function Header() {
 }
 
 function Contents() {
+  //useLocation type 오류로 인한 임시 방편
+  const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
   return (
     <StudyDetailContext>
       <Grid
@@ -28,12 +32,12 @@ function Contents() {
       >
         <Grid item xl={3} lg={6}>
           <ALTA_StudySideContents>
-            <ALTA_StudyMembers />
+            <ALTA_StudyMembers studyId={studyId} />
           </ALTA_StudySideContents>
         </Grid>
         <Grid item xl={6}>
           <ALTA_Inner>
-            <ALTA_StudyDetailContents />
+            <ALTA_StudyDetailContents studyId={studyId} />
           </ALTA_Inner>
         </Grid>
         <Grid item xl={3} lg={6}>

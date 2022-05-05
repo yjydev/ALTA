@@ -4,15 +4,16 @@ import { ContextProps } from '../types/ContextPropsType';
 
 //Context 인스턴스 생성
 export const defaultValue: defaultValueType = {
-  userData: defaultUserData,
-  setUserData: () => null,
+  userDataContext: defaultUserData,
+  setUserDataContext: () => null,
 };
 export const UserDataStore = React.createContext(defaultValue);
 
 //Context Provider 컴포넌트
 export default function UserDataProvider({ children }: ContextProps) {
-  const [userData, setUserData] = useState<UserData>(defaultUserData);
-  const value = { userData, setUserData };
+  const [userDataContext, setUserDataContext] =
+    useState<UserData>(defaultUserData);
+  const value = { userDataContext, setUserDataContext };
   return (
     <UserDataStore.Provider value={value}>{children}</UserDataStore.Provider>
   );
@@ -20,6 +21,6 @@ export default function UserDataProvider({ children }: ContextProps) {
 
 //Context 기본값 타입
 type defaultValueType = {
-  userData: UserData;
-  setUserData: (newData: UserData) => void;
+  userDataContext: UserData;
+  setUserDataContext: (newData: UserData) => void;
 };

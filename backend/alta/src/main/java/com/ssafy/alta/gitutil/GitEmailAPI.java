@@ -7,7 +7,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * packageName 	: com.ssafy.alta.gitutil
@@ -33,8 +37,17 @@ public class GitEmailAPI {
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, List.class);
 
-        String email = response.getBody().get(1).toString();
+        Pattern p = Pattern.compile("(@users.noreply)");
 
-        return email.split(",")[0].split("=")[1];
+        for(Object tmp : response.getBody()){
+            String idxEmail = tmp.toString().split(",")[0].split("=")[1];
+            Matcher matcher = p.matcher(idxEmail);
+            if(matcher.find())
+                continue;
+            System.out.println(idxEmail);
+            return idxEmail;
+        }
+
+        return response.getBody().get(0).toString().split(",")[0].split("=")[1];
     }
 }

@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { Box, TextField } from '@mui/material';
 import { useContext } from 'react';
-
 import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_LanguageSelector from './ALTA_LanguageSelector';
 
 export default function ALTA_UserDataEdit() {
-  const { userData } = useContext(UserDataStore);
+  const { userDataContext } = useContext(UserDataStore);
 
   return (
     <Box sx={userDataStyle}>
@@ -15,22 +14,22 @@ export default function ALTA_UserDataEdit() {
         <Box sx={prifileDataStyle}>
           <TextField
             variant="standard"
-            defaultValue={userData.nickname}
+            defaultValue={userDataContext.nickname}
             sx={nicknameEditorStyle}
           />
           <TextField
             variant="standard"
-            defaultValue={userData.email}
+            defaultValue={userDataContext.email}
             sx={nicknameEditorStyle}
           />
           <TextArea
             defaultValue={
-              userData.introduction === null
+              userDataContext.introduction === null
                 ? '자기소개를 작성해주세요'
-                : `사용 언어 : ${userData.introduction}`
+                : `사용 언어 : ${userDataContext.introduction}`
             }
           ></TextArea>
-          <ALTA_LanguageSelector languageList={userData.languageList} />
+          <ALTA_LanguageSelector languageList={userDataContext.languageList} />
         </Box>
       </Box>
     </Box>

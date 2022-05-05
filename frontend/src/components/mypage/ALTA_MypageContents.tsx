@@ -1,29 +1,30 @@
-import { useContext, useEffect } from 'react';
 import { Box } from '@mui/material';
+import { useContext, useEffect } from 'react';
 
-import { UserDataStore } from '../../context/UserDataContext';
 import { getRequest } from '../../api/request';
+import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_UserData from './ALTA_UserData';
 import ALTA_StudyList from './ALTA_StudyList';
 
 export default function ALTA_MypageContents() {
-  const { setUserData } = useContext(UserDataStore);
+  const { userDataContext, setUserDataContext } = useContext(UserDataStore);
 
   const getUserData = async () => {
     const response = await getRequest('/api/user/info');
-    setUserData(response.userData);
+
+    localStorage.setItem('UserData', JSON.stringify(response.userData));
+    setUserDataContext(response.userData);
   };
 
   useEffect(() => {
     getUserData();
   }, []);
-
   return (
     <>
       <Box sx={{ position: 'relative' }}>
         <ALTA_UserData />
-        <ALTA_StudyList />
+        <ALTA_StudyList studyList={userDataContext.studyList} />
       </Box>
     </>
   );

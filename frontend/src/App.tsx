@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
+import { LicenseInfo } from '@mui/x-license-pro';
 
 import './App.css';
 
@@ -15,6 +16,9 @@ import ALTA_Member from './pages/ALTA_Member';
 import ALTA_Mypage from './pages/ALTA_Mypage';
 
 function App() {
+  LicenseInfo.setLicenseKey(
+    '2aa4db8a29be7f642c457d8df41c7e3eT1JERVI6NDMwODIsRVhQSVJZPTE2ODMyNzgzNTcwMDAsS0VZVkVSU0lPTj0x',
+  );
   return (
     <UserDataProvider>
       <ThemeProvider theme={theme}>
