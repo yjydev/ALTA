@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Member, StudyData } from '../types/StudyType';
 import { ContextProps } from '../types/ContextPropsType';
+import { getRequest } from '../api/request';
 
 //Context 인스턴스 생성
 const defaultValue: defaultValueType = {
@@ -10,6 +11,7 @@ const defaultValue: defaultValueType = {
   setMembers: () => null,
   studyData: [],
   setStudyData: () => null,
+  getReadmeContents: null,
 };
 export const StudyDetailStore = React.createContext(defaultValue);
 
@@ -19,6 +21,11 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const [studyData, setStudyData] = useState<StudyData[]>([]);
   const [maxPeople, setMaxPeople] = useState<number>(0);
 
+  const getReadmeContents = async (studyId: number) => {
+    const response = await getRequest(`/api/study/${studyId}`);
+    setStudyData(response.readme);
+  };
+
   const value = {
     members,
     setMembers,
@@ -26,6 +33,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     setStudyData,
     maxPeople,
     setMaxPeople,
+    getReadmeContents,
   };
   return (
     <StudyDetailStore.Provider value={value}>
@@ -41,4 +49,5 @@ type defaultValueType = {
   setMembers: (newData: Member[]) => void;
   studyData: StudyData[];
   setStudyData: (newData: StudyData[]) => void;
+  getReadmeContents: any;
 };

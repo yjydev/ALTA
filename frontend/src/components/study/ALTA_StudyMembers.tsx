@@ -16,8 +16,8 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
       const response = await getRequest(`/api/study/${studyId}/members`);
 
       //최대 인원 수까지 빈 멤버 추가
-      const tmpMember = [...response.data.members];
-      while (tmpMember.length < response.data.study_max_people)
+      const tmpMember = [...response.members];
+      while (tmpMember.length < response.study_max_people)
         tmpMember.push({
           nickname: '',
           email: '',
@@ -27,7 +27,7 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
         });
 
       setMembers(tmpMember);
-      setMaxPeople(response.data.study_max_people);
+      setMaxPeople(response.study_max_people);
     } catch (error) {
       console.log(error);
     }
