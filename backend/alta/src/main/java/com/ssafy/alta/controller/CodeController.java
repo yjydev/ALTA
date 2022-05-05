@@ -52,7 +52,7 @@ public class CodeController {
     public ResponseEntity updateCode(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId,
                                      @ApiParam(value = "코드 키", required = true) @PathVariable("code_id") Long codeId,
                                      @ApiParam(value = "코드 수정 요청 정보", required = true)  @RequestBody CodeRequest codeRequest) throws JsonProcessingException {
-        codeService.updateCode(studyId, codeId, codeRequest);
+        codeService.updateCode(studyId, codeId, codeRequest, true);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -61,7 +61,7 @@ public class CodeController {
     public ResponseEntity reuploadCode(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId,
                                      @ApiParam(value = "코드 키", required = true) @PathVariable("code_id") Long codeId,
                                      @ApiParam(value = "코드 재업로드 요청 정보", required = true)  @RequestBody CodeRequest codeRequest) throws JsonProcessingException {
-        codeService.reuploadCode(studyId, codeId, codeRequest);
+        codeService.updateCode(studyId, codeId, codeRequest, false);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
