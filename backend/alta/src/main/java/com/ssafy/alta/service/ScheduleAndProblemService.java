@@ -42,7 +42,6 @@ public class ScheduleAndProblemService {
     private final UserService userService;
     private final RedisService redisService;
     private final GitDirectoryAPI gitDirectoryAPI = new GitDirectoryAPI();
-    private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private final UserRepository userRepository;
 
     @Transactional
