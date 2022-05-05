@@ -10,6 +10,7 @@ const makeHeaders = () => {
 };
 
 export const postRequest = async (url, body) => {
+  console.log('post!');
   const response = await axiosInstance.post(url, body, makeHeaders());
 
   return response.data;
