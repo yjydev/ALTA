@@ -41,7 +41,7 @@ import java.util.Optional;
  */
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class CodeService {
     private final CodeRepository codeRepository;
@@ -54,9 +54,11 @@ public class CodeService {
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
+    private static final String BRANCH = "main";
 
     @Transactional(rollbackFor = Exception.class)
     public void insertCode(Long studyId, CodeRequest codeRequest) throws JsonProcessingException {
+//         변수값들 가져옴
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
@@ -70,39 +72,43 @@ public class CodeService {
         Study study = optStudy.get();
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
         User user = optUser.get();
-
-        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
+//        DB에 저장
         codeRepository.save(code);
 
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String path = this.getPath(code.getProblem().getName(), user.getName(), codeRequest.getFile_name());
+        String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
+        String commitMessage = this.getCommitMessage(codeRequest.getCommit_message());
+        
+//        중복 부분 호출 - 코드 github에 업로드
+        this.createCodeInGithub(token, code, path, commitMessage);
+    }
 
-        // Github에 이미 같은 이름의 파일이 업로드 되어있다면
+    @Transactional(rollbackFor = Exception.class)
+    public void createCodeInGithub(String token, Code code, String url, String commitMessage) throws JsonProcessingException {
+
+        //        Git 조회 - Github에 이미 같은 이름의 파일이 업로드 되어있다면
         GitCodeResponse gitCodeResponse = null;
         try {
-            gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, study.getRepositoryName(), path);
+            gitCodeResponse = gitCodeAPI.selectFile(token, url);
         } catch(HttpClientErrorException e) {
             System.out.println("조회할 파일이 github에 없음");
             e.printStackTrace();
         }
+//        같은 파일이 이미 Git에 업로도 되어 있으면 -> Exception 발생
         if(gitCodeResponse != null) {
             throw new DuplicateFileException();
         }
 
-        String commit_message = codeRequest.getCommit_message();
-
-        // 커밋 메시지 빈 경우 default값 달아주기
-        if(commit_message == null || commit_message.equals("")) {
-            commit_message = CREATE_MESSAGE;
-        }
-
-        String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
+        String base64Content = Base64.getEncoder().encodeToString(code.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeCreateRequest request = GitCodeCreateRequest.builder()
                 .content(base64Content)
-                .message(commit_message)
-                .branch("main")
+                .message(commitMessage)
+                .branch(BRANCH)
                 .build();
 
-        String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
+//        Git 생성
+        String sha = gitCodeAPI.manipulate(token, url, HttpMethod.PUT, request);
 
         code.changeSha(sha);
     }
@@ -124,14 +130,13 @@ public class CodeService {
         User user = optUser.get();
 
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String repo = study.getRepositoryName();
-
         String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
+        String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
 
         GitCodeResponse gitCodeResponse = null;
         // 조회의 경우, git에서 찾았는데 없으면 새로 생성해줌
         try {
-            gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+            gitCodeResponse = gitCodeAPI.selectFile(token, url);
         } catch(HttpClientErrorException e) {
             System.out.println("조회할 파일이 github에 없음");
             e.printStackTrace();
@@ -143,10 +148,10 @@ public class CodeService {
             GitCodeCreateRequest request = GitCodeCreateRequest.builder()
                     .content(base64Content)
                     .message(CREATE_MESSAGE)
-                    .branch("main")
+                    .branch(BRANCH)
                     .build();
 
-            String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
+            String sha = gitCodeAPI.manipulate(token, url, HttpMethod.PUT, request);
 
             code.changeSha(sha);
         }
@@ -157,6 +162,33 @@ public class CodeService {
         }
 
         return code.toCodeAndCommentResponse();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteCodeInGithub(String token, long codeId, String url) throws JsonProcessingException {
+        GitCodeResponse gitCodeResponse = null;
+        // 삭제의 경우, git에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
+        try {
+            gitCodeResponse = gitCodeAPI.selectFile(token, url);
+        } catch(HttpClientErrorException e) {
+            e.printStackTrace();
+            System.out.println("삭제할 파일이 github에 없음");
+        }
+
+        // git에 해당 코드가 있다면 - 그 코드도 삭제
+        if(gitCodeResponse != null) {   // 해당 코드가 있다면
+            GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
+                    .message(DELETE_MESSAGE)
+                    .branch(BRANCH)
+                    .sha(gitCodeResponse.getSha())  // 조회한 코드의 sha값으로 삭제
+                    .build();
+
+            gitCodeAPI.manipulate(token, url, HttpMethod.DELETE, request);
+
+        }
+
+        // DB에서 삭제
+        codeRepository.deleteById(codeId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -175,35 +207,12 @@ public class CodeService {
         Code code = optCode.get();
         User user = optUser.get();
 
+
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String repo = study.getRepositoryName();
-
         String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
+        String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
 
-        GitCodeResponse gitCodeResponse = null;
-        // 삭제의 경우, git에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
-        try {
-            gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
-        } catch(HttpClientErrorException e) {
-            e.printStackTrace();
-            System.out.println("삭제할 파일이 github에 없음");
-        }
-
-        // git에 해당 코드가 있다면 - 그 코드도 삭제
-        if(gitCodeResponse != null) {   // 해당 코드가 있다면
-            GitCodeDeleteRequest request = GitCodeDeleteRequest.builder()
-                    .message(DELETE_MESSAGE)
-                    .branch("main")
-                    .sha(gitCodeResponse.getSha())  // 조회한 코드의 sha값으로 삭제
-                    .build();
-
-            gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, request);
-
-        }
-
-        // DB에서 삭제
-        codeRepository.deleteById(codeId);
-
+        this.deleteCodeInGithub(token, codeId, url);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -226,69 +235,31 @@ public class CodeService {
         String lastFileName = code.getFileName();
         code.changeFile(codeRequest.getFile_name(), codeRequest.getContent());
 
+
+
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String repo = study.getRepositoryName();
-
         String path = this.getPath(code.getProblem().getName(), user.getName(), code.getFileName());
+        String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
 
-        String commit_message = codeRequest.getCommit_message();
+        String commitMessage = this.getCommitMessage(codeRequest.getCommit_message());
 
 
         commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
 
-        // 커밋 메시지 빈 경우 default값 달아주기
-        if(commit_message == null || commit_message.equals("")) {
-            commit_message = CREATE_MESSAGE;
-        }
-
         GitCodeResponse gitCodeResponse = null;
         if(code.getFileName() != lastFileName) {
-            try {
-                gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
-            } catch(HttpClientErrorException e) {
-                System.out.println("조회할 파일이 github에 없음");
-                e.printStackTrace();
-            }
-            if(gitCodeResponse != null) {
-                throw new DuplicateFileException();
-            }
 
-            // 새로운거 git 생성
-            String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
-            GitCodeCreateRequest request = GitCodeCreateRequest.builder()
-                    .content(base64Content)
-                    .message(commit_message)
-                    .branch("main")
-                    .build();
+            this.createCodeInGithub(token, code, url, commitMessage);
 
-            String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
-            code.changeSha(sha);
-
-            // 이전거 git에서 삭제
+            // 이전 파일 삭제
             path = this.getPath(code.getProblem().getName(), user.getName(), lastFileName);
+            url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
+            
+            this.deleteCodeInGithub(token, codeId, url);
 
-            // 삭제의 경우, git에서 찾았는데 없으면 걸러서 DB것도 삭제되게 해야 함
-            try {
-                gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
-            } catch(HttpClientErrorException e) {
-                e.printStackTrace();
-                System.out.println("삭제할 파일이 github에 없음");
-            }
-            // git에 해당 코드가 있다면 - 그 코드도 삭제
-            if(gitCodeResponse != null) {   // 해당 코드가 있고
-                
-                GitCodeDeleteRequest gitCodeDeleteRequest = GitCodeDeleteRequest.builder()
-                        .message(DELETE_MESSAGE)
-                        .branch("main")
-                        .sha(gitCodeResponse.getSha())
-                        .build();
-
-                gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.DELETE, gitCodeDeleteRequest);
-
-            }
         } else {
             try {
-                gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, repo, path);
+                gitCodeResponse = gitCodeAPI.selectFile(token, url);
             } catch(HttpClientErrorException e) {
                 System.out.println("조회할 파일이 github에 없음");
                 e.printStackTrace();
@@ -297,17 +268,21 @@ public class CodeService {
             String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
             GitCodeUpdateRequest request = GitCodeUpdateRequest.builder()
                     .content(base64Content)
-                    .message(commit_message)
+                    .message(commitMessage)
                     .sha("")
-                    .branch("main")
+                    .branch(BRANCH)
                     .build();
 
             if(gitCodeResponse != null) {   // 서버에서 변경이 발생하면
                 request.setSha(gitCodeResponse.getSha());
             }
-            String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
+            String sha = gitCodeAPI.manipulate(token, url, HttpMethod.PUT, request);
             code.changeSha(sha);
         }
+
+    }
+
+    public void reuploadCode(Long studyId, Long codeId, CodeRequest codeRequest) {
 
     }
 
@@ -315,7 +290,15 @@ public class CodeService {
         return "/풀이모음/" + problemName + "/" + userName + "/" + fileName;
     }
 
-    public void reuploadCode(Long studyId, Long codeId, CodeRequest codeRequest) {
-
+    private String getUrl(String owner, String repo, String path) {
+        return "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
     }
+
+    public String getCommitMessage(String commitMessage) {
+        if(commitMessage == null || commitMessage.equals("")) {
+            commitMessage = CREATE_MESSAGE;
+        }
+        return commitMessage;
+    }
+
 }
