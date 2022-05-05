@@ -1,6 +1,6 @@
 package com.ssafy.alta.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.dto.response.UserResponse;
 import com.ssafy.alta.entity.Alert;
 import com.ssafy.alta.entity.Study;
@@ -8,21 +8,25 @@ import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitEmailAPI;
-import com.ssafy.alta.jwt.JwtFilter;
 import com.ssafy.alta.repository.AlertRepository;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.util.UserLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 public class UserService1 {
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private UserRepository userRepository;
@@ -37,9 +41,56 @@ public class UserService1 {
     private StudyJoinInfoRepository studyJoinInfoRepository;
 
     private GitEmailAPI gitEmailAPI = new GitEmailAPI();
+    private UserLanguage userLanguage ;
 
     @Autowired
     private RedisService redisService;
+
+    @Transactional
+    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file){
+        String user_id = userService.getCurrentUserId();
+
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
+                .orElseThrow(DataNotFoundException::new));
+        User exUser = optUser.get();
+
+        String[] langlist = userUpdateRequest.getLanguageList();
+        System.out.println("이거 맞아??? : "+ userUpdateRequest);
+
+        HashMap< String,Integer> langStringMap = userLanguage.getLangStringMap();
+        int sum = 0;
+        for(String langString : langlist){
+            if(langStringMap.containsKey(langString))
+                sum+=langStringMap.get(langString);
+            System.out.println(langString + " : " + langStringMap.get(langString));
+        }
+
+        // 이미지 저장
+        String imagePath = environment.getProperty("image.basePath")+UUID.randomUUID()+file.getOriginalFilename();
+        try {
+            file.transferTo(new File(imagePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 받은 정보로 유저 정보 업데이트
+        User newUser = new User().builder()
+                .nickname(userUpdateRequest.getNickname())
+                .email(userUpdateRequest.getEmail())
+                .id(user_id)
+                .image(imagePath)
+                .introduction(userUpdateRequest.getIntroduction())
+                .language(sum)
+                .name(exUser.getName())
+                .role(exUser.getRole())
+                .siteAlert(exUser.getSiteAlert())
+                .emailAlert(exUser.getEmailAlert())
+                .build();
+        userRepository.save(newUser);
+
+        // 유저 정보 불러서 리턴
+        return this.selectUser();
+    }
 
     public UserResponse selectUser()  {
         String user_id = userService.getCurrentUserId();
