@@ -36,9 +36,11 @@ public class UserController1 {
         return new ResponseEntity<>(userService1.selectUser(), HttpStatus.OK);
     }
 
-    @PatchMapping("/info")
+    @PostMapping( consumes = {"multipart/form-data"}, path ="/info" )
     @ApiOperation(value = "user 개인정보 수정", notes ="user 개인 정보 수정")
-    public ResponseEntity updateUserInfo(@RequestPart("profileImage") MultipartFile profileImageFile ,@RequestBody UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity updateUserInfo(@RequestPart("profileImage") MultipartFile profileImageFile ,@ModelAttribute UserUpdateRequest userUpdateRequest) {
+        System.out.println(profileImageFile.getOriginalFilename());
+        System.out.println(userUpdateRequest);
         return new ResponseEntity<>(userService1.updateUser(userUpdateRequest, profileImageFile), HttpStatus.OK);
     }
 }
