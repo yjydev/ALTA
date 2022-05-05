@@ -1,30 +1,27 @@
 package com.ssafy.alta.dto.request;
 
-import com.ssafy.alta.entity.Problem;
-import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.dto.request
- * fileName 	: ProblemRequest
+ * fileName 	: GitRepoUpdateRequest
  * author 	    : jisoon Lee
- * date		    : 2022-04-29
+ * date		    : 2022-05-04
  * description	:
  * ===========================================================
  * DATE             AUTHOR              NOTE
  * -----------------------------------------------------------
- * 2022-04-29       jisoon Lee         최초 생성
+ * 2022-05-04       jisoon Lee         최초 생성
  */
-
 @Getter
-@Setter
+@Builder
 @ToString
-public class ProblemRequest {
-    @ApiModelProperty(value = "회차 키", required = true)
-    private Long scheduleId;
-    private List<Problem> problems;
+public class GitRepoUpdateRequest {
+    private String base_sha;
+    private List<HashMap> tree;
 }
