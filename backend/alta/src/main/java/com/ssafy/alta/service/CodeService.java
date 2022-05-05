@@ -74,14 +74,27 @@ public class CodeService {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         codeRepository.save(code);
 
+        String path = this.getPath(code.getProblem().getName(), user.getName(), codeRequest.getFile_name());
+
+        // Github에 이미 같은 이름의 파일이 업로드 되어있다면
+        GitCodeResponse gitCodeResponse = null;
+        try {
+            gitCodeResponse = gitCodeAPI.selectFile(token, studyLeaderUserName, study.getRepositoryName(), path);
+        } catch(HttpClientErrorException e) {
+            System.out.println("조회할 파일이 github에 없음");
+            e.printStackTrace();
+        }
+        if(gitCodeResponse != null) {
+            throw new DuplicateFileException();
+        }
+
         String commit_message = codeRequest.getCommit_message();
 
         // 커밋 메시지 빈 경우 default값 달아주기
         if(commit_message == null || commit_message.equals("")) {
             commit_message = CREATE_MESSAGE;
         }
-        String path = this.getPath(code.getProblem().getName(), user.getName(), codeRequest.getFile_name());
-        System.out.println(path);
+
         String base64Content = Base64.getEncoder().encodeToString(codeRequest.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeCreateRequest request = GitCodeCreateRequest.builder()
                 .content(base64Content)
