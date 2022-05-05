@@ -8,18 +8,22 @@ import com.ssafy.alta.dto.request.StudyRequest;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
-import com.ssafy.alta.exception.DataNotFoundException;
-import com.ssafy.alta.exception.DuplicateRepoException;
-import com.ssafy.alta.exception.UnAuthorizedException;
+import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitRepoAPI;
+import com.ssafy.alta.mailutil.MailHandler;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.StudyRepository;
 import com.ssafy.alta.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import javax.mail.MessagingException;
+import javax.swing.text.html.Option;
 import java.util.*;
 
 /**
@@ -43,6 +47,8 @@ public class StudyService {
     private final UserService userService;
     private final RedisService redisService;
     private final GitRepoAPI gitRepoAPI = new GitRepoAPI();
+    private final JavaMailSender mailSender;
+    private final SpringTemplateEngine templateEngine;
 
     @Transactional(rollbackFor = Exception.class)
     public void insertStudy(StudyRequest studyRequest) throws JsonProcessingException {
@@ -112,4 +118,44 @@ public class StudyService {
         return map;
     }
 
+//    @Async -> Exception 처리 전 결과가 먼저 날아감
+    @Transactional(rollbackFor = Exception.class)
+    public void inviteUser(Long studyId, String toUser) throws MessagingException {
+        String userId = userService.getCurrentUserId();
+
+        Optional<Study> optStudy = Optional.of(studyRepository.findByStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = sjiRepository.findByStudyStudyIdAndUserId(studyId, toUser);
+        if (optSJI.isPresent())
+            throw new UserStateException();
+        Optional<User> optUser = Optional.of(userRepository.findById(toUser)
+                .orElseThrow(DataNotFoundException::new));
+        if(optUser.get().getEmail() == null)
+            throw new DataNotFoundException();
+
+        User user = optUser.get();
+        String userName = userRepository.findStudyLeaderUserNameByUserId(userId);
+
+        StudyJoinInfo studyJoinInfo = StudyJoinInfo.builder()
+                .user(user)
+                .study(optStudy.get())
+                .state("초대대기")
+                .position("그룹원")
+                .isReceivable(false)
+                .build();
+
+        MailHandler mailHandler = new MailHandler(mailSender);
+        mailHandler.setTo(user.getEmail());
+        mailHandler.setFrom("alta.invitation@gmail.com");
+        mailHandler.setSubject("ALTA에서 전송한 초대메일 입니다.");
+
+        Context context = new Context();
+        context.setVariable("name", userName);
+        context.setVariable("code", optStudy.get().getCode());
+        String html = templateEngine.process("invitation", context);
+        mailHandler.setText(html, true);
+
+        sjiRepository.save(studyJoinInfo);
+        mailHandler.send();
+    }
 }
