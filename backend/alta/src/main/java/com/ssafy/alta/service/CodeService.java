@@ -67,10 +67,9 @@ public class CodeService {
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(UnAuthorizedException::new));
 
-        StudyJoinInfo studyJoinInfo = optSJI.get();
-        if(!optSJI.get().getState().equals("가입")) {
-            throw new UnAuthorizedException();
-        }
+        // 검증 - 해당 스터디의 가입한 스터디원이 맞는지
+        checkStudyJoinInfoState(optSJI.get().getState());
+
 
         Study study = optStudy.get();
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
@@ -81,6 +80,8 @@ public class CodeService {
 //        중복 부분 호출 - 코드 github에 업로드
         this.createCodeInGithub(token, study, code, codeRequest);
     }
+
+
 
     @Transactional(rollbackFor = Exception.class)
     public CodeInfoResponse selectCode(Long studyId, Long codeId) throws JsonProcessingException {
@@ -93,6 +94,9 @@ public class CodeService {
                 .orElseThrow(DataNotFoundException::new));
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(UnAuthorizedException::new));
+
+        // 검증 - 해당 스터디의 가입한 스터디원이 맞는지
+        checkStudyJoinInfoState(optSJI.get().getState());
 
         Study study = optStudy.get();
         Code code = optCode.get();
@@ -124,8 +128,11 @@ public class CodeService {
         Study study = optStudy.get();
         Code code = optCode.get();
 
+        // 검증
         // 작성자가 수정하는 건지 체크
         checkUserId(userId, code.getUser().getId());
+        // 해당 스터디의 가입한 스터디원이 맞는지
+        checkStudyJoinInfoState(optSJI.get().getState());
 
         // DB에서 삭제
         codeRepository.deleteById(code.getId());
@@ -155,6 +162,8 @@ public class CodeService {
         // 검증
         // 작성자가 수정하는 건지 체크
         checkUserId(userId, code.getUser().getId());
+        // 해당 스터디의 가입한 스터디원이 맞는지
+        checkStudyJoinInfoState(optSJI.get().getState());
 
         // 코드 수정일 경우, -> 파일 이름, 내용 변경 -> DB에 적용
         if(isUpdate) {
@@ -283,9 +292,15 @@ public class CodeService {
         }
     }
 
-    public void checkUserId(String userId, String id) {
+    private void checkUserId(String userId, String id) {
         if(userId != id)
             throw new WriterNotMatchException();
+    }
+
+    private void checkStudyJoinInfoState(String state) {
+        if(!state.equals("가입")) {
+            throw new UnAuthorizedException();
+        }
     }
 
     public String getPath(String problemName, String userName, String fileName) {
