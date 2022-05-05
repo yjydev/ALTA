@@ -1,6 +1,8 @@
 package com.ssafy.alta.service;
 
-import com.ssafy.alta.dto.request.ProblemRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.alta.dto.request.ProblemCreateRequest;
+import com.ssafy.alta.dto.request.ProblemUpdateRequest;
 import com.ssafy.alta.dto.request.ScheduleRequest;
 import com.ssafy.alta.dto.response.CodeResponse;
 import com.ssafy.alta.dto.response.ProblemResponse;
@@ -8,7 +10,10 @@ import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
 import com.ssafy.alta.dto.response.ScheduleAndProblemResponse;
 import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.DataNotFoundException;
+import com.ssafy.alta.exception.DuplicateFolderException;
 import com.ssafy.alta.exception.UnAuthorizedException;
+import com.ssafy.alta.gitutil.GitCodeAPI;
+import com.ssafy.alta.gitutil.GitDirectoryAPI;
 import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,7 +41,11 @@ public class ScheduleAndProblemService {
     private final StudyJoinInfoRepository sjiRepository;
     private final UserService userService;
     private final RedisService redisService;
+    private final GitDirectoryAPI gitDirectoryAPI = new GitDirectoryAPI();
+    private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
+    private final UserRepository userRepository;
 
+    @Transactional
     public HashMap<String, Object> selectScheduleList(Long studyId){
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
@@ -103,6 +112,7 @@ public class ScheduleAndProblemService {
         problemRepository.saveAll(problems);
     }
 
+    @Transactional
     public void insertSchedule(Long studyId, ScheduleRequest scheduleRequest) {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
@@ -122,22 +132,59 @@ public class ScheduleAndProblemService {
         scheduleRepository.save(scheduleRequest.toSchedule(round, false, study));
     }
 
-    public void insertProblem(Long study_id, ProblemRequest problemRequest) {
+    @Transactional
+    public void insertProblem(Long studyId, ProblemCreateRequest problemCreateRequest) {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
-        Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findByStudyStudyIdAndId(study_id, problemRequest.getScheduleId())
+        Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findByStudyStudyIdAndId(studyId, problemCreateRequest.getScheduleId())
                 .orElseThrow(DataNotFoundException::new));
-        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(study_id, userId)
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
         if(!optSJI.get().getState().equals("가입"))
             throw new UnAuthorizedException();
 
-        List<Problem> preProblems = problemRequest.getProblems();
+        List<Problem> preProblems = problemCreateRequest.getProblems();
         List<Problem> problems = new ArrayList<>();
         for(Problem problem : preProblems) {
+            if( problemRepository.findByDuplicateProblemInSchedule(optSchedule.get(), problem.getName()) != null ) {
+                throw new DuplicateFolderException();
+            }
             problems.add(new Problem(problem.getName(),problem.getLink(), false, optSchedule.get()));
         }
         problemRepository.saveAll(problems);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateProblem(Long studyId, ProblemUpdateRequest problemUpdateRequest) throws JsonProcessingException {
+        // 1차, 우선 update 하는 사람이 스터디 유저인지 확인
+        // 2차, 문제가 있는지 확인
+        // 3차, 동일 회차에 동일한 문제 있는지 확인
+        // 4차, DB 업데이트 먼저 -> Transactional 처리
+        // 5차, git에 동일한 문제 폴더가 있는지 확인 -> 동일 폴더 존재 시
+        // 6차, git 변경
+
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+        if(!optSJI.get().getState().equals("가입"))
+            throw new UnAuthorizedException();
+
+        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(problemUpdateRequest.getId())
+                .orElseThrow(DataNotFoundException::new));
+
+        Study study = optSJI.get().getStudy();
+        Problem problem = optProblem.get();
+        String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
+
+        if(problemRepository.findByDuplicateProblem(optProblem.get().getSchedule(), problemUpdateRequest.getName(), problemUpdateRequest.getId()) != null)
+            throw new DuplicateFolderException();
+
+        problemRepository.updateProblemById(problemUpdateRequest.getId(), problemUpdateRequest.getName(), problemUpdateRequest.getLink());
+
+        if(!problem.getName().equals(problemUpdateRequest.getName()))
+            gitDirectoryAPI.updateDirectory(token, studyLeaderUserName, study.getRepositoryName(), problem.getName(), problemUpdateRequest.getName());
     }
 }
