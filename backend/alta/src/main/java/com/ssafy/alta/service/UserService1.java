@@ -139,6 +139,14 @@ public class UserService1 {
             tmp.put("joined", studyJoinInfoRepository.countStudyJoinInfoByUserIdAndStudyStudyId(sji.getUser().getId(), tmpStudy.getStudyId()));
             arrayStudyList.add(tmp);
         }
+        char[] lnum =  Integer.toBinaryString(user.getLanguage()).toCharArray();
+        int lnumIdx = 0;
+        ArrayList<String> langStringList = new ArrayList<>();
+        while(lnum.length>lnumIdx){
+            if(lnum[lnumIdx] == '1')
+                langStringList.add((String)userLanguage.getLangIdxMap().get((int)Math.pow(2,lnumIdx )));
+            lnumIdx++;
+        }
 
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
@@ -146,7 +154,7 @@ public class UserService1 {
         userResponse.getUserData().put("alertList", arrayAlertList);
         userResponse.getUserData().put("introduction", user.getIntroduction());
         userResponse.getUserData().put("time", user.getActivityTime());
-        userResponse.getUserData().put("languageList", user.getLanguage());
+        userResponse.getUserData().put("languageList",langStringList);
         userResponse.getUserData().put("profileUrl", user.getImage());
         userResponse.getUserData().put("studyList", arrayStudyList);
 
