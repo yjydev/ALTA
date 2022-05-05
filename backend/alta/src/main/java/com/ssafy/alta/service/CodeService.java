@@ -7,10 +7,7 @@ import com.ssafy.alta.dto.request.GitCodeUpdateRequest;
 import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.GitCodeResponse;
 import com.ssafy.alta.entity.*;
-import com.ssafy.alta.exception.DataNotFoundException;
-import com.ssafy.alta.exception.DuplicateFileException;
-import com.ssafy.alta.exception.UnAuthorizedException;
-import com.ssafy.alta.exception.WriterNotMatchException;
+import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -65,11 +62,13 @@ public class CodeService {
         Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
                 .orElseThrow(DataNotFoundException::new));
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
-                .orElseThrow(UnAuthorizedException::new));
+                .orElseThrow(AccessDeniedStudyException::new));
 
-        // 검증 - 해당 스터디의 가입한 스터디원이 맞는지
+        // 검증
+        // 해당 스터디의 가입한 스터디원이 맞는지
         checkStudyJoinInfoState(optSJI.get().getState());
-
+        // 해당 유저가 해당 문제에서 그 파일을 이미 만들었는지(파일 이름 겹치는지)
+        checkFileName(codeRequest.getFile_name(), userId, codeRequest.getProblem_id());
 
         Study study = optStudy.get();
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
@@ -82,7 +81,6 @@ public class CodeService {
     }
 
 
-
     @Transactional(rollbackFor = Exception.class)
     public CodeInfoResponse selectCode(Long studyId, Long codeId) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
@@ -93,7 +91,7 @@ public class CodeService {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
-                .orElseThrow(UnAuthorizedException::new));
+                .orElseThrow(AccessDeniedStudyException::new));
 
         // 검증 - 해당 스터디의 가입한 스터디원이 맞는지
         checkStudyJoinInfoState(optSJI.get().getState());
@@ -123,7 +121,7 @@ public class CodeService {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
-                .orElseThrow(UnAuthorizedException::new));
+                .orElseThrow(AccessDeniedStudyException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
@@ -152,7 +150,7 @@ public class CodeService {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
-                .orElseThrow(UnAuthorizedException::new));
+                .orElseThrow(AccessDeniedStudyException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
@@ -164,6 +162,8 @@ public class CodeService {
         checkUserId(userId, code.getUser().getId());
         // 해당 스터디의 가입한 스터디원이 맞는지
         checkStudyJoinInfoState(optSJI.get().getState());
+        // 해당 유저가 해당 문제에서 그 파일을 이미 만들었는지(파일 이름 겹치는지)
+        checkFileName(codeRequest.getFile_name(), userId, code.getProblem().getId());
 
         // 코드 수정일 경우, -> 파일 이름, 내용 변경 -> DB에 적용
         if(isUpdate) {
@@ -198,7 +198,7 @@ public class CodeService {
         }
 //        같은 파일이 이미 Git에 업로도 되어 있으면 -> Exception 발생
         if(gitCodeResponse != null) {
-            throw new DuplicateFileException();
+            throw new DuplicateFileInGithubException();
         }
 
         String base64Content = Base64.getEncoder().encodeToString(code.getContent().getBytes(StandardCharsets.UTF_8));
@@ -299,8 +299,14 @@ public class CodeService {
 
     private void checkStudyJoinInfoState(String state) {
         if(!state.equals("가입")) {
-            throw new UnAuthorizedException();
+            throw new AccessDeniedStudyException();
         }
+    }
+
+    private void checkFileName(String fileName, String userId, long problemId) {
+        Code result = codeRepository.findCodeByFileNameAndUser_IdAndProblemId(fileName, userId, problemId);
+        if(result != null)
+            throw new DuplicateFileException();
     }
 
     public String getPath(String problemName, String userName, String fileName) {
