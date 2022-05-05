@@ -1,15 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Box, Typography, Link } from '@mui/material';
+import { Grid, Box, Typography, Link, CircularProgress } from '@mui/material';
 import styled from '@emotion/styled';
 import GithubButton from 'react-github-login-button';
 
 import LoginTokenChecker from '../../modules/LoginTokenChecker';
 
 import Logo from '../../images/logo.png';
+import { blackColor } from '../../modules/colorChart';
 
 export default function ALTA_LoginContents() {
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (LoginTokenChecker()) navigate('/mypage');
@@ -33,13 +36,26 @@ export default function ALTA_LoginContents() {
         </Grid>
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
           <Box sx={loginForm}>
-            {/* <A href="http://k6b203.p.ssafy.io:8000/githubLogin"> */}
-            <A href="http://localhost:8000/githubLogin">
-              <GithubButton
-                label="Github 계정으로 로그인하기"
-                style={{ width: '100%' }}
-              />
-            </A>
+            {loading ? (
+              <>
+                <Button disabled>
+                  <CircularProgress sx={{ color: '#fff' }} />
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* <A href="http://k6b203.p.ssafy.io:8000/githubLogin"> */}
+                <A
+                  href="http://localhost:8000/githubLogin"
+                  onClick={() => setLoading(true)}
+                >
+                  <GithubButton
+                    label="Github 계정으로 로그인하기"
+                    style={{ width: '100%' }}
+                  />
+                </A>
+              </>
+            )}
             <Typography sx={[userInput, signUpGuide]}>
               Github 계정이 없으신가요?
               <Link
@@ -98,4 +114,9 @@ const Img = styled.img`
 
 const A = styled.a`
   all: unset;
+`;
+
+const Button = styled.button`
+  width: 100%;
+  background-color: #000;
 `;
