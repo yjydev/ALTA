@@ -6,17 +6,13 @@ import com.ssafy.alta.dto.request.GitCodeDeleteRequest;
 import com.ssafy.alta.dto.request.GitCodeUpdateRequest;
 import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.GitCodeResponse;
-import com.ssafy.alta.entity.Code;
-import com.ssafy.alta.entity.Problem;
-import com.ssafy.alta.entity.Study;
-import com.ssafy.alta.entity.User;
+import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.exception.DuplicateFileException;
+import com.ssafy.alta.exception.UnAuthorizedException;
+import com.ssafy.alta.exception.WriterNotMatchException;
 import com.ssafy.alta.gitutil.GitCodeAPI;
-import com.ssafy.alta.repository.CodeRepository;
-import com.ssafy.alta.repository.ProblemRepository;
-import com.ssafy.alta.repository.StudyRepository;
-import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -47,6 +43,7 @@ public class CodeService {
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
     private final StudyRepository studyRepository;
+    private final StudyJoinInfoRepository studyJoinInfoRepository;
     private final CommentService commentService;
     private final UserService userService;
     private final RedisService redisService;
@@ -67,6 +64,13 @@ public class CodeService {
                 .orElseThrow(DataNotFoundException::new));
         Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
                 .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(UnAuthorizedException::new));
+
+        StudyJoinInfo studyJoinInfo = optSJI.get();
+        if(!optSJI.get().getState().equals("가입")) {
+            throw new UnAuthorizedException();
+        }
 
         Study study = optStudy.get();
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
@@ -87,6 +91,8 @@ public class CodeService {
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(UnAuthorizedException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
@@ -112,10 +118,17 @@ public class CodeService {
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(UnAuthorizedException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
 
+        // 작성자가 수정하는 건지 체크
+        checkUserId(userId, code.getUser().getId());
+
+        // DB에서 삭제
+        codeRepository.deleteById(code.getId());
 
         this.deleteCodeInGithub(token, study, code, false, "");
     }
@@ -131,11 +144,17 @@ public class CodeService {
                 .orElseThrow(DataNotFoundException::new));
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(UnAuthorizedException::new));
 
         Study study = optStudy.get();
         Code code = optCode.get();
         User user = optUser.get();
         String lastFileName = code.getFileName();
+
+        // 검증
+        // 작성자가 수정하는 건지 체크
+        checkUserId(userId, code.getUser().getId());
 
         // 코드 수정일 경우, -> 파일 이름, 내용 변경 -> DB에 적용
         if(isUpdate) {
@@ -215,8 +234,6 @@ public class CodeService {
 
         }
 
-        // DB에서 삭제
-        codeRepository.deleteById(code.getId());
     }
 
     public GitCodeResponse selectCodeInGithub(String token, Study study, Code code, boolean isUpdate) throws JsonProcessingException {
@@ -256,14 +273,19 @@ public class CodeService {
     }
 
     public void updateCodeInGithub(String token, Study study, Code code, CodeRequest codeRequest, String lastFileName) throws JsonProcessingException {
-        if(code.getFileName() != lastFileName) {
+        if(!code.getFileName().equals(lastFileName)) {
 
             this.createCodeInGithub(token, study, code, codeRequest);
             this.deleteCodeInGithub(token, study, code, true, lastFileName);
 
         } else {
-            selectCodeInGithub(token, study, code, true);
+            this.selectCodeInGithub(token, study, code, true);
         }
+    }
+
+    public void checkUserId(String userId, String id) {
+        if(userId != id)
+            throw new WriterNotMatchException();
     }
 
     public String getPath(String problemName, String userName, String fileName) {

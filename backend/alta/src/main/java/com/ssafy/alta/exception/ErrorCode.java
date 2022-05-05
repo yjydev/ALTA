@@ -33,7 +33,7 @@ public enum ErrorCode {
     HTTP_CLIENT_ERROR_EXCEPTION("A001", HttpStatus.BAD_REQUEST, "Git과 통신 중 에러가 발생했습니다."),
     GIT_DUPLICATE_FILE_ERROR("A002", HttpStatus.NOT_FOUND, "이미 같은 이름의 코드가 Github에 업로드 되어 있습니다."),
 
-    COMMENT_WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "댓글 작성자만 삭제할 수 있습니다.");
+    WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "작성자만 수정/삭제할 수 있습니다.");
 
     private final String code;         // 에러 키(관리하기 위함)
     private final HttpStatus status;  // 상태 코드
