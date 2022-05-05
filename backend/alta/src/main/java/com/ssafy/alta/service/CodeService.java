@@ -62,9 +62,9 @@ public class CodeService {
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
-                .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
                 .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
@@ -92,20 +92,18 @@ public class CodeService {
         String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
 
         code.changeSha(sha);
-        codeRepository.save(code);
-
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CodeInfoResponse selectCode(Long studyId, Long codeId) {
+    public CodeInfoResponse selectCode(Long studyId, Long codeId) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
-                .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
@@ -125,8 +123,20 @@ public class CodeService {
             System.out.println("조회할 파일이 github에 없음");
             e.printStackTrace();
         }
+        
+        // 조회했는데 없으면 git 새로 생성
+        if(gitCodeResponse == null) {
+            String base64Content = Base64.getEncoder().encodeToString(code.getContent().getBytes(StandardCharsets.UTF_8));
+            GitCodeCreateRequest request = GitCodeCreateRequest.builder()
+                    .content(base64Content)
+                    .message(CREATE_MESSAGE)
+                    .branch("main")
+                    .build();
 
-        // if(gitCodeResponse == null) {}
+            String sha = gitCodeAPI.manipulate(token, studyLeaderUserName, study.getRepositoryName(), path, HttpMethod.PUT, request);
+
+            code.changeSha(sha);
+        }
 
         if(gitCodeResponse != null && !gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
@@ -143,9 +153,9 @@ public class CodeService {
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
-                .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
@@ -190,9 +200,9 @@ public class CodeService {
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
-                .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
                 .orElseThrow(DataNotFoundException::new));
 
         Study study = optStudy.get();
