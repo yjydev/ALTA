@@ -46,7 +46,7 @@ public class UserService1 {
     @Autowired
     private RedisService redisService;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file){
         String user_id = userService.getCurrentUserId();
 
@@ -55,7 +55,6 @@ public class UserService1 {
         User exUser = optUser.get();
 
         String[] langlist = userUpdateRequest.getLanguageList();
-        System.out.println("이거 맞아??? : "+ userUpdateRequest);
 
         HashMap< String,Integer> langStringMap = userLanguage.getLangStringMap();
         int sum = 0;
@@ -91,7 +90,7 @@ public class UserService1 {
         // 유저 정보 불러서 리턴
         return this.selectUser();
     }
-
+    @Transactional
     public UserResponse selectUser()  {
         String user_id = userService.getCurrentUserId();
 
