@@ -314,4 +314,8 @@ public class CodeService {
     public String getPath(String problemName, String userName, String fileName) {
         return "/풀이모음/" + problemName + "/" + userName + "/" + fileName;
     }
+
+    public void reuploadCode(Long studyId, Long codeId, CodeRequest codeRequest) {
+
+    }
 }
