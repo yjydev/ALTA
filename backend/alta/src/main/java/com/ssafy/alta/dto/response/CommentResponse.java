@@ -24,7 +24,7 @@ import java.util.Date;
 @Builder
 public class CommentResponse {
     @ApiModelProperty(value = "댓글 작성자 키")
-    private String review_id;
+    private Long review_id;
 
     @ApiModelProperty(value = "댓글 작성자 이름")
     private String reviewer_name;

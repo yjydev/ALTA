@@ -1,6 +1,8 @@
 package com.ssafy.alta.controller;
 
-import com.ssafy.alta.dto.request.ProblemRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.alta.dto.request.ProblemCreateRequest;
+import com.ssafy.alta.dto.request.ProblemUpdateRequest;
 import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
 import com.ssafy.alta.dto.request.ScheduleRequest;
 import com.ssafy.alta.service.ScheduleAndProblemService;
@@ -51,8 +53,15 @@ public class ScheduleAndProblemController {
 
     @PostMapping("/problem")
     @ApiOperation(value = "문제 입력", notes = "회차별 문제리스트를 등록합니다.")
-    public ResponseEntity insertProblem(@PathVariable("study_id") Long studyId, @RequestBody ProblemRequest problemRequest) {
-        scheduleAndProblemService.insertProblem(studyId, problemRequest);
+    public ResponseEntity insertProblem(@PathVariable("study_id") Long studyId, @RequestBody ProblemCreateRequest problemCreateRequest) {
+        scheduleAndProblemService.insertProblem(studyId, problemCreateRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/problem")
+    @ApiOperation(value = "문제 수정", notes = "문제를 수정한다.")
+    public ResponseEntity updateProblem(@PathVariable("study_id") Long studyId, @RequestBody ProblemUpdateRequest problemUpdateRequest) throws JsonProcessingException {
+        scheduleAndProblemService.updateProblem(studyId, problemUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

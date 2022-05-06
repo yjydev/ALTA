@@ -21,6 +21,7 @@ public enum ErrorCode {
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     HANDLE_ACCESS_DENIED("U001", HttpStatus.UNAUTHORIZED, "접근이 제한됩니다."),  // 유저
+    ACCESS_DENIED_STUDY("U002", HttpStatus.UNAUTHORIZED, "스터디에 가입된 그룹원이 아닙니다."),  // 유저
     DB_NOT_FOUND_ERROR("G001", HttpStatus.NOT_FOUND, "일치하는 데이터가 없습니다."), // 글로벌
 
     /* JWT REFRESH TOKEN 기간 만료 에러 */
@@ -28,12 +29,14 @@ public enum ErrorCode {
 
     /* 500 INTERNAL_SERVER_ERROR : 서버 내부 오류 */
     INTERNAL_SERVER_ERROR("G002", HttpStatus.INTERNAL_SERVER_ERROR, "서버에 에러가 발생했습니다."),
-    GIT_DUPLICATE_REPO_ERROR("G003", HttpStatus.NOT_FOUND, "Git 레포지토리 이름이 중복됩니다."),
 
     HTTP_CLIENT_ERROR_EXCEPTION("A001", HttpStatus.BAD_REQUEST, "Git과 통신 중 에러가 발생했습니다."),
-    GIT_DUPLICATE_FILE_ERROR("A002", HttpStatus.NOT_FOUND, "이미 같은 이름의 코드가 Github에 업로드 되어 있습니다."),
+    GIT_DUPLICATE_FILE_ERROR("A002", HttpStatus.BAD_REQUEST, "이미 같은 이름의 코드가 Github에 업로드 되어 있습니다."),
+    GIT_DUPLICATE_REPO_ERROR("A003", HttpStatus.NOT_FOUND, "Git 레포지토리 이름이 중복됩니다."),
+    GIT_DUPLICATE_FOLDER_ERROR("A004", HttpStatus.BAD_REQUEST, "Git 폴더 이름이 중복됩니다."),
 
-    COMMENT_WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "댓글 작성자만 삭제할 수 있습니다.");
+    WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "작성자만 수정/삭제할 수 있습니다."),
+    DUPLICATE_FILE_ERROR("A002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다.");
 
     private final String code;         // 에러 키(관리하기 위함)
     private final HttpStatus status;  // 상태 코드
