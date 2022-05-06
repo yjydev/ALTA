@@ -71,7 +71,7 @@ public class Comment {
 
     public CommentResponse toDto() {
         return CommentResponse.builder()
-                .review_id(user.getId())
+                .review_id(id)
                 .reviewer_name(user.getNickname())
                 .comment(content)
                 .code_number(line)
