@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+
 /**
  * packageName 	: com.ssafy.alta.controller
  * fileName 	: StudyController
@@ -38,5 +40,12 @@ public class StudyController {
     @ApiOperation(value = "스터디 멤버 조회", notes = "스터디 멤버를 조회합니다. 그룹장이라면 모든 정보를, 그룹원이라면 가입된 멤버 정보를 볼 수 있습니다.")
     public ResponseEntity selectStudyMemberList(@PathVariable("study_id") Long studyId) {
         return new ResponseEntity<>(studyService.selectStudyMemberList(studyId), HttpStatus.OK);
+    }
+
+    @PostMapping("/{study_id}/invitation")
+    @ApiOperation(value = "스터디 멤버 초대", notes = "User email을 기반으로 메일을 보낸다.")
+    public ResponseEntity inviteUser(@PathVariable("study_id") Long studyId, @RequestBody String userId) throws MessagingException {
+        studyService.inviteUser(studyId, userId);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

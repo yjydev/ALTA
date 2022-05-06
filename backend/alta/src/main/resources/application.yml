@@ -45,6 +45,27 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: alta.invitation
+    password: k6b203ALTA@@
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    check-template-location: true
+    cache: false
+
 jwt:
   header: Authorization
   #HS512 ????? ??? ??? ??? 512bit, ? 64byte ??? secret key? ???? ??.
