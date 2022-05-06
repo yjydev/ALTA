@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CodeController {
     private final CodeService codeService;
-    private Long studyId;
-    private Long codeId;
-    private CodeRequest codeRequest;
 
     @PostMapping
     @ApiOperation(value = "코드 추가", notes = "새 코드를 DB에 생성하고 Github에 commit합니다.")

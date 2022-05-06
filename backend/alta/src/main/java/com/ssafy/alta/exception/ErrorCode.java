@@ -29,10 +29,11 @@ public enum ErrorCode {
 
     /* 500 INTERNAL_SERVER_ERROR : 서버 내부 오류 */
     INTERNAL_SERVER_ERROR("G002", HttpStatus.INTERNAL_SERVER_ERROR, "서버에 에러가 발생했습니다."),
-    GIT_DUPLICATE_REPO_ERROR("G003", HttpStatus.NOT_FOUND, "Git 레포지토리 이름이 중복됩니다."),
 
     HTTP_CLIENT_ERROR_EXCEPTION("A001", HttpStatus.BAD_REQUEST, "Git과 통신 중 에러가 발생했습니다."),
     GIT_DUPLICATE_FILE_ERROR("A002", HttpStatus.BAD_REQUEST, "이미 같은 이름의 코드가 Github에 업로드 되어 있습니다."),
+    GIT_DUPLICATE_REPO_ERROR("A003", HttpStatus.NOT_FOUND, "Git 레포지토리 이름이 중복됩니다."),
+    GIT_DUPLICATE_FOLDER_ERROR("A004", HttpStatus.BAD_REQUEST, "Git 폴더 이름이 중복됩니다."),
 
     WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "작성자만 수정/삭제할 수 있습니다."),
     DUPLICATE_FILE_ERROR("A002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다.");
