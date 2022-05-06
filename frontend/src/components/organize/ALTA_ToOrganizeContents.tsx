@@ -124,7 +124,7 @@ export default function ALTA_ToOrganizeContents() {
             <span>{!requestData.name && '스터디 이름을 채워주세요'}</span>
             <span>
               {requestData.name &&
-                `"${requestData.name}" 가 스터디 이름을 등록됩니다.`}
+                `"${requestData.name}" 가 스터디 이름으로 등록됩니다.`}
             </span>
           </Typography>
         </ALTA_InputItem>
