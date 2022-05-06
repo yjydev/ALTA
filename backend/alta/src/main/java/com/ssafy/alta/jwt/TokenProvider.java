@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
@@ -75,10 +76,10 @@ public class TokenProvider implements InitializingBean {
         Date validity = new Date(now + this.accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(authentication.getName()) // github_id
                 .setIssuedAt(issuedTime) // 토큰발행 시간
                 .claim(AUTHORITIES_KEY, "ROLE_USER")
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS512) //// 암호화 알고리즘, secret 값
                 .setExpiration(validity) // 토큰만료 시간
                 .compact();
     }
@@ -90,12 +91,15 @@ public class TokenProvider implements InitializingBean {
         Date validity = new Date(now + this.refreshTokenValidityInMilliseconds);
 
         return Jwts.builder()
+                .setSubject(authentication.getName()) // github_id
                 .setIssuedAt(issuedTime) // 토큰발행 시간
+                .claim(AUTHORITIES_KEY, "ROLE_USER")
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity) // 토큰 만료 시간
                 .compact();
     }
 
+    // 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
                 .parserBuilder()
@@ -115,7 +119,6 @@ public class TokenProvider implements InitializingBean {
     }
 
     public boolean validateToken(String token) {
-
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -130,5 +133,6 @@ public class TokenProvider implements InitializingBean {
         }
         return false;
     }
+
 
 }

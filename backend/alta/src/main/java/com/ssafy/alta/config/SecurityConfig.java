@@ -6,6 +6,7 @@ import com.ssafy.alta.jwt.JwtAuthenticationEntryPoint;
 import com.ssafy.alta.jwt.JwtSecurityConfig;
 import com.ssafy.alta.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,21 +39,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 // 스웨거를 사용하기 위해 security 설정을 하지 않는다. -> 무조건 접근 가능!
                 .antMatchers(
-                        "/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**",   // swagger
+                        "/v2/api-docs",
+                        "/configuration/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/swagger/**",   // swagger
                         "/favicon.ico"
-                )
-                .antMatchers("/githubLogin");
+                );
+//                .antMatchers("/githubLogin"); // 여기다가 선언안하면 404 에러 발생..
     }
 
     @Override
 
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.
+        http
                 // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
-                        csrf().disable()
+                .csrf().disable()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -61,10 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
 //                .and()
 
-
                 // 모든 요청은 인증이 되어야 하지만, 로그인관련하여 요청은 다 권한은 허락해주어야 한다.
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
 
                 // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴
@@ -72,11 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .oauth2Login()
                 .userInfoEndpoint()//구글 로그인이 완료된 뒤의 후처리가 필요함. Tip. 코드x , (엑세스토큰 + 사용자 정보 0)
                 .userService(principalOauth2UserService)
-
                 // oauth 성공 후, jwt 토큰을 생성하기 위한 핸들러
                 .and()
                 .successHandler(oauth2AuthenticationSuccessHandler)
-//                .and().logout().clearAuthentication(true).deleteCookies("JSESSIONID").logoutSuccessUrl("/")
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider)); // jwtFilter를 addFilter로 등록했던 클래스 적용
 
