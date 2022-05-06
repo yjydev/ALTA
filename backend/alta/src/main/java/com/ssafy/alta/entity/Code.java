@@ -7,6 +7,7 @@ import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -28,6 +29,7 @@ import java.util.Date;
 @Entity
 @Table(name = "code")
 @Getter
+@ToString
 @DynamicInsert
 @DynamicUpdate
 @NoArgsConstructor
@@ -87,7 +89,7 @@ public class Code {
         this.content = content;
     }
     public void changeFile(String fileName, String content) {
-        if(fileName != null && !fileName.equals("") && !this.fileName.equals(fileName)) // 파일 이름이 null이 아니고, 공란이 아니고, 같지 않다면 업데이트  
+        if(fileName != null && !fileName.equals("") && !this.fileName.equals(fileName)) // 파일 이름이 null이 아니고, 공란이 아니고, 같지 않다면 업데이트
             this.fileName = fileName;
         this.content = content;
     }
