@@ -22,8 +22,8 @@ public enum ErrorCode {
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     HANDLE_ACCESS_DENIED("U001", HttpStatus.UNAUTHORIZED, "접근이 제한됩니다."),  // 유저
     ACCESS_DENIED_STUDY("U002", HttpStatus.UNAUTHORIZED, "스터디에 가입된 그룹원이 아닙니다."),  // 유저
-    USER_EXIST_ERROR("U003", HttpStatus.BAD_REQUEST, "스터디에 존재하는 상태값입니다.(가입, 초대대기, 참가대기, 거절, 탈퇴)"),
-
+    USER_EXIST_STATE("U003", HttpStatus.BAD_REQUEST, "스터디에 존재하는 상태값입니다.(가입, 초대대기, 참가대기, 거절, 탈퇴)"),
+    USER_EXIST_STUDY("U004", HttpStatus.BAD_REQUEST, "이미 스터디에 가입되어 있습니다."),
     DB_NOT_FOUND_ERROR("G001", HttpStatus.NOT_FOUND, "일치하는 데이터가 없습니다."), // 글로벌
 
     /* JWT REFRESH TOKEN 기간 만료 에러 */

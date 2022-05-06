@@ -2,7 +2,7 @@ package com.ssafy.alta.exception;
 
 /**
  * packageName 	: com.ssafy.alta.exception
- * fileName 	: UserStateException
+ * fileName 	: UserExistStudyException
  * author 	    : jisoon Lee
  * date		    : 2022-05-06
  * description	:
@@ -11,8 +11,8 @@ package com.ssafy.alta.exception;
  * -----------------------------------------------------------
  * 2022-05-06       jisoon Lee         최초 생성
  */
-public class UserStateException extends BusinessException{
-    public UserStateException() {
-        super(ErrorCode.USER_EXIST_STATE);
+public class UserExistStudyException extends BusinessException{
+    public UserExistStudyException() {
+        super(ErrorCode.USER_EXIST_STUDY);
     }
 }

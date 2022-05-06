@@ -91,7 +91,7 @@ public class StudyService {
                 .orElseThrow(DataNotFoundException::new));
 
         if(!optSJI.get().getState().equals("가입")) {
-            throw new UnAuthorizedException();
+            throw new AccessDeniedStudyException();
         }
 
         HashMap<String, Object> map = new HashMap<>();
@@ -157,5 +157,28 @@ public class StudyService {
 
         sjiRepository.save(studyJoinInfo);
         mailHandler.send();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStudyMember(String code) {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
+        Optional<Study> studyOpt = Optional.of(studyRepository.findByCode(code)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> sjiOpt = Optional.of(sjiRepository.findByStudyStudyIdAndUserId(studyOpt.get().getStudyId(), userId)
+                .orElseThrow(UnAuthorizedException::new));
+
+        Study study = studyOpt.get();
+        StudyJoinInfo sji = sjiOpt.get();
+        checkStudyJoinInfoState(sji.getState());
+
+        sjiRepository.updateSJIState(sji.getId(), study, "대기");
+    }
+
+    private void checkStudyJoinInfoState(String state) {
+        if(state.equals("가입") || state.equals("대기")) {
+            throw new UserExistStudyException();
+        }
     }
 }
