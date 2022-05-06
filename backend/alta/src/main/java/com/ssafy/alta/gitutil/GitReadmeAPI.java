@@ -7,6 +7,9 @@ import com.ssafy.alta.dto.request.ReadmeUpdateRequest;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.beans.Encoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 
 /**
@@ -27,6 +30,9 @@ public class GitReadmeAPI {
         HttpHeaders httpHeaders = setHttpHeaders(token);
 
         String url = "https://api.github.com/repos/"+owner+"/"+repoName+"/contents/README.md";
+
+        String encodedContent = Base64.getEncoder().encodeToString(readmeUpdateRequest.getContent().replaceAll("\\r\\n|\\r|\\n", "").getBytes(StandardCharsets.UTF_8));
+        readmeUpdateRequest.setContent(encodedContent);
 
         String jsonBody = new ObjectMapper().writeValueAsString(readmeUpdateRequest);
 
