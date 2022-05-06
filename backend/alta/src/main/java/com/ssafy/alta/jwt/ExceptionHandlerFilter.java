@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.ssafy.alta.exception.JwtExpiredExaception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -41,12 +42,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     public void setErrorResponse(HttpStatus status, HttpServletResponse response, Throwable ex) {
         response.setStatus(status.value());
         response.setContentType("application/json");
-
         Gson gson = new Gson();
-        JwtExpiredExaception jwtExpiredExaception = new JwtExpiredExaception();
+
         try {
-            String jsonString = gson.toJson(jwtExpiredExaception);
-            System.out.println(jwtExpiredExaception);
+            String jsonString = gson.toJson("fail");
             response.getWriter().write(jsonString);
         } catch (IOException e) {
             e.printStackTrace();

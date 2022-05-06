@@ -1,11 +1,5 @@
 package com.ssafy.alta.jwt;
 
-import com.ssafy.alta.exception.ErrorCode;
-import com.ssafy.alta.exception.JwtExpiredExaception;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -80,18 +71,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), request.getRequestURI());
             } else {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                System.out.println("enter");
                 logger.debug("Invalid JWT, uri: {}", request.getRequestURI());
             }
-
-//            try {
-//                tokenProvider.validateToken(rt);
-//                Authentication authentication = tokenProvider.getAuthentication(rt);
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//            }
-//            catch (JwtExpiredExaception e){
-//
-//            }
         }
 
         filterChain.doFilter(request, response);

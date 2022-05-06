@@ -1,5 +1,7 @@
 package com.ssafy.alta.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * packageName 	: com.ssafy.alta.exception
  * fileName 	: JwtExpiredExaception
@@ -11,7 +13,8 @@ package com.ssafy.alta.exception;
  * -----------------------------------------------------------
  * 2022-05-06	    오서하  		    최초 생성
  */
-public class JwtExpiredExaception extends BusinessException{
+public class JwtExpiredExaception extends BusinessException {
+
     public JwtExpiredExaception() {
         super(ErrorCode.EXPIRED_REFRESH_TOKEN);
     }

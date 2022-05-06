@@ -13,10 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -127,7 +125,7 @@ public class TokenProvider implements InitializingBean {
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             logger.info("Invalid JWT signature."); // 잘못된 JWT 서명입니다.
         } catch (ExpiredJwtException e) {
-            logger.info("Expired JWT token.\""); // 만료된 JWT 토큰입니다.
+            logger.info("Expired JWT token."); // 만료된 JWT 토큰입니다.
             throw new JwtExpiredExaception();
         } catch (UnsupportedJwtException e) {
             logger.info("Unsupported JWT token."); // 지원되지 않는 JWT 토큰입니다.
