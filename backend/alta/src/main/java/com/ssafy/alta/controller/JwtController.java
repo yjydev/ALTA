@@ -9,6 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * packageName 	: com.ssafy.alta.controller
  * fileName 	: JwtController
@@ -38,6 +41,8 @@ public class JwtController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String newAT = tokenProvider.createAccessToken(authentication);
-        return new ResponseEntity<>(newAT, HttpStatus.OK);
+        Map<String, String> map = new HashMap<>();
+        map.put("jwtAt", newAT);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }
