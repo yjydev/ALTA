@@ -118,7 +118,7 @@ public class StudyService {
         return map;
     }
 
-//    @Async -> Exception 처리 전 결과가 먼저 날아감
+    @Async // 비동기 처리 -> Exception 처리 전에 201번이 날아간다는 점에서는 안좋지만 보낼때까지의 시간이 너무 걸림, 사용자가 그 시간을 감수해야할까?
     @Transactional(rollbackFor = Exception.class)
     public void inviteUser(Long studyId, String toUser) throws MessagingException {
         String userId = userService.getCurrentUserId();
