@@ -157,7 +157,7 @@ public class UserService1 {
         ArrayList<String> langStringList = new ArrayList<>();
         while(lnum.length>lnumIdx){
             if(lnum[lnumIdx] == '1')
-                langStringList.add((String)userLanguage.getLangIdxMap().get((int)Math.pow(2,lnumIdx )));
+                langStringList.add((String)userLanguage.getLangIdxMap().get((int)Math.pow(2,lnum.length-1-lnumIdx )));
             lnumIdx++;
         }
 
