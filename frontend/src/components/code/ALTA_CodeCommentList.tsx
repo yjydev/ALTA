@@ -108,7 +108,7 @@ export default function ALTA_CodeCommentList({
           <Grid container sx={comment_wrapper} columns={17}>
             <Grid item xs={16}>
               <TextField
-                id="outlined-multiline-static"
+                id="outlined-multiline-static-comment"
                 placeholder="리뷰를 입력해주세요"
                 multiline
                 rows={2}

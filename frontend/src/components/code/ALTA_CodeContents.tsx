@@ -25,7 +25,8 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
     setCode(res);
   };
 
-  const goToDetail = () => navigate('/study/detail', { state: { studyId } });
+  const goToDetail = (studyId: string | undefined) =>
+    navigate('/study/detail', { state: { studyId } });
 
   // const goToresubmit = () => navigate('')
 
@@ -64,7 +65,9 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                           startIcon={<ChevronLeftIcon />}
                           variant="contained"
                           sx={backBtn}
-                          onClick={goToDetail}
+                          onClick={() => {
+                            goToDetail(studyId);
+                          }}
                         >
                           Back
                         </Button>

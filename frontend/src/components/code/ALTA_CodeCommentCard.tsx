@@ -40,7 +40,7 @@ export default function ALTA_CodeCommentCard({
       `codeLine-${review['code_number']}`,
     );
     if (lineSpan !== null) {
-      lineSpan.scrollIntoView();
+      lineSpan.scrollIntoView({ behavior: 'smooth' });
     }
     // scroller.scrollTo(`codeLine-${review['code_number']}`, {
     //   duration: 800,

@@ -36,6 +36,12 @@ export default function ALTA_CodeBlock({
             },
             onClick() {
               setCodeLine(lineNum);
+              const c = document.getElementById(
+                'outlined-multiline-static-comment',
+              );
+              if (c) {
+                c.scrollIntoView({ behavior: 'smooth' });
+              }
             },
           })}
         >
