@@ -218,7 +218,7 @@ public class ScheduleAndProblemService {
          - 다른 날짜와 겹치는지
          */
         if(startTime >= endTime || nowTime > endTime) {
-            new InvalidScheduleException();
+            throw new InvalidScheduleException();
         }
         // 시작 날짜가 오늘 이후이면서 해당 스터디 내의 지금 변경하려는 일정이 아닌 일정들을 가져옴
         List<Schedule> schedules = scheduleRepository.findByStudyStudyIdOrderByStartDate(studyId, nowDate, scheduleId);
@@ -226,7 +226,7 @@ public class ScheduleAndProblemService {
             long tempStartTime = temp.getStartDate().getTime();
             long tempEndTime = temp.getEndDate().getTime();
             if(endTime >= tempStartTime && startTime <= tempEndTime) {
-                new InvalidScheduleException();
+                throw new InvalidScheduleException();
             }
         }
         
@@ -246,6 +246,12 @@ public class ScheduleAndProblemService {
             throw new AccessDeniedStudyException();
 
         Schedule schedule = optSchedule.get();
+
+        // 코드가 있으면 일정 삭제 불가능
+        for(Problem problem : schedule.getProblems()) {
+            if(problem.getCode().size() > 0)
+                throw new ImpossibleDeleteScheduleException();
+        }
 
         scheduleRepository.deleteById(scheduleId);
 
