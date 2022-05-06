@@ -3,6 +3,8 @@ package com.ssafy.alta.repository;
 import com.ssafy.alta.entity.Study;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  * packageName 	: com.ssafy.alta.repository
  * fileName 	: StudyRepository
@@ -16,4 +18,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 
 public interface StudyRepository extends JpaRepository<Study, Long> {
+    Optional<Study> findByStudyIdAndUserId(Long studyId, String userId);
 }

@@ -1,6 +1,8 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.response.UserSearchResponse;
 import com.ssafy.alta.entity.User;
+import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,5 +41,14 @@ public class UserService {
         }
 
         return userId;
+    }
+
+    public List<UserSearchResponse> selectUserName(String word) {
+        List<UserSearchResponse> userInfo = userRepository.findByNickNameOrderByNickName(word);
+
+        if(userInfo.size() == 0)
+            throw new DataNotFoundException();
+
+        return userInfo;
     }
 }

@@ -12,5 +12,5 @@ package com.ssafy.alta.entity;
  * 2022-05-06	    우정연  		    최초 생성
  */
 public enum StudyJoinInfoState {
-    가입, 초대대기, 참가대기, 거절, 탈퇴
+    가입, 초대대기, 참가대기, 대기, 거절, 탈퇴
 }
