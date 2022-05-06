@@ -27,6 +27,8 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
 
   const goToDetail = () => navigate('/study/detail', { state: { studyId } });
 
+  // const goToresubmit = () => navigate('')
+
   useEffect(() => {
     getCode();
   }, []);
@@ -57,30 +59,38 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                 <Grid container direction="column" spacing={5}>
                   <Grid item>
                     <Box pt={3} pb={3}>
-                      <Button
-                        startIcon={<ChevronLeftIcon />}
-                        variant="contained"
-                        sx={backBtn}
-                        onClick={goToDetail}
-                      >
-                        Back
-                      </Button>
                       <Box sx={titleStyle}>
-                        <Typography sx={problemStyle}>
-                          2021.04.13 회문
-                        </Typography>
+                        <Button
+                          startIcon={<ChevronLeftIcon />}
+                          variant="contained"
+                          sx={backBtn}
+                          onClick={goToDetail}
+                        >
+                          Back
+                        </Button>
                         <Box>
-                          <Button>재업로드</Button>
                           <Button
+                            sx={reupBtn}
+                            variant="contained"
+                            // onClick={goToresubmit}
+                          >
+                            재업로드
+                          </Button>
+                          <Button
+                            variant="contained"
+                            sx={editBtn}
                             onClick={() => {
                               setIsCodeEdit(true);
                             }}
                           >
                             수정
                           </Button>
-                          <Button>삭제</Button>
+                          <Button sx={delBtn} variant="contained">
+                            삭제
+                          </Button>
                         </Box>
                       </Box>
+                      <Typography sx={problemStyle}>2021.04.13 회문</Typography>
                       <Box sx={titleStyle}>
                         <Typography sx={codeTitleStyle}>
                           {code.file_name}
@@ -92,7 +102,7 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                     </Box>
                     <Divider style={{ width: '100%' }} />
                   </Grid>
-                  <Grid item>
+                  <Grid item id="code-block">
                     <ALTA_CodeBlock code={code.code} language={code.language} />
                   </Grid>
                 </Grid>
@@ -126,6 +136,25 @@ const wrapper = {};
 const backBtn = {
   fontSize: '15px',
   marginBottom: '18px',
+};
+
+const editBtn = {
+  fontSize: '15px',
+  marginRight: ' 10px',
+  backgroundColor: 'secondary.main',
+  color: '#000000',
+};
+
+const delBtn = {
+  fontSize: '15px',
+  marginRight: ' 10px',
+  backgroundColor: 'error.main',
+  color: '#000000',
+};
+
+const reupBtn = {
+  fontSize: '15px',
+  marginRight: ' 10px',
 };
 
 const titleStyle = {
