@@ -31,6 +31,6 @@ public interface StudyJoinInfoRepository extends JpaRepository<StudyJoinInfo, Lo
     Long countStudyJoinInfoByUserIdAndStudyStudyId(String userId, Long studyId);
 
     @Modifying
-    @Query("update StudyJoinInfo s set  s.state = :state where s.id = :id and s.study = :study")
+    @Query("update StudyJoinInfo s set  s.state = :state, s.isReceivable = 1, s.registrationDate = now() where s.id = :id and s.study = :study")
     void updateSJIState(@Param("id") Long id, @Param("study") Study study, @Param("state") String state);
 }
