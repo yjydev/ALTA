@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 /**
  * packageName 	: com.ssafy.alta.controller
  * fileName 	: ScheduleAndProblemController
@@ -48,6 +50,23 @@ public class ScheduleAndProblemController {
     @ApiOperation(value = "스케줄 입력", notes = "스터디 회차 정보를 등록합니다.")
     public ResponseEntity insertSchedule(@PathVariable("study_id") Long studyId, @RequestBody ScheduleRequest scheduleRequest) {
         scheduleAndProblemService.insertSchedule(studyId, scheduleRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/schedule/{schedule_id}")
+    @ApiOperation(value = "스케줄 수정", notes = "스터디 일정 날짜를 수정합니다.")
+    public ResponseEntity updateSchedule(@PathVariable("study_id") Long studyId, 
+                                         @PathVariable("schedule_id") Long scheduleId,
+                                         @RequestBody ScheduleRequest scheduleRequest) throws ParseException {
+        scheduleAndProblemService.updateSchedule(studyId, scheduleId, scheduleRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/schedule/{schedule_id}")
+    @ApiOperation(value = "스케줄 삭제", notes = "스터디 일정을 삭제합니다.")
+    public ResponseEntity deleteSchedule(@PathVariable("study_id") Long studyId,
+                                         @PathVariable("schedule_id") Long scheduleId) {
+        scheduleAndProblemService.deleteSchedule(studyId, scheduleId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
