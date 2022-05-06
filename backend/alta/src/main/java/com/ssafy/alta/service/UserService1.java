@@ -165,7 +165,6 @@ public class UserService1 {
             lnumIdx++;
         }
 
-
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
         userResponse.getUserData().put("email", user.getEmail());
@@ -175,24 +174,6 @@ public class UserService1 {
         userResponse.getUserData().put("languageList",langStringList);
         userResponse.getUserData().put("profileUrl", user.getImage());
         userResponse.getUserData().put("studyList", arrayStudyList);
-
-        // 테스트 진행
-        String token = redisService.getAccessToken();
-        String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), "test");
-        HashMap<String, String> committer = new HashMap<>();
-        committer.put("name",user.getName());
-        committer.put("email",gitEmailAPI.selectGithubEmail(redisService.getAccessToken()));
-        ReadmeUpdateRequest readmeUpdateRequest = new ReadmeUpdateRequest();
-        readmeUpdateRequest.setMessage("gitapi 만들어서 테스트");
-        readmeUpdateRequest.setContent("이렇게 만들어서 넣어본다. \n 이렇게 들어가겠지????");
-        readmeUpdateRequest.setSha(sha);
-        readmeUpdateRequest.setCommitter(committer);
-        try {
-            System.out.println(gitReadmeAPI.updateReadme(token,user.getName(), "test",  readmeUpdateRequest));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
 
         return userResponse;
     }
