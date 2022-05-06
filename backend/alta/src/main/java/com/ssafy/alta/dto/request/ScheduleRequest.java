@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -28,6 +29,7 @@ import java.util.Date;
 public class ScheduleRequest {
     @ApiModelProperty(value = "시작일", required = true)
     private Date startDate;
+
     @ApiModelProperty(value = "종료일", required = true)
     private Date endDate;
 

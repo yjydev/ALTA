@@ -9,16 +9,17 @@ import com.ssafy.alta.dto.response.ProblemResponse;
 import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
 import com.ssafy.alta.dto.response.ScheduleAndProblemResponse;
 import com.ssafy.alta.entity.*;
-import com.ssafy.alta.exception.AccessDeniedStudyException;
-import com.ssafy.alta.exception.DataNotFoundException;
-import com.ssafy.alta.exception.DuplicateFolderException;
-import com.ssafy.alta.exception.UnAuthorizedException;
+import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitDirectoryAPI;
 import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -189,7 +190,7 @@ public class ScheduleAndProblemService {
     }
 
     @Transactional
-    public void updateSchedule(Long studyId, Long scheduleId, ScheduleRequest scheduleRequest) {
+    public void updateSchedule(Long studyId, Long scheduleId, ScheduleRequest scheduleRequest) throws ParseException {
         String userId = userService.getCurrentUserId();
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
@@ -199,14 +200,37 @@ public class ScheduleAndProblemService {
 
         if(!optSJI.get().getState().equals("가입"))
             throw new AccessDeniedStudyException();
-
         Schedule schedule = optSchedule.get();
-        Date startDate = scheduleRequest.getStartDate();
-        Date endDate = scheduleRequest.getEndDate();
 
-        // 검증
+
+        // 계속 9시로 넘어와서 시간 없애려고 -> DB 날짜는 0시라서 시간 맞추기 위함
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = formatter.parse(formatter.format(scheduleRequest.getStartDate()));
+        Date endDate = formatter.parse(formatter.format(scheduleRequest.getEndDate()));
+        Date nowDate = new Date();
+        long startTime = startDate.getTime();
+        long endTime = endDate.getTime();
+        long nowTime = nowDate.getTime();
+
+        /* 검증
+         - 시작일이 끝나는일보다 이전인지
+         - 마감일이 끝나지 않았는지
+         - 다른 날짜와 겹치는지
+         */
+        if(startTime >= endTime || nowTime > endTime) {
+            new InvalidScheduleException();
+        }
+        // 시작 날짜가 오늘 이후이면서 해당 스터디 내의 지금 변경하려는 일정이 아닌 일정들을 가져옴
+        List<Schedule> schedules = scheduleRepository.findByStudyStudyIdOrderByStartDate(studyId, nowDate, scheduleId);
+        for(Schedule temp : schedules) {
+            long tempStartTime = temp.getStartDate().getTime();
+            long tempEndTime = temp.getEndDate().getTime();
+            if(endTime >= tempStartTime && startTime <= tempEndTime) {
+                new InvalidScheduleException();
+            }
+        }
         
-        schedule.changeDate(startDate, endDate);
+        schedule.changeDate(scheduleRequest.getStartDate(), scheduleRequest.getEndDate());
     }
 
     @Transactional

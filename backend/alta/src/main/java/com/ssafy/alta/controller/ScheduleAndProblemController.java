@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 /**
  * packageName 	: com.ssafy.alta.controller
  * fileName 	: ScheduleAndProblemController
@@ -55,7 +57,7 @@ public class ScheduleAndProblemController {
     @ApiOperation(value = "스케줄 수정", notes = "스터디 일정 날짜를 수정합니다.")
     public ResponseEntity updateSchedule(@PathVariable("study_id") Long studyId, 
                                          @PathVariable("schedule_id") Long scheduleId,
-                                         @RequestBody ScheduleRequest scheduleRequest) {
+                                         @RequestBody ScheduleRequest scheduleRequest) throws ParseException {
         scheduleAndProblemService.updateSchedule(studyId, scheduleId, scheduleRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }

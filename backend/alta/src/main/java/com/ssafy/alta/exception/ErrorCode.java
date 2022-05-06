@@ -26,6 +26,8 @@ public enum ErrorCode {
 
     DB_NOT_FOUND_ERROR("G001", HttpStatus.NOT_FOUND, "일치하는 데이터가 없습니다."), // 글로벌
 
+    INVALID_SCHEDULE("S001", HttpStatus.BAD_REQUEST, "변경 불가능한 날짜입니다."),
+
     /* JWT REFRESH TOKEN 기간 만료 에러 */
     EXPIRED_REFRESH_TOKEN("JWT001", HttpStatus.FORBIDDEN, "리프레시 토큰 기한이 만료되어 재로그인이 필요합니다."),
 
@@ -38,7 +40,7 @@ public enum ErrorCode {
     GIT_DUPLICATE_FOLDER_ERROR("A004", HttpStatus.BAD_REQUEST, "Git 폴더 이름이 중복됩니다."),
 
     WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "작성자만 수정/삭제할 수 있습니다."),
-    DUPLICATE_FILE_ERROR("A002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다.");
+    DUPLICATE_FILE_ERROR("C002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다.");
 
     private final String code;         // 에러 키(관리하기 위함)
     private final HttpStatus status;  // 상태 코드
