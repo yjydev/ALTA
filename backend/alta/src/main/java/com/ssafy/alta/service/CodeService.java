@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -162,8 +163,10 @@ public class CodeService {
         checkUserId(userId, code.getUser().getId());
         // 해당 스터디의 가입한 스터디원이 맞는지
         checkStudyJoinInfoState(optSJI.get().getState());
-        // 해당 유저가 해당 문제에서 그 파일을 이미 만들었는지(파일 이름 겹치는지)
-        checkFileName(codeRequest.getFile_name(), userId, code.getProblem().getId());
+        if(!code.getFileName().equals(codeRequest.getFile_name())) {
+            // 파일 이름이 변경되었고 새로운 파일 이름에 대해 해당 유저가 해당 문제에서 그 파일을 이미 만들었는지(파일 이름 겹치는지)
+            checkFileName(codeRequest.getFile_name(), code.getUser().getId(), code.getProblem().getId());
+        }
 
         // 코드 수정일 경우, -> 파일 이름, 내용 변경 -> DB에 적용
         if(isUpdate) {
@@ -304,7 +307,7 @@ public class CodeService {
     }
 
     private void checkFileName(String fileName, String userId, long problemId) {
-        Code result = codeRepository.findCodeByFileNameAndUser_IdAndProblemId(fileName, userId, problemId);
+        Code result = codeRepository.findCodeByFileNameAndUser_IdAndProblem_Id(fileName, userId, problemId);
         if(result != null)
             throw new DuplicateFileException();
     }
