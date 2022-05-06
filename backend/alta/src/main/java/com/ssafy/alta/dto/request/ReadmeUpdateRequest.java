@@ -21,10 +21,13 @@ import java.util.HashMap;
 @Builder
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
 public class ReadmeUpdateRequest {
-    private String commitMsg;
+    private String message;
     private HashMap<String, String> committer;
     private String content;
     private String sha;
+
+    public ReadmeUpdateRequest() {
+        this.committer = new HashMap<>();
+    }
 }
