@@ -1,6 +1,14 @@
 import { useState, useContext } from 'react';
 
-import { Avatar, Grid, Paper, Box, Typography, Button } from '@mui/material';
+import {
+  Avatar,
+  Grid,
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Link,
+} from '@mui/material';
 // import { scroller, Events } from 'react-scroll';
 
 import { putRequest } from '../../api/request';
@@ -75,15 +83,14 @@ export default function ALTA_CodeCommentCard({
             </Grid>
             <Grid sx={infoStyle}>
               <Grid container sx={commentStyle}>
-                <a onClick={() => moveToLine()}>{review['code_number']}</a>
-                {/* <Link
+                <Link
                   onClick={moveToLine}
                   sx={commentCodeLine}
                   underline="none"
                   mr={1}
                 >
                   {review['code_number']}번
-                </Link> */}
+                </Link>
                 {/* <Link
                   to={`codeLine-${review['code_number']}`}
                   spy={true}
