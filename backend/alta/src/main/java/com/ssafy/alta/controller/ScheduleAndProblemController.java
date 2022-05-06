@@ -51,6 +51,24 @@ public class ScheduleAndProblemController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/schedule/{schedule_id}")
+    @ApiOperation(value = "스케줄 수정", notes = "스터디 일정 날짜를 수정합니다.")
+    public ResponseEntity updateSchedule(@PathVariable("study_id") Long studyId, 
+                                         @PathVariable("schedule_id") Long scheduleId,
+                                         @RequestBody ScheduleRequest scheduleRequest) {
+        scheduleAndProblemService.updateSchedule(studyId, scheduleRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/schedule/{schedule_id}")
+    @ApiOperation(value = "스케줄 삭제", notes = "스터디 일정을 삭제합니다.")
+    public ResponseEntity deleteSchedule(@PathVariable("study_id") Long studyId,
+                                         @PathVariable("schedule_id") Long scheduleId,
+                                         @RequestBody ScheduleRequest scheduleRequest) {
+        scheduleAndProblemService.deleteSchedule(studyId, scheduleRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/problem")
     @ApiOperation(value = "문제 입력", notes = "회차별 문제리스트를 등록합니다.")
     public ResponseEntity insertProblem(@PathVariable("study_id") Long studyId, @RequestBody ProblemCreateRequest problemCreateRequest) {
