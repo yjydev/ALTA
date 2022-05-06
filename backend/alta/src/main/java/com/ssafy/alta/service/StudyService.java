@@ -104,7 +104,7 @@ public class StudyService {
             sjiList = sjiRepository.findByStudyStudyId(studyId);
             study_code = sjiList.get(0).getStudy().getCode();
         } else {
-            sjiList = sjiRepository.findByStudyStudyIdAndStateContains(studyId, "가입");
+            sjiList = sjiRepository.findByStudyStudyIdAndState(studyId, "가입");
         }
 
         for(StudyJoinInfo sji : sjiList) {
