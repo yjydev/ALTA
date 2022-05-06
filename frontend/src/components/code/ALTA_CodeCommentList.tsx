@@ -27,20 +27,29 @@ export default function ALTA_CodeCommentList({
 
   const { codeLine, reviews, setReviews } = useContext(CodeReviewStore);
 
+  let reviews_data: ReviewData[] = [];
+
   const getReview = async () => {
     const res = await getRequest(`/api/code/review/${codeId}`);
+    console.log(res);
     setReviews(res);
   };
-  const reviews_data = isCompleted
-    ? reviews
-    : reviews.filter((review: ReviewData) => review.completed === false);
 
+  if (reviews !== null) {
+    reviews_data = isCompleted
+      ? reviews
+      : reviews.filter((rev: ReviewData) => rev.completed === false);
+  }
   // console.log(reviews_data);
   const [newReview, setNewReview] = useState<string>('');
 
   useEffect(() => {
     getReview();
   }, []);
+
+  useEffect(() => {
+    getReview();
+  }, [isCompleted]);
 
   useEffect(() => {
     if (newReview !== '' && codeLine !== 0) {
@@ -110,7 +119,7 @@ export default function ALTA_CodeCommentList({
                       <Typography sx={adornStyle}>
                         {codeLine === 0
                           ? '코드를 선택해주세요.'
-                          : `${codeLine}번 코드`}
+                          : `${codeLine}번 라인`}
                       </Typography>
                     </InputAdornment>
                   ),
@@ -130,7 +139,7 @@ export default function ALTA_CodeCommentList({
         </Box>
       </Grid>
       <Grid item>
-        {reviews_data.map((review) => (
+        {reviews_data.map((review: ReviewData) => (
           <ALTA_CodeCommentCard key={review.review_id} review={review} />
         ))}
       </Grid>

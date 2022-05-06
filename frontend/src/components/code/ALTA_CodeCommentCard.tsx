@@ -10,14 +10,25 @@ import {
   Link,
 } from '@mui/material';
 
-export default function ALTA_CodeCommentCard({ review }) {
-  const [isResolved, setisResolved] = useState(review['completed']);
+import { putRequest } from '../../api/request';
+import { ReviewData } from '../../types/CodeBlockType';
+
+export default function ALTA_CodeCommentCard({
+  review,
+}: {
+  review: ReviewData;
+}) {
+  const [isResolved, setisResolved] = useState<boolean | undefined>(
+    review.completed,
+  );
   // const { setCodeLine } = useContext(CodeBlockContext);
 
-  const changeResolved = () => {
+  const changeResolved = async () => {
     setisResolved(!isResolved);
     // 백엔드로 요청보내서 completed 갱신
-    review['completed'] = isResolved;
+    await putRequest(`/api/code/review/${review.review_id}/solved`, {
+      is_solved: !review.completed,
+    });
   };
 
   const moveToLine = () => {
@@ -35,7 +46,7 @@ export default function ALTA_CodeCommentCard({ review }) {
           <Grid item md={15}>
             <Grid sx={infoStyle}>
               <h4>{review['reviewer_name']}</h4>
-              <p style={{ color: 'gray' }}>{review['comment_date']}</p>
+              <p style={{ color: 'gray' }}>{review.comment_date}</p>
             </Grid>
             <Grid sx={infoStyle}>
               <Grid container sx={commentStyle}>
