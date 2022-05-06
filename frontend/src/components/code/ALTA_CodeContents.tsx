@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import { getRequest } from '../../api/request';
+import { useNavigate } from 'react-router-dom';
 
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
+import { getRequest } from '../../api/request';
 import { CodeReviewStore } from '../../context/CodeReviewContext';
 import { CodeProps } from '../../types/CodeBlockType';
 
@@ -12,6 +14,8 @@ import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
 export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
+  const navigate = useNavigate();
+
   const { code, setCode } = useContext(CodeReviewStore);
   const [isCodeEdit, setIsCodeEdit] = useState(false);
 
@@ -20,6 +24,8 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
     // console.log(res);
     setCode(res);
   };
+
+  const goToDetail = () => navigate('/study/detail', { state: { studyId } });
 
   useEffect(() => {
     getCode();
@@ -51,6 +57,14 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                 <Grid container direction="column" spacing={5}>
                   <Grid item>
                     <Box pt={3} pb={3}>
+                      <Button
+                        startIcon={<ChevronLeftIcon />}
+                        variant="contained"
+                        sx={backBtn}
+                        onClick={goToDetail}
+                      >
+                        Back
+                      </Button>
                       <Box sx={titleStyle}>
                         <Typography sx={problemStyle}>
                           2021.04.13 회문
@@ -108,6 +122,11 @@ const codeTree_wrapper = {
 };
 
 const wrapper = {};
+
+const backBtn = {
+  fontSize: '15px',
+  marginBottom: '18px',
+};
 
 const titleStyle = {
   minWidth: '480px',
