@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { AppBar, Box } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
@@ -5,12 +6,15 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Logo from '../../images/logo.png';
 
 export default function ALTA_Header() {
+  const navigate = useNavigate();
   return (
     <Box sx={wrapper}>
       <AppBar sx={navStyle}>
         <Img src={Logo} alt="" />
         <Box>
-          <AccountBoxIcon sx={{ fontSize: '35px' }} />
+          <a onClick={() => navigate('/mypage')}>
+            <AccountBoxIcon sx={{ fontSize: '35px', cursor: 'pointer' }} />
+          </a>
         </Box>
       </AppBar>
     </Box>
