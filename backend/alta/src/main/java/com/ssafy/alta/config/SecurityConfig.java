@@ -65,8 +65,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
 
-//                    .exceptionHandling() //exception 핸들링할 때, 우리가 만든 두 클래스를 사용하겠서요.
-//                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                    .exceptionHandling()//exception 핸들링할 때, 우리가 만든 두 클래스를 사용하겠서요.
+//                .authenticationEntryPoint()
+                //                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
 //                .and()
 
                 // 모든 요청은 인증이 되어야 하지만, 로그인관련하여 요청은 다 권한은 허락해주어야 한다.

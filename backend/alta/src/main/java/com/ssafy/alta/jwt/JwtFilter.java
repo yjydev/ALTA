@@ -1,6 +1,11 @@
 package com.ssafy.alta.jwt;
 
 import com.ssafy.alta.exception.ErrorCode;
+import com.ssafy.alta.exception.JwtExpiredExaception;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +83,17 @@ public class JwtFilter extends OncePerRequestFilter {
                 System.out.println("enter");
                 logger.debug("Invalid JWT, uri: {}", request.getRequestURI());
             }
+
+//            try {
+//                tokenProvider.validateToken(rt);
+//                Authentication authentication = tokenProvider.getAuthentication(rt);
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//            }
+//            catch (JwtExpiredExaception e){
+//
+//            }
         }
+
         filterChain.doFilter(request, response);
     }
 

@@ -1,5 +1,6 @@
 package com.ssafy.alta.jwt;
 
+import com.ssafy.alta.exception.JwtExpiredExaception;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -118,7 +119,8 @@ public class TokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    public boolean validateToken(String token) {
+
+    public boolean validateToken(String token)  {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -126,6 +128,7 @@ public class TokenProvider implements InitializingBean {
             logger.info("Invalid JWT signature."); // 잘못된 JWT 서명입니다.
         } catch (ExpiredJwtException e) {
             logger.info("Expired JWT token.\""); // 만료된 JWT 토큰입니다.
+            throw new JwtExpiredExaception();
         } catch (UnsupportedJwtException e) {
             logger.info("Unsupported JWT token."); // 지원되지 않는 JWT 토큰입니다.
         } catch (IllegalArgumentException e) {
@@ -133,6 +136,7 @@ public class TokenProvider implements InitializingBean {
         }
         return false;
     }
+
 
 
 }
