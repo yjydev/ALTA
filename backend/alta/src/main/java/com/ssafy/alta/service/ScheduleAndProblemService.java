@@ -9,10 +9,10 @@ import com.ssafy.alta.dto.response.ProblemResponse;
 import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
 import com.ssafy.alta.dto.response.ScheduleAndProblemResponse;
 import com.ssafy.alta.entity.*;
+import com.ssafy.alta.exception.AccessDeniedStudyException;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.exception.DuplicateFolderException;
 import com.ssafy.alta.exception.UnAuthorizedException;
-import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.gitutil.GitDirectoryAPI;
 import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -186,5 +186,44 @@ public class ScheduleAndProblemService {
 
         if(!problem.getName().equals(problemUpdateRequest.getName()))
             gitDirectoryAPI.updateDirectory(token, studyLeaderUserName, study.getRepositoryName(), problem.getName(), problemUpdateRequest.getName());
+    }
+
+    @Transactional
+    public void updateSchedule(Long studyId, Long scheduleId, ScheduleRequest scheduleRequest) {
+        String userId = userService.getCurrentUserId();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findById(scheduleId)
+                .orElseThrow(DataNotFoundException::new));
+
+        if(!optSJI.get().getState().equals("가입"))
+            throw new AccessDeniedStudyException();
+
+        Schedule schedule = optSchedule.get();
+        Date startDate = scheduleRequest.getStartDate();
+        Date endDate = scheduleRequest.getEndDate();
+
+        // 검증
+        
+        schedule.changeDate(startDate, endDate);
+    }
+
+    @Transactional
+    public void deleteSchedule(Long studyId, Long scheduleId) {
+        String userId = userService.getCurrentUserId();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findById(scheduleId)
+                .orElseThrow(DataNotFoundException::new));
+
+        if(!optSJI.get().getState().equals("가입"))
+            throw new AccessDeniedStudyException();
+
+        Schedule schedule = optSchedule.get();
+
+        scheduleRepository.deleteById(scheduleId);
+
     }
 }

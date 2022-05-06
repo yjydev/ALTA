@@ -79,4 +79,9 @@ public class Schedule {
                 .round(round)
                 .build();
     }
+
+    public void changeDate(Date startDate, Date endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }

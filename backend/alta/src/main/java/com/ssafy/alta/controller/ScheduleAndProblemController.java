@@ -56,16 +56,15 @@ public class ScheduleAndProblemController {
     public ResponseEntity updateSchedule(@PathVariable("study_id") Long studyId, 
                                          @PathVariable("schedule_id") Long scheduleId,
                                          @RequestBody ScheduleRequest scheduleRequest) {
-        scheduleAndProblemService.updateSchedule(studyId, scheduleRequest);
+        scheduleAndProblemService.updateSchedule(studyId, scheduleId, scheduleRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/schedule/{schedule_id}")
     @ApiOperation(value = "스케줄 삭제", notes = "스터디 일정을 삭제합니다.")
     public ResponseEntity deleteSchedule(@PathVariable("study_id") Long studyId,
-                                         @PathVariable("schedule_id") Long scheduleId,
-                                         @RequestBody ScheduleRequest scheduleRequest) {
-        scheduleAndProblemService.deleteSchedule(studyId, scheduleRequest);
+                                         @PathVariable("schedule_id") Long scheduleId) {
+        scheduleAndProblemService.deleteSchedule(studyId, scheduleId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
