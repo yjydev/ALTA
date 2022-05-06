@@ -58,8 +58,9 @@ public class ScheduleAndProblemService {
             throw new UnAuthorizedException();
 
         HashMap<String, Object> map = new HashMap<>();
-        List<Schedule> schedulesList = scheduleRepository.findByStudyStudyIdOrderByRound(studyId);
+        List<Schedule> schedulesList = scheduleRepository.findByStudyStudyIdOrderByStartDateAsc(studyId);
         List<ScheduleAndProblemResponse> schedules = new ArrayList<>();
+        int idx = 1;
         for (Schedule schedule : schedulesList) {
             List<Problem> problem1List = schedule.getProblems();
             List<ProblemResponse> problems = new ArrayList<>();
@@ -73,7 +74,7 @@ public class ScheduleAndProblemService {
                 problemResponse.setCodes(codes);
                 problems.add(problemResponse);
             }
-            ScheduleAndProblemResponse scheduleAndProblemResponse = schedule.toScheduleAndProblemResponse();
+            ScheduleAndProblemResponse scheduleAndProblemResponse = schedule.toScheduleAndProblemResponse(idx++);
             scheduleAndProblemResponse.setProblems(problems);
             schedules.add(scheduleAndProblemResponse);
         }

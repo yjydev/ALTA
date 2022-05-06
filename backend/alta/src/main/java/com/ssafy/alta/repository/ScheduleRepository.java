@@ -23,7 +23,7 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findTop1ByStudyStudyIdOrderByRoundDesc(Long studyId);
-    List<Schedule> findByStudyStudyIdOrderByRound(Long studyId);
+    List<Schedule> findByStudyStudyIdOrderByStartDateAsc(Long studyId);
     @Query("select s from Schedule s where s.study.studyId = :studyId and s.startDate > :nowDate and s.id != :scheduleId order by s.startDate")
     List<Schedule> findByStudyStudyIdOrderByStartDate(@Param("studyId") Long studyId, @Param("nowDate") Date nowDate, @Param("scheduleId") Long scheduleId);
     Optional<Schedule> findByStudyStudyIdAndId(Long studyId, Long scheduleId);
