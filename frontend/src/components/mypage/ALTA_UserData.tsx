@@ -66,7 +66,7 @@ const wrapper = {
 const userDataStyle = {
   position: 'relative',
   height: '300px',
-  marginBottom: '100px',
+  marginBottom: '30px',
   padding: '40px 20px',
   borderRadius: '10px',
   transition: 'height .3s',
@@ -78,7 +78,6 @@ const userDataStyle = {
 const userDataTopStyle = {
   display: 'flex',
   position: 'relative',
-  marginBottom: '120px',
 };
 
 const unfold = {

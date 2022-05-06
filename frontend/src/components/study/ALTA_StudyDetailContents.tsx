@@ -1,6 +1,5 @@
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { getRequest } from '../../api/request';
 import AddIcon from '@mui/icons-material/Add';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -15,6 +14,7 @@ import { postRequest } from '../../api/request';
 
 import ALTA_ProblemTable from './ALTA_ProblemTable';
 import ALTA_AddBar from '../common/ALTA_AddBar';
+import ALTA_StudyDetailSkeleton from '../skeleton/ALTA_StudyDetailSkeleton';
 
 export default function ALTA_StudyDetailContents({
   studyId,
@@ -24,39 +24,51 @@ export default function ALTA_StudyDetailContents({
   const { members, studyData, maxPeople, getReadmeContents } =
     useContext(StudyDetailStore);
 
+  const [loading, setLodaing] = useState<boolean>(true);
+
+  const getData = async () => {
+    await getReadmeContents(studyId);
+    setLodaing(false);
+  };
+
   useEffect(() => {
-    getReadmeContents(studyId);
+    getData();
   }, []);
 
   return (
     <Box sx={[wrapper, scrollStyle]}>
-      <Box sx={{ position: 'relative', marginTop: '30px' }}>
-        <ALTA_AddBar
-          height="80px"
-          front={<Front />}
-          back={
-            <Back studyId={studyId} getReadmeContents={getReadmeContents} />
-          }
-        />
-      </Box>
-      <Box sx={{ position: 'relative', marginTop: '150px' }}>
-        {studyData
-          .map((roundTable: StudyData, i: number) => (
-            <Box sx={{ margin: '30px 0 60px' }} key={i}>
-              <Box sx={sectionStyle}>
-                <Typography>{`${roundTable.round} 회차 : ${roundTable.startDate} ~ ${roundTable.endDate}`}</Typography>
-              </Box>
-              <ALTA_ProblemTable
-                studyId={studyId}
-                scheduleId={roundTable.id}
-                problems={roundTable.problems}
-                members={members}
-                maxPeople={maxPeople}
-              />
-            </Box>
-          ))
-          .reverse()}
-      </Box>
+      {loading && <ALTA_StudyDetailSkeleton />}{' '}
+      {!loading && (
+        <>
+          <Box sx={{ position: 'relative', marginTop: '30px' }}>
+            <ALTA_AddBar
+              height="80px"
+              front={<Front />}
+              back={
+                <Back studyId={studyId} getReadmeContents={getReadmeContents} />
+              }
+            />
+          </Box>
+          <Box sx={{ position: 'relative', marginTop: '150px' }}>
+            {studyData
+              .map((roundTable: StudyData, i: number) => (
+                <Box sx={{ margin: '30px 0 60px' }} key={i}>
+                  <Box sx={sectionStyle}>
+                    <Typography>{`${roundTable.round} 회차 : ${roundTable.startDate} ~ ${roundTable.endDate}`}</Typography>
+                  </Box>
+                  <ALTA_ProblemTable
+                    studyId={studyId}
+                    scheduleId={roundTable.id}
+                    problems={roundTable.problems}
+                    members={members}
+                    maxPeople={maxPeople}
+                  />
+                </Box>
+              ))
+              .reverse()}
+          </Box>
+        </>
+      )}
     </Box>
   );
 }

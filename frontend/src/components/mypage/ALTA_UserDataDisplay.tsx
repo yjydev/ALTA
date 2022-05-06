@@ -38,7 +38,7 @@ export default function ALTA_UserDataDisplay() {
 const userDataStyle = {
   position: 'relative',
   height: '300px',
-  marginBottom: '100px',
+  marginBottom: '30px',
   borderRadius: '10px',
   transition: '.3s',
   backgroundColor: '#fff',
