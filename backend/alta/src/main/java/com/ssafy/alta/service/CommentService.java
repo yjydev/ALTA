@@ -6,8 +6,8 @@ import com.ssafy.alta.dto.response.CommentResponse;
 import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Comment;
 import com.ssafy.alta.entity.User;
-import com.ssafy.alta.exception.CommentWriterNotMatchException;
 import com.ssafy.alta.exception.DataNotFoundException;
+import com.ssafy.alta.exception.WriterNotMatchException;
 import com.ssafy.alta.repository.CodeRepository;
 import com.ssafy.alta.repository.CommentRepository;
 import com.ssafy.alta.repository.UserRepository;
@@ -78,7 +78,7 @@ public class CommentService {
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId())) // 댓글 작성자가 맞는지를 확인 -> 아니라면 exception 발생
-            throw new CommentWriterNotMatchException();
+            throw new WriterNotMatchException();
             
         commentRepository.deleteById(commentId);
     }
@@ -90,7 +90,7 @@ public class CommentService {
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId()))
-            throw new CommentWriterNotMatchException();
+            throw new WriterNotMatchException();
         comment.updateComment(commentUpdateRequestment);
     }
 
@@ -101,7 +101,7 @@ public class CommentService {
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId()))
-            throw new CommentWriterNotMatchException();
+            throw new WriterNotMatchException();
         comment.changeState(isSolved);
     }
 }

@@ -28,13 +28,12 @@ import java.util.HashMap;
 public class GitCodeAPI {
     private RestTemplate restTemplate = new RestTemplate();
 
-    public String manipulate(String token, String owner, String repo, String path, HttpMethod method, Object request) throws JsonProcessingException {
+    public String manipulate(String token, String url, HttpMethod method, Object request) throws JsonProcessingException {
         HttpHeaders httpHeaders = this.setHttpHeaders(token);
 
         String jsonBody = new ObjectMapper().writeValueAsString(request);  // 이거 Object로 바로 된다!
 
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonBody, httpHeaders);
-        String url = this.getUrl(owner, repo, path);
 
         ResponseEntity<HashMap> response = restTemplate.exchange(url, method, httpEntity, HashMap.class);
         String sha = "";
@@ -44,11 +43,10 @@ public class GitCodeAPI {
         return sha;
     }
 
-    public GitCodeResponse selectFile(String token, String owner, String repo, String path) {
+    public GitCodeResponse selectFile(String token, String url) {
         HttpHeaders httpHeaders = this.setHttpHeaders(token);
 
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
-        String url = this.getUrl(owner, repo, path);
 
         ResponseEntity<HashMap> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, HashMap.class);
         String sha = response.getBody().get("sha").toString();
@@ -70,9 +68,5 @@ public class GitCodeAPI {
         httpHeaders.set("Content-Type", "application/json");
 
         return httpHeaders;
-    }
-
-    private String getUrl(String owner, String repo, String path) {
-        return "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
     }
 }

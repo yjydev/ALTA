@@ -2,6 +2,7 @@ package com.ssafy.alta.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -16,6 +17,7 @@ import lombok.ToString;
  * 2022-04-28	    우정연  		    최초 생성
  */
 @Getter
+@Setter
 @Builder
 @ToString
 public class GitCodeUpdateRequest {
