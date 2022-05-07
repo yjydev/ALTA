@@ -22,4 +22,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findTop1ByStudyStudyIdOrderByRoundDesc(Long studyId);
     List<Schedule> findByStudyStudyIdOrderByRound(Long studyId);
     Optional<Schedule> findByStudyStudyIdAndId(Long studyId, Long scheduleId);
+    List<Schedule> findByStudyStudyIdOrderByStartDateAsc(Long studyId);
 }
