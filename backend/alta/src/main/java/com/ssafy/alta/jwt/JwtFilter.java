@@ -3,16 +3,16 @@ package com.ssafy.alta.jwt;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -21,13 +21,15 @@ import java.io.IOException;
  * author 	    : 오서하
  * date		    : 2022-04-28
  * description	: JwtFilter를 통해 front가 보낸 jwt가 유효한지를 필터링하는 클래스
+ *
+ * extends OncePerRequestFilter를 적용하여 한 번의 요청 당 한번만 실행을 보장한다.
  * ===========================================================
  * DATE 		AUTHOR 		      NOTE
  * -----------------------------------------------------------
  * 2022-04-28	    오서하  		    최초 생성
  */
 @RequiredArgsConstructor
-public class JwtFilter extends GenericFilterBean {
+public class JwtFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
@@ -42,36 +44,38 @@ public class JwtFilter extends GenericFilterBean {
     }
 
     @Override
-    //토큰의 인증정보를 securityContext에 저장하는 역할 수행
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
-
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // resolveToken함수를 실행하여, request header에서 토큰을 꺼내온다.
-        String at = resolveAccessToken(httpServletRequest);
-        String rt = resolveRefreshToken(httpServletRequest);
+        String at = resolveAccessToken(request);
+        String rt = resolveRefreshToken(request);
 
         System.out.println("at = " + at);
         System.out.println("rt = " + rt);
 
-        String requestURI = httpServletRequest.getRequestURI();
-
-
-        if (StringUtils.hasText(at) && tokenProvider.validateToken(at)) { // JWT ACCESS TOKEN이 정상이면
-            Authentication authentication = tokenProvider.getAuthentication(at); // 토큰안에 authentication 객체를 받는다.
-            SecurityContextHolder.getContext().setAuthentication(authentication); // authentication 객체를 securitycontext에 set한다.
-            logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
-        } else {
-            if(StringUtils.hasText(rt) && tokenProvider.validateToken(rt)){
-
+        // 일반 요청에 대한 건 => 일반 요청에는 rt는 들어오지 않는다.
+        if(at != null && rt == null){
+            if (StringUtils.hasText(at) && tokenProvider.validateToken(at)) { // JWT ACCESS TOKEN이 정상이면
+                Authentication authentication = tokenProvider.getAuthentication(at); // 토큰안에 authentication 객체를 받는다.
+                SecurityContextHolder.getContext().setAuthentication(authentication); // authentication 객체를 securitycontext에 set한다.
+                logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), request.getRequestURI());
+            } else {
+                logger.debug("Invalid JWT, uri: {}", request.getRequestURI());
             }
-            tokenProvider.validateToken(at);
-            logger.debug("Invalid JWT, uri: {}", requestURI);
+        }
+        // af가 만료되었을 때
+        else if(at != null && rt != null){
+            if (StringUtils.hasText(rt) && tokenProvider.validateToken(rt)) { // JWT ACCESS TOKEN이 정상이면
+                Authentication authentication = tokenProvider.getAuthentication(rt); // 토큰안에 authentication 객체를 받는다.
+                SecurityContextHolder.getContext().setAuthentication(authentication); // authentication 객체를 securitycontext에 set한다.
+                logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), request.getRequestURI());
+            } else {
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                logger.debug("Invalid JWT, uri: {}", request.getRequestURI());
+            }
         }
 
-
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, response);
     }
 
 

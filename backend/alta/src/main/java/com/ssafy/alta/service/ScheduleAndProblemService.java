@@ -9,16 +9,17 @@ import com.ssafy.alta.dto.response.ProblemResponse;
 import com.ssafy.alta.dto.request.ScheduleAndProblemRequest;
 import com.ssafy.alta.dto.response.ScheduleAndProblemResponse;
 import com.ssafy.alta.entity.*;
-import com.ssafy.alta.exception.DataNotFoundException;
-import com.ssafy.alta.exception.DuplicateFolderException;
-import com.ssafy.alta.exception.UnAuthorizedException;
-import com.ssafy.alta.gitutil.GitCodeAPI;
+import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitDirectoryAPI;
 import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -31,6 +32,7 @@ import java.util.*;
  * DATE             AUTHOR              NOTE
  * -----------------------------------------------------------
  * 2022-04-28       jisoon Lee         최초 생성
+ * 2022-05-06       우정연             스케쥴 수정
  */
 
 @Service
@@ -56,8 +58,9 @@ public class ScheduleAndProblemService {
             throw new UnAuthorizedException();
 
         HashMap<String, Object> map = new HashMap<>();
-        List<Schedule> schedulesList = scheduleRepository.findByStudyStudyIdOrderByRound(studyId);
+        List<Schedule> schedulesList = scheduleRepository.findByStudyStudyIdOrderByStartDateAsc(studyId);
         List<ScheduleAndProblemResponse> schedules = new ArrayList<>();
+        int idx = 1;
         for (Schedule schedule : schedulesList) {
             List<Problem> problem1List = schedule.getProblems();
             List<ProblemResponse> problems = new ArrayList<>();
@@ -71,7 +74,7 @@ public class ScheduleAndProblemService {
                 problemResponse.setCodes(codes);
                 problems.add(problemResponse);
             }
-            ScheduleAndProblemResponse scheduleAndProblemResponse = schedule.toScheduleAndProblemResponse();
+            ScheduleAndProblemResponse scheduleAndProblemResponse = schedule.toScheduleAndProblemResponse(idx++);
             scheduleAndProblemResponse.setProblems(problems);
             schedules.add(scheduleAndProblemResponse);
         }
@@ -185,5 +188,73 @@ public class ScheduleAndProblemService {
 
         if(!problem.getName().equals(problemUpdateRequest.getName()))
             gitDirectoryAPI.updateDirectory(token, studyLeaderUserName, study.getRepositoryName(), problem.getName(), problemUpdateRequest.getName());
+    }
+
+    @Transactional
+    public void updateSchedule(Long studyId, Long scheduleId, ScheduleRequest scheduleRequest) throws ParseException {
+        String userId = userService.getCurrentUserId();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findById(scheduleId)
+                .orElseThrow(DataNotFoundException::new));
+
+        if(!optSJI.get().getState().equals("가입"))
+            throw new AccessDeniedStudyException();
+        Schedule schedule = optSchedule.get();
+
+
+        // 계속 9시로 넘어와서 시간 없애려고 -> DB 날짜는 0시라서 시간 맞추기 위함
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = formatter.parse(formatter.format(scheduleRequest.getStartDate()));
+        Date endDate = formatter.parse(formatter.format(scheduleRequest.getEndDate()));
+        Date nowDate = new Date();
+        long startTime = startDate.getTime();
+        long endTime = endDate.getTime();
+        long nowTime = nowDate.getTime();
+
+        /* 검증
+         - 시작일이 끝나는일보다 이전인지
+         - 마감일이 끝나지 않았는지
+         - 다른 날짜와 겹치는지
+         */
+        if(startTime >= endTime || nowTime > endTime) {
+            throw new InvalidScheduleException();
+        }
+        // 시작 날짜가 오늘 이후이면서 해당 스터디 내의 지금 변경하려는 일정이 아닌 일정들을 가져옴
+        List<Schedule> schedules = scheduleRepository.findByStudyStudyIdOrderByStartDate(studyId, nowDate, scheduleId);
+        for(Schedule temp : schedules) {
+            long tempStartTime = temp.getStartDate().getTime();
+            long tempEndTime = temp.getEndDate().getTime();
+            if(endTime >= tempStartTime && startTime <= tempEndTime) {
+                throw new InvalidScheduleException();
+            }
+        }
+        
+        schedule.changeDate(scheduleRequest.getStartDate(), scheduleRequest.getEndDate());
+    }
+
+    @Transactional
+    public void deleteSchedule(Long studyId, Long scheduleId) {
+        String userId = userService.getCurrentUserId();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findById(scheduleId)
+                .orElseThrow(DataNotFoundException::new));
+
+        if(!optSJI.get().getState().equals("가입"))
+            throw new AccessDeniedStudyException();
+
+        Schedule schedule = optSchedule.get();
+
+        // 코드가 있으면 일정 삭제 불가능
+        for(Problem problem : schedule.getProblems()) {
+            if(problem.getCode().size() > 0)
+                throw new ImpossibleDeleteScheduleException();
+        }
+
+        scheduleRepository.deleteById(scheduleId);
+
     }
 }

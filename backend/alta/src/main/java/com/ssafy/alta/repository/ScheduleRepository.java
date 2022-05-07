@@ -2,7 +2,10 @@ package com.ssafy.alta.repository;
 
 import com.ssafy.alta.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +23,9 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findTop1ByStudyStudyIdOrderByRoundDesc(Long studyId);
-    List<Schedule> findByStudyStudyIdOrderByRound(Long studyId);
+    List<Schedule> findByStudyStudyIdOrderByStartDateAsc(Long studyId);
+    @Query("select s from Schedule s where s.study.studyId = :studyId and s.startDate > :nowDate and s.id != :scheduleId order by s.startDate")
+    List<Schedule> findByStudyStudyIdOrderByStartDate(@Param("studyId") Long studyId, @Param("nowDate") Date nowDate, @Param("scheduleId") Long scheduleId);
     Optional<Schedule> findByStudyStudyIdAndId(Long studyId, Long scheduleId);
     List<Schedule> findByStudyStudyIdOrderByStartDateAsc(Long studyId);
 }

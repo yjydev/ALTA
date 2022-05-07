@@ -9,6 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * packageName 	: com.ssafy.alta.controller
  * fileName 	: JwtController
@@ -34,10 +37,12 @@ public class JwtController {
 
     @PostMapping("/issueAT")
     @ApiOperation(value = "jwt access token 갱신", notes = "rf이 유효하다면 새로운 at를 반환합니다. ")
-    public ResponseEntity issueAccessToken(@RequestHeader String ACCESS_TOKEN, @RequestHeader String REFRESH_TOKEN) {
+    public ResponseEntity issueAccessToken(@RequestHeader String ACCESS_TOKEN,  @RequestHeader String REFRESH_TOKEN) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String newAT = tokenProvider.createAccessToken(authentication);
-        return new ResponseEntity<>(newAT, HttpStatus.OK);
+        Map<String, String> map = new HashMap<>();
+        map.put("jwtAt", newAT);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }
