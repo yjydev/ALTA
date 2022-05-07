@@ -1,5 +1,7 @@
 package com.ssafy.alta.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.alta.dto.request.ReadmeUpdateRequest;
 import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.dto.response.UserResponse;
 import com.ssafy.alta.entity.Alert;
@@ -8,6 +10,7 @@ import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitEmailAPI;
+import com.ssafy.alta.gitutil.GitReadmeAPI;
 import com.ssafy.alta.repository.AlertRepository;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
@@ -42,6 +45,7 @@ public class UserService1 {
 
     private GitEmailAPI gitEmailAPI = new GitEmailAPI();
     private UserLanguage userLanguage ;
+    private GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
 
     @Autowired
     private RedisService redisService;
@@ -162,8 +166,6 @@ public class UserService1 {
         }
 
 
-
-
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
         userResponse.getUserData().put("email", user.getEmail());
@@ -173,6 +175,24 @@ public class UserService1 {
         userResponse.getUserData().put("languageList",langStringList);
         userResponse.getUserData().put("profileUrl", user.getImage());
         userResponse.getUserData().put("studyList", arrayStudyList);
+
+        // 테스트 진행
+        String token = redisService.getAccessToken();
+        String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), "test");
+        HashMap<String, String> committer = new HashMap<>();
+        committer.put("name",user.getName());
+        committer.put("email",gitEmailAPI.selectGithubEmail(redisService.getAccessToken()));
+        ReadmeUpdateRequest readmeUpdateRequest = new ReadmeUpdateRequest();
+        readmeUpdateRequest.setMessage("gitapi 만들어서 테스트");
+        readmeUpdateRequest.setContent("이렇게 만들어서 넣어본다. \n 이렇게 들어가겠지????");
+        readmeUpdateRequest.setSha(sha);
+        readmeUpdateRequest.setCommitter(committer);
+        try {
+            System.out.println(gitReadmeAPI.updateReadme(token,user.getName(), "test",  readmeUpdateRequest));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
 
         return userResponse;
     }
