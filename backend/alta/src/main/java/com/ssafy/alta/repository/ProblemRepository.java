@@ -32,4 +32,6 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
 
     @Query("SELECT p From Problem p WHERE p.name like :name AND p.schedule = :schedule")
     Problem findByDuplicateProblemInSchedule(@Param("schedule") Schedule schedule, @Param("name") String name);
+
+    List<Problem> findByScheduleIdOrderById(Long scheduleId);
 }
