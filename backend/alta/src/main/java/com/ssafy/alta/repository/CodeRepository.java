@@ -21,4 +21,5 @@ public interface CodeRepository extends JpaRepository<Code, Long> {
     List<Code> findByProblem_IdOrderByCreateDateAsc(long problemId);
     Code findCodeByProblem_IdAndFileName(long problemId, String fileName);
     Code findCodeByFileNameAndUser_IdAndProblemId(String filename, String userId, long problemId);
+    List<Code> findByProblem_IdOrderByUserId(long problemId);
 }
