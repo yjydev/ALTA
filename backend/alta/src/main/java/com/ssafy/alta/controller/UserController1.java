@@ -3,6 +3,7 @@ package com.ssafy.alta.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.alta.dto.request.UserUpdateRequest;
+import com.ssafy.alta.service.ReadmeService;
 import com.ssafy.alta.service.UserService;
 import com.ssafy.alta.service.UserService1;
 import io.swagger.annotations.ApiOperation;
@@ -30,15 +31,18 @@ public class UserController1 {
     @Autowired
     private UserService1 userService1;
 
+    @Autowired
+    private ReadmeService readmeService;
+
     @GetMapping("/info")
     @ApiOperation(value = "user 정보 가져오기", notes = "user 정보 가져고익")
     public ResponseEntity selectUserInfo() {
         return new ResponseEntity<>(userService1.selectUser(), HttpStatus.OK);
     }
 
-    @PostMapping( consumes = {"multipart/form-data"}, path ="/info" )
-    @ApiOperation(value = "user 개인정보 수정", notes ="user 개인 정보 수정")
-    public ResponseEntity updateUserInfo(@RequestPart("profileImage") MultipartFile profileImageFile ,@ModelAttribute UserUpdateRequest userUpdateRequest) {
+    @PostMapping(consumes = {"multipart/form-data"}, path = "/info")
+    @ApiOperation(value = "user 개인정보 수정", notes = "user 개인 정보 수정")
+    public ResponseEntity updateUserInfo(@RequestPart("profileImage") MultipartFile profileImageFile, @ModelAttribute UserUpdateRequest userUpdateRequest) {
         System.out.println(profileImageFile.getOriginalFilename());
         System.out.println(userUpdateRequest);
         return new ResponseEntity<>(userService1.updateUser(userUpdateRequest, profileImageFile), HttpStatus.OK);
