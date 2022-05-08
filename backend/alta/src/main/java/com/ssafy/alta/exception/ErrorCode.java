@@ -28,6 +28,7 @@ public enum ErrorCode {
 
     INVALID_SCHEDULE("S001", HttpStatus.BAD_REQUEST, "변경 불가능한 날짜입니다."),
     IMPOSSIBLE_DELETE_SCHEDULE("S001", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 일정입니다."),
+    IMPOSSIBLE_DELETE_PROBLEM("S002", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 문제입니다."),
 
     /* JWT REFRESH TOKEN 기간 만료 에러 */
     EXPIRED_REFRESH_TOKEN("JWT001", HttpStatus.FORBIDDEN, "리프레시 토큰 기한이 만료되어 재로그인이 필요합니다."),

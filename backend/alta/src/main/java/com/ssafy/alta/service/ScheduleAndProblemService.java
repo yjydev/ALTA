@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -55,7 +56,7 @@ public class ScheduleAndProblemService {
                 .orElseThrow(DataNotFoundException::new));
 
         if(!optSJI.get().getState().equals("가입"))
-            throw new UnAuthorizedException();
+            throw new AccessDeniedStudyException();
 
         HashMap<String, Object> map = new HashMap<>();
         List<Schedule> schedulesList = scheduleRepository.findByStudyStudyIdOrderByStartDateAsc(studyId);
@@ -91,7 +92,7 @@ public class ScheduleAndProblemService {
                 .orElseThrow(DataNotFoundException::new));
 
         if(!optSJI.get().getState().equals("가입"))
-            throw new UnAuthorizedException();
+            throw new AccessDeniedStudyException();
 
         Study study = optSJI.get().getStudy();
         int round = 1;
@@ -117,12 +118,11 @@ public class ScheduleAndProblemService {
     @Transactional
     public void insertSchedule(Long studyId, ScheduleRequest scheduleRequest) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
         if(!optSJI.get().getState().equals("가입"))
-            throw new UnAuthorizedException();
+            throw new AccessDeniedStudyException();
 
         Study study = optSJI.get().getStudy();
         int round = 1;
@@ -144,7 +144,7 @@ public class ScheduleAndProblemService {
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
         if(!optSJI.get().getState().equals("가입"))
-            throw new UnAuthorizedException();
+            throw new AccessDeniedStudyException();
 
         List<Problem> preProblems = problemCreateRequest.getProblems();
         List<Problem> problems = new ArrayList<>();
@@ -256,5 +256,25 @@ public class ScheduleAndProblemService {
 
         scheduleRepository.deleteById(scheduleId);
 
+    }
+
+    @Transactional
+    public void deleteProblem(Long studyId, Long problemId) {
+        String userId = userService.getCurrentUserId();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(problemId)
+                .orElseThrow(DataNotFoundException::new));
+
+        if(!optSJI.get().getState().equals("가입"))
+            throw new AccessDeniedStudyException();
+
+        Problem problem = optProblem.get();
+
+        if(problem.getCode().size() > 0)
+            throw new ImpossibleDeleteProblemException();
+
+        problemRepository.deleteById(problemId);
     }
 }
