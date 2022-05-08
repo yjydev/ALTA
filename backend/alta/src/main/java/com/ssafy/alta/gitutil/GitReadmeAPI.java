@@ -31,7 +31,8 @@ public class GitReadmeAPI {
 
         String url = "https://api.github.com/repos/"+owner+"/"+repoName+"/contents/README.md";
 
-        String encodedContent = Base64.getEncoder().encodeToString(readmeUpdateRequest.getContent().replaceAll("\\r\\n|\\r|\\n", "").getBytes(StandardCharsets.UTF_8));
+//        String encodedContent = Base64.getEncoder().encodeToString(readmeUpdateRequest.getContent().replaceAll("\\r\\n|\\r|\\n", "").getBytes(StandardCharsets.UTF_8));
+        String encodedContent = Base64.getEncoder().encodeToString(readmeUpdateRequest.getContent().getBytes(StandardCharsets.UTF_8));
         readmeUpdateRequest.setContent(encodedContent);
 
         String jsonBody = new ObjectMapper().writeValueAsString(readmeUpdateRequest);

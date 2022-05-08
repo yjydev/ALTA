@@ -18,7 +18,13 @@ import java.util.List;
  */
 public interface CodeRepository extends JpaRepository<Code, Long> {
     List<Code> findByUser_IdOrderByCreateDateAsc(String userId);
+
     List<Code> findByProblem_IdOrderByCreateDateAsc(long problemId);
+
     Code findCodeByProblem_IdAndFileName(long problemId, String fileName);
+
+    List<Code> findByProblem_IdOrderByUserId(long problemId);
+
     Code findCodeByFileNameAndUser_IdAndProblem_Id(String filename, String userId, long problemId);
+
 }
