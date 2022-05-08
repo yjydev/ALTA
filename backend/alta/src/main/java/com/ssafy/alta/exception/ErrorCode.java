@@ -26,9 +26,12 @@ public enum ErrorCode {
     USER_EXIST_STUDY("U004", HttpStatus.BAD_REQUEST, "이미 스터디에 가입되어 있습니다."),
     DB_NOT_FOUND_ERROR("G001", HttpStatus.NOT_FOUND, "일치하는 데이터가 없습니다."), // 글로벌
 
-    INVALID_SCHEDULE("S001", HttpStatus.BAD_REQUEST, "변경 불가능한 날짜입니다."),
-    IMPOSSIBLE_DELETE_SCHEDULE("S001", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 일정입니다."),
-    IMPOSSIBLE_DELETE_PROBLEM("S002", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 문제입니다."),
+    DUPLICATED_SCHEDULE("S001", HttpStatus.BAD_REQUEST, "시작 날짜가 중복됩니다."),
+    INVALID_CREATE_SCHEDULE("S002", HttpStatus.BAD_REQUEST, "생성 불가능한 날짜입니다."),
+    INVALID_SCHEDULE("S003", HttpStatus.BAD_REQUEST, "변경 불가능한 날짜입니다."),
+    IMPOSSIBLE_DELETE_SCHEDULE("S004", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 일정입니다."),
+
+    IMPOSSIBLE_DELETE_PROBLEM("P001", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 문제입니다."),
 
     /* JWT REFRESH TOKEN 기간 만료 에러 */
     EXPIRED_REFRESH_TOKEN("JWT001", HttpStatus.FORBIDDEN, "리프레시 토큰 기한이 만료되어 재로그인이 필요합니다."),

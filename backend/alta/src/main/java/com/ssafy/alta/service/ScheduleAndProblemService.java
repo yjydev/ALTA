@@ -116,7 +116,7 @@ public class ScheduleAndProblemService {
     }
 
     @Transactional
-    public void insertSchedule(Long studyId, ScheduleRequest scheduleRequest) {
+    public void insertSchedule(Long studyId, ScheduleRequest scheduleRequest) throws ParseException {
         String userId = userService.getCurrentUserId();
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
@@ -125,13 +125,24 @@ public class ScheduleAndProblemService {
             throw new AccessDeniedStudyException();
 
         Study study = optSJI.get().getStudy();
-        int round = 1;
 
-        Optional<Schedule> optSchedule = scheduleRepository.findTop1ByStudyStudyIdOrderByRoundDesc(studyId);
-        if(optSchedule.isPresent()) {
-            round = optSchedule.get().getRound() + 1;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = formatter.parse(formatter.format(scheduleRequest.getStartDate()));
+        Date endDate = formatter.parse(formatter.format(scheduleRequest.getEndDate()));
+        Date nowDate = new Date();
+        long startTime = startDate.getTime();
+        long endTime = endDate.getTime();
+        long nowTime = nowDate.getTime();
+
+        if(startTime >= endTime || nowTime > endTime) {
+            throw new InvalidCreateScheduleException();
         }
-        scheduleRepository.save(scheduleRequest.toSchedule(round, false, study));
+
+        Optional<Schedule> schedules = scheduleRepository.findByStudyStudyIdSameStartDate(studyId, startDate);
+        if (schedules.isPresent())
+            throw new DuplicatedScheduleException();
+
+        scheduleRepository.save(scheduleRequest.toSchedule(0, false, study));
     }
 
     @Transactional

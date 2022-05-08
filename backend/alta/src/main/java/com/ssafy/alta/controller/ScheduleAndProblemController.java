@@ -50,7 +50,7 @@ public class ScheduleAndProblemController {
     @PostMapping("/schedule")
     @ApiOperation(value = "스케줄 입력", notes = "스터디 회차 정보를 등록합니다.")
     public ResponseEntity insertSchedule(@PathVariable("study_id") Long studyId,
-                                         @RequestBody ScheduleRequest scheduleRequest) {
+                                         @RequestBody ScheduleRequest scheduleRequest) throws ParseException {
         scheduleAndProblemService.insertSchedule(studyId, scheduleRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
