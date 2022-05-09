@@ -44,7 +44,7 @@ export default function ALTA_LoginContents() {
             ) : (
               <>
                 <A
-                  href={`${process.env.REACT_APP_BASE_URL}/githubLogin`}
+                  href={`${process.env.REACT_APP_BASE_URL}:8000/githubLogin`}
                   onClick={() => setLoading(true)}
                 >
                   {/* <A
