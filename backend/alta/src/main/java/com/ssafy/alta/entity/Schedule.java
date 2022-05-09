@@ -71,12 +71,17 @@ public class Schedule {
         this.study = study;
     }
 
-    public ScheduleAndProblemResponse toScheduleAndProblemResponse() {
+    public ScheduleAndProblemResponse toScheduleAndProblemResponse(int idx) {
         return ScheduleAndProblemResponse.builder()
                 .id(id)
                 .startDate(startDate)
                 .endDate(endDate)
-                .round(round)
+                .round(idx)
                 .build();
+    }
+
+    public void changeDate(Date startDate, Date endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }

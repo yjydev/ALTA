@@ -9,6 +9,7 @@ import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.*;
+import com.ssafy.alta.gitutil.GitCollaboratorAPI;
 import com.ssafy.alta.gitutil.GitRepoAPI;
 import com.ssafy.alta.mailutil.MailHandler;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
@@ -47,6 +48,7 @@ public class StudyService {
     private final UserService userService;
     private final RedisService redisService;
     private final GitRepoAPI gitRepoAPI = new GitRepoAPI();
+    private final GitCollaboratorAPI gitCollaboratorAPI = new GitCollaboratorAPI();
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
 
@@ -91,7 +93,7 @@ public class StudyService {
                 .orElseThrow(DataNotFoundException::new));
 
         if(!optSJI.get().getState().equals("가입")) {
-            throw new UnAuthorizedException();
+            throw new AccessDeniedStudyException();
         }
 
         HashMap<String, Object> map = new HashMap<>();
@@ -120,8 +122,9 @@ public class StudyService {
 
 //    @Async // 비동기 처리 -> Exception 처리 전에 201번이 날아간다는 점에서는 안좋지만 보낼때까지의 시간이 너무 걸림, 사용자가 그 시간을 감수해야할까?
     @Transactional(rollbackFor = Exception.class)
-    public void inviteUser(Long studyId, String toUser) throws MessagingException {
+    public void inviteUser(Long studyId, String toUser) throws MessagingException, JsonProcessingException {
         String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
 
         Optional<Study> optStudy = Optional.of(studyRepository.findByStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -134,11 +137,14 @@ public class StudyService {
             throw new DataNotFoundException();
 
         User user = optUser.get();
-        String userName = userRepository.findStudyLeaderUserNameByUserId(userId);
+        Study study = optStudy.get();
+        String userName = userRepository.findStudyLeaderUserNameByUserId(userId); // 스터디장만 처리가능하니까
+        String url = "https://github.com/" + userName + "/" + study.getRepositoryName() + "/invitations";
+        gitCollaboratorAPI.insertCollaborators(token, userName, study.getRepositoryName(), user.getName());
 
         StudyJoinInfo studyJoinInfo = StudyJoinInfo.builder()
                 .user(user)
-                .study(optStudy.get())
+                .study(study)
                 .state("초대대기")
                 .position("그룹원")
                 .isReceivable(false)
@@ -151,11 +157,47 @@ public class StudyService {
 
         Context context = new Context();
         context.setVariable("name", userName);
-        context.setVariable("code", optStudy.get().getCode());
+        context.setVariable("code", study.getCode());
+        context.setVariable("url", url);
         String html = templateEngine.process("invitation", context);
         mailHandler.setText(html, true);
 
         sjiRepository.save(studyJoinInfo);
         mailHandler.send();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStudyMember(String code) {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
+        Optional<Study> studyOpt = Optional.of(studyRepository.findByCode(code)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> sjiOpt = Optional.of(sjiRepository.findByStudyStudyIdAndUserId(studyOpt.get().getStudyId(), userId)
+                .orElseThrow(UnAuthorizedException::new));
+
+        Study study = studyOpt.get();
+        StudyJoinInfo sji = sjiOpt.get();
+        checkStudyJoinInfoState(sji.getState());
+        List<HashMap> result = gitCollaboratorAPI.selectCollaborators(token, study.getUser().getName(), study.getRepositoryName());
+
+        boolean check = false;
+        for(HashMap m : result) {
+            if(userId.equals(m.get("id").toString())) {
+                check = true;
+                break;
+            }
+        }
+
+        if(!check)
+            throw new CollaboratorApprovalException();
+
+        sjiRepository.updateSJIState(sji.getId(), study, "가입");
+    }
+
+    private void checkStudyJoinInfoState(String state) {
+        if(state.equals("가입")) {
+            throw new UserExistStudyException();
+        }
     }
 }

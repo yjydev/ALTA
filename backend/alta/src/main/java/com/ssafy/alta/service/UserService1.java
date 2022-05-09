@@ -1,5 +1,7 @@
 package com.ssafy.alta.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.alta.dto.request.ReadmeUpdateRequest;
 import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.dto.response.UserResponse;
 import com.ssafy.alta.entity.Alert;
@@ -8,6 +10,7 @@ import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitEmailAPI;
+import com.ssafy.alta.gitutil.GitReadmeAPI;
 import com.ssafy.alta.repository.AlertRepository;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
@@ -42,6 +45,7 @@ public class UserService1 {
 
     private GitEmailAPI gitEmailAPI = new GitEmailAPI();
     private UserLanguage userLanguage ;
+    private GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
 
     @Autowired
     private RedisService redisService;
@@ -160,9 +164,6 @@ public class UserService1 {
                 langStringList.add((String)userLanguage.getLangIdxMap().get((int)Math.pow(2,lnum.length-1-lnumIdx )));
             lnumIdx++;
         }
-
-
-
 
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기

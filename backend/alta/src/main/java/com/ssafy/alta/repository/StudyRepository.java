@@ -1,7 +1,10 @@
 package com.ssafy.alta.repository;
 
 import com.ssafy.alta.entity.Study;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -19,4 +22,5 @@ import java.util.Optional;
 
 public interface StudyRepository extends JpaRepository<Study, Long> {
     Optional<Study> findByStudyIdAndUserId(Long studyId, String userId);
+    Optional<Study> findByCode(String code);
 }

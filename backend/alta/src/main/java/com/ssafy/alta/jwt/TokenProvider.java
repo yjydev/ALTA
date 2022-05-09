@@ -1,5 +1,6 @@
 package com.ssafy.alta.jwt;
 
+import com.ssafy.alta.exception.JwtExpiredExaception;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -14,7 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -75,10 +75,10 @@ public class TokenProvider implements InitializingBean {
         Date validity = new Date(now + this.accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(authentication.getName()) // github_id
                 .setIssuedAt(issuedTime) // 토큰발행 시간
                 .claim(AUTHORITIES_KEY, "ROLE_USER")
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS512) //// 암호화 알고리즘, secret 값
                 .setExpiration(validity) // 토큰만료 시간
                 .compact();
     }
@@ -90,12 +90,15 @@ public class TokenProvider implements InitializingBean {
         Date validity = new Date(now + this.refreshTokenValidityInMilliseconds);
 
         return Jwts.builder()
+                .setSubject(authentication.getName()) // github_id
                 .setIssuedAt(issuedTime) // 토큰발행 시간
+                .claim(AUTHORITIES_KEY, "ROLE_USER")
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity) // 토큰 만료 시간
                 .compact();
     }
 
+    // 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
                 .parserBuilder()
@@ -114,15 +117,16 @@ public class TokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    public boolean validateToken(String token) {
 
+    public boolean validateToken(String token)  {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             logger.info("Invalid JWT signature."); // 잘못된 JWT 서명입니다.
         } catch (ExpiredJwtException e) {
-            logger.info("Expired JWT token.\""); // 만료된 JWT 토큰입니다.
+            logger.info("Expired JWT token."); // 만료된 JWT 토큰입니다.
+            throw new JwtExpiredExaception();
         } catch (UnsupportedJwtException e) {
             logger.info("Unsupported JWT token."); // 지원되지 않는 JWT 토큰입니다.
         } catch (IllegalArgumentException e) {
@@ -130,5 +134,7 @@ public class TokenProvider implements InitializingBean {
         }
         return false;
     }
+
+
 
 }
