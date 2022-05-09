@@ -44,7 +44,7 @@ export default function ALTA_LoginContents() {
               </>
             ) : (
               <>
-                <A href="http://k6b203.p.ssafy.io:8000/githubLogin">
+                <A href="http://algorithmtime.com:8000/githubLogin">
                   {/* <A
                   href="http://localhost:8000/githubLogin"
                   onClick={() => setLoading(true)}
