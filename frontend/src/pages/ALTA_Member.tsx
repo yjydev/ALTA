@@ -24,6 +24,8 @@ export default function ALTA_ToOrganize() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'ALTA | 멤버 관리';
+
     checkLogin(() => navigate('/'));
   }, []);
 
