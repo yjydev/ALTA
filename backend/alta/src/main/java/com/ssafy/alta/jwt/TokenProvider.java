@@ -130,7 +130,7 @@ public class TokenProvider implements InitializingBean {
             throw new JwtExpiredExaception();
         } catch (UnsupportedJwtException e) {
             logger.info("Unsupported JWT token."); // 지원되지 않는 JWT 토큰입니다.
-            throw new JwtExpiredExaception();
+            throw new JwtException("JWT error");
         } catch (IllegalArgumentException e) {
             logger.info("JWT token compact of handler are invalid."); // JWT 토큰이 잘못되었습니다.
             throw new JwtException("JWT error");
