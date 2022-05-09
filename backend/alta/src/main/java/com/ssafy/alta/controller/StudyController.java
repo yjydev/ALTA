@@ -1,7 +1,9 @@
 package com.ssafy.alta.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.alta.dto.request.StudyCodeRequest;
 import com.ssafy.alta.dto.request.StudyRequest;
+import com.ssafy.alta.dto.request.StudyUserIdRequest;
 import com.ssafy.alta.service.StudyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,15 +50,15 @@ public class StudyController {
 
     @PostMapping("/{study_id}/invitation")
     @ApiOperation(value = "스터디 멤버 초대", notes = "User email을 기반으로 메일을 보낸다.")
-    public ResponseEntity inviteUser(@PathVariable("study_id") Long studyId, @RequestBody String userId) throws MessagingException, JsonProcessingException {
-        studyService.inviteUser(studyId, userId);
+    public ResponseEntity inviteUser(@PathVariable("study_id") Long studyId, @RequestBody StudyUserIdRequest studyUserIdRequest) throws MessagingException, JsonProcessingException {
+        studyService.inviteUser(studyId, studyUserIdRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/invitation")
     @ApiOperation(value = "스터디 가입 검증")
-    public ResponseEntity updateStudyMember(@RequestBody String code) {
-        studyService.updateStudyMember(code);
+    public ResponseEntity updateStudyMember(@RequestBody StudyCodeRequest studyCodeRequest) {
+        studyService.updateStudyMember(studyCodeRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
