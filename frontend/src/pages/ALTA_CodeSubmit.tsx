@@ -12,6 +12,8 @@ export default function ALTA_CodeSubmit() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'ALTA | 코드 제출';
+
     checkLogin(() => navigate('/'));
   }, []);
 

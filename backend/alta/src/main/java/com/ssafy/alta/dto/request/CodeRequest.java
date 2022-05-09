@@ -29,13 +29,13 @@ import java.util.List;
 @AllArgsConstructor
 public class CodeRequest {
     @ApiModelProperty(value = "커밋 메시지")
-    private String commit_message;
+    private String commitMessage;
 
     @ApiModelProperty(value = "파일이름.확장자", required = true)
-    private String file_name;
+    private String fileName;
 
     @ApiModelProperty(value = "문제 키", required = true)
-    private Long problem_id;
+    private Long problemId;
 
     @ApiModelProperty(value = "코드 내용", required = true)
     private String content;
@@ -43,7 +43,7 @@ public class CodeRequest {
     public Code toCode(User user, Problem problem) {
         Code code = Code.builder()
                 .content(content)
-                .fileName(file_name)
+                .fileName(fileName)
                 .user(user)
                 .problem(problem)
                 .build();

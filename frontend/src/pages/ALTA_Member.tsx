@@ -30,6 +30,8 @@ export default function ALTA_Member() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'ALTA | 멤버 관리';
+
     checkLogin(() => navigate('/'));
   }, []);
 

@@ -19,6 +19,7 @@ export default function ALTA_StudyDetail() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'ALTA | 스터디 관리';
     checkLogin(() => navigate('/'));
   }, []);
 

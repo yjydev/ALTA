@@ -60,7 +60,7 @@ public class CodeService {
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblem_id())
+        Optional<Problem> optProblem = Optional.ofNullable(problemRepository.findById(codeRequest.getProblemId())
                 .orElseThrow(DataNotFoundException::new));
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(AccessDeniedStudyException::new));
@@ -69,7 +69,7 @@ public class CodeService {
         // 해당 스터디의 가입한 스터디원이 맞는지
         checkStudyJoinInfoState(optSJI.get().getState());
         // 해당 유저가 해당 문제에서 그 파일을 이미 만들었는지(파일 이름 겹치는지)
-        checkFileName(codeRequest.getFile_name(), userId, codeRequest.getProblem_id());
+        checkFileName(codeRequest.getFileName(), userId, codeRequest.getProblemId());
 
         Study study = optStudy.get();
         Code code = codeRequest.toCode(optUser.get(), optProblem.get());
@@ -108,7 +108,7 @@ public class CodeService {
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
 
-        return code.toCodeAndCommentResponse();
+        return code.toCodeInfoResponse();
     }
 
 
@@ -163,14 +163,14 @@ public class CodeService {
         checkUserId(userId, code.getUser().getId());
         // 해당 스터디의 가입한 스터디원이 맞는지
         checkStudyJoinInfoState(optSJI.get().getState());
-        if(!code.getFileName().equals(codeRequest.getFile_name())) {
+        if(!code.getFileName().equals(codeRequest.getFileName())) {
             // 파일 이름이 변경되었고 새로운 파일 이름에 대해 해당 유저가 해당 문제에서 그 파일을 이미 만들었는지(파일 이름 겹치는지)
-            checkFileName(codeRequest.getFile_name(), code.getUser().getId(), code.getProblem().getId());
+            checkFileName(codeRequest.getFileName(), code.getUser().getId(), code.getProblem().getId());
         }
 
         // 코드 수정일 경우, -> 파일 이름, 내용 변경 -> DB에 적용
         if(isUpdate) {
-            code.changeFile(codeRequest.getFile_name(), codeRequest.getContent());
+            code.changeFile(codeRequest.getFileName(), codeRequest.getContent());
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
         // 코드 재업로드일 경우, -> 파일 삭제, 파일 생성
@@ -186,9 +186,9 @@ public class CodeService {
     @Transactional(rollbackFor = Exception.class)
     public void createCodeInGithub(String token, Study study, Code code, CodeRequest codeRequest) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), codeRequest.getFile_name());
+        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), codeRequest.getFileName());
         String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
-        String commitMessage = this.getCommitMessage(codeRequest.getCommit_message());
+        String commitMessage = this.getCommitMessage(codeRequest.getCommitMessage());
 
 
         //        Git 조회 - Github에 이미 같은 이름의 파일이 업로드 되어있다면
