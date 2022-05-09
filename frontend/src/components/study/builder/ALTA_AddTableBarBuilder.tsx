@@ -6,9 +6,10 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 
-import { generateError } from '../../../modules/generateAlert';
+import { generateError, generateTimer } from '../../../modules/generateAlert';
 import { blackColor } from '../../../modules/colorChart';
 import { postRequest } from '../../../api/request';
+import { AxiosError } from 'axios';
 
 export const addTableBarFrontBuilder = () =>
   function ALTA_AddTableBarFront({ fliper }: { fliper: () => void }) {
@@ -51,9 +52,10 @@ const PlainBtn = styled.button`
 
 export const addTableBarBackBuilder = (
   studyId: number,
-  getReadmeContents: () => void,
+  getReadmeContents: (studyId: number) => void,
 ) =>
   function Back({ fliper }: { fliper: () => void }) {
+    console.log(studyId);
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(new Date());
 
@@ -87,8 +89,15 @@ export const addTableBarBackBuilder = (
         endDate: refineDate(endDate),
       };
 
-      await postRequest(`/api/study/${studyId}/schedule`, requestData);
-      getReadmeContents();
+      console.log(requestData);
+      try {
+        await postRequest(`/api/study/${studyId}/schedule`, requestData);
+      } catch (err: any) {
+        if (err.response.data.code === 'S001')
+          generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
+        else generateError('새로운 회차를 생성할 수 없습니다', '');
+      }
+      getReadmeContents(studyId);
 
       setStartDate(new Date());
       setEndDate(new Date());

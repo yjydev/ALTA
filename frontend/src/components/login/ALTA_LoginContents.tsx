@@ -47,10 +47,6 @@ export default function ALTA_LoginContents() {
                   href={`${process.env.REACT_APP_BUTTON_URL}:8000/githubLogin`}
                   onClick={() => setLoading(true)}
                 >
-                  {/* <A
-                  href="http://localhost:8000/githubLogin"
-                  onClick={() => setLoading(true)}
-                > */}
                   <GithubButton
                     label="Github 계정으로 로그인하기"
                     style={{ width: '100%' }}

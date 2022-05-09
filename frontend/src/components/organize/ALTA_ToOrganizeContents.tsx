@@ -56,10 +56,22 @@ export default function ALTA_ToOrganizeContents() {
     setReqeustData(newData);
   };
 
+  const handleStudyName = (value: string): void => {
+    if (value.length > 10) return;
+
+    handleRequestData(value, 'name');
+  };
+
   const handleMaxPeople = (value: number) => {
     if (value > 6) handleRequestData('6', 'maxPeople');
     else if (value < 2) handleRequestData('2', 'maxPeople');
     else handleRequestData(`${value}`, 'maxPeople');
+  };
+
+  const handleStudyIntro = (value: string): void => {
+    if (value.length > 80) return;
+
+    handleRequestData(value, 'introduction');
   };
 
   //빈 항목이 있는지 체크
@@ -115,8 +127,8 @@ export default function ALTA_ToOrganizeContents() {
             autoFocus
             variant="standard"
             value={requestData.name}
-            onChange={(e) => handleRequestData(e.target.value, 'name')}
-            placeholder="스터디 이름을 정해주세요"
+            onChange={(e) => handleStudyName(e.target.value)}
+            placeholder="스터디 이름을 정해주세요 (최대 10자)"
             sx={{ width: '100%' }}
             inputProps={{ style: { fontSize: 18, padding: '0 0 3px' } }}
           />
@@ -227,7 +239,7 @@ export default function ALTA_ToOrganizeContents() {
             rows={4}
             placeholder="소개글을 써주세요. (최대 100자)"
             value={requestData.introduction}
-            onChange={(e) => handleRequestData(e.target.value, 'introduction')}
+            onChange={(e) => handleStudyIntro(e.target.value)}
           />
           <Typography
             sx={guideStyle}
