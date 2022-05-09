@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import {
   Avatar,
@@ -9,20 +9,64 @@ import {
   Button,
   Link,
 } from '@mui/material';
+// import { scroller, Events } from 'react-scroll';
 
-export default function ALTA_CodeCommentCard({ review }) {
-  const [isResolved, setisResolved] = useState(review['completed']);
-  // const { setCodeLine } = useContext(CodeBlockContext);
+import { putRequest } from '../../api/request';
+import { ReviewData } from '../../types/CodeBlockType';
+import { CodeReviewStore } from '../../context/CodeReviewContext';
 
-  const changeResolved = () => {
+export default function ALTA_CodeCommentCard({
+  review,
+}: {
+  review: ReviewData;
+}) {
+  const [isResolved, setisResolved] = useState<boolean | undefined>(
+    review.completed,
+  );
+
+  const { setCodeLine } = useContext(CodeReviewStore);
+
+  const changeResolved = async () => {
     setisResolved(!isResolved);
     // 백엔드로 요청보내서 completed 갱신
-    review['completed'] = isResolved;
+    await putRequest(`/api/code/review/${review.review_id}/solved`, {
+      is_solved: !review.completed,
+    });
   };
 
   const moveToLine = () => {
-    // setCodeLine(review['code_number']);
+    setCodeLine(review['code_number']);
+    const lineSpan = document.getElementById(
+      `codeLine-${review['code_number']}`,
+    );
+    if (lineSpan !== null) {
+      lineSpan.scrollIntoView({ behavior: 'smooth' });
+    }
+    // scroller.scrollTo(`codeLine-${review['code_number']}`, {
+    //   duration: 800,
+    //   delay: 0,
+    //   smooth: 'easeInOutQuart',
+    // });
     // 추후 해당 라인 스크롤링 이벤트 구현 예정
+    // const goToContainer = new Promise((resolve, reject) => {
+    //   Events.scrollEvent.register('end', () => {
+    //     resolve;
+    //     Events.scrollEvent.remove('end');
+    //   });
+    //   scroller.scrollTo('code-block', {
+    //     duration: 800,
+    //     delay: 0,
+    //     smooth: 'easeInOutQuart',
+    //   });
+    // });
+    // goToContainer.then(() =>
+    //   scroller.scrollTo(`codeLine-${review['code_number']}`, {
+    //     duration: 800,
+    //     delay: 0,
+    //     smooth: 'easeInOutQuart',
+    //     containerId: 'code-block',
+    //   }),
+    // );
   };
 
   return (
@@ -35,7 +79,7 @@ export default function ALTA_CodeCommentCard({ review }) {
           <Grid item md={15}>
             <Grid sx={infoStyle}>
               <h4>{review['reviewer_name']}</h4>
-              <p style={{ color: 'gray' }}>{review['comment_date']}</p>
+              <p style={{ color: 'gray' }}>{review.comment_date}</p>
             </Grid>
             <Grid sx={infoStyle}>
               <Grid container sx={commentStyle}>
@@ -47,6 +91,13 @@ export default function ALTA_CodeCommentCard({ review }) {
                 >
                   {review['code_number']}번
                 </Link>
+                {/* <Link
+                  to={`codeLine-${review['code_number']}`}
+                  spy={true}
+                  smooth={true}
+                >
+                  {review['code_number']}
+                </Link> */}
                 <Typography mb={2}>{review['comment']}</Typography>
               </Grid>
               {isResolved ? (

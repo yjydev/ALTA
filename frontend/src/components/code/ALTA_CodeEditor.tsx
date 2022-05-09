@@ -1,5 +1,4 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
-import { putRequest } from '../../api/request';
 import {
   Box,
   Grid,
@@ -9,21 +8,17 @@ import {
   TextField,
 } from '@mui/material';
 
+import { putRequest } from '../../api/request';
 import MonacoEditor from '@uiw/react-monacoeditor';
 
 export default function ALTA_CodeEditor({
   code,
   language,
   setIsCodeEdit,
-}: {
-  code: string;
-  language: string;
-  setIsCodeEdit: Dispatch<SetStateAction<boolean>>;
-}) {
-  const problemName = 'Chart';
-
+  file,
+}: editorProps) {
   const [editData, setEditData] = useState<editDataType>({
-    file_name: `${problemName}`,
+    file_name: file,
     content: `${code}`,
   });
 
@@ -34,13 +29,14 @@ export default function ALTA_CodeEditor({
   };
 
   const handleEditCode = async () => {
-    // console.log(editData);
+    console.log(editData);
     try {
       const res = await putRequest(
-        '/api/study/37/code/26',
+        '/api/study/37/code/87/modify',
         JSON.stringify(editData),
       );
       console.log(res);
+      setIsCodeEdit(false);
     } catch (err) {
       console.log(err);
     }
@@ -60,7 +56,7 @@ export default function ALTA_CodeEditor({
           <Box sx={titleStyle}>
             <TextField
               sx={titleInput}
-              defaultValue={problemName}
+              defaultValue={file}
               inputProps={{ style: { fontSize: 35 } }}
               onChange={(e) => handleEditData(e.target.value, 'file_name')}
             />
@@ -120,4 +116,11 @@ type editDataType = {
   [index: string]: string;
   file_name: string;
   content: string;
+};
+
+type editorProps = {
+  code: string;
+  language: string;
+  setIsCodeEdit: Dispatch<SetStateAction<boolean>>;
+  file: string;
 };

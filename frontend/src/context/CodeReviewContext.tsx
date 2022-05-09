@@ -4,7 +4,7 @@ import { ReviewData, CodeData, defaultCodeData } from '../types/CodeBlockType';
 type defaultValueType = {
   code: CodeData;
   setCode: (newCode: CodeData) => void;
-  reviews: ReviewData[];
+  reviews: ReviewData[] | null;
   setReviews: (newReview: ReviewData[]) => void;
   codeLine: number;
   setCodeLine: (newLine: number) => void;
@@ -13,7 +13,7 @@ type defaultValueType = {
 const defaultValue: defaultValueType = {
   code: defaultCodeData,
   setCode: () => null,
-  reviews: [],
+  reviews: null,
   setReviews: () => null,
   codeLine: 0,
   setCodeLine: () => null,

@@ -29,12 +29,19 @@ export default function ALTA_CodeBlock({
           showLineNumbers={true}
           wrapLines={true}
           lineProps={(lineNum: number) => ({
+            id: `codeLine-${lineNum}`,
             style: {
               display: 'block',
               background: codeLine === lineNum ? 'rgb(41,62,98)' : 'inherit',
             },
             onClick() {
               setCodeLine(lineNum);
+              const c = document.getElementById(
+                'outlined-multiline-static-comment',
+              );
+              if (c) {
+                c.scrollIntoView({ behavior: 'smooth' });
+              }
             },
           })}
         >
