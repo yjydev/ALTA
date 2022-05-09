@@ -23,6 +23,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.swing.text.html.Option;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -86,7 +89,7 @@ public class StudyService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public HashMap<String, Object> selectStudyMemberList(Long studyId){
+    public HashMap<String, Object> selectStudyMemberList(Long studyId) {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
@@ -97,6 +100,7 @@ public class StudyService {
             throw new AccessDeniedStudyException();
         }
 
+        Study study = optSJI.get().getStudy();
         HashMap<String, Object> map = new HashMap<>();
         List<StudyJoinInfo> sjiList = null;
         List<StudyJoinInfoResponse> sjiResponse = new ArrayList<>();
@@ -104,14 +108,20 @@ public class StudyService {
         int study_max_people = optSJI.get().getStudy().getMaxPeople();
 
         if(optSJI.get().getPosition().equals("그룹장")) {
-            sjiList = sjiRepository.findByStudyStudyId(studyId);
+            sjiList = sjiRepository.findByStudyStudyIdOrderByRegistrationDate(study);
             study_code = sjiList.get(0).getStudy().getCode();
         } else {
-            sjiList = sjiRepository.findByStudyStudyIdAndState(studyId, "가입");
+            sjiList = sjiRepository.findByStudyStudyIdAndStateOrderByRegistrationDate(study, "가입");
         }
 
         for(StudyJoinInfo sji : sjiList) {
-            sjiResponse.add(sji.toStudyJoinInfoResponse());
+            String date = null;
+            if (sji.getRegistrationDate() != null) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                date = formatter.format(sji.getRegistrationDate());
+            }
+
+            sjiResponse.add(sji.toStudyJoinInfoResponse(date));
         }
 
         map.put("members", sjiResponse);
@@ -186,11 +196,11 @@ public class StudyService {
         Study study = studyOpt.get();
         StudyJoinInfo sji = sjiOpt.get();
 
+        checkStudyJoinInfoState(sji.getState());
         int joinCount = sjiRepository.findByJoinUser(study, "가입");
         if(study.getMaxPeople() <= joinCount)
             throw new StudyOverMaxPeopleException();
 
-        checkStudyJoinInfoState(sji.getState());
         List<HashMap> result = gitCollaboratorAPI.selectCollaborators(token, study.getUser().getName(), study.getRepositoryName());
 
         boolean check = false;
@@ -204,7 +214,7 @@ public class StudyService {
         if(!check)
             throw new CollaboratorApprovalException();
 
-        sjiRepository.updateSJIState(sji.getId(), study, "가입");
+        sjiRepository.updateSJIState(sji.getId(), study, "가입", new Date());
     }
 
     private void checkStudyJoinInfoState(String state) {
