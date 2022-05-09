@@ -142,7 +142,7 @@ public class UserService1 {
             tmp.put("introduction", tmpStudy.getIntroduction());
             tmp.put("language", tmpStudy.getLanguage());
             tmp.put("maxPeople", tmpStudy.getMaxPeople());
-            tmp.put("joined", studyJoinInfoRepository.countStudyJoinInfoByUserIdAndStudyStudyId(sji.getUser().getId(), tmpStudy.getStudyId()));
+            tmp.put("joined", studyJoinInfoRepository.countStudyJoinInfoByStateAndStudyStudyId("가입", tmpStudy.getStudyId()));
 
             arrayStudyList.add(tmp);
         }
