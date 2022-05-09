@@ -36,8 +36,8 @@ spring:
           github: # /oauth2/authorization/github 이 주소를 동작하게 한다.
 #            client-id: 3c388f133d2216e06569 #local :seoha test
 #            client-secret: b9d3c97ca3cdd536d733129fc193cf63d39e0680
-#            client-id: d48d2214b6bcdcd5ec62
-#            client-secret: b9aa9c706cab627a05d19abe6695c3332c46c800
+            client-id: d48d2214b6bcdcd5ec62
+            client-secret: b9aa9c706cab627a05d19abe6695c3332c46c800
             scope:
               - repo
               - user
