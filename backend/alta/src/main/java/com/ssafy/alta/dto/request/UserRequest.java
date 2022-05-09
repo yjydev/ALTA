@@ -31,8 +31,8 @@ public class UserRequest {
     String nickname;
     String role;
     String email;
-    int email_alert;
-    int site_alert;
+    int emailAlert;
+    int siteAlert;
 
     public User toEntity(){
         User user = User.builder()
@@ -41,8 +41,8 @@ public class UserRequest {
                 .nickname(nickname)
                 .role(role)
                 .email(email)
-                .emailAlert(email_alert)
-                .siteAlert(site_alert)
+                .emailAlert(emailAlert)
+                .siteAlert(siteAlert)
                 .build();
         return user;
     }

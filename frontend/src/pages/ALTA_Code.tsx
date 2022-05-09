@@ -11,6 +11,8 @@ import ALTA_Header from '../components/common/ALTA_Header';
 export default function ALTA_Code() {
   const navigate = useNavigate();
   useEffect(() => {
+    document.title = 'ALTA | 코드 상세보기';
+
     if (loginTokenChecker() === -1) navigate('/');
   }, []);
 

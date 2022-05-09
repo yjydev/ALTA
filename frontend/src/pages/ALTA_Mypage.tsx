@@ -12,6 +12,8 @@ export default function ALTA_Mypage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'ALTA | 마이페이지';
+
     checkLogin(() => navigate('/'));
   }, []);
 
