@@ -43,7 +43,7 @@ export default function ALTA_LoginContents() {
               </>
             ) : (
               <>
-                <Aㅇ
+                <A
                   href={`${process.env.REACT_APP_BASE_URL}/githubLogin`}
                   onClick={() => setLoading(true)}
                 >
@@ -55,7 +55,7 @@ export default function ALTA_LoginContents() {
                     label="Github 계정으로 로그인하기"
                     style={{ width: '100%' }}
                   />
-                </Aㅇ>
+                </A>
               </>
             )}
             <Typography sx={[userInput, signUpGuide]}>
