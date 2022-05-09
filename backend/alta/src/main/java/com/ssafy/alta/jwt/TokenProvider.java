@@ -135,9 +135,6 @@ public class TokenProvider implements InitializingBean {
             logger.info("JWT token compact of handler are invalid."); // JWT 토큰이 잘못되었습니다.
             throw new JwtException("JWT error");
         }
-        finally {
-            return false;
-        }
     }
 
 
