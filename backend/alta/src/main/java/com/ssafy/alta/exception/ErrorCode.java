@@ -32,6 +32,7 @@ public enum ErrorCode {
     IMPOSSIBLE_DELETE_SCHEDULE("S004", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 일정입니다."),
 
     STUDY_MAX_PEOPLE_ZERO("T001", HttpStatus.BAD_REQUEST, "최대 인원이 0이면 생성불가능합니다."),
+    STUDY_OVER_MAX_PEOPLE("T001", HttpStatus.BAD_REQUEST, "최대 인원수를 초과했습니다."),
 
     IMPOSSIBLE_DELETE_PROBLEM("P001", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 문제입니다."),
 
