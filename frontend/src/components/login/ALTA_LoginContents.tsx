@@ -7,7 +7,6 @@ import GithubButton from 'react-github-login-button';
 import { loginTokenChecker } from '../../modules/LoginTokenChecker';
 
 import Logo from '../../images/logo.png';
-import { blackColor } from '../../modules/colorChart';
 
 export default function ALTA_LoginContents() {
   const navigate = useNavigate();
@@ -44,14 +43,14 @@ export default function ALTA_LoginContents() {
               </>
             ) : (
               <>
-                {/* <A
+                <A
                   href="http://algorithmtime.com:8000/githubLogin"
                   onClick={() => setLoading(true)}
-                > */}
-                <A
+                >
+                  {/* <A
                   href="http://localhost:8000/githubLogin"
                   onClick={() => setLoading(true)}
-                >
+                > */}
                   <GithubButton
                     label="Github 계정으로 로그인하기"
                     style={{ width: '100%' }}
