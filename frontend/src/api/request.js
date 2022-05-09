@@ -9,20 +9,34 @@ const makeHeaders = () => {
   };
 };
 
-export const postRequest = async (url, body) => {
+export const postRequest = async (url, body, headers = makeHeaders()) => {
   console.log('post!');
-  const response = await axiosInstance.post(url, body, makeHeaders());
+  const response = await axiosInstance.post(url, body, headers);
 
   return response.data;
 };
 
-export const getRequest = async (url) => {
-  const response = await axiosInstance.get(url, makeHeaders());
+export const getRequest = async (url, headers = makeHeaders()) => {
+  const response = await axiosInstance.get(url, headers);
   return response.data;
 };
 
-export const putRequest = async (url, body) => {
-  const response = await axiosInstance.put(url, body, makeHeaders());
+export const putRequest = async (url, body, headers = makeHeaders()) => {
+  const response = await axiosInstance.put(url, body, headers);
+
+  return response.data;
+};
+
+export const refreshToken = async () => {
+  const headers = {
+    headers: {
+      'Content-Type': 'application/json',
+      'ACCESS_TOKEN': `Bearer ${localStorage.getItem('jwt')}`,
+      'REFRESH_TOKEN ': `Bearer ${localStorage.getItem('refresh')}`,
+    },
+  };
+
+  const response = await axiosInstance.post('/api/jwt/issueAT', null, headers);
 
   return response.data;
 };
