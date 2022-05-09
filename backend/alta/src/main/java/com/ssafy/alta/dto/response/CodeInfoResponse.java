@@ -41,5 +41,5 @@ public class CodeInfoResponse {
     private String language;
 
     @ApiModelProperty(value = "코드 작성자 닉네임")
-    private String nickname;
+    private String writer;
 }
