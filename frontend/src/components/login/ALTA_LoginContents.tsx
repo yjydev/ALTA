@@ -44,11 +44,11 @@ export default function ALTA_LoginContents() {
               </>
             ) : (
               <>
-                <A href="http://algorithmtime.com:8000/githubLogin">
-                  {/* <A
+                {/* <A href="http://algorithmtime.com:8000/githubLogin"> */}
+                <A
                   href="http://localhost:8000/githubLogin"
                   onClick={() => setLoading(true)}
-                > */}
+                >
                   <GithubButton
                     label="Github 계정으로 로그인하기"
                     style={{ width: '100%' }}
