@@ -1,10 +1,6 @@
 import axios from 'axios';
 
-// const BASE_URL = 'http://k6b203.p.ssafy.io';
-// const BASE_URL = 'http://k6b203.p.ssafy.io:8000';
-// const BASE_URL = 'http://localhost:9000';
-// const BASE_URL = 'http://localhost:8000';
-const BASE_URL = 'https://algorithmtime.com';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const createAxiosInstance = () => {
   const axiosInstance = axios.create({
