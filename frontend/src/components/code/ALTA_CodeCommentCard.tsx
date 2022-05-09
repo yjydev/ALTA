@@ -29,15 +29,15 @@ export default function ALTA_CodeCommentCard({
   const changeResolved = async () => {
     setisResolved(!isResolved);
     // 백엔드로 요청보내서 completed 갱신
-    await putRequest(`/api/code/review/${review.review_id}/solved`, {
+    await putRequest(`/api/code/review/${review.reviewId}/solved`, {
       is_solved: !review.completed,
     });
   };
 
   const moveToLine = () => {
-    setCodeLine(review['code_number']);
+    setCodeLine(review['codeNumber']);
     const lineSpan = document.getElementById(
-      `codeLine-${review['code_number']}`,
+      `codeLine-${review['codeNumber']}`,
     );
     if (lineSpan !== null) {
       lineSpan.scrollIntoView({ behavior: 'smooth' });
@@ -78,8 +78,8 @@ export default function ALTA_CodeCommentCard({
           </Grid>
           <Grid item md={15}>
             <Grid sx={infoStyle}>
-              <h4>{review['reviewer_name']}</h4>
-              <p style={{ color: 'gray' }}>{review.comment_date}</p>
+              <h4>{review['reviewerName']}</h4>
+              <p style={{ color: 'gray' }}>{review.commentDate}</p>
             </Grid>
             <Grid sx={infoStyle}>
               <Grid container sx={commentStyle}>
@@ -89,7 +89,7 @@ export default function ALTA_CodeCommentCard({
                   underline="none"
                   mr={1}
                 >
-                  {review['code_number']}번
+                  {review['codeNumber']}번
                 </Link>
                 {/* <Link
                   to={`codeLine-${review['code_number']}`}

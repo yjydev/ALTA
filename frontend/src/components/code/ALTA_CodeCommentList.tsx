@@ -65,7 +65,7 @@ export default function ALTA_CodeCommentList({
     if (typeof codeId !== 'undefined') {
       const codeIdx = parseInt(codeId);
       const newRequest: PostReview = {
-        code_id: codeIdx,
+        codeId: codeIdx,
         content: newReview,
         line: codeLine,
       };
@@ -140,7 +140,7 @@ export default function ALTA_CodeCommentList({
       </Grid>
       <Grid item>
         {reviews_data.map((review: ReviewData) => (
-          <ALTA_CodeCommentCard key={review.review_id} review={review} />
+          <ALTA_CodeCommentCard key={review.reviewId} review={review} />
         ))}
       </Grid>
     </Grid>
