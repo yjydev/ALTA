@@ -18,11 +18,8 @@ export default function ALTA_MemberList({
   const getMembers = async () => {
     try {
       const res = await getRequest(`/api/study/${studyId}/members`);
-      console.log(res);
       setMembers(res.members);
       setStudyCode(res.studyCode);
-      console.log(members);
-      console.log(studyCode);
     } catch (err) {
       console.log(err);
     }
@@ -37,7 +34,7 @@ export default function ALTA_MemberList({
       <Grid container direction="row" sx={wrapper}>
         <Grid item sm={12}>
           <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
-          <ALTA_MemberTable />
+          <ALTA_MemberTable members={members} studyCode={studyCode} />
           {studyCode ? (
             <Grid container pl={1}>
               <Typography mt={3} fontSize="17px" sx={studyCode_wrapper}>
