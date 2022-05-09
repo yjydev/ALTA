@@ -44,14 +44,14 @@ public class UserService1 {
     private StudyJoinInfoRepository studyJoinInfoRepository;
 
     private GitEmailAPI gitEmailAPI = new GitEmailAPI();
-    private UserLanguage userLanguage ;
+    private UserLanguage userLanguage;
     private GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
 
     @Autowired
     private RedisService redisService;
 
     @Transactional(rollbackFor = Exception.class)
-    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file){
+    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file) {
         String user_id = userService.getCurrentUserId();
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
@@ -60,16 +60,16 @@ public class UserService1 {
 
         String[] langlist = userUpdateRequest.getLanguageList();
 
-        HashMap< String,Integer> langStringMap = userLanguage.getLangStringMap();
+        HashMap<String, Integer> langStringMap = userLanguage.getLangStringMap();
         int sum = 0;
-        for(String langString : langlist){
-            if(langStringMap.containsKey(langString))
-                sum+=langStringMap.get(langString);
+        for (String langString : langlist) {
+            if (langStringMap.containsKey(langString))
+                sum += langStringMap.get(langString);
             System.out.println(langString + " : " + langStringMap.get(langString));
         }
 
         // 이미지 저장
-        String imagePath = environment.getProperty("image.basePath")+UUID.randomUUID()+file.getOriginalFilename();
+        String imagePath = environment.getProperty("image.basePath") + UUID.randomUUID() + file.getOriginalFilename();
         try {
             file.transferTo(new File(imagePath));
         } catch (IOException e) {
@@ -94,8 +94,9 @@ public class UserService1 {
         // 유저 정보 불러서 리턴
         return this.selectUser();
     }
+
     @Transactional
-    public UserResponse selectUser()  {
+    public UserResponse selectUser() {
         String user_id = userService.getCurrentUserId();
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
@@ -132,6 +133,8 @@ public class UserService1 {
 
         ArrayList<HashMap<String, Object>> arrayStudyList = new ArrayList<>();
         for (StudyJoinInfo sji : sjiList) {
+            if(!sji.getState().equals("가입"))
+                continue;
             HashMap<String, Object> tmp = new HashMap<>();
             Study tmpStudy = sji.getStudy();
             tmp.put("id", tmpStudy.getStudyId());
@@ -140,32 +143,19 @@ public class UserService1 {
             tmp.put("language", tmpStudy.getLanguage());
             tmp.put("maxPeople", tmpStudy.getMaxPeople());
             tmp.put("joined", studyJoinInfoRepository.countStudyJoinInfoByUserIdAndStudyStudyId(sji.getUser().getId(), tmpStudy.getStudyId()));
-            List<StudyJoinInfo> watingList = studyJoinInfoRepository.findByStudyStudyId(tmpStudy.getStudyId());
-
-            boolean waiting = false;
-            if(watingList.size() > 1 ){
-                for(StudyJoinInfo member : watingList){
-                    if(member.getState().equals("대기")) {
-                        waiting = true;
-                        break;
-                    }
-                }
-            }
-
-            tmp.put("waitingMember", waiting);
 
             arrayStudyList.add(tmp);
         }
-        char[] lnum =  Integer.toBinaryString(user.getLanguage() == null ? 0 :  user.getLanguage()).toCharArray();
+        char[] lnum = Integer.toBinaryString(user.getLanguage() == null ? 0 : user.getLanguage()).toCharArray();
         int lnumIdx = 0;
         ArrayList<String> langStringList = new ArrayList<>();
-        while(lnum.length>lnumIdx){
-            if(lnum[lnumIdx] == '1')
-                langStringList.add((String)userLanguage.getLangIdxMap().get((int)Math.pow(2,lnum.length-1-lnumIdx )));
+        while (lnum.length > lnumIdx) {
+            if (lnum[lnumIdx] == '1')
+                langStringList.add((String) userLanguage.getLangIdxMap().get((int) Math.pow(2, lnum.length - 1 - lnumIdx)));
             lnumIdx++;
         }
 
-        if(langStringList.size() == 0)
+        if (langStringList.size() == 0)
             langStringList.add("사용 언어를 설정해주세요.");
 
         userResponse.getUserData().put("nickname", user.getNickname());
@@ -174,7 +164,7 @@ public class UserService1 {
         userResponse.getUserData().put("alertList", arrayAlertList);
         userResponse.getUserData().put("introduction", user.getIntroduction());
         userResponse.getUserData().put("time", user.getActivityTime());
-        userResponse.getUserData().put("languageList",langStringList);
+        userResponse.getUserData().put("languageList", langStringList);
         userResponse.getUserData().put("profileUrl", user.getImage());
         userResponse.getUserData().put("studyList", arrayStudyList);
 
