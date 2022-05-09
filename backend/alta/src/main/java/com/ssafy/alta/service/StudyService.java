@@ -60,6 +60,9 @@ public class StudyService {
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
 
+        if(studyRequest.getMaxPeople() == 0)
+            throw new StudyMaxPeopleZeroException();
+
         User user = optUser.get();
         studyRequest.setUser(user);
         studyRequest.setCode(UUID.randomUUID().toString().substring(0, 8));
