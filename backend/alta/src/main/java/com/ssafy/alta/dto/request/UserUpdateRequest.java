@@ -25,7 +25,7 @@ public class UserUpdateRequest {
     private String email;
     private String introduction;
     private String[] languageList;
-    private int email_alert;
-    private int site_alert;
+    private int emailAlert;
+    private int siteAlert;
 
 }

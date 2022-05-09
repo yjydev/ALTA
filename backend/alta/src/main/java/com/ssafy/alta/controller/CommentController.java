@@ -33,9 +33,9 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping("/{code_id}")
+    @GetMapping("/{codeId}")
     @ApiOperation(value = "코드 댓글 리스트 조회", notes = "코드의 댓글 리스트를 조회합니다.")
-    public ResponseEntity selectCommentList(@ApiParam(value = "코드 키", required = true) @PathVariable("code_id") Long codeId) {
+    public ResponseEntity selectCommentList(@ApiParam(value = "코드 키", required = true) @PathVariable("codeId") Long codeId) {
         List<CommentResponse> commentResponseList = commentService.selectCommentList(codeId);
         return new ResponseEntity<>(commentResponseList, HttpStatus.OK);
     }
@@ -47,23 +47,25 @@ public class CommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{review_id}")
+    @DeleteMapping("/{reviewId}")
     @ApiOperation(value = "코드 댓글 삭제", notes = "댓글을 삭제합니다.")
-    public ResponseEntity deleteComment(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id") Long reviewId) {
+    public ResponseEntity deleteComment(@ApiParam(value = "댓글 키", required = true) @PathVariable("reviewId") Long reviewId) {
         commentService.deleteComment(reviewId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{review_id}")
+    @PutMapping("/{reviewId}")
     @ApiOperation(value = "코드 댓글 업데이터", notes = "댓글의 내용, 줄, 상태를 변경합니다.(변경 안할 값은 값을 그대로 보냄)")
-    public ResponseEntity updateComment(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id")Long reviewId, @ApiParam(value = "변경할 댓글 정보", required = true) @RequestBody CommentUpdateRequest commentUpdateRequest) {
+    public ResponseEntity updateComment(@ApiParam(value = "댓글 키", required = true) @PathVariable("reviewId")Long reviewId,
+                                        @ApiParam(value = "변경할 댓글 정보", required = true) @RequestBody CommentUpdateRequest commentUpdateRequest) {
         commentService.updateComment(reviewId, commentUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @PutMapping("/{review_id}/solved")
+    @PutMapping("/{reviewId}/solved")
     @ApiOperation(value = "코드 댓글 상태 변경", notes = "댓글 해결 여부를 변경합니다.")
-    public ResponseEntity updateCommentSolved(@ApiParam(value = "댓글 키", required = true) @PathVariable("review_id") Long reviewId, @ApiParam(value = "댓글 상태", required = true) @RequestBody CommentUpdateSolvedRequest request) {
-        commentService.updateCommentSolved(reviewId, request.getIs_solved());
+    public ResponseEntity updateCommentSolved(@ApiParam(value = "댓글 키", required = true) @PathVariable("reviewId") Long reviewId,
+                                              @ApiParam(value = "댓글 상태", required = true) @RequestBody CommentUpdateSolvedRequest request) {
+        commentService.updateCommentSolved(reviewId, request.getIsSolved());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

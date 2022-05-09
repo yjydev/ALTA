@@ -24,19 +24,19 @@ import java.util.Date;
 @Builder
 public class CommentResponse {
     @ApiModelProperty(value = "댓글 작성자 키")
-    private Long review_id;
+    private Long reviewId;
 
     @ApiModelProperty(value = "댓글 작성자 이름")
-    private String reviewer_name;
+    private String reviewerName;
 
     @ApiModelProperty(value = "댓글 내용")
     private String comment;
 
     @ApiModelProperty(value = "댓글 작성 일자")
-    private Date comment_date;
+    private Date commentDate;
 
     @ApiModelProperty(value = "코드 번호")
-    private Integer code_number;
+    private Integer codeNumber;
 
     @ApiModelProperty(value = "완료 여부")
     private Boolean completed;
