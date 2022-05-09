@@ -2,6 +2,7 @@ package com.ssafy.alta.jwt;
 
 import com.google.gson.Gson;
 import com.ssafy.alta.exception.JwtExpiredExaception;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +34,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (JwtExpiredExaception ex){
             log.error("jwt refresh expired! exception catch");
             setErrorResponse(HttpStatus.FORBIDDEN,response,ex);
-        }catch (RuntimeException ex){
-            log.error("runtime exception exception handler filter");
-            setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,response,ex);
+        } catch (JwtException ex){
+            log.error("jwt error!! exception catch");
+            setErrorResponse(HttpStatus.FORBIDDEN,response,ex);
         }
     }
 

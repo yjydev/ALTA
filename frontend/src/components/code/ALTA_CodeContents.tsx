@@ -18,6 +18,7 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
 
   const { code, setCode } = useContext(CodeReviewStore);
   const [isCodeEdit, setIsCodeEdit] = useState(false);
+  const [userName, setUserName] = useState<string>('');
 
   const getCode = async () => {
     const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
@@ -32,6 +33,10 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
 
   useEffect(() => {
     getCode();
+    const user = localStorage.getItem('UserData');
+    if (user !== null) {
+      setUserName(JSON.parse(user)['nickname']);
+    }
   }, []);
 
   useEffect(() => {
@@ -53,8 +58,10 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                 <ALTA_CodeEditor
                   code={code.code}
                   language={code.language}
-                  file={code.file_name}
+                  file={code.fileName}
                   setIsCodeEdit={setIsCodeEdit}
+                  studyId={studyId}
+                  codeId={codeId}
                 />
               ) : (
                 <Grid container direction="column" spacing={5}>
@@ -96,10 +103,10 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                       <Typography sx={problemStyle}>2021.04.13 회문</Typography>
                       <Box sx={titleStyle}>
                         <Typography sx={codeTitleStyle}>
-                          {code.file_name}
+                          {code.fileName}
                         </Typography>
                         <Typography sx={codeWritterStyle} align="right">
-                          작성자 : user
+                          작성자 : {code.writer}
                         </Typography>
                       </Box>
                     </Box>

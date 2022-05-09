@@ -1,3 +1,8 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { checkLogin } from '../modules/LoginTokenChecker';
+
 import ALTA_Template from '../components/common/ALTA_Template';
 import ALTA_Inner from '../components/common/ALTA_Inner';
 import ALTA_Header from '../components/common/ALTA_Header';
@@ -9,6 +14,12 @@ export default function ALTA_ToOrganize() {
 
 //template에 prop로 넘겨줄 컴포넌트
 function Header() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkLogin(() => navigate('/'));
+  }, []);
+
   return <ALTA_Header />;
 }
 
