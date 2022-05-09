@@ -115,8 +115,8 @@ public class StudyService {
         }
 
         map.put("members", sjiResponse);
-        map.put("study_code", study_code);
-        map.put("study_max_people", study_max_people);
+        map.put("studyCode", study_code);
+        map.put("studyMaxPeople", study_max_people);
 
         return map;
     }
