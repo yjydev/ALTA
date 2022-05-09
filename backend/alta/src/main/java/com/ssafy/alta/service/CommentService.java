@@ -55,7 +55,7 @@ public class CommentService {
     public void insertComment(CommentCreateRequest commentRequest) {
         String userId = userService.getCurrentUserId();
 
-        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCode_id())
+        Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCodeId())
                 .orElseThrow(DataNotFoundException::new));
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)).orElseThrow(DataNotFoundException::new);
         Code code = optCode.get();

@@ -40,4 +40,6 @@ public class CodeInfoResponse {
     @ApiModelProperty(value = "코드 사용 언어")
     private String language;
 
+    @ApiModelProperty(value = "코드 작성자 닉네임")
+    private String nickname;
 }

@@ -94,12 +94,13 @@ public class Code {
         this.content = content;
     }
 
-    public CodeInfoResponse toCodeAndCommentResponse() {
+    public CodeInfoResponse toCodeInfoResponse() {
         return CodeInfoResponse.builder()
                 .code(this.content)
-                .create_date(this.createDate)
-                .file_name(this.fileName)
+                .createDate(this.createDate)
+                .fileName(this.fileName)
                 .language(FileToLanguage.getInstanse().getLanguage(this.fileName))
+                .nickname(this.user.getNickname())
                 .build();
     }
 }
