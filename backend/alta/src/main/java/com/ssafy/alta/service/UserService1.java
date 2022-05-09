@@ -86,8 +86,8 @@ public class UserService1 {
                 .language(sum)
                 .name(exUser.getName())
                 .role(exUser.getRole())
-                .siteAlert(exUser.getSiteAlert())
-                .emailAlert(exUser.getEmailAlert())
+                .siteAlert(userUpdateRequest.getSiteAlert())
+                .emailAlert(userUpdateRequest.getEmailAlert())
                 .build();
         userRepository.save(newUser);
 
