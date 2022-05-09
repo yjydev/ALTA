@@ -100,7 +100,7 @@ public class Code {
                 .createDate(this.createDate)
                 .fileName(this.fileName)
                 .language(FileToLanguage.getInstanse().getLanguage(this.fileName))
-                .nickname(this.user.getNickname())
+                .writer(this.user.getNickname())
                 .build();
     }
 }
