@@ -156,7 +156,7 @@ public class UserService1 {
 
             arrayStudyList.add(tmp);
         }
-        char[] lnum =  Integer.toBinaryString(user.getLanguage()).toCharArray();
+        char[] lnum =  Integer.toBinaryString(user.getLanguage() == null ? 0 :  user.getLanguage()).toCharArray();
         int lnumIdx = 0;
         ArrayList<String> langStringList = new ArrayList<>();
         while(lnum.length>lnumIdx){
@@ -164,6 +164,9 @@ public class UserService1 {
                 langStringList.add((String)userLanguage.getLangIdxMap().get((int)Math.pow(2,lnum.length-1-lnumIdx )));
             lnumIdx++;
         }
+
+        if(langStringList.size() == 0)
+            langStringList.add("사용 언어를 설정해주세요.");
 
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
