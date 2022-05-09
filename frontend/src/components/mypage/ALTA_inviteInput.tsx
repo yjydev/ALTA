@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Typography, TextField, Box } from '@mui/material';
 
@@ -6,22 +7,31 @@ import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 import { putRequest } from '../../api/request';
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
 
 export default function ALTA_inviteInput() {
+  const navigate = useNavigate();
   const [isToggle, handleisToggle] = useState(false);
   const [inviteCode, setInviteCode] = useState<string>('');
 
   const handleInvite = async () => {
-    // const request = { code: inviteCode };
-    // console.log(request);
+    generateTimer('잠시 기다려 주세요', `초대코드 검증 중입니다.`);
+    const request = { code: inviteCode };
     try {
       const res = await putRequest(
         `/api/study/invitation`,
-        // JSON.stringify(request),
-        inviteCode,
+        JSON.stringify(request),
+      );
+      generateCheck('가입 완료', `스터디에 가입되었습니다`, () =>
+        navigate('/mypage'),
       );
     } catch (err) {
       console.log(err);
+      generateError('이미 가입된 스터디거나 초대 코드가 유효하지 않습니다', ``);
     }
   };
 
