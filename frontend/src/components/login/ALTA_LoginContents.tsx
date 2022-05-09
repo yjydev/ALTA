@@ -4,7 +4,7 @@ import { Grid, Box, Typography, Link, CircularProgress } from '@mui/material';
 import styled from '@emotion/styled';
 import GithubButton from 'react-github-login-button';
 
-import LoginTokenChecker from '../../modules/LoginTokenChecker';
+import { loginTokenChecker } from '../../modules/LoginTokenChecker';
 
 import Logo from '../../images/logo.png';
 import { blackColor } from '../../modules/colorChart';
@@ -15,7 +15,7 @@ export default function ALTA_LoginContents() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (LoginTokenChecker()) navigate('/mypage');
+    if (loginTokenChecker() === 2) navigate('/mypage');
   }, []);
 
   return (
@@ -44,7 +44,10 @@ export default function ALTA_LoginContents() {
               </>
             ) : (
               <>
-                {/* <A href="http://algorithmtime.com:8000/githubLogin"> */}
+                {/* <A
+                  href="http://algorithmtime.com:8000/githubLogin"
+                  onClick={() => setLoading(true)}
+                > */}
                 <A
                   href="http://localhost:8000/githubLogin"
                   onClick={() => setLoading(true)}
