@@ -1,10 +1,8 @@
 package com.ssafy.alta.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ssafy.alta.dto.request.GithubRepoRequest;
-import com.ssafy.alta.dto.request.StudyJoinInfoRequest;
+import com.ssafy.alta.dto.request.*;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
-import com.ssafy.alta.dto.request.StudyRequest;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
@@ -60,6 +58,9 @@ public class StudyService {
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
 
+        if(studyRequest.getMaxPeople() == 0)
+            throw new StudyMaxPeopleZeroException();
+
         User user = optUser.get();
         studyRequest.setUser(user);
         studyRequest.setCode(UUID.randomUUID().toString().substring(0, 8));
@@ -114,30 +115,36 @@ public class StudyService {
         }
 
         map.put("members", sjiResponse);
-        map.put("study_code", study_code);
-        map.put("study_max_people", study_max_people);
+        map.put("studyCode", study_code);
+        map.put("studyMaxPeople", study_max_people);
 
         return map;
     }
 
 //    @Async // 비동기 처리 -> Exception 처리 전에 201번이 날아간다는 점에서는 안좋지만 보낼때까지의 시간이 너무 걸림, 사용자가 그 시간을 감수해야할까?
     @Transactional(rollbackFor = Exception.class)
-    public void inviteUser(Long studyId, String toUser) throws MessagingException, JsonProcessingException {
+    public void inviteUser(Long studyId, StudyUserIdRequest studyUserIdRequest) throws MessagingException, JsonProcessingException {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
+        System.out.println(userId);
 
         Optional<Study> optStudy = Optional.of(studyRepository.findByStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
-        Optional<StudyJoinInfo> optSJI = sjiRepository.findByStudyStudyIdAndUserId(studyId, toUser);
+        Optional<StudyJoinInfo> optSJI = sjiRepository.findByStudyStudyIdAndUserId(studyId, studyUserIdRequest.getUserId());
         if (optSJI.isPresent())
             throw new UserStateException();
-        Optional<User> optUser = Optional.of(userRepository.findById(toUser)
+        Optional<User> optUser = Optional.of(userRepository.findById(studyUserIdRequest.getUserId())
                 .orElseThrow(DataNotFoundException::new));
         if(optUser.get().getEmail() == null)
             throw new DataNotFoundException();
 
         User user = optUser.get();
         Study study = optStudy.get();
+
+        int joinCount = sjiRepository.findByJoinUser(study, "가입");
+        if(study.getMaxPeople() <= joinCount)
+            throw new StudyOverMaxPeopleException();
+
         String userName = userRepository.findStudyLeaderUserNameByUserId(userId); // 스터디장만 처리가능하니까
         String url = "https://github.com/" + userName + "/" + study.getRepositoryName() + "/invitations";
         gitCollaboratorAPI.insertCollaborators(token, userName, study.getRepositoryName(), user.getName());
@@ -167,17 +174,22 @@ public class StudyService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateStudyMember(String code) {
+    public void updateStudyMember(StudyCodeRequest studyCodeRequest) {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
-        Optional<Study> studyOpt = Optional.of(studyRepository.findByCode(code)
+        Optional<Study> studyOpt = Optional.of(studyRepository.findByCode(studyCodeRequest.getCode())
                 .orElseThrow(DataNotFoundException::new));
         Optional<StudyJoinInfo> sjiOpt = Optional.of(sjiRepository.findByStudyStudyIdAndUserId(studyOpt.get().getStudyId(), userId)
                 .orElseThrow(UnAuthorizedException::new));
 
         Study study = studyOpt.get();
         StudyJoinInfo sji = sjiOpt.get();
+
+        int joinCount = sjiRepository.findByJoinUser(study, "가입");
+        if(study.getMaxPeople() <= joinCount)
+            throw new StudyOverMaxPeopleException();
+
         checkStudyJoinInfoState(sji.getState());
         List<HashMap> result = gitCollaboratorAPI.selectCollaborators(token, study.getUser().getName(), study.getRepositoryName());
 
