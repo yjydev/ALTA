@@ -20,7 +20,7 @@ export default function ALTA_CodeSubmitContents() {
   //API 명세를 보니 codeId가 필요하더군요. 57번 라인을 확인해주세요
   const codeId = JSON.parse(state).codeId;
 
-  const [commit, setCommit] = useState<string>('');
+  const [commitMessage, setCommitMessage] = useState<string>('');
   const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -42,14 +42,14 @@ export default function ALTA_CodeSubmitContents() {
       return;
     }
 
-    if (!commit) {
+    if (!commitMessage) {
       generateError('커밋 메세지가 없습니다', '');
       return;
     }
 
     const requestBody = {
-      commit_message: commit,
-      file_name: fileName,
+      commitMessage,
+      fileName,
       content: code,
     };
     // 코드를 최초 제출할 때는 problem Id를 body에 담아서 보내줘야 합니다.
@@ -84,9 +84,9 @@ export default function ALTA_CodeSubmitContents() {
           id="스터디 이름"
           variant="standard"
           placeholder="커밋 메세지를 입력해주세요"
-          value={commit}
+          value={commitMessage}
           onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
-            setCommit(e.target.value)
+            setCommitMessage(e.target.value)
           }
           sx={{ width: '100%' }}
         />
