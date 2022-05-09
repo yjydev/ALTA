@@ -32,11 +32,12 @@ public class CodeInfoResponse {
     private String code;
     
     @ApiModelProperty(value = "코드 업로드 날짜")
-    private Date create_date;
+    private Date createDate;
 
     @ApiModelProperty(value = "파일 이름")
-    private String file_name;
+    private String fileName;
     
     @ApiModelProperty(value = "코드 사용 언어")
     private String language;
+
 }
