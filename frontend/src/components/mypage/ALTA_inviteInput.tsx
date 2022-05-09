@@ -5,8 +5,25 @@ import { Button, Typography, TextField, Box } from '@mui/material';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
+import { putRequest } from '../../api/request';
+
 export default function ALTA_inviteInput() {
   const [isToggle, handleisToggle] = useState(false);
+  const [inviteCode, setInviteCode] = useState<string>('');
+
+  const handleInvite = async () => {
+    // const request = { code: inviteCode };
+    // console.log(request);
+    try {
+      const res = await putRequest(
+        `/api/study/invitation`,
+        // JSON.stringify(request),
+        inviteCode,
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Box sx={wrapper}>
@@ -32,10 +49,15 @@ export default function ALTA_inviteInput() {
             }}
             variant="standard"
             placeholder="초대코드를 입력해주세요"
+            onChange={(e) => setInviteCode(e.target.value)}
           />
         </Box>
         <Box sx={completeBtn}>
-          {isToggle ? <Button variant="outlined">입력</Button> : null}
+          {isToggle ? (
+            <Button variant="outlined" onClick={handleInvite}>
+              입력
+            </Button>
+          ) : null}
         </Box>
       </Box>
     </Box>
