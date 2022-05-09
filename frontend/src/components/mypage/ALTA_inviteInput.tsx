@@ -30,7 +30,7 @@ export default function ALTA_inviteInput() {
         navigate('/mypage'),
       );
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       generateError('이미 가입된 스터디거나 초대 코드가 유효하지 않습니다', ``);
     }
   };
