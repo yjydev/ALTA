@@ -92,7 +92,7 @@ export default function ALTA_ToOrganizeContents() {
       await postRequest('/api/study', requestData);
       generateCheck(
         '스터디가 생성되었습니다',
-        `${requestData.name} 레포지토리가 Github에 생성되었습니다`,
+        `${requestData.repositoryName} 레포지토리가 Github에 생성되었습니다`,
         () => navigate('/mypage'),
       );
     } catch (error) {

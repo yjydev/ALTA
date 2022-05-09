@@ -50,7 +50,7 @@ export default function ALTA_CodeSubmitContents() {
     const requestBody = {
       commit_message: commit,
       file_name: fileName,
-      content: window.btoa(code),
+      content: code,
     };
     // 코드를 최초 제출할 때는 problem Id를 body에 담아서 보내줘야 합니다.
     // 따라서 problemId를 router의 parameter로 보내줍니다.
