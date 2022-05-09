@@ -16,6 +16,8 @@ export default function ALTA_CodeEditor({
   language,
   setIsCodeEdit,
   file,
+  studyId,
+  codeId,
 }: editorProps) {
   const [editData, setEditData] = useState<editDataType>({
     file_name: file,
@@ -32,7 +34,7 @@ export default function ALTA_CodeEditor({
     console.log(editData);
     try {
       const res = await putRequest(
-        '/api/study/37/code/87/modify',
+        `/api/study/${studyId}/code/${codeId}/modify`,
         JSON.stringify(editData),
       );
       console.log(res);
@@ -123,4 +125,6 @@ type editorProps = {
   language: string;
   setIsCodeEdit: Dispatch<SetStateAction<boolean>>;
   file: string;
+  codeId: string | undefined;
+  studyId: string | undefined;
 };

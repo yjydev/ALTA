@@ -18,6 +18,7 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
 
   const { code, setCode } = useContext(CodeReviewStore);
   const [isCodeEdit, setIsCodeEdit] = useState(false);
+  const [userName, setUserName] = useState<string>('');
 
   const getCode = async () => {
     const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
@@ -32,6 +33,10 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
 
   useEffect(() => {
     getCode();
+    const user = localStorage.getItem('UserData');
+    if (user !== null) {
+      setUserName(JSON.parse(user)['nickname']);
+    }
   }, []);
 
   useEffect(() => {
@@ -55,6 +60,8 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                   language={code.language}
                   file={code.file_name}
                   setIsCodeEdit={setIsCodeEdit}
+                  studyId={studyId}
+                  codeId={codeId}
                 />
               ) : (
                 <Grid container direction="column" spacing={5}>
@@ -99,7 +106,7 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                           {code.file_name}
                         </Typography>
                         <Typography sx={codeWritterStyle} align="right">
-                          작성자 : user
+                          작성자 : {userName}
                         </Typography>
                       </Box>
                     </Box>
