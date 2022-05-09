@@ -1,28 +1,30 @@
 export type ReviewData = {
-  review_id: number;
-  reviewer_name: string;
+  reviewId: number;
+  reviewerName: string;
   comment: string;
-  comment_date: string;
-  code_number: number;
+  commentDate: string;
+  codeNumber: number;
   completed?: boolean;
 };
 
 export type CodeData = {
   code: string;
-  create_date: Date;
-  file_name: string;
+  createDate: Date;
+  fileName: string;
   language: string;
+  writer: string;
 };
 
 export const defaultCodeData = {
   code: '',
-  create_date: new Date(),
-  file_name: '',
+  createDate: new Date(),
+  fileName: '',
   language: '',
+  writer: '',
 };
 
 export type PostReview = {
-  code_id: number;
+  codeId: number;
   content: string;
   line: number;
 };
