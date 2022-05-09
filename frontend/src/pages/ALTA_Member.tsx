@@ -21,7 +21,7 @@ export default function ALTA_Member() {
       <ALTA_Inner>
         <Box sx={{ position: 'relative' }}>
           <ALTA_MemberList studyId={studyId} />
-          <ALTA_MemberInvite />
+          <ALTA_MemberInvite studyId={studyId} />
         </Box>
       </ALTA_Inner>
     </MemberContext>
