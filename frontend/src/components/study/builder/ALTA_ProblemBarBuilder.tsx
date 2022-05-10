@@ -71,7 +71,7 @@ function SellBtn({ code, problem, memberName, studyId }: SellBtnProps) {
 
   const goCodeSumbit = () => {
     const problemId = problem.id;
-    const fileName = `${problem.name}/${problem.name}_${memberName}.txt`;
+    const fileName = `${problem.name}_${memberName}.txt`;
     navigate('/code-submit', { state: { problemId, fileName, studyId } });
   };
 
