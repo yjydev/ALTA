@@ -62,13 +62,13 @@ public class StudyJoinInfo {
     @Column(name = "sji_registration_date")
     private Date registrationDate;
 
-    public StudyJoinInfoResponse toStudyJoinInfoResponse() {
+    public StudyJoinInfoResponse toStudyJoinInfoResponse(String date) {
         return StudyJoinInfoResponse.builder()
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .position(position)
                 .state(state)
-                .registrationDate(registrationDate)
+                .registrationDate(date)
                 .build();
     }
 }
