@@ -8,7 +8,6 @@ import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_InputItem from '../common/ALTA_InputItem';
 import { blackColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
-import { postRequest, putRequest } from '../../api/request';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { editCodeApi, submitCodeApi } from '../../api/apis';
 
@@ -17,17 +16,18 @@ export default function ALTA_CodeSubmitContents() {
 
   const state = JSON.stringify(useLocation().state);
   const problemId = JSON.parse(state).problemId;
-  const fileName = JSON.parse(state).fileName;
   const studyId = JSON.parse(state).studyId;
   const codeId = JSON.parse(state).codeId;
 
   const [commitMessage, setCommitMessage] = useState<string>('');
   const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
+  const [fileName, setFileName] = useState<string>('');
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const files = e.target.files;
-
     if (files) {
+      setFileName(files[0].name);
+
       const reader = new FileReader();
 
       reader.onload = () => setCode(String(reader.result));
