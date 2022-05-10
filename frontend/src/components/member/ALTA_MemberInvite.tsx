@@ -10,7 +10,8 @@ import {
   CircularProgress,
 } from '@mui/material';
 
-import { postRequest, getRequest } from '../../api/request';
+import { sendMailApi, searchMemberApi } from '../../api/apis';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 import {
   generateCheck,
   generateError,
@@ -19,11 +20,7 @@ import {
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
-export default function ALTA_MemberList({
-  studyId,
-}: {
-  studyId: string | undefined;
-}) {
+export default function ALTA_MemberList({ studyId }: { studyId: number }) {
   const navigate = useNavigate();
 
   const [userList, setUserList] = useState<userList[]>([]);
@@ -31,58 +28,46 @@ export default function ALTA_MemberList({
   const [loading, setLoading] = useState<boolean>(
     searchOpen && userList.length === 0,
   );
+  const [inputValue, setInputValue] = useState<string>('');
 
-  const [selectName, setSelectName] = useState<string>('');
-  const [selectUser, setSelectUser] = useState<userList | null>({
-    id: '',
-    email: '',
-    nickname: '',
-  });
+  const [selectUser, setSelectUser] = useState<userList>(defaultUser);
 
-  const handleEmail = async (nickname: string) => {
-    setSelectName(nickname);
-    // console.log(nickname);
+  const searchName = async (nickname: string) => {
+    setInputValue(nickname);
+    if (!(await checkLogin()).status) navigate('/');
     setLoading(true);
     try {
-      const res = await getRequest(`/api/user/search?q=${nickname}`);
+      const res = await searchMemberApi(nickname);
       setUserList(res);
       setLoading(false);
-      // console.log(userList);
+      const select = userList.find((usr) => usr.nickname === nickname);
+      if (select) {
+        setSelectUser(select);
+      }
     } catch (err) {
-      console.log(err);
+      setLoading(false);
     }
   };
 
   const handleInvite = async () => {
-    const request = {
-      userId: '',
-    };
-    if (!selectUser) {
-      const select = userList.find((usr) => usr.nickname === selectName);
-      if (select) {
-        setSelectUser(select);
-      }
-    }
     generateTimer(
       '잠시 기다려 주세요',
       `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`,
     );
-    if (selectUser) {
+    if (inputValue) {
       if (selectUser.email) {
-        request.userId = selectUser.id;
         try {
-          const res = await postRequest(
-            `/api/study/${studyId}/invitation`,
-            JSON.stringify(request),
-          );
-          console.log(res);
+          const res = await sendMailApi(studyId, parseInt(selectUser.id));
           generateCheck(
             '초대 완료',
             `${selectUser.nickname} 님에게 초대 메일을 발송하였습니다`,
-            () => navigate(`/study/${studyId}/member`),
+            () => navigate(`/study/member`, { state: { studyId } }),
           );
-        } catch (err) {
-          generateError(`초대를 보낼 수 없습니다`, ``);
+        } catch (err: any) {
+          generateError(
+            `초대를 보낼 수 없습니다`,
+            `${err.response.data.message}`,
+          );
         }
       } else {
         generateError(
@@ -93,26 +78,16 @@ export default function ALTA_MemberList({
     } else {
       generateError(`초대할 사람의 닉네임을 입력해주세요`, ``);
     }
+    setInputValue('');
+    setUserList([]);
   };
 
   return (
     <Box pt={3}>
       <ALTA_ContentsTitle> 멤버 초대 </ALTA_ContentsTitle>
       <Box sx={wrapper} mt={4}>
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          columns={14}
-          pl={1}
-          spacing={2}
-        >
-          <Grid item xs={2} sx={labelStyle}>
-            <InputLabel htmlFor="email-input" sx={emailLabel}>
-              이메일
-            </InputLabel>
-          </Grid>
-          <Grid item xs={9}>
+        <Grid container columns={14} pl={3} spacing={2}>
+          <Grid item xs={11}>
             <Autocomplete
               open={searchOpen}
               onOpen={() => {
@@ -121,41 +96,48 @@ export default function ALTA_MemberList({
               onClose={() => {
                 setSearchOpen(false);
               }}
-              isOptionEqualToValue={(option, value) =>
-                option.nickname === value.nickname
-              }
+              isOptionEqualToValue={(option, value) => option === value}
               // 자동완성 기능으로 특정 옵션을 선택한 경우
-              onChange={(e, obj) => setSelectUser(obj)}
+              onChange={(e, obj) => {
+                if (obj) {
+                  setSelectUser(obj);
+                  setInputValue(obj.nickname);
+                }
+              }}
+              onInputChange={(e) => {
+                if (e) searchName((e.target as HTMLInputElement).value);
+              }}
+              inputValue={inputValue}
               getOptionLabel={(option) => option.nickname}
-              options={userList}
+              options={[selectUser, ...userList]}
+              noOptionsText={'일치하는 데이터가 없습니다'}
               loading={loading}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  id="email-input"
-                  variant="outlined"
-                  placeholder="초대할 사람의 닉네임을 입력해주세요"
-                  size="small"
-                  fullWidth
-                  // 자동완성 사용 없이 직접 작성할 경우
-                  onChange={(e) => handleEmail(e.target.value)}
-                  // 자동완성 기능을 활용하여 옵션 선택을 위해 엔터를 칠 경우
-                  onKeyUp={(e) => {
-                    if (e.key === 'Enter') {
-                      setSelectName((e.target as HTMLInputElement).value);
-                    }
-                  }}
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {loading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                      </React.Fragment>
-                    ),
-                  }}
-                />
+                <Grid container alignItems="center">
+                  <Grid item xs={2} sx={labelStyle}>
+                    <InputLabel htmlFor="nickname-input" sx={nameLabel}>
+                      닉네임
+                    </InputLabel>
+                  </Grid>
+                  <Grid item xs={10}>
+                    <TextField
+                      {...params}
+                      id="nickname-input"
+                      placeholder="초대할 사람의 닉네임을 입력해주세요"
+                      size="small"
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <React.Fragment>
+                            {loading ? (
+                              <CircularProgress color="inherit" size={20} />
+                            ) : null}
+                          </React.Fragment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
               )}
             />
           </Grid>
@@ -180,7 +162,7 @@ const inviteBtn = {
   },
 };
 
-const emailLabel = {
+const nameLabel = {
   fontWeight: 'bold',
   color: '#000000',
 };
@@ -204,4 +186,10 @@ type userList = {
   id: string;
   email: string;
   nickname: string;
+};
+
+const defaultUser: userList = {
+  id: '',
+  email: '',
+  nickname: '',
 };

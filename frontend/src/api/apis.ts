@@ -17,6 +17,16 @@ export async function memberListApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/members`);
 }
 
+// 스터디 멤버 관리 - 멤버 정보 요청
+export async function memberManagementDataApi(studyId: number) {
+  return await getRequest(`/api/study/${studyId}/members/management`);
+}
+
+// 스터디 멤버 관리 - 유저 검색 요청
+export async function searchMemberApi(nickname: string) {
+  return await getRequest(`/api/user/search?q=${nickname}`);
+}
+
 //POST
 //스터디 생성 요청
 export async function organizeStudyApi(requestBody: OrganizeStudyRequset) {
@@ -82,6 +92,14 @@ export async function submitCodeApi(
   };
 
   return await postRequest(`/api/study/${studyId}/code`, requestBody);
+}
+
+// 스터디 초대 메일 발송 요청
+export async function sendMailApi(studyId: number, userId: number) {
+  const requestBody = {
+    userId,
+  };
+  return await postRequest(`/api/study/${studyId}/invitation`, requestBody);
 }
 
 //PUT
