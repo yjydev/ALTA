@@ -68,7 +68,7 @@ public class StudyController {
         return new ResponseEntity<>(studyService.updateStudyMember(studyCodeRequest), HttpStatus.OK);
     }
 
-    @PutMapping("/{study_id}/tree}")
+    @PutMapping("/{study_id}/tree")
     @ApiOperation(value = "트리 구조 조회", notes = "스터디의 트리 구조를 조회한다.")
     public ResponseEntity updateStudyMember(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId) {
         return new ResponseEntity<>(studyService.selectTree(studyId), HttpStatus.OK);
