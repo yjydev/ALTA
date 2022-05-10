@@ -2,6 +2,7 @@ package com.ssafy.alta.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.*;
+import com.ssafy.alta.dto.response.StudyJoinInfoMemberResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
@@ -15,16 +16,12 @@ import com.ssafy.alta.repository.StudyRepository;
 import com.ssafy.alta.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
-import javax.swing.text.html.Option;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -102,17 +99,39 @@ public class StudyService {
 
         Study study = optSJI.get().getStudy();
         HashMap<String, Object> map = new HashMap<>();
-        List<StudyJoinInfo> sjiList = null;
-        List<StudyJoinInfoResponse> sjiResponse = new ArrayList<>();
-        String study_code = null;
+        List<StudyJoinInfo> sjiList = sjiRepository.findByStudyStudyIdAndStateOrderByRegistrationDate(study, "가입");
+        List<StudyJoinInfoMemberResponse> sjiResponse = new ArrayList<>();
         int study_max_people = optSJI.get().getStudy().getMaxPeople();
 
-        if(optSJI.get().getPosition().equals("그룹장")) {
-            sjiList = sjiRepository.findByStudyStudyIdOrderByRegistrationDate(study);
-            study_code = sjiList.get(0).getStudy().getCode();
-        } else {
-            sjiList = sjiRepository.findByStudyStudyIdAndStateOrderByRegistrationDate(study, "가입");
+        for(StudyJoinInfo sji : sjiList) {
+            sjiResponse.add(sji.toStudyJoinInfoMemberResponse());
         }
+
+        map.put("members", sjiResponse);
+        map.put("isLeader", optSJI.get().getPosition().equals("그룹장")?true: false);
+        map.put("studyMaxPeople", study_max_people);
+
+        return map;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Object selectStudyLeaderMemberList(Long studyId) {
+        String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
+
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+
+        if(!optSJI.get().getPosition().equals("그룹장")) {
+            throw new UnAuthorizedException();
+        }
+
+        Study study = optSJI.get().getStudy();
+        HashMap<String, Object> map = new HashMap<>();
+        List<StudyJoinInfo> sjiList = sjiRepository.findByStudyStudyIdOrderByRegistrationDate(study);
+        List<StudyJoinInfoResponse> sjiResponse = new ArrayList<>();
+        String study_code = sjiList.get(0).getStudy().getCode();
+        int study_max_people = optSJI.get().getStudy().getMaxPeople();
 
         for(StudyJoinInfo sji : sjiList) {
             String date = null;
@@ -184,7 +203,7 @@ public class StudyService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateStudyMember(StudyCodeRequest studyCodeRequest) {
+    public String updateStudyMember(StudyCodeRequest studyCodeRequest) {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
@@ -215,6 +234,7 @@ public class StudyService {
             throw new CollaboratorApprovalException();
 
         sjiRepository.updateSJIState(sji.getId(), study, "가입", new Date());
+        return study.getName();
     }
 
     private void checkStudyJoinInfoState(String state) {

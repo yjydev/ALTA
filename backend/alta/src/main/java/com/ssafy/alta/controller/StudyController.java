@@ -43,9 +43,15 @@ public class StudyController {
     }
 
     @GetMapping("/{study_id}/members")
-    @ApiOperation(value = "스터디 멤버 조회", notes = "스터디 멤버를 조회합니다. 그룹장이라면 모든 정보를, 그룹원이라면 가입된 멤버 정보를 볼 수 있습니다.")
+    @ApiOperation(value = "스터디 멤버 조회", notes = "스터디에 가입된 멤버를 조회합니다.")
     public ResponseEntity selectStudyMemberList(@PathVariable("study_id") Long studyId) {
         return new ResponseEntity<>(studyService.selectStudyMemberList(studyId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{study_id}/members/management")
+    @ApiOperation(value = "스터디 멤버 관리 - 그룹장", notes = "스터디 멤버 관리 정보를 조회합니다.")
+    public ResponseEntity selectStudyLeaderMemberList(@PathVariable("study_id") Long studyId) {
+        return new ResponseEntity<>(studyService.selectStudyLeaderMemberList(studyId), HttpStatus.OK);
     }
 
     @PostMapping("/{study_id}/invitation")
@@ -58,7 +64,6 @@ public class StudyController {
     @PutMapping("/invitation")
     @ApiOperation(value = "스터디 가입 검증")
     public ResponseEntity updateStudyMember(@RequestBody StudyCodeRequest studyCodeRequest) {
-        studyService.updateStudyMember(studyCodeRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(studyService.updateStudyMember(studyCodeRequest), HttpStatus.OK);
     }
 }

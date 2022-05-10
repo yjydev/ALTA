@@ -1,5 +1,6 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.response.StudyJoinInfoMemberResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -69,6 +70,13 @@ public class StudyJoinInfo {
                 .position(position)
                 .state(state)
                 .registrationDate(date)
+                .build();
+    }
+
+    public StudyJoinInfoMemberResponse toStudyJoinInfoMemberResponse() {
+        return StudyJoinInfoMemberResponse.builder()
+                .nickname(user.getNickname())
+                .position(position)
                 .build();
     }
 }
