@@ -296,7 +296,7 @@ public class CodeService {
     }
 
     private void checkUserId(String userId, String id) {
-        if(userId != id)
+        if(!userId.equals(id))
             throw new WriterNotMatchException();
     }
 
@@ -313,7 +313,7 @@ public class CodeService {
     }
 
     public String getPath(String problemName, String userName, String fileName) {
-        return "/풀이모음/" + problemName + "/" + userName + "/" + fileName;
+        return "/풀이모음/" + problemName + "/" + fileName;
     }
 
     private String getUrl(String owner, String repo, String path) {
