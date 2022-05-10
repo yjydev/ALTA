@@ -2,8 +2,7 @@ import { Box } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { checkLogin } from '../../modules/LoginTokenChecker';
-import { getRequest } from '../../api/request';
+import { generateError } from '../../modules/generateAlert';
 import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_UserData from './ALTA_UserData';
@@ -20,7 +19,9 @@ export default function ALTA_MypageContents() {
     (async function () {
       const status = await getUserData();
 
-      if (!status) navigate('/');
+      if (status === -1) navigate('/');
+      else if (status === -2)
+        generateError('유저 정보를 불러올 수 없습니다', '');
       else setLoading(false);
     })();
   }, []);

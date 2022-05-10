@@ -50,7 +50,7 @@ export const addProblemBarBackBuilder = (
   id?: number,
 ) =>
   function Back({ fliper }: { fliper: () => void }) {
-    const { getReadmeContents } = useContext(StudyDetailStore);
+    const { getStudyDetail } = useContext(StudyDetailStore);
     const navigate = useNavigate();
 
     const [problemId, _] = useState<number>(id ? id : -1);
@@ -83,7 +83,7 @@ export const addProblemBarBackBuilder = (
       await postRequest(`/api/study/${studyId}/problem`, requestBody);
       setPropblemName('');
       setPropblemLink('');
-      getReadmeContents(studyId);
+      getStudyDetail(studyId);
     };
 
     const editProblem = async () => {
@@ -99,7 +99,7 @@ export const addProblemBarBackBuilder = (
 
       await putRequest(`/api/study/${studyId}/problem/`, requestBody);
       fliper();
-      getReadmeContents(studyId);
+      getStudyDetail(studyId);
     };
 
     return (

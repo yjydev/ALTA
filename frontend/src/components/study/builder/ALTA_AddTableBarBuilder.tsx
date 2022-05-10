@@ -53,7 +53,7 @@ const PlainBtn = styled.button`
 
 export const addTableBarBackBuilder = (
   studyId: number,
-  getReadmeContents: (studyId: number) => void,
+  getStudyDetail: (studyId: number) => void,
 ) =>
   function Back({ fliper }: { fliper: () => void }) {
     const navigate = useNavigate();
@@ -103,7 +103,7 @@ export const addTableBarBackBuilder = (
           generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
         else generateError('새로운 회차를 생성할 수 없습니다', '');
       }
-      getReadmeContents(studyId);
+      getStudyDetail(studyId);
 
       setStartDate(new Date());
       setEndDate(new Date());

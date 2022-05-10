@@ -19,7 +19,7 @@ export default function UserDataProvider({ children }: ContextProps) {
     const loginStatus = await checkLogin();
 
     if (!loginStatus.status)
-      return { status: false, message: 'login token error' };
+      return { status: -1, message: 'login token error' };
 
     try {
       const response = await userDataApi();
@@ -27,9 +27,9 @@ export default function UserDataProvider({ children }: ContextProps) {
       localStorage.setItem('UserData', JSON.stringify(response.userData));
       setUserData(response.userData);
 
-      return { status: true, message: 'success get user data' };
+      return { status: 1, message: 'success get user data' };
     } catch (err) {
-      return { status: false, message: 'fail get user data' };
+      return { status: -2, message: 'fail get user data' };
     }
   };
 
@@ -42,8 +42,5 @@ export default function UserDataProvider({ children }: ContextProps) {
 //Context 기본값 타입
 type defaultValueType = {
   userData: UserData;
-  getUserData: () => Promise<{
-    status: boolean;
-    message: string;
-  }> | null;
+  getUserData: () => any;
 };
