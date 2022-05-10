@@ -4,9 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-import { getRequest } from '../../api/request';
+import { getRequest, deleteRequest } from '../../api/request';
 import { CodeReviewStore } from '../../context/CodeReviewContext';
 import { CodeProps } from '../../types/CodeBlockType';
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
 
 import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
@@ -21,9 +26,33 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
   const [userName, setUserName] = useState<string>('');
 
   const getCode = async () => {
-    const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
-    // console.log(res);
-    setCode(res);
+    try {
+      const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
+      // console.log(res);
+      setCode(res);
+    } catch (err: any) {
+      if (err.response.status === 403) {
+        navigate('/');
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    generateTimer('잠시 기다려 주세요', `${code.fileName} 을 삭제중입니다`);
+    try {
+      const res = await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
+      generateCheck(
+        '코드가 삭제되었습니다.',
+        `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
+        () => goToDetail(studyId),
+      );
+    } catch (err: any) {
+      if (err.response.status === 403) {
+        navigate('/');
+      }
+      console.log(err);
+      generateError('코드 삭제에 실패하였습니다', ``);
+    }
   };
 
   const goToDetail = (studyId: string | undefined) =>
@@ -78,27 +107,33 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                         >
                           Back
                         </Button>
-                        <Box>
-                          <Button
-                            sx={reupBtn}
-                            variant="contained"
-                            // onClick={goToresubmit}
-                          >
-                            재업로드
-                          </Button>
-                          <Button
-                            variant="contained"
-                            sx={editBtn}
-                            onClick={() => {
-                              setIsCodeEdit(true);
-                            }}
-                          >
-                            수정
-                          </Button>
-                          <Button sx={delBtn} variant="contained">
-                            삭제
-                          </Button>
-                        </Box>
+                        {code.writer === userName ? (
+                          <Box>
+                            <Button
+                              sx={reupBtn}
+                              variant="contained"
+                              // onClick={goToresubmit}
+                            >
+                              재업로드
+                            </Button>
+                            <Button
+                              variant="contained"
+                              sx={editBtn}
+                              onClick={() => {
+                                setIsCodeEdit(true);
+                              }}
+                            >
+                              수정
+                            </Button>
+                            <Button
+                              sx={delBtn}
+                              variant="contained"
+                              onClick={handleDelete}
+                            >
+                              삭제
+                            </Button>
+                          </Box>
+                        ) : null}
                       </Box>
                       <Typography sx={problemStyle}>2021.04.13 회문</Typography>
                       <Box sx={titleStyle}>
@@ -134,14 +169,16 @@ const codeComment_wrapper = {
 };
 
 const codeBlock_wrapper = {
-  // width: '100%',
+  // maxWidth: '100vw',
 };
 
 const codeTree_wrapper = {
   display: { xs: 'none', md: 'block' },
 };
 
-const wrapper = {};
+const wrapper = {
+  width: '100%',
+};
 
 const backBtn = {
   fontSize: '15px',
