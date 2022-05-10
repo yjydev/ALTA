@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.*;
 import com.ssafy.alta.dto.response.StudyJoinInfoMemberResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
+import com.ssafy.alta.dto.response.TreeResponse;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
@@ -242,4 +243,7 @@ public class StudyService {
             throw new UserExistStudyException();
         }
     }
+
+//    public TreeResponse selectTree(Long studyId) {
+//    }
 }
