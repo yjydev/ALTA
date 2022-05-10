@@ -90,6 +90,8 @@ export default function ALTA_MemberList({
           ``,
         );
       }
+    } else {
+      generateError(`초대할 사람의 닉네임을 입력해주세요`, ``);
     }
   };
 
@@ -122,6 +124,7 @@ export default function ALTA_MemberList({
               isOptionEqualToValue={(option, value) =>
                 option.nickname === value.nickname
               }
+              // 자동완성 기능으로 특정 옵션을 선택한 경우
               onChange={(e, obj) => setSelectUser(obj)}
               getOptionLabel={(option) => option.nickname}
               options={userList}
@@ -134,7 +137,9 @@ export default function ALTA_MemberList({
                   placeholder="초대할 사람의 닉네임을 입력해주세요"
                   size="small"
                   fullWidth
+                  // 자동완성 사용 없이 직접 작성할 경우
                   onChange={(e) => handleEmail(e.target.value)}
+                  // 자동완성 기능을 활용하여 옵션 선택을 위해 엔터를 칠 경우
                   onKeyUp={(e) => {
                     if (e.key === 'Enter') {
                       setSelectName((e.target as HTMLInputElement).value);
