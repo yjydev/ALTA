@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 /**
  * packageName 	: com.ssafy.alta.controller
  * fileName 	: NoticeController
@@ -31,7 +33,7 @@ public class NoticeController {
     }
 
     @GetMapping
-    public ResponseEntity selectNotice() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity selectNotice(@PathVariable("studyId") Long studyId) throws ParseException {
+        return new ResponseEntity<>(noticeService.selectNotice(studyId), HttpStatus.OK);
     }
 }

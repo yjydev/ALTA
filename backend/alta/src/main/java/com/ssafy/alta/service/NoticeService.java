@@ -1,6 +1,7 @@
 package com.ssafy.alta.service;
 
 import com.ssafy.alta.dto.request.NoticeRequest;
+import com.ssafy.alta.dto.response.NoticeResponse;
 import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.AccessDeniedStudyException;
 import com.ssafy.alta.exception.DataNotFoundException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -50,9 +52,32 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public NoticeResponse selectNotice(Long studyId) throws ParseException {
+        String userId = userService.getCurrentUserId();
+
+        Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(studyJoinInfoRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(AccessDeniedStudyException::new));
+        checkStudyJoinInfoState(optSJI.get().getState());
+        Notice notice = noticeRepository.findTop1ByStudyStudyIdOrderByWriteDateDesc(studyId);
+        NoticeResponse noticeResponse = new NoticeResponse();
+        if (notice != null)
+            noticeResponse = notice.toNoticeResponse();
+
+        return noticeResponse;
+    }
+
     private void checkStudyJoinInfoPosition(String position) {
         if(!position.equals("그룹장")) {
             throw new UnAuthorizedException();
+        }
+    }
+
+    private void checkStudyJoinInfoState(String state) {
+        if(!state.equals("가입")) {
+            throw new AccessDeniedStudyException();
         }
     }
 }

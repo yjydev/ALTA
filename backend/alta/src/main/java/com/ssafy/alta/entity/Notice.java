@@ -1,5 +1,6 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.response.NoticeResponse;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -53,5 +56,16 @@ public class Notice {
         this.content = content;
         this.writeDate = writeDate;
         this.study = study;
+    }
+
+    public NoticeResponse toNoticeResponse() {
+        String date;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초");
+        date = formatter.format(this.writeDate);
+
+        return NoticeResponse.builder()
+                .content(content)
+                .writeDate(date)
+                .build();
     }
 }

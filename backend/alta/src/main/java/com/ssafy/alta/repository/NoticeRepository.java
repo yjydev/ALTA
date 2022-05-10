@@ -1,5 +1,6 @@
 package com.ssafy.alta.repository;
 
+import com.ssafy.alta.dto.response.NoticeResponse;
 import com.ssafy.alta.entity.Notice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 2022-05-10       jisoon Lee         최초 생성
  */
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
+    Notice findTop1ByStudyStudyIdOrderByWriteDateDesc(Long studyId);
 }
