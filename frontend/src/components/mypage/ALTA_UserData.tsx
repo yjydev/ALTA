@@ -6,6 +6,7 @@ import ALTA_AlertSetting from './ALTA_AlertSetting';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_UserDataEdit from './ALTA_UserDataEdit';
 import ALTA_UserDataDisplay from './ALTA_UserDataDisplay';
+import ALTA_Tooltip from '../common/ALTA_Tooltip';
 
 export default function ALTA_UserData() {
   const [alertFold, setAlertFold] = useState<boolean>(true);
@@ -21,7 +22,9 @@ export default function ALTA_UserData() {
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
       <Box sx={[userDataStyle, alertFold ? null : unfold]}>
         {isEditPage ? null : (
-          <EditIcon sx={[editButtonStyle, inTop]} onClick={openEditPage} />
+          <ALTA_Tooltip title="내 정보 수정">
+            <EditIcon sx={[editButtonStyle, inTop]} onClick={openEditPage} />
+          </ALTA_Tooltip>
         )}
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}></Box>
@@ -92,6 +95,7 @@ const profileDataStyle = {
 };
 const editButtonStyle = {
   position: 'absolute',
+  cursor: 'pointer',
 };
 
 const inTop = {

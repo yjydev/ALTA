@@ -6,6 +6,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 import Logo from '../../images/logo.png';
 
+import ALTA_Tooltip from '../common/ALTA_Tooltip';
+
 export default function ALTA_Header() {
   const navigate = useNavigate();
 
@@ -25,12 +27,16 @@ export default function ALTA_Header() {
             alignItems: 'center',
           }}
         >
-          <A onClick={() => navigate('/mypage')}>
-            <AccountBoxIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
-          </A>
-          <A onClick={logout}>
-            <LogoutIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
-          </A>
+          <ALTA_Tooltip title="마이 페이지">
+            <A onClick={() => navigate('/mypage')}>
+              <AccountBoxIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
+            </A>
+          </ALTA_Tooltip>
+          <ALTA_Tooltip title="로그아웃">
+            <A onClick={logout}>
+              <LogoutIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
+            </A>
+          </ALTA_Tooltip>
         </Box>
       </AppBar>
     </Box>

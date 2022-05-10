@@ -15,6 +15,7 @@ import {
 } from './builder/ALTA_AddProblemBarBuilder';
 
 import ALTA_FlipBar from '../common/ALTA_FlipBar';
+import ALTA_Tooltip from '../common/ALTA_Tooltip';
 
 type Props = {
   problems: Problem[];
@@ -59,11 +60,17 @@ export default function ALTA_ProblemTable({
             sx={scheduleEditBtnStyle}
             onClick={() => setScheduleEditing(!scheduleEditing)}
           >
-            {!scheduleEditing && <EditIcon />}
+            {!scheduleEditing && (
+              <ALTA_Tooltip title="일정 수정하기">
+                <EditIcon />
+              </ALTA_Tooltip>
+            )}
             {scheduleEditing && (
-              <SaveIcon
-                onClick={() => edit(studyId, roundTable.id, scheduleString)}
-              />
+              <ALTA_Tooltip title="저장하기">
+                <SaveIcon
+                  onClick={() => edit(studyId, roundTable.id, scheduleString)}
+                />
+              </ALTA_Tooltip>
             )}
           </Button>
         </Typography>

@@ -10,6 +10,8 @@ import { checkLogin } from '../../../modules/LoginTokenChecker';
 import { useNavigate } from 'react-router-dom';
 import { addProblemApi, editProblemApi } from '../../../api/apis';
 
+import ALTA_Tooltip from '../../common/ALTA_Tooltip';
+
 export const addProblemBarFrontBuilder = () =>
   function Front({ fliper }: { fliper: () => void }) {
     const PlainBtn = styled.button`
@@ -25,19 +27,21 @@ export const addProblemBarFrontBuilder = () =>
       transition: background-color 0.3s;
     `;
     return (
-      <PlainBtn onClick={fliper}>
-        <Box
-          sx={{
-            display: 'flex',
-            height: 40,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <AddCircleIcon sx={{ color: blackColor, opacity: '0.5' }} />{' '}
-        </Box>
-      </PlainBtn>
+      <ALTA_Tooltip title="문제 추가하기">
+        <PlainBtn onClick={fliper}>
+          <Box
+            sx={{
+              display: 'flex',
+              height: 40,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <AddCircleIcon sx={{ color: blackColor, opacity: '0.5' }} />{' '}
+          </Box>
+        </PlainBtn>
+      </ALTA_Tooltip>
     );
   };
 
