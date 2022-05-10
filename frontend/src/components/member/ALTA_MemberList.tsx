@@ -1,22 +1,26 @@
+import { useContext, useEffect } from 'react';
 import { Grid, Box, Typography, Button } from '@mui/material';
+
+import { MemberStore } from '../../context/MemberContext';
 
 import ALTA_MemberTable from './ALTA_MemberTable';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList() {
-  const study_code = 'esfsad';
+  const { members, studyCode, setStudyCode } = useContext(MemberStore);
+
   return (
     <Box py={4}>
       <Grid container direction="row" sx={wrapper}>
         <Grid item sm={12}>
           <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
-          <ALTA_MemberTable />
-          {study_code ? (
+          <ALTA_MemberTable members={members} studyCode={studyCode} />
+          {studyCode ? (
             <Grid container pl={1}>
               <Typography mt={3} fontSize="17px" sx={studyCode_wrapper}>
                 스터디 고유 코드 :
                 <Typography sx={studyCodeStyle} ml={2} mr={3}>
-                  {study_code}
+                  {studyCode}
                 </Typography>
                 <Button variant="contained" sx={refreshBtn}>
                   코드 갱신

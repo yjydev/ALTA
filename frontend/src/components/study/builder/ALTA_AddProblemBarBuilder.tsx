@@ -59,7 +59,7 @@ export const addProblemBarBackBuilder = (
 
     const addProblem = async () => {
       (async function () {
-        await checkLogin(() => navigate('/'));
+        await checkLogin();
       })();
 
       console.log(studyId, problemId);

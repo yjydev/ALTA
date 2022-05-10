@@ -76,7 +76,7 @@ export const addTableBarBackBuilder = (
 
     const addProblemTable = async () => {
       (async function () {
-        await checkLogin(() => navigate('/'));
+        await checkLogin();
       })();
 
       //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리

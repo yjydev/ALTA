@@ -11,30 +11,24 @@ import ALTA_StudyList from './ALTA_StudyList';
 import ALTA_MyPageSkeleton from '../skeleton/ALTA_MyPageSkeleton';
 
 export default function ALTA_MypageContents() {
-  const { userDataContext, setUserDataContext } = useContext(UserDataStore);
+  const { userData, getUserData } = useContext(UserDataStore);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
 
-  const getUserData = async () => {
-    await checkLogin(() => navigate('/'));
-
-    const response = await getRequest('/api/user/info');
-
-    localStorage.setItem('UserData', JSON.stringify(response.userData));
-    setUserDataContext(response.userData);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    getUserData();
+    (async function () {
+      await getUserData();
+      setLoading(false);
+    })();
+    // getUserData();
   }, []);
   return (
     <>
       <Box sx={{ position: 'relative' }}>
         {loading && <ALTA_MyPageSkeleton />}
         {!loading && <ALTA_UserData />}
-        {!loading && <ALTA_StudyList studyList={userDataContext.studyList} />}
+        {!loading && <ALTA_StudyList studyList={userData.studyList} />}
       </Box>
     </>
   );

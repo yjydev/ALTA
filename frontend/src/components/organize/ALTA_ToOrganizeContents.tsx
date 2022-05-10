@@ -97,7 +97,7 @@ export default function ALTA_ToOrganizeContents() {
 
   //스터디 생성 API 요청
   const organize = async () => {
-    await checkLogin(() => navigate('/'));
+    await checkLogin();
 
     generateTimer(
       '잠시 기다려 주세요',

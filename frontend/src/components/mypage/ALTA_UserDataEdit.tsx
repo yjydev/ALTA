@@ -14,20 +14,20 @@ export default function ALTA_UserDataEdit({
 }: {
   setIsEditPage: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { userDataContext } = useContext(UserDataStore);
+  const { userData } = useContext(UserDataStore);
   const navigate = useNavigate();
 
-  const [nickname, setNickname] = useState(userDataContext.nickname);
-  const [email, setEmail] = useState(userDataContext.email);
+  const [nickname, setNickname] = useState(userData.nickname);
+  const [email, setEmail] = useState(userData.email);
   const [introduction, setIntroduction] = useState(
-    userDataContext.introduction,
+    userData.introduction,
   );
   const [languageList, setLanguageList] = useState(
-    userDataContext.languageList,
+    userData.languageList,
   );
 
   const editUserData = async () => {
-    await checkLogin(() => navigate('/'));
+    await checkLogin();
     const requestBody = new FormData();
     const requestData = {
       nickname,

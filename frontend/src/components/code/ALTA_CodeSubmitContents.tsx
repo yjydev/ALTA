@@ -48,7 +48,7 @@ export default function ALTA_CodeSubmitContents() {
       return;
     }
 
-    await checkLogin(() => navigate('/'));
+    await checkLogin();
 
     const requestBody = {
       commitMessage,

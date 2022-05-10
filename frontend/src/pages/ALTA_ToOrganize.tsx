@@ -18,7 +18,7 @@ function Header() {
 
   useEffect(() => {
     (async function () {
-      await checkLogin(() => navigate('/'));
+      await checkLogin();
     })();
   }, []);
 

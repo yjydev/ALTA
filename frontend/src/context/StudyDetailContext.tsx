@@ -25,7 +25,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const [maxPeople, setMaxPeople] = useState<number>(0);
 
   const getReadmeContents = async (studyId: number) => {
-    await checkLogin(() => navigate('/'));
+    await checkLogin();
 
     const response = await getRequest(`/api/study/${studyId}`);
     setStudyData(response.readme);

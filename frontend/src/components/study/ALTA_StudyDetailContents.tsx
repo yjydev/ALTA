@@ -39,7 +39,7 @@ export default function ALTA_StudyDetailContents({
     startDate: string,
     endDate: string,
   ) => {
-    await checkLogin(() => navigate('/'));
+    await checkLogin();
 
     const requestBody = {
       scheduleId,
