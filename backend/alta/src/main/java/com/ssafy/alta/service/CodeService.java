@@ -313,7 +313,7 @@ public class CodeService {
     }
 
     public String getPath(String problemName, String userName, String fileName) {
-        return "/풀이모음/" + problemName + "/" + fileName;
+        return "/풀이모음/" + problemName + "/" + userName + "/" + fileName;
     }
 
     private String getUrl(String owner, String repo, String path) {

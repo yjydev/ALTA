@@ -103,7 +103,6 @@ public class ScheduleAndProblemService {
         }
 
         scheduleAndProblemRequest.setStudy(study);
-        scheduleAndProblemRequest.setRound(round);
         scheduleAndProblemRequest.setIsCancel(false);
         Schedule schedule = scheduleRepository.save(scheduleAndProblemRequest.toEntity());
 
@@ -138,11 +137,21 @@ public class ScheduleAndProblemService {
             throw new InvalidCreateScheduleException();
         }
 
-        Optional<Schedule> schedules = scheduleRepository.findByStudyStudyIdSameStartDate(studyId, startDate);
-        if (schedules.isPresent())
+        Optional<Schedule> schedule = scheduleRepository.findByStudyStudyIdSameStartDate(studyId, startDate);
+        if (schedule.isPresent()) {
             throw new DuplicatedScheduleException();
+        }
 
-        scheduleRepository.save(scheduleRequest.toSchedule(0, false, study));
+        List<Schedule> schedules = scheduleRepository.findByStudyStudyIdOrderByStartDate(studyId, nowDate);
+        for(Schedule temp : schedules) {
+            long tempStartTime = temp.getStartDate().getTime();
+            long tempEndTime = temp.getEndDate().getTime();
+            if(endTime >= tempStartTime && startTime <= tempEndTime) {
+                throw new InvalidScheduleException();
+            }
+        }
+
+        scheduleRepository.save(scheduleRequest.toSchedule(false, study));
     }
 
     @Transactional
@@ -233,10 +242,12 @@ public class ScheduleAndProblemService {
             throw new InvalidScheduleException();
         }
         // 시작 날짜가 오늘 이후이면서 해당 스터디 내의 지금 변경하려는 일정이 아닌 일정들을 가져옴
-        List<Schedule> schedules = scheduleRepository.findByStudyStudyIdOrderByStartDate(studyId, nowDate, scheduleId);
+        List<Schedule> schedules = scheduleRepository.findByStudyStudyIExceptOnedOrderByStartDate(studyId, nowDate, scheduleId);
         for(Schedule temp : schedules) {
             long tempStartTime = temp.getStartDate().getTime();
             long tempEndTime = temp.getEndDate().getTime();
+            System.out.println(temp.getStartDate());
+            System.out.println(temp.getEndDate());
             if(endTime >= tempStartTime && startTime <= tempEndTime) {
                 throw new InvalidScheduleException();
             }
