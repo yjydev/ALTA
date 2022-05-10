@@ -10,7 +10,6 @@ const makeHeaders = () => {
 };
 
 export const postRequest = async (url, body, headers = makeHeaders()) => {
-  console.log('post!');
   const response = await axiosInstance.post(url, body, headers);
 
   return response.data;
@@ -32,9 +31,10 @@ export const refreshToken = async () => {
     headers: {
       'Content-Type': 'application/json',
       'ACCESS_TOKEN': `Bearer ${localStorage.getItem('jwt')}`,
-      'REFRESH_TOKEN ': `Bearer ${localStorage.getItem('refresh')}`,
+      'REFRESH_TOKEN': `Bearer ${localStorage.getItem('refresh')}`,
     },
   };
+  console.log(headers);
 
   const response = await axiosInstance.post('/api/jwt/issueAT', null, headers);
 

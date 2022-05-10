@@ -14,7 +14,9 @@ export default function ALTA_Mypage() {
   useEffect(() => {
     document.title = 'ALTA | 마이페이지';
 
-    checkLogin(() => navigate('/'));
+    (async function () {
+      await checkLogin(() => navigate('/'));
+    })();
   }, []);
 
   return <ALTA_Template header={<Header />} contents={<Contents />} />;

@@ -16,10 +16,6 @@ export default function ALTA_UserData() {
     setIsEditPage(!isEditPage);
   };
 
-  const submitUserData = () => {
-    setIsEditPage(false);
-  };
-
   return (
     <Box sx={wrapper}>
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
@@ -30,19 +26,18 @@ export default function ALTA_UserData() {
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}></Box>
           <Box sx={profileDataStyle}>
-            {isEditPage ? <ALTA_UserDataEdit /> : <ALTA_UserDataDisplay />}
+            {isEditPage ? (
+              <ALTA_UserDataEdit setIsEditPage={setIsEditPage} />
+            ) : (
+              <ALTA_UserDataDisplay />
+            )}
           </Box>
         </Box>
         <Box>
           <ALTA_AlertSetting />
         </Box>
         {isEditPage ? (
-          <Box sx={[editButtonStyle, inBottom]}>
-            <Button onClick={submitUserData}>수정 완료</Button>
-            <Button onClick={submitUserData} color="error">
-              수정 취소
-            </Button>
-          </Box>
+          <></>
         ) : (
           <Button
             sx={[editButtonStyle, inBottom]}

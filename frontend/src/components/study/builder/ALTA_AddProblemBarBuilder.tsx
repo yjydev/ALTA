@@ -7,6 +7,9 @@ import { blackColor, subColor, whiteColor } from '../../../modules/colorChart';
 import { generateError } from '../../../modules/generateAlert';
 import { postRequest, putRequest } from '../../../api/request';
 import { StudyDetailStore } from '../../../context/StudyDetailContext';
+import { checkLogin } from '../../../modules/LoginTokenChecker';
+import { useNavigate } from 'react-router-dom';
+import { Problem } from '../../../types/StudyType';
 
 export const addProblemBarFrontBuilder = () =>
   function Front({ fliper }: { fliper: () => void }) {
@@ -44,15 +47,30 @@ export const addProblemBarBackBuilder = (
   scheduleId: number,
   name?: string,
   link?: string,
+  id?: number,
 ) =>
   function Back({ fliper }: { fliper: () => void }) {
     const { getReadmeContents } = useContext(StudyDetailStore);
+    const navigate = useNavigate();
 
+    const [problemId, _] = useState<number>(id ? id : -1);
     const [problemName, setPropblemName] = useState<string>(name ? name : '');
     const [problemLink, setPropblemLink] = useState<string>(link ? link : '');
 
-    const buildProblemData = () => {
-      return {
+    const addProblem = async () => {
+      (async function () {
+        await checkLogin(() => navigate('/'));
+      })();
+
+      console.log(studyId, problemId);
+
+      //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
+      if (!problemName || !problemLink) {
+        generateError('문제 이름과 링크를 모두 입력해주세요', '');
+        return;
+      }
+
+      const requestBody = {
         problems: [
           {
             name: problemName,
@@ -61,16 +79,6 @@ export const addProblemBarBackBuilder = (
         ],
         scheduleId,
       };
-    };
-
-    const addProblem = async () => {
-      //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
-      if (!problemName || !problemLink) {
-        generateError('문제 이름과 링크를 모두 입력해주세요', '');
-        return;
-      }
-
-      const requestBody = buildProblemData();
 
       await postRequest(`/api/study/${studyId}/problem`, requestBody);
       setPropblemName('');
@@ -83,9 +91,14 @@ export const addProblemBarBackBuilder = (
         generateError('변경 사항이 없습니다', '');
         return;
       }
-      const requestBody = buildProblemData();
+      const requestBody = {
+        id: problemId,
+        name: problemName,
+        link: problemLink,
+      };
 
-      await putRequest(`/api/study/${studyId}/problem`, requestBody);
+      await putRequest(`/api/study/${studyId}/problem/`, requestBody);
+      fliper();
       getReadmeContents(studyId);
     };
 

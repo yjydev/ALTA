@@ -23,6 +23,7 @@ import {
 } from '../../modules/generateAlert';
 
 import ALTA_InputItem from '../common/ALTA_InputItem';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 export default function ALTA_ToOrganizeContents() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function ALTA_ToOrganizeContents() {
   const [requestData, setReqeustData] = useState<OrganizeStudyRequset>({
     introduction: '',
     isPublic: 'true',
-    language: languages[0].language,
+    language: languages[0],
     maxPeople: '2',
     name: '',
     repositoryName: '',
@@ -96,6 +97,10 @@ export default function ALTA_ToOrganizeContents() {
 
   //스터디 생성 API 요청
   const organize = async () => {
+    (async function () {
+      await checkLogin(() => navigate('/'));
+    })();
+
     generateTimer(
       '잠시 기다려 주세요',
       `Github에 ${requestData.name} 레포지토리를 생성 중입니다`,
@@ -151,9 +156,9 @@ export default function ALTA_ToOrganizeContents() {
             onChange={(e) => handleRequestData(e.target.value, 'language')}
             // defaultValue={languages[0].language}
           >
-            {languages.map((language) => (
-              <MenuItem key={language.language} value={language.language}>
-                {language.language}
+            {languages.map((lan) => (
+              <MenuItem key={lan} value={lan}>
+                {lan}
               </MenuItem>
             ))}
           </Select>

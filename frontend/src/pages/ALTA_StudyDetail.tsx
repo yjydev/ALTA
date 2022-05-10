@@ -20,7 +20,9 @@ export default function ALTA_StudyDetail() {
 
   useEffect(() => {
     document.title = 'ALTA | 스터디 관리';
-    checkLogin(() => navigate('/'));
+    (async function () {
+      await checkLogin(() => navigate('/'));
+    })();
   }, []);
 
   return <ALTA_Template header={<Header />} contents={<Contents />} />;

@@ -26,7 +26,9 @@ export default function ALTA_ToOrganize() {
   useEffect(() => {
     document.title = 'ALTA | 멤버 관리';
 
-    checkLogin(() => navigate('/'));
+    (async function () {
+      await checkLogin(() => navigate('/'));
+    })();
   }, []);
 
   return <ALTA_Template header={<Header />} contents={<Contents />} />;

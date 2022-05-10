@@ -14,7 +14,9 @@ export default function ALTA_CodeSubmit() {
   useEffect(() => {
     document.title = 'ALTA | 코드 제출';
 
-    checkLogin(() => navigate('/'));
+    (async function () {
+      await checkLogin(() => navigate('/'));
+    })();
   }, []);
 
   return <ALTA_Template header={<Header />} contents={<Contents />} />;
