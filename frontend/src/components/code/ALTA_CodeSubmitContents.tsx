@@ -9,6 +9,7 @@ import ALTA_InputItem from '../common/ALTA_InputItem';
 import { blackColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
 import { postRequest, putRequest } from '../../api/request';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 export default function ALTA_CodeSubmitContents() {
   const navigate = useNavigate();
@@ -46,6 +47,8 @@ export default function ALTA_CodeSubmitContents() {
       generateError('커밋 메세지가 없습니다', '');
       return;
     }
+
+    await checkLogin(() => navigate('/'));
 
     const requestBody = {
       commitMessage,

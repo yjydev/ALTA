@@ -2,7 +2,9 @@ import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { getRequest } from '../../api/request';
+import { useNavigate } from 'react-router-dom';
 
+import { checkLogin } from '../../modules/LoginTokenChecker';
 import { Member } from '../../types/StudyType';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 
@@ -11,10 +13,12 @@ import ALTA_MembersSkeleton from '../skeleton/ALTA_MembersSkeleton';
 
 export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
   const { members, setMembers, setMaxPeople } = useContext(StudyDetailStore);
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(true);
 
   const getMembers = async () => {
+    await checkLogin(() => navigate('/'));
     try {
       const response = await getRequest(`/api/study/${studyId}/members`);
 

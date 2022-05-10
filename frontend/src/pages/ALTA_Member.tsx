@@ -1,8 +1,5 @@
 import { Box } from '@mui/material';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import { checkLogin } from '../modules/LoginTokenChecker';
 
 import ALTA_Template from '../components/common/ALTA_Template';
 import ALTA_Inner from '../components/common/ALTA_Inner';
@@ -21,14 +18,8 @@ export default function ALTA_ToOrganize() {
     </ALTA_Inner>
   );
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     document.title = 'ALTA | 멤버 관리';
-
-    (async function () {
-      await checkLogin(() => navigate('/'));
-    })();
   }, []);
 
   return <ALTA_Template header={<Header />} contents={<Contents />} />;

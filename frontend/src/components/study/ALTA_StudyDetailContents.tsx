@@ -1,6 +1,8 @@
 import { Box, Typography, Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { checkLogin } from '../../modules/LoginTokenChecker';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 
@@ -24,6 +26,7 @@ export default function ALTA_StudyDetailContents({
 }: {
   studyId: number;
 }) {
+  const navigate = useNavigate();
   const { members, studyData, maxPeople, getReadmeContents } =
     useContext(StudyDetailStore);
 
@@ -36,6 +39,8 @@ export default function ALTA_StudyDetailContents({
     startDate: string,
     endDate: string,
   ) => {
+    await checkLogin(() => navigate('/'));
+
     const requestBody = {
       scheduleId,
       startDate,

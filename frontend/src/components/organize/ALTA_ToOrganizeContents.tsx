@@ -97,14 +97,13 @@ export default function ALTA_ToOrganizeContents() {
 
   //스터디 생성 API 요청
   const organize = async () => {
-    (async function () {
-      await checkLogin(() => navigate('/'));
-    })();
+    await checkLogin(() => navigate('/'));
 
     generateTimer(
       '잠시 기다려 주세요',
       `Github에 ${requestData.name} 레포지토리를 생성 중입니다`,
     );
+
     try {
       await postRequest('/api/study', requestData);
       generateCheck(

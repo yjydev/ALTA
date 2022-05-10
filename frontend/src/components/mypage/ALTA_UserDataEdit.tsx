@@ -1,8 +1,11 @@
 import styled from '@emotion/styled';
 import { Box, Button, TextField } from '@mui/material';
 import { useContext, useState } from 'react';
-// import { postRequest } from '../../api/request';
+import { useNavigate } from 'react-router-dom';
+
+import { postRequest } from '../../api/request';
 import { UserDataStore } from '../../context/UserDataContext';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_LanguageSelector from './ALTA_LanguageSelector';
 
@@ -12,6 +15,7 @@ export default function ALTA_UserDataEdit({
   setIsEditPage: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { userDataContext } = useContext(UserDataStore);
+  const navigate = useNavigate();
 
   const [nickname, setNickname] = useState(userDataContext.nickname);
   const [email, setEmail] = useState(userDataContext.email);
@@ -23,6 +27,7 @@ export default function ALTA_UserDataEdit({
   );
 
   const editUserData = async () => {
+    await checkLogin(() => navigate('/'));
     const requestBody = new FormData();
     const requestData = {
       nickname,
@@ -30,8 +35,7 @@ export default function ALTA_UserDataEdit({
       introduction,
       languageList,
     };
-    console.log(requestData, requestBody);
-    // await postRequest('/api/user/info', requestBody);
+    await postRequest('/api/user/info', requestBody);
   };
 
   return (
