@@ -8,26 +8,27 @@ import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_InputItem from '../common/ALTA_InputItem';
 import { blackColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
-import { postRequest, putRequest } from '../../api/request';
 import { checkLogin } from '../../modules/LoginTokenChecker';
+import { editCodeApi, submitCodeApi } from '../../api/apis';
+import ALTA_Tooltip from '../common/ALTA_Tooltip';
 
 export default function ALTA_CodeSubmitContents() {
   const navigate = useNavigate();
 
   const state = JSON.stringify(useLocation().state);
   const problemId = JSON.parse(state).problemId;
-  const fileName = JSON.parse(state).fileName;
   const studyId = JSON.parse(state).studyId;
-  //API 명세를 보니 codeId가 필요하더군요. 57번 라인을 확인해주세요
   const codeId = JSON.parse(state).codeId;
 
   const [commitMessage, setCommitMessage] = useState<string>('');
   const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
+  const [fileName, setFileName] = useState<string>('');
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const files = e.target.files;
-
     if (files) {
+      setFileName(files[0].name);
+
       const reader = new FileReader();
 
       reader.onload = () => setCode(String(reader.result));
@@ -48,31 +49,14 @@ export default function ALTA_CodeSubmitContents() {
       return;
     }
 
-    await checkLogin();
+    if (!(await checkLogin())) navigate('/');
 
-    const requestBody = {
-      commitMessage,
-      fileName,
-      content: code,
-    };
-    // 코드를 최초 제출할 때는 problem Id를 body에 담아서 보내줘야 합니다.
-    // 따라서 problemId를 router의 parameter로 보내줍니다.
-    // 코드 재업로드를 위해 코드 업로드 페이지로 접근할 경우에는 parameter에서 problem Id를 제외하고 code id를 보내주세요
-    // problemId의 유무로 분기처리됩니다.
     if (problemId) {
-      await postRequest(
-        `/api/study/${studyId}/code`,
-        Object.assign(requestBody, { problemId }),
-      );
+      await submitCodeApi(studyId, problemId, commitMessage, fileName, code);
 
       goStudyDetail();
     } else {
-      await putRequest(
-        `/api/study/${studyId}/code/${codeId}/reupload`,
-        Object.assign(requestBody),
-      );
-
-      // 코드 상세 페이지로 이동하면 될 것 같습니다
+      await editCodeApi(studyId, codeId, commitMessage, fileName, code);
     }
   };
 
@@ -100,15 +84,17 @@ export default function ALTA_CodeSubmitContents() {
         focusHandler={() => null}
       >
         <FileInput id="file" type="file" onChange={uploadFile} />
-        <Button variant="contained" sx={uploadBtnStyle}>
-          <Label htmlFor="file">
-            <Box sx={uploadBtnStyle}>
-              <AddCircleIcon
-                sx={{ color: blackColor, opacity: '0.5', fontSize: '25px' }}
-              />
-            </Box>
-          </Label>
-        </Button>
+        <ALTA_Tooltip title="PC에서 파일 찾기">
+          <Button variant="contained" sx={uploadBtnStyle}>
+            <Label htmlFor="file">
+              <Box sx={uploadBtnStyle}>
+                <AddCircleIcon
+                  sx={{ color: blackColor, opacity: '0.5', fontSize: '25px' }}
+                />
+              </Box>
+            </Label>
+          </Button>
+        </ALTA_Tooltip>
       </ALTA_InputItem>
       <ALTA_CodeBlock code={code} language="javascript" />
       <Box sx={{ textAlign: 'right' }}>

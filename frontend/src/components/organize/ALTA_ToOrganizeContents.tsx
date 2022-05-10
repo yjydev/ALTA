@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from '@emotion/styled';
 import {
   Box,
   TextField,
@@ -9,13 +12,11 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
 
 import { languages } from '../../modules/languageSources';
 import { OrganizeStudyRequset } from '../../types/StudyType';
-import { postRequest } from '../../api/request';
+import { checkLogin } from '../../modules/LoginTokenChecker';
+import { organizeStudyApi } from '../../api/apis';
 import {
   generateCheck,
   generateError,
@@ -23,7 +24,6 @@ import {
 } from '../../modules/generateAlert';
 
 import ALTA_InputItem from '../common/ALTA_InputItem';
-import { checkLogin } from '../../modules/LoginTokenChecker';
 
 export default function ALTA_ToOrganizeContents() {
   const navigate = useNavigate();
@@ -75,7 +75,6 @@ export default function ALTA_ToOrganizeContents() {
     handleRequestData(value, 'introduction');
   };
 
-  //빈 항목이 있는지 체크
   const checkEmpty = (): boolean => {
     for (const key in requestData) {
       if (requestData[key] === '') {
@@ -85,8 +84,6 @@ export default function ALTA_ToOrganizeContents() {
     return true;
   };
 
-  //true => 한글과 공백 없음
-  //false => 한글과 공백 있음
   const checkRepoName = (): boolean => {
     const regx = new RegExp(/[ㄱ-힣]|\s/g);
     if (regx.test(requestData.repositoryName)) {
@@ -95,9 +92,8 @@ export default function ALTA_ToOrganizeContents() {
     return true;
   };
 
-  //스터디 생성 API 요청
   const organize = async () => {
-    await checkLogin();
+    if (!(await checkLogin())) navigate('/');
 
     generateTimer(
       '잠시 기다려 주세요',
@@ -105,13 +101,13 @@ export default function ALTA_ToOrganizeContents() {
     );
 
     try {
-      await postRequest('/api/study', requestData);
+      await organizeStudyApi(requestData);
       generateCheck(
         '스터디가 생성되었습니다',
         `${requestData.repositoryName} 레포지토리가 Github에 생성되었습니다`,
         () => navigate('/mypage'),
       );
-    } catch (error) {
+    } catch (err) {
       generateError('스터디를 생성할 수 없습니다', ``);
     }
   };
