@@ -47,4 +47,10 @@ public class UserController1 {
         System.out.println(userUpdateRequest);
         return new ResponseEntity<>(userService1.updateUser(userUpdateRequest, profileImageFile), HttpStatus.OK);
     }
+
+    @PatchMapping("/alert")
+    @ApiOperation(value = "알람 수신 여부 수정", notes = "user 알람 수신 여부 수정")
+    public ResponseEntity patchUserAlert(@RequestBody int alertSetting ){
+        return new ResponseEntity<>(userService1.updateAlert(alertSetting), HttpStatus.OK);
+    }
 }
