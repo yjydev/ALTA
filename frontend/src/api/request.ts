@@ -1,6 +1,13 @@
 import { axiosInstance } from './index';
 
-const makeHeaders = () => {
+type HeaderType = {
+  headers: {
+    'Content-Type': string;
+    'ACCESS_TOKEN': string;
+  };
+};
+
+const makeHeaders = (): HeaderType => {
   return {
     headers: {
       'Content-Type': 'application/json',
@@ -9,24 +16,35 @@ const makeHeaders = () => {
   };
 };
 
-export const postRequest = async (url, body, headers = makeHeaders()) => {
+export const postRequest = async (
+  url: string,
+  body: any,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.post(url, body, headers);
 
   return response.data;
 };
 
-export const getRequest = async (url, headers = makeHeaders()) => {
+export const getRequest = async (
+  url: string,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.get(url, headers);
   return response.data;
 };
 
-export const putRequest = async (url, body, headers = makeHeaders()) => {
+export const putRequest = async (
+  url: string,
+  body: any,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.put(url, body, headers);
 
   return response.data;
 };
 
-export const refreshToken = async () => {
+export const refreshToken = async (): Promise<any> => {
   const headers = {
     headers: {
       'Content-Type': 'application/json',
@@ -34,14 +52,15 @@ export const refreshToken = async () => {
       'REFRESH_TOKEN': `Bearer ${localStorage.getItem('refresh')}`,
     },
   };
-  console.log(headers);
-
   const response = await axiosInstance.post('/api/jwt/issueAT', null, headers);
 
   return response.data;
 };
 
-export const deleteRequest = async (url, headers = makeHeaders()) => {
+export const deleteRequest = async (
+  url: string,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.delete(url, headers);
   return response.data;
 };

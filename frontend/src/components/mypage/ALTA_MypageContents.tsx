@@ -18,10 +18,11 @@ export default function ALTA_MypageContents() {
 
   useEffect(() => {
     (async function () {
-      await getUserData();
-      setLoading(false);
+      const status = await getUserData();
+
+      if (!status) navigate('/');
+      else setLoading(false);
     })();
-    // getUserData();
   }, []);
   return (
     <>

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { UserData, defaultUserData } from '../types/UserDataType';
 import { ContextProps } from '../types/ContextPropsType';
-import { useNavigate } from 'react-router-dom';
 import { checkLogin } from '../modules/LoginTokenChecker';
-import { getRequest } from '../api/request';
+import { userDataApi } from '../api/apis';
 
 //Context 인스턴스 생성
 export const defaultValue: defaultValueType = {
@@ -23,7 +22,7 @@ export default function UserDataProvider({ children }: ContextProps) {
       return { status: false, message: 'login token error' };
 
     try {
-      const response = await getRequest('/api/user/info');
+      const response = await userDataApi();
 
       localStorage.setItem('UserData', JSON.stringify(response.userData));
       setUserData(response.userData);

@@ -19,12 +19,8 @@ export default function ALTA_UserDataEdit({
 
   const [nickname, setNickname] = useState(userData.nickname);
   const [email, setEmail] = useState(userData.email);
-  const [introduction, setIntroduction] = useState(
-    userData.introduction,
-  );
-  const [languageList, setLanguageList] = useState(
-    userData.languageList,
-  );
+  const [introduction, setIntroduction] = useState(userData.introduction);
+  const [languageList, setLanguageList] = useState(userData.languageList);
 
   const editUserData = async () => {
     await checkLogin();
