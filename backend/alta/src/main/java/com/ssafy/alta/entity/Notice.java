@@ -1,6 +1,7 @@
 package com.ssafy.alta.entity;
 
 import com.sun.istack.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -46,4 +47,11 @@ public class Notice {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_study_id")
     private Study study;
+
+    @Builder
+    public Notice(String content, Date writeDate, Study study) {
+        this.content = content;
+        this.writeDate = writeDate;
+        this.study = study;
+    }
 }

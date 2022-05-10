@@ -1,9 +1,11 @@
 package com.ssafy.alta.controller;
 
+import com.ssafy.alta.dto.request.NoticeRequest;
 import com.ssafy.alta.service.NoticeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * packageName 	: com.ssafy.alta.controller
@@ -20,5 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/study/{studyId}/notice")
 @RequiredArgsConstructor
 public class NoticeController {
-    private NoticeService noticeService;
+    private final NoticeService noticeService;
+
+    @PostMapping
+    public ResponseEntity insertNotice(@PathVariable("studyId") Long studyId, @RequestBody NoticeRequest noticeRequest) {
+        System.out.println(noticeRequest.getContent());
+        System.out.println(studyId);
+        noticeService.insertNotice(studyId, noticeRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity selectNotice() {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
