@@ -78,12 +78,10 @@ export async function submitCodeApi(
     commitMessage,
     fileName,
     content: code,
+    problemId,
   };
 
-  return await postRequest(
-    `/api/study/${studyId}/code`,
-    Object.assign(requestBody, { problemId }),
-  );
+  return await postRequest(`/api/study/${studyId}/code`, requestBody);
 }
 
 //PUT
@@ -118,11 +116,12 @@ export async function editCodeApi(
     commitMessage,
     fileName,
     content: code,
+    codeId,
   };
 
   return await await putRequest(
     `/api/study/${studyId}/code/${codeId}/reupload`,
-    Object.assign(requestBody, { codeId }),
+    requestBody,
   );
 }
 //문제 수정 요청
