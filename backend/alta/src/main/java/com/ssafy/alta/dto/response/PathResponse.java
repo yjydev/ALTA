@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.dto.response
@@ -27,9 +28,12 @@ import java.util.LinkedList;
 @Builder
 @ToString
 public class PathResponse {
-    @ApiModelProperty(value = "경로 리스트")
-    LinkedList<String> path;
+    @ApiModelProperty(value = "키")
+    Long id;
 
     @ApiModelProperty(value = "코드 키")
     Long codeId;
+
+    @ApiModelProperty(value = "경로 리스트")
+    private List<String> path;
 }

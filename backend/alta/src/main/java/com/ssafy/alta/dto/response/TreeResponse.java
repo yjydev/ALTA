@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * packageName 	: com.ssafy.alta.dto.request
@@ -28,5 +30,5 @@ import java.util.LinkedList;
 @ToString
 public class TreeResponse {
     @ApiModelProperty(value = "경로 정보 리스트")
-    LinkedList<TreeResponse> list;
+    private List<PathResponse> list;
 }

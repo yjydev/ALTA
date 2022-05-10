@@ -2,20 +2,16 @@ package com.ssafy.alta.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.*;
+import com.ssafy.alta.dto.response.PathResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoMemberResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
 import com.ssafy.alta.dto.response.TreeResponse;
-import com.ssafy.alta.entity.Schedule;
-import com.ssafy.alta.entity.Study;
-import com.ssafy.alta.entity.StudyJoinInfo;
-import com.ssafy.alta.entity.User;
+import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitCollaboratorAPI;
 import com.ssafy.alta.gitutil.GitRepoAPI;
 import com.ssafy.alta.mailutil.MailHandler;
-import com.ssafy.alta.repository.StudyJoinInfoRepository;
-import com.ssafy.alta.repository.StudyRepository;
-import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -46,6 +42,7 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final UserRepository userRepository;
     private final StudyJoinInfoRepository sjiRepository;
+    private final ScheduleRepository scheduleRepository;
     private final UserService userService;
     private final RedisService redisService;
     private final GitRepoAPI gitRepoAPI = new GitRepoAPI();
@@ -249,8 +246,18 @@ public class StudyService {
     public TreeResponse selectTree(Long studyId) {
         String userId = userService.getCurrentUserId();
 
-        List<Schedule> scheduleList =
-        Optional<StudyJoinInfo> sjiOpt = Optional.of(sjiRepository.findByStudyStudyIdAndUserId(studyOpt.get().getStudyId(), userId)
-                .orElseThrow(UnAuthorizedException::new));
+        // 스터디 그룹원이 아니면 조회 불가 -> 예외 발생
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(AccessDeniedStudyException::new));
+
+        if(!optSJI.get().getState().equals("가입")) {
+            throw new AccessDeniedStudyException();
+        }
+        TreeResponse treeResponse;
+        List<PathResponse> list = new LinkedList<>();
+        List<Schedule> scheduleList = scheduleRepository.findByStudyStudyIdOrderByStartDateAsc(studyId);
+
+
+        return treeResponse;
     }
 }
