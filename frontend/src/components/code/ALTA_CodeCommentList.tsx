@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Divider,
   Grid,
@@ -22,6 +23,7 @@ export default function ALTA_CodeCommentList({
 }: {
   codeId: string | undefined;
 }) {
+  const navigate = useNavigate();
   const [isCompleted, setisCompleted] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
@@ -30,9 +32,15 @@ export default function ALTA_CodeCommentList({
   let reviews_data: ReviewData[] = [];
 
   const getReview = async () => {
-    const res = await getRequest(`/api/code/review/${codeId}`);
-    console.log(res);
-    setReviews(res);
+    try {
+      const res = await getRequest(`/api/code/review/${codeId}`);
+      // console.log(res);
+      setReviews(res);
+    } catch (err: any) {
+      if (err.response.status === 403) {
+        navigate('/');
+      }
+    }
   };
 
   if (reviews !== null) {
@@ -74,8 +82,11 @@ export default function ALTA_CodeCommentList({
         await postRequest('/api/code/review', JSON.stringify(newRequest));
         setNewReview('');
         getReview();
-      } catch (err) {
-        console.log(err);
+      } catch (err: any) {
+        if (err.response.status === 403) {
+          navigate('/');
+        }
+        // console.log(err.response);
       }
     } else {
       console.log('fail');
