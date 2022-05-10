@@ -24,6 +24,8 @@ import java.util.Optional;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findByStudyStudyIdOrderByStartDateAsc(Long studyId);
 
+    List<Schedule> findByStudyStudyIdOrderByStartDateDesc(Long studyId);
+
     @Query("select s from Schedule s where s.study.studyId = :studyId and s.startDate > :nowDate and s.id != :scheduleId order by s.startDate")
     List<Schedule> findByStudyStudyIExceptOneOrderByStartDate(@Param("studyId") Long studyId, @Param("nowDate") Date nowDate, @Param("scheduleId") Long scheduleId);
 
@@ -34,4 +36,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findByStudyStudyIdSameStartDate(@Param("studyId") Long studyId, @Param("startDate") Date startDate);
 
     Optional<Schedule> findByStudyStudyIdAndId(Long studyId, Long scheduleId);
+
+    Optional<Schedule> findTop1ByStudyStudyIdOrderByStartDateDesc(Long studyId);
 }

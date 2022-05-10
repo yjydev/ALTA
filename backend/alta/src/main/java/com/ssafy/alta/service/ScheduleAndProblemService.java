@@ -97,7 +97,7 @@ public class ScheduleAndProblemService {
         Study study = optSJI.get().getStudy();
         int round = 1;
 
-        Optional<Schedule> optSchedule = scheduleRepository.findTop1ByStudyStudyIdOrderByRoundDesc(studyId);
+        Optional<Schedule> optSchedule = scheduleRepository.findTop1ByStudyStudyIdOrderByStartDateDesc(studyId);
         if(optSchedule.isPresent()) {
             round = optSchedule.get().getRound() + 1;
         }

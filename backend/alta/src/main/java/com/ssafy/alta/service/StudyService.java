@@ -20,6 +20,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -49,6 +50,9 @@ public class StudyService {
     private final GitCollaboratorAPI gitCollaboratorAPI = new GitCollaboratorAPI();
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private enum Path {
+        SCHEDULE, PROBLEM, USER
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void insertStudy(StudyRequest studyRequest) throws JsonProcessingException {
@@ -253,11 +257,84 @@ public class StudyService {
         if(!optSJI.get().getState().equals("가입")) {
             throw new AccessDeniedStudyException();
         }
-        TreeResponse treeResponse;
-        List<PathResponse> list = new LinkedList<>();
-        List<Schedule> scheduleList = scheduleRepository.findByStudyStudyIdOrderByStartDateAsc(studyId);
 
+        LinkedList<PathResponse> pathResponseList = new LinkedList<>();
+        List<Schedule> scheduleList = scheduleRepository.findByStudyStudyIdOrderByStartDateDesc(studyId);
+        List<StudyJoinInfo> sjiList = sjiRepository.findByStudyStudyIdWhereState(studyId, "가입");
+
+        // 1. 리스트에 모든 객체 넣기
+        long idx = 0;
+        List<String> path1, path2, path3, path4;
+        for(Schedule schedule : scheduleList) {
+            path1 = new ArrayList<>();
+            path1.add((scheduleList.size() - idx) + "회차");
+            addPathResponse(pathResponseList, path1, 0L);
+            for(Problem problem : schedule.getProblems()) {
+                path2 = cloneList(path1);
+                path2.add(problem.getName());
+                addPathResponse(pathResponseList, path2, 0L);
+                for(StudyJoinInfo info : sjiList) {
+                    path3 = cloneList(path2);
+                    path3.add(info.getUser().getName());
+                    addPathResponse(pathResponseList, path3, 0L);
+                }
+                for(Code code : problem.getCode()) {
+                    path4 = cloneList(path2);
+                    path4.add(code.getUser().getName());
+                    path4.add(code.getFileName());
+                    addPathResponse(pathResponseList, path4, code.getId());
+                }
+            }
+            idx++;
+        }
+
+        // 2. 리스트 정렬 - Depth로 정렬
+        //  `일정` -> 시작 날짜로 정렬(내림차순)
+        //     `문제 이름` -> 이름으로 정렬(오름차순)
+        //        `사용자 이름` -> 이름으로 정렬(오름차순)
+        Collections.sort(pathResponseList, (o1, o2) -> {
+            List<String> p1 = o1.getPath();
+            List<String> p2 = o2.getPath();
+            if(p1.size() == p2.size()) {
+                if(p1.get(Path.SCHEDULE.ordinal()).equals(p2.get(Path.SCHEDULE.ordinal()))) {
+                    if (p1.get(Path.PROBLEM.ordinal()).equals(p2.get(Path.PROBLEM.ordinal())))
+                        return p1.get(Path.USER.ordinal()).compareTo(p2.get(Path.USER.ordinal()));
+                    return p1.get(Path.PROBLEM.ordinal()).compareTo(p2.get(Path.PROBLEM.ordinal()));
+                }
+                return -(Integer.parseInt(p1.get(Path.SCHEDULE.ordinal()).substring(0, p1.get(Path.SCHEDULE.ordinal()).indexOf("회")))
+                        - Integer.parseInt(p2.get(Path.SCHEDULE.ordinal()).substring(0, p2.get(Path.SCHEDULE.ordinal()).indexOf("회"))));
+            }
+            return p1.size() - o2.getPath().size();
+        });
+
+        // 3. 정렬된 객체들에 대해 1번부터 번호 매기기
+        idx = 1;
+        for(PathResponse pathResponse : pathResponseList) {
+            pathResponse.setId(idx++);
+        }
+
+        // 4. TreeResponse로 반환
+        TreeResponse treeResponse = TreeResponse.builder()
+                                        .list(pathResponseList)
+                                        .build();
 
         return treeResponse;
     }
+
+    public List<String> cloneList(List<String> list) {
+        List<String> newList = new ArrayList<>();
+        for(String s : list) {
+            newList.add(s);
+        }
+        return newList;
+    }
+
+    public void addPathResponse(LinkedList<PathResponse> pathResponseList, List<String> path, long codeId) {
+        PathResponse pathResponse = PathResponse.builder()
+                .path(path)
+                .codeId(codeId)
+                .build();
+        pathResponseList.offer(pathResponse);
+    }
+
 }
