@@ -32,7 +32,6 @@ import java.util.List;
 public class ScheduleAndProblemRequest {
     private Date startDate;
     private Date endDate;
-    private int round;
     private Boolean isCancel;
     private Study study;
     private List<Problem> problems;
@@ -41,7 +40,6 @@ public class ScheduleAndProblemRequest {
         return Schedule.builder()
                 .startDate(startDate)
                 .endDate(endDate)
-                .round(round)
                 .isCancel(isCancel)
                 .study(study)
                 .build();

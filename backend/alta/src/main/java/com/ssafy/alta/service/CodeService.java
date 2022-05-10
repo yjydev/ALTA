@@ -296,7 +296,7 @@ public class CodeService {
     }
 
     private void checkUserId(String userId, String id) {
-        if(userId != id)
+        if(!userId.equals(id))
             throw new WriterNotMatchException();
     }
 

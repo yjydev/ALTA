@@ -63,10 +63,9 @@ public class Schedule {
     private List<Problem> problems = new ArrayList<>();
 
     @Builder
-    public Schedule(Date startDate, Date endDate, int round, boolean isCancel, Study study) {
+    public Schedule(Date startDate, Date endDate, boolean isCancel, Study study) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.round = round;
         this.isCancel = isCancel;
         this.study = study;
     }

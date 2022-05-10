@@ -33,11 +33,10 @@ public class ScheduleRequest {
     @ApiModelProperty(value = "종료일", required = true)
     private Date endDate;
 
-    public Schedule toSchedule(Integer round, Boolean isCancel, Study study) {
+    public Schedule toSchedule(Boolean isCancel, Study study) {
         return Schedule.builder()
                 .startDate(startDate)
                 .endDate(endDate)
-                .round(round)
                 .isCancel(isCancel)
                 .study(study)
                 .build();
