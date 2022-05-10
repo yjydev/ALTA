@@ -17,7 +17,9 @@ function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkLogin(() => navigate('/'));
+    (async function () {
+      await checkLogin(() => navigate('/'));
+    })();
   }, []);
 
   return <ALTA_Header />;

@@ -1,6 +1,8 @@
 import { Box } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { checkLogin } from '../../modules/LoginTokenChecker';
 import { getRequest } from '../../api/request';
 import { UserDataStore } from '../../context/UserDataContext';
 
@@ -10,9 +12,13 @@ import ALTA_MyPageSkeleton from '../skeleton/ALTA_MyPageSkeleton';
 
 export default function ALTA_MypageContents() {
   const { userDataContext, setUserDataContext } = useContext(UserDataStore);
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
 
   const getUserData = async () => {
+    await checkLogin(() => navigate('/'));
+
     const response = await getRequest('/api/user/info');
 
     localStorage.setItem('UserData', JSON.stringify(response.userData));

@@ -9,6 +9,8 @@ import DatePicker from '@mui/lab/DatePicker';
 import { generateError } from '../../../modules/generateAlert';
 import { blackColor } from '../../../modules/colorChart';
 import { postRequest } from '../../../api/request';
+import { checkLogin } from '../../../modules/LoginTokenChecker';
+import { useNavigate } from 'react-router-dom';
 
 export const addTableBarFrontBuilder = () =>
   function ALTA_AddTableBarFront({ fliper }: { fliper: () => void }) {
@@ -51,9 +53,11 @@ const PlainBtn = styled.button`
 
 export const addTableBarBackBuilder = (
   studyId: number,
-  getReadmeContents: () => void,
+  getReadmeContents: (studyId: number) => void,
 ) =>
   function Back({ fliper }: { fliper: () => void }) {
+    const navigate = useNavigate();
+
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(new Date());
 
@@ -71,6 +75,10 @@ export const addTableBarBackBuilder = (
     };
 
     const addProblemTable = async () => {
+      (async function () {
+        await checkLogin(() => navigate('/'));
+      })();
+
       //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
       if (startDate && endDate) {
         const unixStartTime = startDate.getTime();
@@ -87,8 +95,15 @@ export const addTableBarBackBuilder = (
         endDate: refineDate(endDate),
       };
 
-      await postRequest(`/api/study/${studyId}/schedule`, requestData);
-      getReadmeContents();
+      try {
+        await postRequest(`/api/study/${studyId}/schedule`, requestData);
+        fliper();
+      } catch (err: any) {
+        if (err.response.data.code === 'S001')
+          generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
+        else generateError('새로운 회차를 생성할 수 없습니다', '');
+      }
+      getReadmeContents(studyId);
 
       setStartDate(new Date());
       setEndDate(new Date());

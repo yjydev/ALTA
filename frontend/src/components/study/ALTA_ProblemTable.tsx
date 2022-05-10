@@ -13,8 +13,6 @@ import {
 
 import ALTA_FlipBar from '../common/ALTA_FlipBar';
 
-import EditIcon from '@mui/icons-material/Edit';
-
 type Props = {
   problems: Problem[];
   members: Member[];
@@ -69,6 +67,7 @@ export default function ALTA_ProblemTable({
                   scheduleId,
                   problem.name,
                   problem.link,
+                  problem.id,
                 )}
               />
             </Box>
@@ -92,13 +91,6 @@ const tableHeaderStyle = {
   backgroundColor: subColor,
 };
 
-const tableBodyStyle = {
-  'height': '40px',
-  '&:nth-of-type(even)': {
-    backgroundColor: 'rgba(224, 212, 194, 0.3)',
-  },
-};
-
 const sellStyle = {
   position: 'relative',
   display: 'flex',
@@ -110,25 +102,6 @@ const ellipsisStyle = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-};
-
-const omisstionBtnStyle = {
-  color: 'error.main',
-};
-
-const problemEditBtnStyle = {
-  'position': 'absolute',
-  'minWidth': '20px',
-  'padding': 0.5,
-  'left': 2,
-  'cursor': 'pointer',
-  'color': blackColor,
-  '&:hover': {
-    color: 'primary.main',
-  },
-  '*': {
-    fontSize: '20px',
-  },
 };
 
 const A = styled.a`

@@ -25,12 +25,8 @@ export default function ALTA_Member() {
     </MemberContext>
   );
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     document.title = 'ALTA | 멤버 관리';
-
-    checkLogin(() => navigate('/'));
   }, []);
 
   return <ALTA_Template header={<Header />} contents={<Contents />} />;

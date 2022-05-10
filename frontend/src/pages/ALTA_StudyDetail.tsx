@@ -1,10 +1,7 @@
 import { Grid } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { checkLogin } from '../modules/LoginTokenChecker';
 import StudyDetailContext from '../context/StudyDetailContext';
 
 import ALTA_Template from '../components/common/ALTA_Template';
@@ -16,11 +13,8 @@ import ALTA_StudyMembers from '../components/study/ALTA_StudyMembers';
 import ALTA_StudyBoard from '../components/study/ALTA_StudyBoard';
 
 export default function ALTA_StudyDetail() {
-  const navigate = useNavigate();
-
   useEffect(() => {
     document.title = 'ALTA | 스터디 관리';
-    checkLogin(() => navigate('/'));
   }, []);
 
   return <ALTA_Template header={<Header />} contents={<Contents />} />;

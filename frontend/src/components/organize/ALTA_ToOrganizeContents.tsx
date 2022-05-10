@@ -23,6 +23,7 @@ import {
 } from '../../modules/generateAlert';
 
 import ALTA_InputItem from '../common/ALTA_InputItem';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 export default function ALTA_ToOrganizeContents() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function ALTA_ToOrganizeContents() {
   const [requestData, setReqeustData] = useState<OrganizeStudyRequset>({
     introduction: '',
     isPublic: 'true',
-    language: languages[0].language,
+    language: languages[0],
     maxPeople: '2',
     name: '',
     repositoryName: '',
@@ -56,10 +57,22 @@ export default function ALTA_ToOrganizeContents() {
     setReqeustData(newData);
   };
 
+  const handleStudyName = (value: string): void => {
+    if (value.length > 10) return;
+
+    handleRequestData(value, 'name');
+  };
+
   const handleMaxPeople = (value: number) => {
     if (value > 6) handleRequestData('6', 'maxPeople');
     else if (value < 2) handleRequestData('2', 'maxPeople');
     else handleRequestData(`${value}`, 'maxPeople');
+  };
+
+  const handleStudyIntro = (value: string): void => {
+    if (value.length > 80) return;
+
+    handleRequestData(value, 'introduction');
   };
 
   //빈 항목이 있는지 체크
@@ -84,10 +97,13 @@ export default function ALTA_ToOrganizeContents() {
 
   //스터디 생성 API 요청
   const organize = async () => {
+    await checkLogin(() => navigate('/'));
+
     generateTimer(
       '잠시 기다려 주세요',
       `Github에 ${requestData.name} 레포지토리를 생성 중입니다`,
     );
+
     try {
       await postRequest('/api/study', requestData);
       generateCheck(
@@ -115,8 +131,8 @@ export default function ALTA_ToOrganizeContents() {
             autoFocus
             variant="standard"
             value={requestData.name}
-            onChange={(e) => handleRequestData(e.target.value, 'name')}
-            placeholder="스터디 이름을 정해주세요"
+            onChange={(e) => handleStudyName(e.target.value)}
+            placeholder="스터디 이름을 정해주세요 (최대 10자)"
             sx={{ width: '100%' }}
             inputProps={{ style: { fontSize: 18, padding: '0 0 3px' } }}
           />
@@ -139,9 +155,9 @@ export default function ALTA_ToOrganizeContents() {
             onChange={(e) => handleRequestData(e.target.value, 'language')}
             // defaultValue={languages[0].language}
           >
-            {languages.map((language) => (
-              <MenuItem key={language.language} value={language.language}>
-                {language.language}
+            {languages.map((lan) => (
+              <MenuItem key={lan} value={lan}>
+                {lan}
               </MenuItem>
             ))}
           </Select>
@@ -227,7 +243,7 @@ export default function ALTA_ToOrganizeContents() {
             rows={4}
             placeholder="소개글을 써주세요. (최대 100자)"
             value={requestData.introduction}
-            onChange={(e) => handleRequestData(e.target.value, 'introduction')}
+            onChange={(e) => handleStudyIntro(e.target.value)}
           />
           <Typography
             sx={guideStyle}

@@ -1,12 +1,42 @@
 import styled from '@emotion/styled';
-import { Box, TextField } from '@mui/material';
-import { useContext } from 'react';
+import { Box, Button, TextField } from '@mui/material';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { postRequest } from '../../api/request';
 import { UserDataStore } from '../../context/UserDataContext';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_LanguageSelector from './ALTA_LanguageSelector';
 
-export default function ALTA_UserDataEdit() {
+export default function ALTA_UserDataEdit({
+  setIsEditPage,
+}: {
+  setIsEditPage: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { userDataContext } = useContext(UserDataStore);
+  const navigate = useNavigate();
+
+  const [nickname, setNickname] = useState(userDataContext.nickname);
+  const [email, setEmail] = useState(userDataContext.email);
+  const [introduction, setIntroduction] = useState(
+    userDataContext.introduction,
+  );
+  const [languageList, setLanguageList] = useState(
+    userDataContext.languageList,
+  );
+
+  const editUserData = async () => {
+    await checkLogin(() => navigate('/'));
+    const requestBody = new FormData();
+    const requestData = {
+      nickname,
+      email,
+      introduction,
+      languageList,
+    };
+    await postRequest('/api/user/info', requestBody);
+  };
 
   return (
     <Box sx={userDataStyle}>
@@ -14,23 +44,28 @@ export default function ALTA_UserDataEdit() {
         <Box sx={prifileDataStyle}>
           <TextField
             variant="standard"
-            defaultValue={userDataContext.nickname}
+            defaultValue={nickname}
             sx={nicknameEditorStyle}
+            onChange={(e) => setNickname(e.target.value)}
           />
           <TextField
             variant="standard"
-            defaultValue={userDataContext.email}
+            defaultValue={email}
             sx={nicknameEditorStyle}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextArea
-            defaultValue={
-              userDataContext.introduction === null
-                ? '자기소개를 작성해주세요'
-                : `사용 언어 : ${userDataContext.introduction}`
-            }
+            defaultValue={introduction === null ? '' : `${introduction}`}
+            onChange={(e) => setIntroduction(e.target.value)}
           ></TextArea>
-          <ALTA_LanguageSelector languageList={userDataContext.languageList} />
+          <ALTA_LanguageSelector setLanguageList={setLanguageList} />
         </Box>
+      </Box>
+      <Box sx={editButtonStyle}>
+        <Button onClick={editUserData}> 수정 완료</Button>
+        <Button color="error" onClick={() => setIsEditPage(false)}>
+          수정 취소
+        </Button>
       </Box>
     </Box>
   );
@@ -59,6 +94,11 @@ const nicknameEditorStyle = {
   width: '60%',
   fontSize: '20px',
   fontWeight: 'bold',
+};
+
+const editButtonStyle = {
+  float: 'right',
+  marginTop: 1.5,
 };
 const TextArea = styled.textarea`
   all: unset;
