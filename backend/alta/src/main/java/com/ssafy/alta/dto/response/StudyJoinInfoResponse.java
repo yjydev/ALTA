@@ -28,5 +28,5 @@ public class StudyJoinInfoResponse {
     private String email;
     private String state;
     private String position;
-    private Date registrationDate;
+    private String registrationDate;
 }
