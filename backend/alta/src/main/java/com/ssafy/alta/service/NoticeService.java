@@ -38,9 +38,7 @@ public class NoticeService {
 
     @Transactional(rollbackFor = Exception.class)
     public void insertNotice(Long studyId, NoticeRequest noticeRequest) {
-        System.out.println("service: "+studyId);
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));

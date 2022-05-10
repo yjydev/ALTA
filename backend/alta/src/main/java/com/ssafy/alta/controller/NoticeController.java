@@ -26,8 +26,6 @@ public class NoticeController {
 
     @PostMapping
     public ResponseEntity insertNotice(@PathVariable("studyId") Long studyId, @RequestBody NoticeRequest noticeRequest) {
-        System.out.println(noticeRequest.getContent());
-        System.out.println(studyId);
         noticeService.insertNotice(studyId, noticeRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
