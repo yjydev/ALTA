@@ -1,33 +1,13 @@
 import { useContext, useEffect } from 'react';
 import { Grid, Box, Typography, Button } from '@mui/material';
 
-import { getRequest } from '../../api/request';
 import { MemberStore } from '../../context/MemberContext';
 
 import ALTA_MemberTable from './ALTA_MemberTable';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
-export default function ALTA_MemberList({
-  studyId,
-}: {
-  studyId: string | undefined;
-}) {
-  const { members, setMembers, studyCode, setStudyCode } =
-    useContext(MemberStore);
-
-  const getMembers = async () => {
-    try {
-      const res = await getRequest(`/api/study/${studyId}/members`);
-      setMembers(res.members);
-      setStudyCode(res.studyCode);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    getMembers();
-  }, []);
+export default function ALTA_MemberList() {
+  const { members, studyCode, setStudyCode } = useContext(MemberStore);
 
   return (
     <Box py={4}>
