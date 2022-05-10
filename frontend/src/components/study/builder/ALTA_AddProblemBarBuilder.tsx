@@ -5,11 +5,10 @@ import styled from '@emotion/styled';
 
 import { blackColor, subColor, whiteColor } from '../../../modules/colorChart';
 import { generateError } from '../../../modules/generateAlert';
-import { postRequest, putRequest } from '../../../api/request';
 import { StudyDetailStore } from '../../../context/StudyDetailContext';
 import { checkLogin } from '../../../modules/LoginTokenChecker';
 import { useNavigate } from 'react-router-dom';
-import { Problem } from '../../../types/StudyType';
+import { addProblemApi, editProblemApi } from '../../../api/apis';
 
 export const addProblemBarFrontBuilder = () =>
   function Front({ fliper }: { fliper: () => void }) {
@@ -58,11 +57,7 @@ export const addProblemBarBackBuilder = (
     const [problemLink, setPropblemLink] = useState<string>(link ? link : '');
 
     const addProblem = async () => {
-      (async function () {
-        await checkLogin();
-      })();
-
-      console.log(studyId, problemId);
+      if (!(await checkLogin())) navigate('/');
 
       //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
       if (!problemName || !problemLink) {
@@ -70,34 +65,22 @@ export const addProblemBarBackBuilder = (
         return;
       }
 
-      const requestBody = {
-        problems: [
-          {
-            name: problemName,
-            link: problemLink,
-          },
-        ],
-        scheduleId,
-      };
+      await addProblemApi(studyId, scheduleId, problemName, problemLink);
 
-      await postRequest(`/api/study/${studyId}/problem`, requestBody);
       setPropblemName('');
       setPropblemLink('');
       getStudyDetail(studyId);
     };
 
     const editProblem = async () => {
+      if (!(await checkLogin())) navigate('/');
+
       if (name && name === problemName && link && link === problemLink) {
         generateError('변경 사항이 없습니다', '');
         return;
       }
-      const requestBody = {
-        id: problemId,
-        name: problemName,
-        link: problemLink,
-      };
 
-      await putRequest(`/api/study/${studyId}/problem/`, requestBody);
+      await editProblemApi(studyId, problemId, problemName, problemLink);
       fliper();
       getStudyDetail(studyId);
     };
