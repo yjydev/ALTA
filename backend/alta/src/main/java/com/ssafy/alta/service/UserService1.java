@@ -56,25 +56,27 @@ public class UserService1 {
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
                 .orElseThrow(DataNotFoundException::new));
         User exUser = optUser.get();
-
-        char[] list = Integer.toBinaryString(alertSetting).toCharArray();
-        System.out.println(Integer.toBinaryString(alertSetting));
+        String tmpLen = Integer.toBinaryString(alertSetting);
+        while (tmpLen.length() != 4)
+            tmpLen = "0" + tmpLen;
+        char[] list = tmpLen.toCharArray();
+        System.out.println(tmpLen);
         // 이메일 일정, 코멘트, 풀이 // 알림 일정, 코멘트, 풀이
         boolean[] alertList = new boolean[4];
         for (int i = 3; i >= 0; i--) {
-            if (i < list.length) {
-                if (list[i] == '1')
-                    alertList[i] = true;
-            }
+
+            if (list[i] == '1')
+                alertList[i] = true;
+
         }
         System.out.println(Arrays.toString(alertList));
         int emailSum = 0;
         int alertSum = 0;
         for (int i = 0; i < 2; i++) {
-            if (alertList[i])
-                alertSum += (int) Math.pow(2, i);
-            if (alertList[i + 2])
+            if (alertList[1 - i])
                 emailSum += (int) Math.pow(2, i);
+            if (alertList[3 - i])
+                alertSum += (int) Math.pow(2, i);
         }
 
         User newUser = new User().builder()
