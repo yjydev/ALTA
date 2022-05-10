@@ -242,7 +242,7 @@ public class ScheduleAndProblemService {
             throw new InvalidScheduleException();
         }
         // 시작 날짜가 오늘 이후이면서 해당 스터디 내의 지금 변경하려는 일정이 아닌 일정들을 가져옴
-        List<Schedule> schedules = scheduleRepository.findByStudyStudyIExceptOnedOrderByStartDate(studyId, nowDate, scheduleId);
+        List<Schedule> schedules = scheduleRepository.findByStudyStudyIExceptOneOrderByStartDate(studyId, nowDate, scheduleId);
         for(Schedule temp : schedules) {
             long tempStartTime = temp.getStartDate().getTime();
             long tempEndTime = temp.getEndDate().getTime();

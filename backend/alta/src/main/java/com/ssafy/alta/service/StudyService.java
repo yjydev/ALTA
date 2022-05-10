@@ -5,6 +5,7 @@ import com.ssafy.alta.dto.request.*;
 import com.ssafy.alta.dto.response.StudyJoinInfoMemberResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
 import com.ssafy.alta.dto.response.TreeResponse;
+import com.ssafy.alta.entity.Schedule;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
@@ -36,6 +37,7 @@ import java.util.*;
  * DATE             AUTHOR              NOTE
  * -----------------------------------------------------------
  * 2022-04-26       jisoon Lee         최초 생성
+ * 2022-05-10       우정연             코드 트리 기능 추가
  */
 
 @Service
@@ -244,6 +246,11 @@ public class StudyService {
         }
     }
 
-//    public TreeResponse selectTree(Long studyId) {
-//    }
+    public TreeResponse selectTree(Long studyId) {
+        String userId = userService.getCurrentUserId();
+
+        List<Schedule> scheduleList =
+        Optional<StudyJoinInfo> sjiOpt = Optional.of(sjiRepository.findByStudyStudyIdAndUserId(studyOpt.get().getStudyId(), userId)
+                .orElseThrow(UnAuthorizedException::new));
+    }
 }
