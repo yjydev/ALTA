@@ -42,15 +42,14 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const editSchedule = async (
     studyId: number,
     scheduleId: number,
-    startDate: string,
-    endDate: string,
+    dateString: string,
   ) => {
     const loginStatus = await checkLogin();
 
     if (!loginStatus.status)
       return { status: -1, message: 'login token error' };
     try {
-      await editScheduleApi(studyId, scheduleId, startDate, endDate);
+      await editScheduleApi(studyId, scheduleId, dateString);
       await getStudyDetail(studyId);
       return { status: 1, message: 'success edit schedule' };
     } catch (err) {
@@ -86,7 +85,6 @@ type defaultValueType = {
   editSchedule: (
     studyId: number,
     scheduleId: number,
-    startDate: string,
-    endDate: string,
+    dateString: string,
   ) => any;
 };
