@@ -11,6 +11,7 @@ import { blackColor } from '../../../modules/colorChart';
 import { postRequest } from '../../../api/request';
 import { checkLogin } from '../../../modules/LoginTokenChecker';
 import { useNavigate } from 'react-router-dom';
+import { addScheduleApi } from '../../../api/apis';
 
 export const addTableBarFrontBuilder = () =>
   function ALTA_AddTableBarFront({ fliper }: { fliper: () => void }) {
@@ -53,7 +54,7 @@ const PlainBtn = styled.button`
 
 export const addTableBarBackBuilder = (
   studyId: number,
-  getStudyDetail: (studyId: number) => void,
+  getReadmeContents: (studyId: number) => void,
 ) =>
   function Back({ fliper }: { fliper: () => void }) {
     const navigate = useNavigate();
@@ -61,23 +62,8 @@ export const addTableBarBackBuilder = (
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(new Date());
 
-    //Date 인스턴스를 0000-00-00형태의 문자열로 변경
-    const refineDate = (date: Date | null): string | null => {
-      if (date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-
-        return `${year}-${month}-${day}`;
-      }
-
-      return null;
-    };
-
     const addProblemTable = async () => {
-      (async function () {
-        await checkLogin();
-      })();
+      if (!(await checkLogin())) () => navigate('/');
 
       //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
       if (startDate && endDate) {
@@ -90,20 +76,15 @@ export const addTableBarBackBuilder = (
         }
       }
 
-      const requestData = {
-        startDate: refineDate(startDate),
-        endDate: refineDate(endDate),
-      };
-
       try {
-        await postRequest(`/api/study/${studyId}/schedule`, requestData);
+        await addScheduleApi(studyId, startDate, endDate);
         fliper();
       } catch (err: any) {
         if (err.response.data.code === 'S001')
           generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
         else generateError('새로운 회차를 생성할 수 없습니다', '');
       }
-      getStudyDetail(studyId);
+      getReadmeContents(studyId);
 
       setStartDate(new Date());
       setEndDate(new Date());

@@ -23,7 +23,8 @@ export default function ALTA_UserDataEdit({
   const [languageList, setLanguageList] = useState(userData.languageList);
 
   const editUserData = async () => {
-    await checkLogin();
+    if (!(await checkLogin())) navigate('/');
+
     const requestBody = new FormData();
     const requestData = {
       nickname,
