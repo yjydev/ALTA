@@ -40,3 +40,8 @@ export const refreshToken = async () => {
 
   return response.data;
 };
+
+export const deleteRequest = async (url, headers = makeHeaders()) => {
+  const response = await axiosInstance.delete(url, headers);
+  return response.data;
+};
