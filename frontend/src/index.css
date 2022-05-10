@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  font-family: 'Spoqa Han Sans Neo', 'sans-serif' !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f6f6f6;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

@@ -1,0 +1,95 @@
+{
+  "/api": {
+    "study_max_people": 5,
+    "readme": [
+      {
+        "id": 4,
+        "startDate": "2022-04-29",
+        "endDate": "2022-04-27",
+        "round": 1,
+        "problems": [
+          {
+            "id": 1,
+            "name": "구슬 탈출2",
+            "link": "https://www.acmicpc.net/problem/13460",
+            "codes": [
+              {
+                "id": 1,
+                "nickname": "js",
+                "path": "/root/js1.java"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "2048 (Easy)",
+            "link": "https://www.acmicpc.net/problem/12100",
+            "codes": [
+              {
+                "id": 2,
+                "nickname": "js",
+                "path": "/root/js2.java"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "startDate": "2022-04-29",
+        "endDate": "2022-04-27",
+        "round": 2,
+        "problems": [
+          {
+            "id": 1,
+            "name": "구슬 탈출2",
+            "link": "https://www.acmicpc.net/problem/13460",
+            "codes": [
+              {
+                "id": 1,
+                "nickname": "js",
+                "path": "/root/js1.java"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "2048 (Easy)",
+            "link": "https://www.acmicpc.net/problem/12100",
+            "codes": [
+              {
+                "id": 2,
+                "nickname": "js",
+                "path": "/root/js2.java"
+              }
+            ]
+          }
+        ]
+      }   
+    ],
+    "members": [
+      {
+        "nickname": "JISOON",
+        "email": "jisoon806@gmail.com",
+        "state": "가입",
+        "position": "그룹장",
+        "registrationDate": "2022-04-26T16:13:09.000+00:00"
+      },
+      {
+        "nickname": "js",
+        "email": "jisoon@gmail.com",
+        "state": "가입",
+        "position": "그룹원",
+        "registrationDate": "2022-04-26T16:28:39.000+00:00"
+      },
+      {
+        "nickname": "test",
+        "email": "test@gmail.com",
+        "state": "초대대기",
+        "position": "그룹원",
+        "registrationDate": null
+      }
+    ],
+    "study_code": "152342432"
+  }  
+}
