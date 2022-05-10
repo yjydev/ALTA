@@ -10,6 +10,7 @@ import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
 import ALTA_MembersSkeleton from '../skeleton/ALTA_MembersSkeleton';
+import { memberListApi } from '../../api/apis';
 
 export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
   const { members, setMembers, setMaxPeople } = useContext(StudyDetailStore);
@@ -18,9 +19,9 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
   const [loading, setLoading] = useState<boolean>(true);
 
   const getMembers = async () => {
-    await checkLogin(() => navigate('/'));
+    if (!(await checkLogin())) navigate('/');
     try {
-      const response = await getRequest(`/api/study/${studyId}/members`);
+      const response = await memberListApi(studyId);
 
       //최대 인원 수까지 빈 멤버 추가
       const tmpMember = [...response.members];
