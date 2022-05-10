@@ -80,7 +80,7 @@ export async function submitCodeApi(
     content: code,
   };
 
-  return await await postRequest(
+  return await postRequest(
     `/api/study/${studyId}/code`,
     Object.assign(requestBody, { problemId }),
   );
@@ -91,15 +91,20 @@ export async function submitCodeApi(
 export async function editScheduleApi(
   studyId: number,
   scheduleId: number,
-  startDate: string,
-  endDate: string,
+  dateString: string,
 ) {
+  const tmp = dateString.split(' ~ ');
   const requestBody = {
     scheduleId,
-    startDate,
-    endDate,
+    startDate: tmp[0],
+    endDate: tmp[1],
   };
-  return await putRequest(`/api/study/${studyId}/schedule`, requestBody);
+
+  console.log(requestBody);
+  return await putRequest(
+    `/api/study/${studyId}/schedule/${scheduleId}`,
+    requestBody,
+  );
 }
 //코드 수정 요청
 export async function editCodeApi(

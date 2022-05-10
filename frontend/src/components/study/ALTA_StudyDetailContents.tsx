@@ -1,14 +1,10 @@
-import { Box, Typography, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import { StudyData } from '../../types/StudyType';
-import { blackColor } from '../../modules/colorChart';
 import {
   addTableBarFrontBuilder,
   addTableBarBackBuilder,
@@ -17,7 +13,6 @@ import {
 import ALTA_ProblemTable from './ALTA_ProblemTable';
 import ALTA_FlipBar from '../common/ALTA_FlipBar';
 import ALTA_StudyDetailSkeleton from '../skeleton/ALTA_StudyDetailSkeleton';
-import styled from '@emotion/styled';
 import { generateError } from '../../modules/generateAlert';
 
 export default function ALTA_StudyDetailContents({
@@ -26,20 +21,9 @@ export default function ALTA_StudyDetailContents({
   studyId: number;
 }) {
   const navigate = useNavigate();
-  const { members, studyData, maxPeople, getStudyDetail, editSchedule } =
-    useContext(StudyDetailStore);
+  const { studyData, getStudyDetail } = useContext(StudyDetailStore);
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [scheduleEditing, setScheduleEditing] = useState<boolean>(false);
-
-  const edit = async (
-    studyId: number,
-    scheduleId: number,
-    startDate: string,
-    endDate: string,
-  ) => {
-    editSchedule(studyId, scheduleId, startDate, endDate);
-  };
 
   useEffect(() => {
     (async function () {
@@ -66,43 +50,13 @@ export default function ALTA_StudyDetailContents({
           </Box>
           <Box sx={{ position: 'relative', marginTop: '150px' }}>
             {studyData
-              .map((roundTable: StudyData, i: number) => (
-                <Box sx={{ margin: '30px 0 60px' }} key={i}>
-                  <Box sx={sectionStyle}>
-                    <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-                      {`${roundTable.round} 회차 : `}
-                      <Input
-                        type="text"
-                        className={`${scheduleEditing && 'editing'}`}
-                        defaultValue={`${roundTable.startDate} ~ ${roundTable.endDate}`}
-                        disabled={!scheduleEditing}
-                      />
-                      <Button
-                        sx={scheduleEditBtnStyle}
-                        onClick={() => setScheduleEditing(!scheduleEditing)}
-                      >
-                        {!scheduleEditing && <EditIcon />}
-                        {scheduleEditing && (
-                          <SaveIcon
-                            onClick={() =>
-                              edit(
-                                studyId,
-                                roundTable.id,
-                                roundTable.startDate,
-                                roundTable.endDate,
-                              )
-                            }
-                          />
-                        )}
-                      </Button>
-                    </Typography>
-                  </Box>
+              .map((roundTable: StudyData) => (
+                <Box sx={{ margin: '30px 0 60px' }} key={roundTable.id}>
                   <ALTA_ProblemTable
                     studyId={studyId}
                     scheduleId={roundTable.id}
                     problems={roundTable.problems}
-                    members={members}
-                    maxPeople={maxPeople}
+                    roundTable={roundTable}
                   />
                 </Box>
               ))
@@ -125,32 +79,3 @@ const wrapper = {
   backgroundColor: '#fff',
   overflowY: 'scroll',
 };
-
-const sectionStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-};
-
-const scheduleEditBtnStyle = {
-  'minWidth': '20px',
-  'padding': 0.5,
-  'cursor': 'pointer',
-  'color': blackColor,
-  '&:hover': {
-    color: 'primary.main',
-  },
-  '*': {
-    fontSize: '20px',
-  },
-};
-
-const Input = styled.input`
-  all: unset;
-  width: 200px;
-  margin-left: 5px;
-  font-size: 16px;
-  &.editing {
-    background-color: rgba(224, 212, 194, 0.6);
-  }
-`;
