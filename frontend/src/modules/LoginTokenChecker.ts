@@ -17,24 +17,24 @@ export function loginTokenChecker(): number {
   return 1;
 }
 
-export async function checkLogin(callback: () => void) {
+export async function checkLogin() {
   const loginStatus: number = loginTokenChecker();
 
-  console.log('checking token');
-  if (loginStatus === -1) callback();
+  if (loginStatus === -1) return { status: false, message: 'no jwt' };
   else if (loginStatus === 0) {
     try {
       const response = await refreshToken();
-      console.log('jwt 갱신');
+
       localStorage.setItem('jwt', response.jwtAt);
+      return { status: true, message: 'success refresh' };
     } catch (err) {
-      console.log(err);
-      console.log('jwt 갱신 불가');
       localStorage.removeItem('jwt');
       localStorage.removeItem('refresh');
       localStorage.removeItem('userData');
 
-      callback();
+      return { status: false, message: 'refresh token expired' };
     }
   }
+
+  return { status: true, message: 'jwt is ok' };
 }

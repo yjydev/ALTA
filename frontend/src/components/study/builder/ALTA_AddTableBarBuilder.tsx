@@ -53,7 +53,7 @@ const PlainBtn = styled.button`
 
 export const addTableBarBackBuilder = (
   studyId: number,
-  getReadmeContents: (studyId: number) => void,
+  getStudyDetail: (studyId: number) => void,
 ) =>
   function Back({ fliper }: { fliper: () => void }) {
     const navigate = useNavigate();
@@ -76,7 +76,7 @@ export const addTableBarBackBuilder = (
 
     const addProblemTable = async () => {
       (async function () {
-        await checkLogin(() => navigate('/'));
+        await checkLogin();
       })();
 
       //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
@@ -103,7 +103,7 @@ export const addTableBarBackBuilder = (
           generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
         else generateError('새로운 회차를 생성할 수 없습니다', '');
       }
-      getReadmeContents(studyId);
+      getStudyDetail(studyId);
 
       setStartDate(new Date());
       setEndDate(new Date());

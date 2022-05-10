@@ -18,7 +18,7 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
   const [loading, setLoading] = useState<boolean>(true);
 
   const getMembers = async () => {
-    await checkLogin(() => navigate('/'));
+    await checkLogin();
     try {
       const response = await getRequest(`/api/study/${studyId}/members`);
 

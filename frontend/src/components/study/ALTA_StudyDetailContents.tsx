@@ -2,7 +2,6 @@ import { Box, Typography, Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { checkLogin } from '../../modules/LoginTokenChecker';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 
@@ -10,7 +9,6 @@ import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import { StudyData } from '../../types/StudyType';
 import { blackColor } from '../../modules/colorChart';
-import { putRequest } from '../../api/request';
 import {
   addTableBarFrontBuilder,
   addTableBarBackBuilder,
@@ -20,6 +18,7 @@ import ALTA_ProblemTable from './ALTA_ProblemTable';
 import ALTA_FlipBar from '../common/ALTA_FlipBar';
 import ALTA_StudyDetailSkeleton from '../skeleton/ALTA_StudyDetailSkeleton';
 import styled from '@emotion/styled';
+import { generateError } from '../../modules/generateAlert';
 
 export default function ALTA_StudyDetailContents({
   studyId,
@@ -27,35 +26,30 @@ export default function ALTA_StudyDetailContents({
   studyId: number;
 }) {
   const navigate = useNavigate();
-  const { members, studyData, maxPeople, getReadmeContents } =
+  const { members, studyData, maxPeople, getStudyDetail, editSchedule } =
     useContext(StudyDetailStore);
 
-  const [loading, setLodaing] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [scheduleEditing, setScheduleEditing] = useState<boolean>(false);
 
-  const editSchedule = async (
+  const edit = async (
     studyId: number,
     scheduleId: number,
     startDate: string,
     endDate: string,
   ) => {
-    await checkLogin(() => navigate('/'));
-
-    const requestBody = {
-      scheduleId,
-      startDate,
-      endDate,
-    };
-    await putRequest(`/api/study/${studyId}/schedule`, requestBody);
-  };
-
-  const getData = async () => {
-    await getReadmeContents(studyId);
-    setLodaing(false);
+    editSchedule(studyId, scheduleId, startDate, endDate);
   };
 
   useEffect(() => {
-    getData();
+    (async function () {
+      const status = await getStudyDetail(studyId);
+
+      if (status === -1) navigate('/');
+      else if (status === -2)
+        generateError('스터디 정보를 불러올 수 없습니다', '');
+      else setLoading(false);
+    })();
   }, []);
 
   return (
@@ -67,7 +61,7 @@ export default function ALTA_StudyDetailContents({
             <ALTA_FlipBar
               height="80px"
               Front={addTableBarFrontBuilder()}
-              Back={addTableBarBackBuilder(studyId, getReadmeContents)}
+              Back={addTableBarBackBuilder(studyId, getStudyDetail)}
             />
           </Box>
           <Box sx={{ position: 'relative', marginTop: '150px' }}>
@@ -91,7 +85,7 @@ export default function ALTA_StudyDetailContents({
                         {scheduleEditing && (
                           <SaveIcon
                             onClick={() =>
-                              editSchedule(
+                              edit(
                                 studyId,
                                 roundTable.id,
                                 roundTable.startDate,

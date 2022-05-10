@@ -5,29 +5,29 @@ import { useContext } from 'react';
 import { UserDataStore } from '../../context/UserDataContext';
 
 export default function ALTA_UserDataDisplay() {
-  const { userDataContext } = useContext(UserDataStore);
+  const { userData } = useContext(UserDataStore);
 
   return (
     <Box sx={userDataStyle}>
       <Box sx={userDataTopStyle}>
         <Box sx={prifileDataStyle}>
           <Typography sx={nicknameStyle}>
-            {userDataContext.nickname}
+            {userData.nickname}
             <br />
-            <Span>{userDataContext.email}</Span>
+            <Span>{userData.email}</Span>
           </Typography>
           <TextArea
             disabled
             defaultValue={
-              userDataContext.introduction === null
+              userData.introduction === null
                 ? '자기소개를 작성해주세요'
-                : `사용 언어 : ${userDataContext.introduction}`
+                : `사용 언어 : ${userData.introduction}`
             }
           ></TextArea>
           <Typography>
-            {userDataContext.languageList === null
+            {userData.languageList === null
               ? '사용 언어를 설정해주세요'
-              : `사용 언어 : ${userDataContext.languageList}`}
+              : `사용 언어 : ${userData.languageList}`}
           </Typography>
         </Box>
       </Box>

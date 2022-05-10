@@ -1,8 +1,6 @@
 import { Box } from '@mui/material';
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import { checkLogin } from '../modules/LoginTokenChecker';
+import { useParams } from 'react-router-dom';
 import MemberContext from '../context/MemberContext';
 
 import ALTA_Template from '../components/common/ALTA_Template';
