@@ -5,7 +5,6 @@ import com.ssafy.alta.dto.request.*;
 import com.ssafy.alta.dto.response.PathResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoMemberResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
-import com.ssafy.alta.dto.response.TreeResponse;
 import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitCollaboratorAPI;
@@ -20,7 +19,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -247,7 +245,7 @@ public class StudyService {
         }
     }
 
-    public TreeResponse selectTree(Long studyId) {
+    public List<PathResponse> selectTree(Long studyId) {
         String userId = userService.getCurrentUserId();
 
         // 스터디 그룹원이 아니면 조회 불가 -> 예외 발생
@@ -265,24 +263,24 @@ public class StudyService {
         // 1. 리스트에 모든 객체 넣기
         long idx = 0;
         List<String> path1, path2, path3, path4;
-        for(Schedule schedule : scheduleList) {
+        for(Schedule schedule : scheduleList) {         // 일정(회차) 추가
             path1 = new ArrayList<>();
             path1.add((scheduleList.size() - idx) + "회차");
-            addPathResponse(pathResponseList, path1, 0L);
-            for(Problem problem : schedule.getProblems()) {
+            pathResponseList.offer(addPathResponse(path1, 0L));
+            for(Problem problem : schedule.getProblems()) {     // 문제 추가
                 path2 = cloneList(path1);
                 path2.add(problem.getName());
-                addPathResponse(pathResponseList, path2, 0L);
-                for(StudyJoinInfo info : sjiList) {
+                pathResponseList.offer(addPathResponse(path2, 0L));
+                for(StudyJoinInfo info : sjiList) {             // 유저 추가
                     path3 = cloneList(path2);
                     path3.add(info.getUser().getName());
-                    addPathResponse(pathResponseList, path3, 0L);
+                    pathResponseList.offer(addPathResponse(path3, 0L));
                 }
-                for(Code code : problem.getCode()) {
+                for(Code code : problem.getCode()) {            // 코드 추가
                     path4 = cloneList(path2);
                     path4.add(code.getUser().getName());
                     path4.add(code.getFileName());
-                    addPathResponse(pathResponseList, path4, code.getId());
+                    pathResponseList.offer(addPathResponse(path4, code.getId()));
                 }
             }
             idx++;
@@ -298,13 +296,13 @@ public class StudyService {
             if(p1.size() == p2.size()) {
                 if(p1.get(Path.SCHEDULE.ordinal()).equals(p2.get(Path.SCHEDULE.ordinal()))) {
                     if (p1.get(Path.PROBLEM.ordinal()).equals(p2.get(Path.PROBLEM.ordinal())))
-                        return p1.get(Path.USER.ordinal()).compareTo(p2.get(Path.USER.ordinal()));
-                    return p1.get(Path.PROBLEM.ordinal()).compareTo(p2.get(Path.PROBLEM.ordinal()));
+                        return p1.get(Path.USER.ordinal()).compareTo(p2.get(Path.USER.ordinal()));      // 유저이름 오름차순 정렬
+                    return p1.get(Path.PROBLEM.ordinal()).compareTo(p2.get(Path.PROBLEM.ordinal()));    // 문제이름 오름차순 정렬
                 }
                 return -(Integer.parseInt(p1.get(Path.SCHEDULE.ordinal()).substring(0, p1.get(Path.SCHEDULE.ordinal()).indexOf("회")))
-                        - Integer.parseInt(p2.get(Path.SCHEDULE.ordinal()).substring(0, p2.get(Path.SCHEDULE.ordinal()).indexOf("회"))));
+                        - Integer.parseInt(p2.get(Path.SCHEDULE.ordinal()).substring(0, p2.get(Path.SCHEDULE.ordinal()).indexOf("회"))));    // 회차 내림차순 정렬
             }
-            return p1.size() - o2.getPath().size();
+            return p1.size() - o2.getPath().size();     // depth 오름차순 정렬
         });
 
         // 3. 정렬된 객체들에 대해 1번부터 번호 매기기
@@ -313,14 +311,10 @@ public class StudyService {
             pathResponse.setId(idx++);
         }
 
-        // 4. TreeResponse로 반환
-        TreeResponse treeResponse = TreeResponse.builder()
-                                        .list(pathResponseList)
-                                        .build();
-
-        return treeResponse;
+        return pathResponseList;
     }
 
+    // list 복사
     public List<String> cloneList(List<String> list) {
         List<String> newList = new ArrayList<>();
         for(String s : list) {
@@ -329,12 +323,13 @@ public class StudyService {
         return newList;
     }
 
-    public void addPathResponse(LinkedList<PathResponse> pathResponseList, List<String> path, long codeId) {
+    // PathResponse로 바꿔줌
+    public PathResponse addPathResponse(List<String> path, long codeId) {
         PathResponse pathResponse = PathResponse.builder()
                 .path(path)
                 .codeId(codeId)
                 .build();
-        pathResponseList.offer(pathResponse);
+        return pathResponse;
     }
 
 }
