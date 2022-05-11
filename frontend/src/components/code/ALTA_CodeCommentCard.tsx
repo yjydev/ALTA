@@ -15,6 +15,7 @@ import { toggleSolved } from '../../api/apis';
 import { ReviewData } from '../../types/CodeBlockType';
 import { CodeStore } from '../../context/CodeContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
+import { displayAt } from '../../modules/displayAt';
 
 export default function ALTA_CodeCommentCard({
   review,
@@ -53,7 +54,7 @@ export default function ALTA_CodeCommentCard({
           <Grid item md={15}>
             <Grid sx={infoStyle}>
               <h4>{review.reviewerName}</h4>
-              <p style={{ color: 'gray' }}>{review.commentDate}</p>
+              <p style={{ color: 'gray' }}>{displayAt(review.commentDate)}</p>
             </Grid>
             <Grid sx={infoStyle}>
               <Grid container sx={commentStyle}>
