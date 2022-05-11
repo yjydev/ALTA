@@ -33,15 +33,15 @@ public class FileLanguageUtil {
         return instanse;
     }
 
-    // 파일 이름 추출
-    public String getFileName(String file) {
-        int index = file.lastIndexOf('.');
-        if(index == -1) {   // 확장자가 없음
-            return file;
-        }
-        String fileName = file.substring(0, index);
-        return fileName;
-    }
+//    // 파일 이름 추출
+//    public String getFileName(String file) {
+//        int index = file.lastIndexOf('.');
+//        if(index == -1) {   // 확장자가 없음
+//            return file;
+//        }
+//        String fileName = file.substring(0, index);
+//        return fileName;
+//    }
 
     // 파일 이름에 스터디 언어에 따른 확장자 붙여서 반환
     public String getFullFileName(String fileName, String language) {
