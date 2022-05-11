@@ -7,7 +7,7 @@ import { UserDataStore } from '../../context/UserDataContext';
 
 import ALTA_UserData from './ALTA_UserData';
 import ALTA_StudyList from './ALTA_StudyList';
-import ALTA_MyPageSkeleton from '../skeleton/ALTA_MyPageSkeleton';
+import ALTA_Loading from '../common/ALTA_Loading';
 
 export default function ALTA_MypageContents() {
   const { userData, getUserData } = useContext(UserDataStore);
@@ -27,8 +27,8 @@ export default function ALTA_MypageContents() {
   }, []);
   return (
     <>
+      {loading && <ALTA_Loading />}
       <Box sx={{ position: 'relative' }}>
-        {loading && <ALTA_MyPageSkeleton />}
         {!loading && <ALTA_UserData />}
         {!loading && <ALTA_StudyList studyList={userData.studyList} />}
       </Box>

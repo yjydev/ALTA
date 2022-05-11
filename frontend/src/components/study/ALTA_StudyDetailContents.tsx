@@ -1,10 +1,12 @@
-import { Box } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import { StudyData } from '../../types/StudyType';
+import { generateError } from '../../modules/generateAlert';
+import { memberListApi } from '../../api/apis';
 import {
   addTableBarFrontBuilder,
   addTableBarBackBuilder,
@@ -12,8 +14,11 @@ import {
 
 import ALTA_ProblemTable from './ALTA_ProblemTable';
 import ALTA_FlipBar from '../common/ALTA_FlipBar';
-import ALTA_StudyDetailSkeleton from '../skeleton/ALTA_StudyDetailSkeleton';
-import { generateError } from '../../modules/generateAlert';
+import ALTA_Loading from '../common/ALTA_Loading';
+import ALTA_Inner from '../../components/common/ALTA_Inner';
+import ALTA_StudySideContents from '../../components/study/ALTA_StudySideContents';
+import ALTA_StudyMembers from '../../components/study/ALTA_StudyMembers';
+import ALTA_StudyBoard from '../../components/study/ALTA_StudyBoard';
 
 export default function ALTA_StudyDetailContents({
   studyId,
@@ -37,34 +42,54 @@ export default function ALTA_StudyDetailContents({
   }, []);
 
   return (
-    <Box sx={[wrapper, scrollStyle]}>
-      {loading && <ALTA_StudyDetailSkeleton />}{' '}
+    <>
+      {loading && <ALTA_Loading />}
       {!loading && (
-        <>
-          <Box sx={{ position: 'relative', marginTop: '30px' }}>
-            <ALTA_FlipBar
-              height="80px"
-              Front={addTableBarFrontBuilder()}
-              Back={addTableBarBackBuilder(studyId, getStudyDetail)}
-            />
-          </Box>
-          <Box sx={{ position: 'relative', marginTop: '150px' }}>
-            {studyData
-              .map((roundTable: StudyData) => (
-                <Box sx={{ margin: '30px 0 60px' }} key={roundTable.id}>
-                  <ALTA_ProblemTable
-                    studyId={studyId}
-                    scheduleId={roundTable.id}
-                    problems={roundTable.problems}
-                    roundTable={roundTable}
+        <Grid
+          sx={{ height: '100%', padding: '20px 0' }}
+          container
+          justifyContent="center"
+        >
+          <Grid item xl={3} lg={6}>
+            <ALTA_StudySideContents>
+              <ALTA_StudyMembers studyId={studyId} />
+            </ALTA_StudySideContents>
+          </Grid>
+          <Grid item xl={6}>
+            <ALTA_Inner>
+              <Box sx={[wrapper, scrollStyle]}>
+                <Box sx={{ position: 'relative', marginTop: '30px' }}>
+                  <ALTA_FlipBar
+                    height="80px"
+                    Front={addTableBarFrontBuilder()}
+                    Back={addTableBarBackBuilder(studyId, getStudyDetail)}
                   />
                 </Box>
-              ))
-              .reverse()}
-          </Box>
-        </>
+                <Box sx={{ position: 'relative', marginTop: '150px' }}>
+                  {studyData
+                    .map((roundTable: StudyData) => (
+                      <Box sx={{ margin: '30px 0 60px' }} key={roundTable.id}>
+                        <ALTA_ProblemTable
+                          studyId={studyId}
+                          scheduleId={roundTable.id}
+                          problems={roundTable.problems}
+                          roundTable={roundTable}
+                        />
+                      </Box>
+                    ))
+                    .reverse()}
+                </Box>
+              </Box>
+            </ALTA_Inner>
+          </Grid>
+          <Grid item xl={3} lg={6}>
+            <ALTA_StudySideContents>
+              <ALTA_StudyBoard />
+            </ALTA_StudySideContents>
+          </Grid>
+        </Grid>
       )}
-    </Box>
+    </>
   );
 }
 

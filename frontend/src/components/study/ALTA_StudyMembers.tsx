@@ -1,22 +1,21 @@
 import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { getRequest } from '../../api/request';
 import { useNavigate } from 'react-router-dom';
 
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { Member } from '../../types/StudyType';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
+import { memberListApi } from '../../api/apis';
 
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
-import ALTA_MembersSkeleton from '../skeleton/ALTA_MembersSkeleton';
-import { memberListApi } from '../../api/apis';
 
 export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
   const { members, setMembers, setMaxPeople } = useContext(StudyDetailStore);
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [showMemberManagement, setShowMemberManagement] =
+    useState<boolean>(false);
 
   const getMembers = async () => {
     if (!(await checkLogin())) navigate('/');
@@ -25,7 +24,7 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
 
       //최대 인원 수까지 빈 멤버 추가
       const tmpMember = [...response.members];
-      while (tmpMember.length < response.study_max_people)
+      while (tmpMember.length < response.studyMaxPeople)
         tmpMember.push({
           nickname: '',
           email: '',
@@ -33,9 +32,10 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
           position: '',
           resistrationData: '',
         });
-      setLoading(false);
+
       setMembers(tmpMember);
-      setMaxPeople(response.study_max_people);
+      setMaxPeople(response.studyMaxPeople);
+      if (response.studyCode) setShowMemberManagement(true);
     } catch (error) {
       console.log(error);
     }
@@ -47,17 +47,17 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
 
   return (
     <>
-      {loading && <ALTA_MembersSkeleton />}
-      {!loading &&
-        members.map((member: Member, i: number) => (
-          <ALTA_StudyMemberCard
-            key={`${i}-${member.nickname}-${member.email}`}
-            member={member}
-          />
-        ))}
-      <Link>
-        <Button sx={btnStyle}>멤버 관리</Button>
-      </Link>
+      {members.map((member: Member, i: number) => (
+        <ALTA_StudyMemberCard
+          key={`${i}-${member.nickname}-${member.email}`}
+          member={member}
+        />
+      ))}
+      {showMemberManagement && (
+        <Link onClick={() => navigate(`/study/${studyId}/member`)}>
+          <Button sx={btnStyle}>멤버 관리</Button>
+        </Link>
+      )}
     </>
   );
 }
