@@ -3,6 +3,7 @@ package com.ssafy.alta.dto.request;
 import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Problem;
 import com.ssafy.alta.entity.User;
+import com.ssafy.alta.util.FileLanguageUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class CodeRequest {
     @ApiModelProperty(value = "커밋 메시지")
     private String commitMessage;
 
-    @ApiModelProperty(value = "파일이름.확장자", required = true)
+    @ApiModelProperty(value = "생성, 재업로드 시 - 파일이름.확장자 / 수정 시 - 파일이름", required = true)
     private String fileName;
 
     @ApiModelProperty(value = "문제 키", required = true)
@@ -40,10 +41,11 @@ public class CodeRequest {
     @ApiModelProperty(value = "코드 내용", required = true)
     private String content;
 
+    // 생성, 재업로드 시에만 사용(수정 X)
     public Code toCode(User user, Problem problem) {
         Code code = Code.builder()
                 .content(content)
-                .fileName(fileName)
+                .fileName(FileLanguageUtil.getInstanse().getFileName(fileName))
                 .user(user)
                 .problem(problem)
                 .build();
