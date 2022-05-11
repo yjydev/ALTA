@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import {
   Avatar,
@@ -9,9 +9,15 @@ import {
   Typography,
   Button,
   Link,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-import { toggleSolved } from '../../api/apis';
+import { generateError, generateCheck } from '../../modules/generateAlert';
+
+import { toggleSolved, editReviewApi, deleteReviewApi } from '../../api/apis';
 import { ReviewData } from '../../types/CodeBlockType';
 import { CodeStore } from '../../context/CodeContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
@@ -24,8 +30,11 @@ export default function ALTA_CodeCommentCard({
 }) {
   const navigate = useNavigate();
   const [isResolved, setisResolved] = useState<boolean>(review.completed);
-  const { setCodeLine, user } = useContext(CodeStore);
+  const { setCodeLine, user, code } = useContext(CodeStore);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
+  const [commentValue, setCommentValue] = useState<string>(review.comment);
+  const { studyId, codeId } = JSON.parse(JSON.stringify(useLocation().state));
   const userData = localStorage.getItem('UserData');
   const profile = userData
     ? JSON.parse(userData)['profileUrl']
@@ -33,8 +42,48 @@ export default function ALTA_CodeCommentCard({
 
   const changeResolved = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    setisResolved(!isResolved);
-    await toggleSolved(review.reviewId, !review.completed);
+    if (user !== code.writer)
+      generateError('코드 작성자만 변경할 수 있습니다', '');
+    else {
+      try {
+        await toggleSolved(review.reviewId, !review.completed);
+        setisResolved(!isResolved);
+      } catch (err: any) {
+        generateError(
+          '상태 변경에 실패하였습니다',
+          `${err.response.data.message}`,
+        );
+      }
+    }
+  };
+
+  const handleEditComment = async () => {
+    if (!(await checkLogin()).status) navigate('/');
+    if (commentValue === '') generateError('내용을 작성해주세요', '');
+    else {
+      try {
+        await editReviewApi(review.reviewId, commentValue, review.codeNumber);
+        setIsEdit(false);
+        navigate('/study/code', { state: { studyId, codeId } });
+      } catch (err: any) {
+        generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
+      }
+    }
+  };
+
+  const handleDelComment = async () => {
+    if (!(await checkLogin()).status) navigate('/');
+    try {
+      await deleteReviewApi(review.reviewId);
+      generateCheck('리뷰가 삭제되었습니다.', ``, () =>
+        navigate('/study/code', { state: { studyId, codeId } }),
+      );
+    } catch (err: any) {
+      generateError(
+        '리뷰 삭제에 실패하였습니다',
+        `${err.response.data.message}`,
+      );
+    }
   };
 
   const moveToLine = () => {
@@ -53,34 +102,95 @@ export default function ALTA_CodeCommentCard({
           </Grid>
           <Grid item md={15}>
             <Grid sx={infoStyle}>
-              <h4>{review.reviewerName}</h4>
-              <p style={{ color: 'gray' }}>{displayAt(review.commentDate)}</p>
+              <Box sx={editStyle}>
+                <h4>{review.reviewerName}</h4>
+                {user === review.reviewerName ? (
+                  <>
+                    {isEdit ? (
+                      <>
+                        <Button
+                          disableRipple
+                          sx={[btnStyle, cancelBtn]}
+                          onClick={handleEditComment}
+                        >
+                          수정 완료
+                        </Button>
+                        <Button
+                          disableRipple
+                          onClick={() => {
+                            setIsEdit(false);
+                            setCommentValue(review.comment);
+                          }}
+                          sx={[btnStyle, cancelBtn]}
+                        >
+                          취소
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          startIcon={<EditIcon />}
+                          sx={[btnStyle, editBtn]}
+                          disableRipple
+                          onClick={() => setIsEdit(true)}
+                        />
+                        <Button
+                          startIcon={<DeleteForeverIcon />}
+                          disableRipple
+                          sx={btnStyle}
+                          onClick={handleDelComment}
+                        />
+                      </>
+                    )}
+                  </>
+                ) : null}
+              </Box>
+              <Typography sx={dateStyle}>
+                {displayAt(review.commentDate)}
+              </Typography>
             </Grid>
             <Grid sx={infoStyle}>
               <Grid container sx={commentStyle}>
-                <Link
-                  onClick={moveToLine}
-                  sx={commentCodeLine}
-                  underline="none"
-                  mr={1}
-                >
-                  {review['codeNumber']}번
-                </Link>
-                <Typography mb={2}>{review['comment']}</Typography>
+                {isEdit ? (
+                  <TextField
+                    value={commentValue}
+                    multiline
+                    size="small"
+                    sx={editCommentInput}
+                    onChange={(e) => setCommentValue(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Typography sx={adornStyle}>
+                            {`${review.codeNumber}번 라인 `}
+                          </Typography>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                ) : (
+                  <>
+                    <Link
+                      onClick={moveToLine}
+                      sx={commentCodeLine}
+                      underline="none"
+                      mr={1}
+                    >
+                      {review['codeNumber']}번
+                    </Link>
+                    <Typography mb={2}>{review['comment']}</Typography>
+                  </>
+                )}
               </Grid>
-              {user === review.reviewerName ? (
-                <Box>
-                  {isResolved ? (
-                    <Button onClick={changeResolved}>
-                      <Typography sx={resolvedStyle}>해결됨</Typography>
-                    </Button>
-                  ) : (
-                    <Button onClick={changeResolved}>
-                      <Typography sx={unresolvedStyle}> 미해결 </Typography>
-                    </Button>
-                  )}
-                </Box>
-              ) : null}
+              {isResolved ? (
+                <Button onClick={changeResolved}>
+                  <Typography sx={resolvedStyle}>해결됨</Typography>
+                </Button>
+              ) : (
+                <Button onClick={changeResolved}>
+                  <Typography sx={unresolvedStyle}> 미해결 </Typography>
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Grid>
@@ -93,6 +203,35 @@ const infoStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'baseline',
+};
+
+const dateStyle = {
+  color: 'gray',
+  paddingRight: '10px',
+};
+
+const editStyle = {
+  display: 'flex',
+};
+
+const btnStyle = {
+  'color': '#000000',
+  '&:hover': {
+    color: 'primary.main',
+    backgroundColor: 'inherit',
+  },
+  'minWidth': '20px',
+};
+
+const editBtn = {
+  paddingLeft: '16px',
+  paddingRight: 0,
+};
+
+const cancelBtn = {
+  paddingLeft: '16px',
+  paddingRight: 1,
+  paddingBottom: 0,
 };
 
 const profileStyle = {
@@ -117,4 +256,20 @@ const commentStyle = {
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'baseline',
+};
+
+const editCommentInput = {
+  paddingBottom: 2,
+  paddingLeft: 0,
+  width: '70%',
+};
+
+const codeSelect = {
+  alignItems: 'flex-end',
+  paddingTop: '2px',
+};
+
+const adornStyle = {
+  color: 'primary.main',
+  fontWeight: 'bold',
 };
