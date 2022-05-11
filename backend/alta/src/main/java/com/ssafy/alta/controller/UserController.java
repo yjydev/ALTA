@@ -1,6 +1,7 @@
 package com.ssafy.alta.controller;
 
 import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.service.ActivityScoreService;
 import com.ssafy.alta.service.RedisService;
 import com.ssafy.alta.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +24,8 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ActivityScoreService activityScoreService;
 
     @GetMapping("/gitLogin/loginSuccess")
     public ResponseEntity<String> authorize(@RequestParam ("jwt") String jwt)
@@ -42,5 +45,18 @@ public class UserController {
     @ApiOperation(value = "user 검색 결과", notes = "user 검색 결과 가져오기, id, nickname, email")
     public ResponseEntity selectUserName(@RequestParam("q") String word) {
         return new ResponseEntity<>(userService.selectUserName(word), HttpStatus.OK);
+    }
+
+//    @GetMapping("{userId}/{studyId}/{codeId}")
+//    public void  test(@PathVariable("userId") String userId,
+//                      @PathVariable("studyId") Long studyId,
+//                      @PathVariable("codeId") Long codeId){
+//        activityScoreService.addScoreForCommentOrCode(userId, studyId,codeId, 1);
+//    }
+    @GetMapping("{userId}/{studyId}/{problemId}")
+    public void  test2(@PathVariable("userId") String userId,
+                      @PathVariable("studyId") Long studyId,
+                      @PathVariable("problemId") Long problemId){
+        activityScoreService.addScoreProblem(userId, studyId,problemId, 3);
     }
 }

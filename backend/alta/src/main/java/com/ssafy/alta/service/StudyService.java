@@ -223,14 +223,7 @@ public class StudyService {
             throw new StudyOverMaxPeopleException();
 
         List<HashMap> result = gitCollaboratorAPI.selectCollaborators(token, study.getUser().getName(), study.getRepositoryName());
-
-        boolean check = false;
-        for(HashMap m : result) {
-            if(userId.equals(m.get("id").toString())) {
-                check = true;
-                break;
-            }
-        }
+        boolean check = isExist(result, userId);
 
         if(!check)
             throw new CollaboratorApprovalException();
@@ -239,16 +232,43 @@ public class StudyService {
         return study.getName();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteMember(Long studyId, Long sjiId) {
         String userId = userService.getCurrentUserId();
+        String token = redisService.getAccessToken();
 
         Optional<StudyJoinInfo> optSJIRequester = sjiRepository.findByStudyStudyIdAndUserId(studyId, userId);
         Optional<StudyJoinInfo> optSJI = sjiRepository.findById(sjiId);
+        Optional<Study> optStudy = studyRepository.findById(studyId);
         checkStudyJoinInfoPosition(optSJIRequester.get().getPosition());
         if (!optSJI.get().getState().equals("초대대기"))
             throw new DataNotFoundException();
 
+        Study study = optStudy.get();
+        User deleteUser = optSJI.get().getUser();
+
         sjiRepository.deleteById(sjiId);
+
+        List<HashMap> invitationList = gitCollaboratorAPI.selectInvitation(token, study.getUser().getName(), study.getRepositoryName());
+        String invitationId = null;
+        for(HashMap h : invitationList) {
+            HashMap m = (HashMap) h.get("invitee");
+            if(m.get("id").toString().equals(optSJI.get().getUser().getId())) {
+                invitationId = h.get("id").toString();
+                break;
+            }
+        }
+
+        if (invitationId == null) {
+            List<HashMap> result = gitCollaboratorAPI.selectCollaborators(token, study.getUser().getName(), study.getRepositoryName());
+            boolean check = isExist(result, deleteUser.getId());
+
+            if (check) {
+                gitCollaboratorAPI.deleteCollaborator(token, study.getUser().getName(), study.getRepositoryName(), deleteUser.getName());
+            }
+        } else {
+            gitCollaboratorAPI.deleteInvitation(token, study.getUser().getName(), study.getRepositoryName(), invitationId);
+        }
     }
 
     public List<PathResponse> selectTree(Long studyId) {
@@ -339,5 +359,16 @@ public class StudyService {
         if(state.equals("가입")) {
             throw new UserExistStudyException();
         }
+    }
+
+    private boolean isExist(List<HashMap> result, String userId) {
+        boolean check = false;
+        for(HashMap m : result) {
+            if(userId.equals(m.get("id").toString())) {
+                check = true;
+                break;
+            }
+        }
+        return check;
     }
 }

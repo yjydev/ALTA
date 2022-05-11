@@ -184,14 +184,14 @@ public class UserService1 {
         }
 
         if (langStringList.size() == 0)
-            langStringList.add("사용 언어를 설정해주세요.");
+            langStringList = null;
 
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
         userResponse.getUserData().put("email", user.getEmail());
         userResponse.getUserData().put("emailAlert", user.getEmailAlert());
         userResponse.getUserData().put("siteAlert", user.getSiteAlert());
-        userResponse.getUserData().put("introduction", user.getIntroduction());
+        userResponse.getUserData().put("introduction", user.getIntroduction() == null ? "" : user.getIntroduction());
         userResponse.getUserData().put("time", user.getActivityTime());
         userResponse.getUserData().put("languageList", langStringList);
         userResponse.getUserData().put("profileUrl", user.getImage());
