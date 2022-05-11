@@ -44,7 +44,6 @@ public class GitCollaboratorAPI {
         HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
 
         String url = "https://api.github.com/repos/" + owner + "/" + repo +"/collaborators";
-        System.out.println(url);
         ResponseEntity<JSONArray> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, JSONArray.class);
         List<HashMap> list = (List<HashMap>) response.getBody();
         return list;
@@ -74,7 +73,6 @@ public class GitCollaboratorAPI {
 
         String url = "https://api.github.com/repos/" + owner + "/" + repo + "/invitations/" + invitationId;
         ResponseEntity<HashMap> map = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, HashMap.class);
-        System.out.println(map.getStatusCode());
     }
 
     private HttpHeaders setHttpHeaders(String token) {
