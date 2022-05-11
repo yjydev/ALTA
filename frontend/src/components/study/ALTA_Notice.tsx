@@ -23,6 +23,10 @@ export default function ALTA_Notice({ studyId }: { studyId: number }) {
   const [noticeEditingLoading, setNoticeEditingLoading] = useState(false);
 
   const edit = async () => {
+    if (notice === noticeContent) {
+      return;
+    }
+
     setNoticeEditingLoading(true);
     const noticeStatus = await editNoticeContent(
       studyId,
