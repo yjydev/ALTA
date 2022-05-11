@@ -51,6 +51,12 @@ public class UserController1 {
         return new ResponseEntity<>(userService1.updateUser(userUpdateRequest),  HttpStatus.OK);
     }
 
+    @PostMapping(consumes = {"multipart/form-data"}, path = "/image")
+    @ApiOperation(value = "user 개인정보 사진 추가", notes = "user 개인 프로필 사진 추가")
+    public ResponseEntity updateUserImage(@RequestPart("profileImage") MultipartFile file) {
+
+        return new ResponseEntity(userService1.updateUserImage(file),  HttpStatus.OK);
+    }
     @PatchMapping("/alert")
     @ApiOperation(value = "알람 수신 여부 수정", notes = "user 알람 수신 여부 수정")
     public ResponseEntity patchUserAlert(@RequestBody int alertSetting) {
