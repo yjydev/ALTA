@@ -79,7 +79,7 @@ const userDataTopStyle = {
 };
 
 const unfold = {
-  height: '650px',
+  height: '580px',
 };
 
 const profileImgStyle = {

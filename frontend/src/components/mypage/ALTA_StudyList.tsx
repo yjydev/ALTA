@@ -1,11 +1,12 @@
 import { Box, Button, Grid } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import { Study } from '../../types/UserDataType';
+import scrollStyle from '../../modules/scrollStyle';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_StudyCard from './ALTA_StudyCard';
 import ALTA_inviteInput from './ALTA_inviteInput';
-import { useNavigate } from 'react-router-dom';
 
 export default function ALTA_StudyList({ studyList }: { studyList: Study[] }) {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function ALTA_StudyList({ studyList }: { studyList: Study[] }) {
         </Button>
         <ALTA_inviteInput />
       </Box>
-      <Grid sx={studyListStyle} container spacing={3} mb={3}>
+      <Grid sx={[studyListStyle, scrollStyle]} container spacing={3} mb={3}>
         {studyList.map((study: Study) => (
           <Grid key={study.id} item xs={6}>
             <Box onClick={() => goStudyDetail(study.id)}>
@@ -41,7 +42,7 @@ export default function ALTA_StudyList({ studyList }: { studyList: Study[] }) {
 
 const wrapper = {
   position: 'absolute',
-  minWidth: '100%',
+  width: '100%',
   top: '450px',
 };
 
@@ -52,10 +53,8 @@ const Btns = {
 };
 
 const studyListStyle = {
-  'height': '250px',
-  'overflowY': 'scroll',
-  'marginTop': 0,
-  '&::-webkit-scrollbar': {
-    display: 'none',
-  },
+  height: '250px',
+  overflowY: 'scroll',
+  marginTop: 0,
+  paddingRight: 0.5,
 };
