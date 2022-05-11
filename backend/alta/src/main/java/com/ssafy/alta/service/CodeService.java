@@ -142,7 +142,7 @@ public class CodeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest, boolean isUpdate) throws JsonProcessingException {
+    public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken();
 
@@ -171,16 +171,8 @@ public class CodeService {
         }
 
         // 코드 수정일 경우, -> 파일 이름, 내용 변경 -> DB에 적용
-        if(isUpdate) {
-            code.changeFile(codeRequest.getFileName(), codeRequest.getContent());
-            commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
-        }
-        // 코드 재업로드일 경우, -> 파일 삭제, 파일 생성
-        else {
-            codeRepository.deleteById(codeId);
-            code = codeRequest.toCode(user, code.getProblem());
-            codeRepository.save(code);
-        }
+        code.changeFile(codeRequest.getFileName(), codeRequest.getContent());
+        commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
 
         this.updateCodeInGithub(token, study, code, codeRequest, lastFileName);
     }
