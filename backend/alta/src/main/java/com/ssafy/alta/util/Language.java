@@ -15,16 +15,22 @@ import lombok.Getter;
  */
 @Getter
 public enum Language {
-    Java("Java", "java"),
-    C("C", "c"),
-    CPlus("C++", "cpp"),
-    CSharp("C#", "cs"),
-    Python("Python", "py"),
-    JS("Java Script", "js");
+    Java("Java", "java", "java"),
+    C("C", "c", "c"),
+    CPlus("C++", "cpp", "cpp"),
+    CSharp("C#", "cs", "csharp"),
+    Python("Python", "py", "python"),
+    JS("Java Script", "js", "javascript");
     private String language;
     private String extension;
-    Language(String language, String extension) {
+    private String editerFormat;
+    static private Language[] list = Language.values();
+    Language(String language, String extension, String editerFormat) {
         this.language = language;
         this.extension = extension;
+        this.editerFormat = editerFormat;
+    }
+    static public Language[] getList() {
+        return list;
     }
 }

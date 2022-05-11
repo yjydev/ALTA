@@ -1,6 +1,7 @@
 package com.ssafy.alta.controller;
 
 import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.service.ActivityScoreService;
 import com.ssafy.alta.service.RedisService;
 import com.ssafy.alta.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -23,13 +24,14 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ActivityScoreService activityScoreService;
 
     @GetMapping("/gitLogin/loginSuccess")
     public ResponseEntity<String> authorize(@RequestParam ("jwt") String jwt)
     {
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
-
 
     @GetMapping("/test")
     public void getUserInfo2( @RequestHeader String ACCESS_TOKEN) {

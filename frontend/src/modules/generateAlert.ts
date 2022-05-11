@@ -1,3 +1,4 @@
+import { stringify } from 'querystring';
 import Swal from 'sweetalert2';
 
 import '../style/AlertStyle.css';
@@ -52,5 +53,40 @@ export function generateTimer(title: string, text: string) {
     didOpen: async () => {
       Swal.showLoading();
     },
+  });
+}
+
+export function generateConfirm(
+  title: string,
+  text: string,
+  subTitle: string,
+  subText: string,
+  callback: () => Promise<void> | null,
+) {
+  Swal.fire({
+    title,
+    text,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: mainColor,
+    confirmButtonText: '확인',
+    cancelButtonColor: errorColor,
+    color: blackColor,
+    background: whiteColor,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: `${subTitle}`,
+        text: `${subText}`,
+        icon: 'success',
+        showConfirmButton: true,
+        confirmButtonColor: mainColor,
+        confirmButtonText: '확인',
+        color: blackColor,
+        background: whiteColor,
+      }).then(() => {
+        if (callback) callback();
+      });
+    }
   });
 }

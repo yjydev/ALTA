@@ -208,8 +208,26 @@ export async function toggleSolved(reviewId: number, isSolved: boolean) {
   return await putRequest(`/api/code/review/${reviewId}/solved`, requestBody);
 }
 
+// 리뷰(댓글) 수정 요청
+export async function editReviewApi(
+  reviewId: number,
+  content: string,
+  line: number,
+) {
+  const requestBody = {
+    content,
+    line,
+  };
+  return await putRequest(`/api/code/review/${reviewId}`, requestBody);
+}
+
 // delete
 // 코드 삭제 요청
 export async function deleteCodeApi(studyId: number, codeId: number) {
   return await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
+}
+
+// 댓글(리뷰) 삭제 요청
+export async function deleteReviewApi(reviewId: number) {
+  return await deleteRequest(`/api/code/review/${reviewId}`);
 }

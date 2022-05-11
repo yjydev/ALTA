@@ -37,11 +37,11 @@ public class ActivityScore {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_user_id")
-    private String userId;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_study_id")
-    private Long studyId;
+    private Study study;
 
     @Column(name = "history")
     private String history;

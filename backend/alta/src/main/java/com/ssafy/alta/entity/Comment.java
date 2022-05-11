@@ -83,7 +83,6 @@ public class Comment {
     public void updateComment(CommentUpdateRequest commentUpdateRequest) {
         this.line = commentUpdateRequest.getLine();
         this.content = commentUpdateRequest.getContent();
-        this.isSolved = commentUpdateRequest.getIsSolved();
     }
 
     public void changeState(boolean isSolved) {

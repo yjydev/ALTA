@@ -45,7 +45,7 @@ public class CodeRequest {
     public Code toCode(User user, Problem problem) {
         Code code = Code.builder()
                 .content(content)
-                .fileName(FileLanguageUtil.getInstanse().getFileName(fileName))
+                .fileName(fileName)
                 .user(user)
                 .problem(problem)
                 .build();
