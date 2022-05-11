@@ -72,7 +72,7 @@ export default function ALTA_CodeContents({
         </Box>
       </Grid>
       <Grid item md={10}>
-        <Box pr={15}>
+        <Box pr={10}>
           <Grid container direction="column" rowGap={3}>
             <Grid item sx={codeBlock_wrapper}>
               {isCodeEdit ? (
