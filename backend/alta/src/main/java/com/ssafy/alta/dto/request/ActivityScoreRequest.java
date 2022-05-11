@@ -1,6 +1,8 @@
 package com.ssafy.alta.dto.request;
 
 import com.ssafy.alta.entity.ActivityScore;
+import com.ssafy.alta.entity.Study;
+import com.ssafy.alta.entity.User;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -27,8 +29,8 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 public class ActivityScoreRequest {
 
-    private String userId;
-    private Long studyId;
+    private User userId;
+    private Study studyId;
     private String history;
     private int activityType;
 
