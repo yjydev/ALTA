@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { Member, StudyData } from '../types/StudyType';
 import { ContextProps } from '../types/ContextPropsType';
-import { editScheduleApi, studyDetailDataApi } from '../api/apis';
+import {
+  editScheduleApi,
+  memberListApi,
+  studyDetailDataApi,
+} from '../api/apis';
 import { checkLogin } from '../modules/LoginTokenChecker';
 
 //Context 인스턴스 생성
 const defaultValue: defaultValueType = {
-  maxPeople: 0,
-  setMaxPeople: () => null,
   members: [],
-  setMembers: () => null,
   studyData: [],
-  setStudyData: () => null,
+  maxPeople: 0,
   getStudyDetail: () => null,
+  getStudyMembers: () => null,
   editSchedule: () => null,
 };
 export const StudyDetailStore = React.createContext(defaultValue);
@@ -39,6 +41,34 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     }
   };
 
+  const getStudyMembers = async (studyId: number) => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status)
+      return { status: -1, message: 'login token error' };
+
+    try {
+      const response = await memberListApi(studyId);
+
+      //최대 인원 수까지 빈 멤버 추가
+      const tmpMember = [...response.members];
+      while (tmpMember.length < response.studyMaxPeople)
+        tmpMember.push({
+          nickname: '',
+          email: '',
+          state: '',
+          position: '',
+          resistrationData: '',
+        });
+
+      setMembers(tmpMember);
+      setMaxPeople(response.maxPeople);
+      return { status: 1, message: 'success get member data' };
+    } catch (err) {
+      return { status: -2, message: 'fail get member data' };
+    }
+  };
+
   const editSchedule = async (
     studyId: number,
     scheduleId: number,
@@ -59,12 +89,10 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 
   const value = {
     members,
-    setMembers,
     studyData,
-    setStudyData,
     maxPeople,
-    setMaxPeople,
     getStudyDetail,
+    getStudyMembers,
     editSchedule,
   };
   return (
@@ -75,13 +103,11 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 }
 //Context 기본값 타입
 type defaultValueType = {
-  maxPeople: number;
-  setMaxPeople: (newData: number) => void;
   members: Member[];
-  setMembers: (newData: Member[]) => void;
   studyData: StudyData[];
-  setStudyData: (newData: StudyData[]) => void;
+  maxPeople: number;
   getStudyDetail: (studyId: number) => any;
+  getStudyMembers: (studyId: number) => any;
   editSchedule: (
     studyId: number,
     scheduleId: number,

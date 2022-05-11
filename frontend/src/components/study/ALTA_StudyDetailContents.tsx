@@ -26,16 +26,23 @@ export default function ALTA_StudyDetailContents({
   studyId: number;
 }) {
   const navigate = useNavigate();
-  const { studyData, getStudyDetail } = useContext(StudyDetailStore);
+  const { studyData, getStudyDetail, getStudyMembers } =
+    useContext(StudyDetailStore);
 
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async function () {
-      const status = await getStudyDetail(studyId);
+      const [DetailStatus, MemberStatus] = await Promise.all([
+        getStudyDetail(studyId),
+        getStudyMembers(studyId),
+      ]);
 
-      if (status === -1) navigate('/');
-      else if (status === -2)
+      if (DetailStatus.status === -1 || MemberStatus.status === -1)
+        navigate('/');
+      else if (DetailStatus.status === -2)
+        generateError('스터디 정보를 불러올 수 없습니다', '');
+      else if (MemberStatus.status === -2)
         generateError('스터디 정보를 불러올 수 없습니다', '');
       else setLoading(false);
     })();

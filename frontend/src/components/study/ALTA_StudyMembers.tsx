@@ -11,46 +11,46 @@ import { memberListApi } from '../../api/apis';
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
 
 export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
-  const { members, setMembers, setMaxPeople } = useContext(StudyDetailStore);
+  const { members } = useContext(StudyDetailStore);
   const navigate = useNavigate();
 
   const [showMemberManagement, setShowMemberManagement] =
     useState<boolean>(false);
 
-  const getMembers = async () => {
-    if (!(await checkLogin())) navigate('/');
-    try {
-      const response = await memberListApi(studyId);
+  // const getMembers = async () => {
+  //   if (!(await checkLogin())) navigate('/');
+  //   try {
+  //     const response = await memberListApi(studyId);
 
-      //최대 인원 수까지 빈 멤버 추가
-      const tmpMember = [...response.members];
-      while (tmpMember.length < response.studyMaxPeople)
-        tmpMember.push({
-          nickname: '',
-          email: '',
-          state: '',
-          position: '',
-          resistrationData: '',
-        });
+  //     //최대 인원 수까지 빈 멤버 추가
+  //     const tmpMember = [...response.members];
+  //     while (tmpMember.length < response.studyMaxPeople)
+  //       tmpMember.push({
+  //         nickname: '',
+  //         email: '',
+  //         state: '',
+  //         position: '',
+  //         resistrationData: '',
+  //       });
 
-      setMembers(tmpMember);
-      setMaxPeople(response.studyMaxPeople);
-      if (response.studyCode) setShowMemberManagement(true);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     setMembers(tmpMember);
+  //     setMaxPeople(response.studyMaxPeople);
+  //     if (response.isLeader) setShowMemberManagement(true);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const goToManagement = (studyId: number) => {
     navigate('/study/member', { state: { studyId } });
   };
 
-  useEffect(() => {
-    getMembers();
-  }, []);
+  // useEffect(() => {
+  //   getMembers();
+  // }, []);
 
   return (
-    <>
+    <div>
       {members.map((member: Member, i: number) => (
         <ALTA_StudyMemberCard
           key={`${i}-${member.nickname}-${member.email}`}
@@ -58,11 +58,11 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
         />
       ))}
       {showMemberManagement && (
-        <Link onClick={() => navigate(`/study/${studyId}/member`)}>
+        <Link onClick={() => goToManagement(studyId)}>
           <Button sx={btnStyle}>멤버 관리</Button>
         </Link>
       )}
-    </>
+    </div>
   );
 }
 

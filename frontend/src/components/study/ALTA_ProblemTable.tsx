@@ -61,7 +61,7 @@ export default function ALTA_ProblemTable({
   return (
     <>
       <Box sx={sectionStyle}>
-        <Typography
+        <Box
           sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}
         >
           {`${roundTable.round} 회차 : `}
@@ -103,7 +103,7 @@ export default function ALTA_ProblemTable({
               </ALTA_Tooltip>
             )}
           </Button>
-        </Typography>
+        </Box>
       </Box>
       <Box sx={tableStyle}>
         <Box>
