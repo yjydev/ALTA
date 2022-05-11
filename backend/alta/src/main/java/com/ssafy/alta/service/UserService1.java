@@ -97,7 +97,8 @@ public class UserService1 {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file) {
+//    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file) {
+    public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
         String user_id = userService.getCurrentUserId();
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
@@ -115,19 +116,19 @@ public class UserService1 {
         }
 
         // 이미지 저장
-        String imagePath = environment.getProperty("image.basePath") + UUID.randomUUID() + file.getOriginalFilename();
-        try {
-            file.transferTo(new File(imagePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        String imagePath = environment.getProperty("image.basePath") + UUID.randomUUID() + file.getOriginalFilename();
+//        try {
+//            file.transferTo(new File(imagePath));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         // 받은 정보로 유저 정보 업데이트
         User newUser = new User().builder()
                 .nickname(userUpdateRequest.getNickname())
                 .email(userUpdateRequest.getEmail())
                 .id(user_id)
-                .image(imagePath)
+//                .image(imagePath)
                 .introduction(userUpdateRequest.getIntroduction())
                 .language(sum)
                 .name(exUser.getName())
