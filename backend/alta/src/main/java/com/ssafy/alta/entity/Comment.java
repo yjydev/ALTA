@@ -76,6 +76,7 @@ public class Comment {
                 .comment(content)
                 .codeNumber(line)
                 .completed(isSolved)
+                .commentDate(createDate)
                 .build();
     }
 
