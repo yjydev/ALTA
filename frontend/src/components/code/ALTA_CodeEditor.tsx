@@ -111,7 +111,7 @@ export default function ALTA_CodeEditor({
           <Box sx={codeBlockStyle} className="codeBlock">
             <MonacoEditor
               id="code-monaco-editor"
-              language={code.language}
+              language={code.language.toLowerCase()}
               value={code.code}
               options={{
                 theme: 'vs-dark',
