@@ -241,7 +241,6 @@ public class StudyService {
 
     public void deleteMember(Long studyId, Long sjiId) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
 
         Optional<StudyJoinInfo> optSJIRequester = sjiRepository.findByStudyStudyIdAndUserId(studyId, userId);
         Optional<StudyJoinInfo> optSJI = sjiRepository.findById(sjiId);
