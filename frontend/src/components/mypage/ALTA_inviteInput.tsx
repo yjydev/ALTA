@@ -26,8 +26,10 @@ export default function ALTA_inviteInput() {
         `/api/study/invitation`,
         JSON.stringify(request),
       );
-      generateCheck('가입 완료', `스터디에 가입되었습니다`, () =>
-        navigate('/mypage'),
+      generateCheck(
+        '가입 완료',
+        `${res.studyName}스터디에 가입되었습니다`,
+        () => navigate('/mypage'),
       );
     } catch (err) {
       // console.log(err);

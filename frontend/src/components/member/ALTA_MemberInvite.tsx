@@ -50,6 +50,7 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
   };
 
   const handleInvite = async () => {
+    if (!(await checkLogin()).status) navigate('/');
     generateTimer(
       '잠시 기다려 주세요',
       `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`,

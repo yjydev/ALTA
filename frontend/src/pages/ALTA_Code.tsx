@@ -1,33 +1,31 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
-import CodeReviewContext from '../context/CodeReviewContext';
-import { loginTokenChecker } from '../modules/LoginTokenChecker';
+import CodeContext from '../context/CodeContext';
 
 import ALTA_CodeContents from '../components/code/ALTA_CodeContents';
 import ALTA_Template from '../components/common/ALTA_Template';
 import ALTA_Header from '../components/common/ALTA_Header';
 
 export default function ALTA_Code() {
-  const navigate = useNavigate();
   useEffect(() => {
     document.title = 'ALTA | 코드 상세보기';
-
-    if (loginTokenChecker() === -1) navigate('/');
   }, []);
-
-  const { studyId, codeId } = useParams<{
-    studyId: string | undefined;
-    codeId: string | undefined;
-  }>();
+  const { studyId, codeId, problem } = JSON.parse(
+    JSON.stringify(useLocation().state),
+  );
   const Header = () => <ALTA_Header />;
   const Contents = () => (
-    <CodeReviewContext>
+    <CodeContext>
       <Div>
-        <ALTA_CodeContents studyId={studyId} codeId={codeId} />
+        <ALTA_CodeContents
+          studyId={studyId}
+          codeId={codeId}
+          problem={problem}
+        />
       </Div>
-    </CodeReviewContext>
+    </CodeContext>
   );
   return <ALTA_Template header={<Header />} contents={<Contents />} />;
 }
