@@ -15,16 +15,16 @@ import java.util.Map;
  * 2022-04-29	    우정연  		    최초 생성
  */
 public class FileLanguageUtil {
-    private Map<String, String> LanguageToFile;
+    private Map<String, String> languageToFile;
     private static FileLanguageUtil instanse = null;
     private FileLanguageUtil() {
-        LanguageToFile = new HashMap<>();
-        LanguageToFile.put(Language.Java.getLanguage(), Language.Java.getExtension());
-        LanguageToFile.put(Language.Python.getLanguage(), Language.Python.getExtension());
-        LanguageToFile.put(Language.C.getLanguage(), Language.C.getExtension());
-        LanguageToFile.put(Language.CPlus.getLanguage(), Language.CPlus.getExtension());
-        LanguageToFile.put(Language.CSharp.getLanguage(), Language.CSharp.getExtension());
-        LanguageToFile.put(Language.JS.getLanguage(), Language.JS.getExtension());
+        languageToFile = new HashMap<>();
+        languageToFile.put(Language.Java.getLanguage(), Language.Java.getExtension());
+        languageToFile.put(Language.Python.getLanguage(), Language.Python.getExtension());
+        languageToFile.put(Language.C.getLanguage(), Language.C.getExtension());
+        languageToFile.put(Language.CPlus.getLanguage(), Language.CPlus.getExtension());
+        languageToFile.put(Language.CSharp.getLanguage(), Language.CSharp.getExtension());
+        languageToFile.put(Language.JS.getLanguage(), Language.JS.getExtension());
     }
     public static FileLanguageUtil getInstanse() {
         if(instanse == null) {
@@ -41,5 +41,13 @@ public class FileLanguageUtil {
         }
         String fileName = file.substring(index + 1, file.length());
         return fileName;
+    }
+
+    public String getFileExtension(String language) {
+        if(!languageToFile.containsKey(language)) {     // 스터디 언어가 잘못 설정되 있으면 git에 txt로 저장
+            return "txt";
+        } else {
+            return languageToFile.get(language);
+        }
     }
 }
