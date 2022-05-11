@@ -84,5 +84,6 @@ github:
 
 image:
 #  basePath: C:\Github\altaImage\
-  basePath: /home/ubuntu/altaProfilImage/
+  basePath: /home/ubuntu/images/
+  urlBasePath : http://k6b203.p.ssafy.io:8000/images/
 
