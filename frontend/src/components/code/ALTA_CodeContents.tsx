@@ -7,12 +7,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { deleteCodeApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
 import { CodeProps } from '../../types/CodeBlockType';
-import {
-  generateCheck,
-  generateError,
-  generateTimer,
-  generateConfirm,
-} from '../../modules/generateAlert';
+import { generateError, generateConfirm } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_CodeEditor from './ALTA_CodeEditor';
