@@ -8,7 +8,7 @@ import {
 
 import scrollStyle from '../../modules/scrollStyle';
 
-import { Member } from '../../types/StudyType';
+import { Member } from '../../types/MemberType';
 
 import ALTA_MemberTableBody from './ALTA_MemberTableBody';
 
