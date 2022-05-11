@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Grid,
@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 
 import { sendMailApi, searchMemberApi } from '../../api/apis';
+import { MemberStore } from '../../context/MemberContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import {
   generateCheck,
@@ -51,12 +52,12 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
 
   const handleInvite = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    generateTimer(
-      '잠시 기다려 주세요',
-      `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`,
-    );
     if (inputValue) {
       if (selectUser.email) {
+        generateTimer(
+          '잠시 기다려 주세요',
+          `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`,
+        );
         try {
           const res = await sendMailApi(studyId, parseInt(selectUser.id));
           generateCheck(
