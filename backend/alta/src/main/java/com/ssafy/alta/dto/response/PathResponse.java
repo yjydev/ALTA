@@ -25,7 +25,6 @@ import java.util.List;
 @ApiModel(value = "경로 정보")
 @Getter
 @Setter
-@Builder
 @ToString
 public class PathResponse {
     @ApiModelProperty(value = "키")
@@ -36,4 +35,9 @@ public class PathResponse {
 
     @ApiModelProperty(value = "경로 리스트")
     private List<String> path;
+
+    public PathResponse(List<String> path, Long codeId) {
+        this.path = path;
+        this.codeId = codeId;
+    }
 }

@@ -266,21 +266,21 @@ public class StudyService {
         for(Schedule schedule : scheduleList) {         // 일정(회차) 추가
             path1 = new ArrayList<>();
             path1.add((scheduleList.size() - idx) + "회차");
-            pathResponseList.offer(addPathResponse(path1, 0L));
+            pathResponseList.offer(new PathResponse(path1, 0L));
             for(Problem problem : schedule.getProblems()) {     // 문제 추가
                 path2 = cloneList(path1);
                 path2.add(problem.getName());
-                pathResponseList.offer(addPathResponse(path2, 0L));
+                pathResponseList.offer(new PathResponse(path2, 0L));
                 for(StudyJoinInfo info : sjiList) {             // 유저 추가
                     path3 = cloneList(path2);
                     path3.add(info.getUser().getName());
-                    pathResponseList.offer(addPathResponse(path3, 0L));
+                    pathResponseList.offer(new PathResponse(path3, 0L));
                 }
                 for(Code code : problem.getCode()) {            // 코드 추가
                     path4 = cloneList(path2);
                     path4.add(code.getUser().getName());
                     path4.add(code.getFileName());
-                    pathResponseList.offer(addPathResponse(path4, code.getId()));
+                    pathResponseList.offer(new PathResponse(path4, code.getId()));
                 }
             }
             idx++;
@@ -321,15 +321,6 @@ public class StudyService {
             newList.add(s);
         }
         return newList;
-    }
-
-    // PathResponse로 바꿔줌
-    public PathResponse addPathResponse(List<String> path, long codeId) {
-        PathResponse pathResponse = PathResponse.builder()
-                .path(path)
-                .codeId(codeId)
-                .build();
-        return pathResponse;
     }
 
 }
