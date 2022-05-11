@@ -35,6 +35,7 @@ type Props = {
 const wrapper = {
   position: 'relative',
   width: '100%',
+  cursor: 'pointer',
 };
 
 const frontStyle = {

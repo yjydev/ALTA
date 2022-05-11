@@ -17,6 +17,26 @@ export async function memberListApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/members`);
 }
 
+// 스터디 멤버 관리 - 멤버 정보 요청
+export async function memberManagementDataApi(studyId: number) {
+  return await getRequest(`/api/study/${studyId}/members/management`);
+}
+
+// 스터디 멤버 관리 - 유저 검색 요청
+export async function searchMemberApi(nickname: string) {
+  return await getRequest(`/api/user/search?q=${nickname}`);
+}
+
+// 코드 요청
+export async function codeDataApi(studyId: number, codeId: number) {
+  return await getRequest(`/api/study/${studyId}/code/${codeId}`);
+}
+
+// 댓글 리뷰 정보 요청
+export async function reivewDataApi(codeId: number) {
+  return await getRequest(`/api/code/review/${codeId}`);
+}
+
 //POST
 //스터디 생성 요청
 export async function organizeStudyApi(requestBody: OrganizeStudyRequset) {
@@ -78,14 +98,33 @@ export async function submitCodeApi(
     commitMessage,
     fileName,
     content: code,
+    problemId,
   };
 
-  return await postRequest(
-    `/api/study/${studyId}/code`,
-    Object.assign(requestBody, { problemId }),
-  );
+  return await postRequest(`/api/study/${studyId}/code`, requestBody);
 }
 
+// 스터디 초대 메일 발송 요청
+export async function sendMailApi(studyId: number, userId: number) {
+  const requestBody = {
+    userId,
+  };
+  return await postRequest(`/api/study/${studyId}/invitation`, requestBody);
+}
+
+// 댓글(리뷰) 추가 요청
+export async function addReviewApi(
+  codeId: number,
+  content: string,
+  line: number,
+) {
+  const requestBody = {
+    codeId,
+    content,
+    line,
+  };
+  return await postRequest('/api/code/review', requestBody);
+}
 //PUT
 //스터디 회차 일정 수정 요청
 export async function editScheduleApi(
@@ -118,11 +157,12 @@ export async function editCodeApi(
     commitMessage,
     fileName,
     content: code,
+    codeId,
   };
 
   return await await putRequest(
     `/api/study/${studyId}/code/${codeId}/reupload`,
-    Object.assign(requestBody, { codeId }),
+    requestBody,
   );
 }
 //문제 수정 요청
@@ -138,4 +178,38 @@ export async function editProblemApi(
     link,
   };
   return await await putRequest(`/api/study/${studyId}/problem/`, requestBody);
+}
+
+// 코드 수정 요청
+export async function modifyCodeApi(
+  studyId: number,
+  codeId: number,
+  commitMessage: string,
+  fileName: string,
+  content: string,
+) {
+  const requestBody = {
+    commitMessage,
+    fileName,
+    content,
+    codeId,
+  };
+  return await putRequest(
+    `/api/study/${studyId}/code/${codeId}/modify`,
+    requestBody,
+  );
+}
+
+// 리뷰(댓글) 해결 여부 토글 요청
+export async function toggleSolved(reviewId: number, isSolved: boolean) {
+  const requestBody = {
+    isSolved,
+  };
+  return await putRequest(`/api/code/review/${reviewId}/solved`, requestBody);
+}
+
+// delete
+// 코드 삭제 요청
+export async function deleteCodeApi(studyId: number, codeId: number) {
+  return await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
 }

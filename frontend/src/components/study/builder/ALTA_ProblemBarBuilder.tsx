@@ -6,6 +6,8 @@ import { Member, Problem, Code } from '../../../types/StudyType';
 import { useNavigate } from 'react-router-dom';
 import { blackColor, mainColor } from '../../../modules/colorChart';
 
+import ALTA_Tooltip from '../../common/ALTA_Tooltip';
+
 export const problemBarFrontBuilder = (
   problem: Problem,
   members: Member[],
@@ -27,7 +29,9 @@ export const problemBarFrontBuilder = (
       <Grid container sx={tableBodyStyle}>
         <Grid item xs={4} sx={sellStyle}>
           <Button sx={problemEditBtnStyle} onClick={fliper}>
-            <EditIcon />
+            <ALTA_Tooltip title="문제 수정하기">
+              <EditIcon />
+            </ALTA_Tooltip>
           </Button>
           <Typography sx={ellipsisStyle}>
             <A href={problem.link} target="_blank">
@@ -76,7 +80,10 @@ function SellBtn({ code, problem, memberName, studyId }: SellBtnProps) {
   };
 
   const goCodeDetail = () => {
-    if (code) navigate(`/study/${studyId}/code/${code.id}`);
+    if (code)
+      navigate(`/study/code`, {
+        state: { studyId, codeId: code.id, problem: problem.name },
+      });
   };
 
   return (

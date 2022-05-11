@@ -10,6 +10,7 @@ import { blackColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { editCodeApi, submitCodeApi } from '../../api/apis';
+import ALTA_Tooltip from '../common/ALTA_Tooltip';
 
 export default function ALTA_CodeSubmitContents() {
   const navigate = useNavigate();
@@ -83,15 +84,17 @@ export default function ALTA_CodeSubmitContents() {
         focusHandler={() => null}
       >
         <FileInput id="file" type="file" onChange={uploadFile} />
-        <Button variant="contained" sx={uploadBtnStyle}>
-          <Label htmlFor="file">
-            <Box sx={uploadBtnStyle}>
-              <AddCircleIcon
-                sx={{ color: blackColor, opacity: '0.5', fontSize: '25px' }}
-              />
-            </Box>
-          </Label>
-        </Button>
+        <ALTA_Tooltip title="PC에서 파일 찾기">
+          <Button variant="contained" sx={uploadBtnStyle}>
+            <Label htmlFor="file">
+              <Box sx={uploadBtnStyle}>
+                <AddCircleIcon
+                  sx={{ color: blackColor, opacity: '0.5', fontSize: '25px' }}
+                />
+              </Box>
+            </Label>
+          </Button>
+        </ALTA_Tooltip>
       </ALTA_InputItem>
       <ALTA_CodeBlock code={code} language="javascript" />
       <Box sx={{ textAlign: 'right' }}>
