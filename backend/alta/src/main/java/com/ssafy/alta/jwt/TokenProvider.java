@@ -1,12 +1,14 @@
 package com.ssafy.alta.jwt;
 
 import com.ssafy.alta.exception.JwtExpiredExaception;
+import com.ssafy.alta.service.RedisService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,6 +48,8 @@ public class TokenProvider implements InitializingBean {
 
     private Key key;
 
+    @Autowired
+    private RedisService redisService;
 
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
@@ -135,6 +139,13 @@ public class TokenProvider implements InitializingBean {
             logger.info("JWT token compact of handler are invalid."); // JWT 토큰이 잘못되었습니다.
             throw new JwtException("JWT error");
         }
+    }
+
+    public boolean compareWithRedisData(String token){
+        String storedRT = redisService.getJWTRefreshToken();
+        if(storedRT.equals(token))
+            return true;
+        return false;
     }
 
 
