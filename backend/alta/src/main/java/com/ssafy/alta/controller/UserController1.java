@@ -43,14 +43,16 @@ public class UserController1 {
     @PostMapping(consumes = {"multipart/form-data"}, path = "/info")
     @ApiOperation(value = "user 개인정보 수정", notes = "user 개인 정보 수정")
 //    public ResponseEntity updateUserInfo(@RequestPart("profileImage") MultipartFile profileImageFile, @ModelAttribute UserUpdateRequest userUpdateRequest) {
-    public ResponseEntity updateUserInfo( @ModelAttribute UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity updateUserInfo(@RequestBody UserUpdateRequest userUpdateRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 //        return new ResponseEntity<>(userService1.updateUser(userUpdateRequest, profileImageFile), HttpStatus.OK);
-        return new ResponseEntity<>(userService1.updateUser(userUpdateRequest), HttpStatus.OK);
+        return new ResponseEntity<>(userService1.updateUser(userUpdateRequest), headers, HttpStatus.OK);
     }
 
     @PatchMapping("/alert")
     @ApiOperation(value = "알람 수신 여부 수정", notes = "user 알람 수신 여부 수정")
-    public ResponseEntity patchUserAlert(@RequestBody int alertSetting ){
+    public ResponseEntity patchUserAlert(@RequestBody int alertSetting) {
         return new ResponseEntity<>(userService1.updateAlert(alertSetting), HttpStatus.OK);
     }
 }
