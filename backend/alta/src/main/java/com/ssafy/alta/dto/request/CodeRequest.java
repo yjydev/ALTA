@@ -43,7 +43,6 @@ public class CodeRequest {
 
     // 생성, 재업로드 시에만 사용(수정 X)
     public Code toCode(User user, Problem problem) {
-        this.fileName = FileLanguageUtil.getInstanse().getFileName(fileName);
         Code code = Code.builder()
                 .content(content)
                 .fileName(fileName)
