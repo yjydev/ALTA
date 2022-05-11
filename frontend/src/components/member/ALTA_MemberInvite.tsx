@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 
 import { sendMailApi, searchMemberApi } from '../../api/apis';
+import { MemberStore } from '../../context/MemberContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import {
   generateCheck,
@@ -19,7 +20,6 @@ import {
   generateTimer,
 } from '../../modules/generateAlert';
 
-import { MemberStore } from '../../context/MemberContext';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList({ studyId }: { studyId: number }) {
