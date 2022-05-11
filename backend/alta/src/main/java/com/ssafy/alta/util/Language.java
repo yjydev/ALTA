@@ -15,14 +15,16 @@ import lombok.Getter;
  */
 @Getter
 public enum Language {
-    Java("java"),
-    Python("python"),
-    C("c"),
-    CPlus("cpp"),
-    CSharp("C#"),
-    JS("javascript");
+    Java("Java", "js"),
+    C("C", "c"),
+    CPlus("C++", "cpp"),
+    CSharp("C#", "cs"),
+    Python("Python", "py"),
+    JS("Java Script", "js");
     private String language;
-    Language(String language) {
+    private String extension;
+    Language(String language, String extension) {
         this.language = language;
+        this.extension = extension;
     }
 }
