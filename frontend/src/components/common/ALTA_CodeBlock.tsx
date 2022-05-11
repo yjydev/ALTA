@@ -23,7 +23,7 @@ export default function ALTA_CodeBlock({
     >
       <Box>
         <SyntaxHighlighter
-          language={language}
+          language={language.toLowerCase()}
           style={code_themes['darcula']}
           className="highlighter"
           showLineNumbers={true}
