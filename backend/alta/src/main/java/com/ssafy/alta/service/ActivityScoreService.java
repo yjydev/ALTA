@@ -1,14 +1,11 @@
 package com.ssafy.alta.service;
 
-import com.ssafy.alta.dto.request.ActivityScoreRequest;
 import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -67,8 +64,13 @@ public class ActivityScoreService {
             history = study_name + " 스터디에 " + code_file_name + " 파일을 업로드 했습니다.";
         }
 
-        ActivityScoreRequest activityScoreRequest = new ActivityScoreRequest(optUser.get(), study.get() , history, activityType);
-        activityScoreRepository.save(activityScoreRequest.toEntity());
+        ActivityScore activityScore = ActivityScore.builder()
+                .user(optUser.get())
+                .study(study.get())
+                .history(history)
+                .activityType(activityType)
+                .build();
+        activityScoreRepository.save(activityScore);
     }
 
     public void addScoreProblem(String user_id, Long study_id, Long problem_id, int activityType){
@@ -85,8 +87,13 @@ public class ActivityScoreService {
 
         String history = study_name + " 스터디에 " + problem_name + " 문제를 업로드 했습니다.";
 
-        ActivityScoreRequest activityScoreRequest = new ActivityScoreRequest(optUser.get(), study.get(),history, 3);
-        activityScoreRepository.save(activityScoreRequest.toEntity());
+        ActivityScore activityScore = ActivityScore.builder()
+                .user(optUser.get())
+                .study(study.get())
+                .history(history)
+                .activityType(activityType)
+                .build();
+        activityScoreRepository.save(activityScore);
     }
 
 //    public int getScore(String user_id, Long study_id){

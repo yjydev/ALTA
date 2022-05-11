@@ -33,7 +33,6 @@ public class UserController {
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
-
     @GetMapping("/test")
     public void getUserInfo2( @RequestHeader String ACCESS_TOKEN) {
 
@@ -45,18 +44,5 @@ public class UserController {
     @ApiOperation(value = "user 검색 결과", notes = "user 검색 결과 가져오기, id, nickname, email")
     public ResponseEntity selectUserName(@RequestParam("q") String word) {
         return new ResponseEntity<>(userService.selectUserName(word), HttpStatus.OK);
-    }
-
-//    @GetMapping("{userId}/{studyId}/{codeId}")
-//    public void  test(@PathVariable("userId") String userId,
-//                      @PathVariable("studyId") Long studyId,
-//                      @PathVariable("codeId") Long codeId){
-//        activityScoreService.addScoreForCommentOrCode(userId, studyId,codeId, 1);
-//    }
-    @GetMapping("{userId}/{studyId}/{problemId}")
-    public void  test2(@PathVariable("userId") String userId,
-                      @PathVariable("studyId") Long studyId,
-                      @PathVariable("problemId") Long problemId){
-        activityScoreService.addScoreProblem(userId, studyId,problemId, 3);
     }
 }
