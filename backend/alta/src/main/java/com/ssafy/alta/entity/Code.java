@@ -2,7 +2,6 @@ package com.ssafy.alta.entity;
 
 import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.CodeResponse;
-import com.ssafy.alta.util.FileToLanguage;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -94,12 +93,12 @@ public class Code {
         this.content = content;
     }
 
-    public CodeInfoResponse toCodeInfoResponse() {
+    public CodeInfoResponse toCodeInfoResponse(String language) {
         return CodeInfoResponse.builder()
                 .code(this.content)
                 .createDate(this.createDate)
                 .fileName(this.fileName)
-                .language(FileToLanguage.getInstanse().getLanguage(this.fileName))
+                .language(language)
                 .writer(this.user.getNickname())
                 .build();
     }

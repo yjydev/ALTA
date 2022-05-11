@@ -7,6 +7,7 @@ import com.ssafy.alta.dto.request.StudyUserIdRequest;
 import com.ssafy.alta.service.StudyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,9 +62,21 @@ public class StudyController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{studyId}/invitation/{sjiId}")
+    public ResponseEntity deleteMember(@PathVariable("studyId") Long studyId, @PathVariable("sjiId") Long sjiId){
+        studyService.deleteMember(studyId, sjiId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping("/invitation")
     @ApiOperation(value = "스터디 가입 검증")
     public ResponseEntity updateStudyMember(@RequestBody StudyCodeRequest studyCodeRequest) {
         return new ResponseEntity<>(studyService.updateStudyMember(studyCodeRequest), HttpStatus.OK);
+    }
+
+    @PutMapping("/{study_id}/tree")
+    @ApiOperation(value = "트리 구조 조회", notes = "스터디의 트리 구조를 조회한다.")
+    public ResponseEntity updateStudyMember(@ApiParam(value = "스터디 키", required = true) @PathVariable("study_id") Long studyId) {
+        return new ResponseEntity<>(studyService.selectTree(studyId), HttpStatus.OK);
     }
 }

@@ -10,6 +10,7 @@ import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.*;
+import com.ssafy.alta.util.FileLanguageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class CodeService {
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
     private static final String BRANCH = "main";
+    private FileLanguageUtil fileLanguageUtil = FileLanguageUtil.getInstanse();
 
     @Transactional(rollbackFor = Exception.class)
     public void insertCode(Long studyId, CodeRequest codeRequest) throws JsonProcessingException {
@@ -108,7 +110,7 @@ public class CodeService {
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
 
-        return code.toCodeInfoResponse();
+        return code.toCodeInfoResponse(study.getLanguage());
     }
 
 
@@ -186,7 +188,8 @@ public class CodeService {
     @Transactional(rollbackFor = Exception.class)
     public void createCodeInGithub(String token, Study study, Code code, CodeRequest codeRequest) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), codeRequest.getFileName());
+        String fullFileName = fileLanguageUtil.getFullFileName(codeRequest.getFileName(), study.getLanguage());
+        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
         String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
         String commitMessage = this.getCommitMessage(codeRequest.getCommitMessage());
 
@@ -222,7 +225,8 @@ public class CodeService {
     public void deleteCodeInGithub(String token, Study study, Code code, boolean isUpdate, String lastFileName) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String fileName = isUpdate ? lastFileName : code.getFileName();
-        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fileName);
+        String fullFileName = fileLanguageUtil.getFullFileName(fileName, study.getLanguage());
+        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
         String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
 
         GitCodeResponse gitCodeResponse = null;
@@ -250,7 +254,8 @@ public class CodeService {
 
     public GitCodeResponse selectCodeInGithub(String token, Study study, Code code, boolean isUpdate) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), code.getFileName());
+        String fullFileName = fileLanguageUtil.getFullFileName(code.getFileName(), study.getLanguage());
+        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
         String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
 
 

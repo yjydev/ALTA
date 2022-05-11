@@ -2,7 +2,7 @@ export type ReviewData = {
   reviewId: number;
   reviewerName: string;
   comment: string;
-  commentDate: string;
+  commentDate: Date;
   codeNumber: number;
   completed: boolean;
 };

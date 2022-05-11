@@ -2,18 +2,15 @@ package com.ssafy.alta.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.*;
+import com.ssafy.alta.dto.response.PathResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoMemberResponse;
 import com.ssafy.alta.dto.response.StudyJoinInfoResponse;
-import com.ssafy.alta.entity.Study;
-import com.ssafy.alta.entity.StudyJoinInfo;
-import com.ssafy.alta.entity.User;
+import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitCollaboratorAPI;
 import com.ssafy.alta.gitutil.GitRepoAPI;
 import com.ssafy.alta.mailutil.MailHandler;
-import com.ssafy.alta.repository.StudyJoinInfoRepository;
-import com.ssafy.alta.repository.StudyRepository;
-import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -35,6 +32,7 @@ import java.util.*;
  * DATE             AUTHOR              NOTE
  * -----------------------------------------------------------
  * 2022-04-26       jisoon Lee         최초 생성
+ * 2022-05-10       우정연             코드 트리 기능 추가
  */
 
 @Service
@@ -43,12 +41,16 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final UserRepository userRepository;
     private final StudyJoinInfoRepository sjiRepository;
+    private final ScheduleRepository scheduleRepository;
     private final UserService userService;
     private final RedisService redisService;
     private final GitRepoAPI gitRepoAPI = new GitRepoAPI();
     private final GitCollaboratorAPI gitCollaboratorAPI = new GitCollaboratorAPI();
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private enum Path {
+        SCHEDULE, PROBLEM, USER
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void insertStudy(StudyRequest studyRequest) throws JsonProcessingException {
@@ -235,6 +237,102 @@ public class StudyService {
 
         sjiRepository.updateSJIState(sji.getId(), study, "가입", new Date());
         return study.getName();
+    }
+
+    public void deleteMember(Long studyId, Long sjiId) {
+        String userId = userService.getCurrentUserId();
+
+        Optional<StudyJoinInfo> optSJIRequester = sjiRepository.findByStudyStudyIdAndUserId(studyId, userId);
+        Optional<StudyJoinInfo> optSJI = sjiRepository.findById(sjiId);
+        checkStudyJoinInfoPosition(optSJIRequester.get().getPosition());
+        if (!optSJI.get().getState().equals("초대대기"))
+            throw new DataNotFoundException();
+
+        sjiRepository.deleteById(sjiId);
+    }
+
+    public List<PathResponse> selectTree(Long studyId) {
+        String userId = userService.getCurrentUserId();
+
+        // 스터디 그룹원이 아니면 조회 불가 -> 예외 발생
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(AccessDeniedStudyException::new));
+
+        if(!optSJI.get().getState().equals("가입")) {
+            throw new AccessDeniedStudyException();
+        }
+
+        LinkedList<PathResponse> pathResponseList = new LinkedList<>();
+        List<Schedule> scheduleList = scheduleRepository.findByStudyStudyIdOrderByStartDateDesc(studyId);
+        List<StudyJoinInfo> sjiList = sjiRepository.findByStudyStudyIdWhereState(studyId, "가입");
+
+        // 1. 리스트에 모든 객체 넣기
+        long idx = 0;
+        List<String> path1, path2, path3, path4;
+        for(Schedule schedule : scheduleList) {         // 일정(회차) 추가
+            path1 = new ArrayList<>();
+            path1.add((scheduleList.size() - idx) + "회차");
+            pathResponseList.offer(new PathResponse(path1, 0L));
+            for(Problem problem : schedule.getProblems()) {     // 문제 추가
+                path2 = cloneList(path1);
+                path2.add(problem.getName());
+                pathResponseList.offer(new PathResponse(path2, 0L));
+                for(StudyJoinInfo info : sjiList) {             // 유저 추가
+                    path3 = cloneList(path2);
+                    path3.add(info.getUser().getName());
+                    pathResponseList.offer(new PathResponse(path3, 0L));
+                }
+                for(Code code : problem.getCode()) {            // 코드 추가
+                    path4 = cloneList(path2);
+                    path4.add(code.getUser().getName());
+                    path4.add(code.getFileName());
+                    pathResponseList.offer(new PathResponse(path4, code.getId()));
+                }
+            }
+            idx++;
+        }
+
+        // 2. 리스트 정렬 - Depth로 정렬
+        //  `일정` -> 시작 날짜로 정렬(내림차순)
+        //     `문제 이름` -> 이름으로 정렬(오름차순)
+        //        `사용자 이름` -> 이름으로 정렬(오름차순)
+        Collections.sort(pathResponseList, (o1, o2) -> {
+            List<String> p1 = o1.getPath();
+            List<String> p2 = o2.getPath();
+            if(p1.size() == p2.size()) {
+                if(p1.get(Path.SCHEDULE.ordinal()).equals(p2.get(Path.SCHEDULE.ordinal()))) {
+                    if (p1.get(Path.PROBLEM.ordinal()).equals(p2.get(Path.PROBLEM.ordinal())))
+                        return p1.get(Path.USER.ordinal()).compareTo(p2.get(Path.USER.ordinal()));      // 유저이름 오름차순 정렬
+                    return p1.get(Path.PROBLEM.ordinal()).compareTo(p2.get(Path.PROBLEM.ordinal()));    // 문제이름 오름차순 정렬
+                }
+                return -(Integer.parseInt(p1.get(Path.SCHEDULE.ordinal()).substring(0, p1.get(Path.SCHEDULE.ordinal()).indexOf("회")))
+                        - Integer.parseInt(p2.get(Path.SCHEDULE.ordinal()).substring(0, p2.get(Path.SCHEDULE.ordinal()).indexOf("회"))));    // 회차 내림차순 정렬
+            }
+            return p1.size() - o2.getPath().size();     // depth 오름차순 정렬
+        });
+
+        // 3. 정렬된 객체들에 대해 1번부터 번호 매기기
+        idx = 1;
+        for(PathResponse pathResponse : pathResponseList) {
+            pathResponse.setId(idx++);
+        }
+
+        return pathResponseList;
+    }
+
+    // list 복사
+    public List<String> cloneList(List<String> list) {
+        List<String> newList = new ArrayList<>();
+        for(String s : list) {
+            newList.add(s);
+        }
+        return newList;
+    }
+
+    private void checkStudyJoinInfoPosition(String position) {
+        if(!position.equals("그룹장")) {
+            throw new UnAuthorizedException();
+        }
     }
 
     private void checkStudyJoinInfoState(String state) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Member } from '../types/StudyType';
+import { Member } from '../types/MemberType';
 import { ContextProps } from '../types/ContextPropsType';
 import { memberManagementDataApi } from '../api/apis';
 import { checkLogin } from '../modules/LoginTokenChecker';
@@ -13,6 +13,7 @@ const defaultValue: defaultValueType = {
   maxPeople: 0,
   setMaxPeople: () => null,
   getMembers: () => null,
+  invitable: true,
 };
 export const MemberStore = React.createContext(defaultValue);
 
@@ -30,11 +31,13 @@ export default function MemberProvider({ children }: ContextProps) {
       const res = await memberManagementDataApi(studyId);
       setMembers(res.members);
       setStudyCode(res.studyCode);
+      setMaxPeople(res.studyMaxPeople);
       return { status: 1, message: 'success get members data' };
     } catch (err) {
       return { status: -2, message: 'fail get members data' };
     }
   };
+  const invitable = members.length < maxPeople ? true : false;
 
   const value = {
     members,
@@ -44,6 +47,7 @@ export default function MemberProvider({ children }: ContextProps) {
     maxPeople,
     setMaxPeople,
     getMembers,
+    invitable,
   };
   return <MemberStore.Provider value={value}>{children}</MemberStore.Provider>;
 }
@@ -56,4 +60,5 @@ type defaultValueType = {
   studyCode: string;
   setStudyCode: (newData: string) => void;
   getMembers: (studyId: number) => any;
+  invitable: boolean;
 };
