@@ -109,13 +109,18 @@ export default function ALTA_ProblemTable({
         <Box>
           <Box>
             <Grid container sx={tableHeaderStyle}>
-              <Grid item xs={4} sx={sellStyle}>
+              <Grid item xs={4} sx={[sellStyle, ellipsisStyle]}>
                 <Typography>제목</Typography>
               </Grid>
-              <Grid item xs={8} sx={sellStyle}>
+              <Grid item xs={8} sx={[sellStyle, ellipsisStyle]}>
                 <Grid container>
                   {members.map((member, i) => (
-                    <Grid item key={i} xs={12 / maxPeople} sx={sellStyle}>
+                    <Grid
+                      item
+                      key={i}
+                      xs={12 / maxPeople}
+                      sx={[sellStyle, ellipsisStyle]}
+                    >
                       <Typography sx={ellipsisStyle}>
                         {member.nickname ? member.nickname : '-'}
                       </Typography>
@@ -173,6 +178,7 @@ const sellStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  padding: '0 5px',
 };
 
 const ellipsisStyle = {

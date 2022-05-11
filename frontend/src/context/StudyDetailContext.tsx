@@ -62,7 +62,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
         });
 
       setMembers(tmpMember);
-      setMaxPeople(response.maxPeople);
+      setMaxPeople(response.studyMaxPeople);
       return { status: 1, message: 'success get member data' };
     } catch (err) {
       return { status: -2, message: 'fail get member data' };
