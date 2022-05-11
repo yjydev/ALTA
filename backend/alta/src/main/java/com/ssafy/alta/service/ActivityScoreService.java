@@ -58,7 +58,7 @@ public class ActivityScoreService {
         String history = "";
 
         if(activityType == 1){
-            history = study_name +"  스터디의 " + code_file_name + " 에 댓글을 남겼습니다.";
+            history = study_name +" 스터디의 " + code_file_name + " 에 댓글을 남겼습니다.";
         }
         else if(activityType == 2){
             history = study_name + " 스터디에 " + code_file_name + " 파일을 업로드 했습니다.";

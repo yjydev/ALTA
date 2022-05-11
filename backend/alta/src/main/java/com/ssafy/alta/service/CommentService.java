@@ -38,6 +38,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CodeRepository codeRepository;
     private final UserService userService;
+    private final ActivityScoreService activityScoreService;
 
     public List<CommentResponse> selectCommentList(Long codeId) {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
@@ -63,6 +64,10 @@ public class CommentService {
 
         Comment comment = commentRequest.toEntity(user, code);
         commentRepository.save(comment);
+
+
+        // 성실점수 추가
+        activityScoreService.addScoreForCommentOrCode(userId, code.getProblem().getSchedule().getStudy().getStudyId(), code.getId(), 1);
 
     }
 
