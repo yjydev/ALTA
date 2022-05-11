@@ -41,12 +41,17 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
     }
   };
 
+  const goToManagement = (studyId: number) => {
+    navigate('/study/member', { state: { studyId } });
+  };
+
   useEffect(() => {
     getMembers();
   }, []);
 
   return (
     <>
+<<<<<<< HEAD
       {members.map((member: Member, i: number) => (
         <ALTA_StudyMemberCard
           key={`${i}-${member.nickname}-${member.email}`}
@@ -58,6 +63,21 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
           <Button sx={btnStyle}>멤버 관리</Button>
         </Link>
       )}
+=======
+      {loading && <ALTA_MembersSkeleton />}
+      {!loading &&
+        members.map((member: Member, i: number) => (
+          <ALTA_StudyMemberCard
+            key={`${i}-${member.nickname}-${member.email}`}
+            member={member}
+          />
+        ))}
+      <Link>
+        <Button sx={btnStyle} onClick={() => goToManagement(studyId)}>
+          멤버 관리
+        </Button>
+      </Link>
+>>>>>>> f1dc5f0a516fded182a6fe7fd85127a44c36ea49
     </>
   );
 }

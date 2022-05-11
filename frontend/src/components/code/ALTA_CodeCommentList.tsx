@@ -1,7 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Divider,
   Grid,
   Typography,
   Box,
@@ -12,51 +11,38 @@ import {
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
 
-import { postRequest, getRequest } from '../../api/request';
-import { CodeReviewStore } from '../../context/CodeReviewContext';
-import { ReviewData, PostReview } from '../../types/CodeBlockType';
+import { addReviewApi } from '../../api/apis';
+import { CodeStore } from '../../context/CodeContext';
+import { ReviewData } from '../../types/CodeBlockType';
+
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_CodeCommentCard from './ALTA_CodeCommentCard';
 
-export default function ALTA_CodeCommentList({
-  codeId,
-}: {
-  codeId: string | undefined;
-}) {
+export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
   const navigate = useNavigate();
   const [isCompleted, setisCompleted] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-
-  const { codeLine, reviews, setReviews } = useContext(CodeReviewStore);
-
-  let reviews_data: ReviewData[] = [];
-
-  const getReview = async () => {
-    try {
-      const res = await getRequest(`/api/code/review/${codeId}`);
-      // console.log(res);
-      setReviews(res);
-    } catch (err: any) {
-      if (err.response.status === 403) {
-        navigate('/');
-      }
-    }
-  };
-
-  if (reviews !== null) {
-    reviews_data = isCompleted
-      ? reviews
-      : reviews.filter((rev: ReviewData) => rev.completed === false);
-  }
-  // console.log(reviews_data);
   const [newReview, setNewReview] = useState<string>('');
 
-  useEffect(() => {
-    getReview();
-  }, []);
+  const { codeLine, reviews, getReview } = useContext(CodeStore);
+
+  const reviews_data = isCompleted
+    ? reviews
+    : reviews?.filter((rev: ReviewData) => rev.completed === false);
+
+  const getReviews = async (codeId: number) => {
+    const status = await getReview(codeId);
+    if (status === -1) navigate('/');
+  };
 
   useEffect(() => {
-    getReview();
+    getReviews(codeId);
   }, [isCompleted]);
 
   useEffect(() => {
@@ -68,29 +54,23 @@ export default function ALTA_CodeCommentList({
   }, [newReview, codeLine]);
 
   const handleNewReview = async () => {
-    // const startIdx: number = newReview.lastIndexOf(`${codeLine}`) + 5;
-    // const review: string = newReview.substring(startIdx);
-    if (typeof codeId !== 'undefined') {
-      const codeIdx = parseInt(codeId);
-      const newRequest: PostReview = {
-        codeId: codeIdx,
-        content: newReview,
-        line: codeLine,
-      };
-
-      try {
-        await postRequest('/api/code/review', JSON.stringify(newRequest));
-        setNewReview('');
-        getReview();
-      } catch (err: any) {
-        if (err.response.status === 403) {
-          navigate('/');
-        }
-        // console.log(err.response);
-      }
-    } else {
-      console.log('fail');
-      // 추후 예외처리 추가 예정
+    if (!(await checkLogin()).status) navigate('/');
+    generateTimer('잠시 기다려 주세요', `리뷰 생성중입니다.`);
+    try {
+      await addReviewApi(codeId, newReview, codeLine);
+      setNewReview('');
+      generateCheck(
+        '리뷰가 생성되었습니다.',
+        `${codeLine} 번 라인에 대한 리뷰가 성공적으로 생성되었습니다`,
+        () => {
+          getReviews(codeId);
+        },
+      );
+    } catch (err: any) {
+      generateError(
+        '리뷰 생성에 실패하였습니다',
+        `${err.response.data.message}`,
+      );
     }
   };
 
@@ -113,7 +93,6 @@ export default function ALTA_CodeCommentList({
           </Grid>
         </Grid>
       </Grid>
-      <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
       <Grid item>
         <Box sx={addCommentStyle}>
           <Grid container sx={comment_wrapper} columns={17}>
@@ -150,7 +129,7 @@ export default function ALTA_CodeCommentList({
         </Box>
       </Grid>
       <Grid item>
-        {reviews_data.map((review: ReviewData) => (
+        {reviews_data?.map((review: ReviewData) => (
           <ALTA_CodeCommentCard key={review.reviewId} review={review} />
         ))}
       </Grid>
@@ -160,6 +139,7 @@ export default function ALTA_CodeCommentList({
 
 const addCommentStyle = {
   height: '7rem',
+  marginTop: 4,
 };
 
 const addButton = {
