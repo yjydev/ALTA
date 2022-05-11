@@ -62,6 +62,12 @@ public class StudyController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{studyId}/invitation/{sjiId}")
+    public ResponseEntity deleteMember(@PathVariable("studyId") Long studyId, @PathVariable("sjiId") Long sjiId){
+        studyService.deleteMember(studyId, sjiId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping("/invitation")
     @ApiOperation(value = "스터디 가입 검증")
     public ResponseEntity updateStudyMember(@RequestBody StudyCodeRequest studyCodeRequest) {
