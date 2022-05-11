@@ -108,7 +108,7 @@ public class CodeService {
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
 
-        return code.toCodeInfoResponse();
+        return code.toCodeInfoResponse(study.getLanguage());
     }
 
 
