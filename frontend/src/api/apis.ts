@@ -231,3 +231,8 @@ export async function deleteCodeApi(studyId: number, codeId: number) {
 export async function deleteReviewApi(reviewId: number) {
   return await deleteRequest(`/api/code/review/${reviewId}`);
 }
+
+// 초대 대기 삭제 요청
+export async function deleteInvitationApi(studyId: number, sjiId: number) {
+  return await deleteRequest(`/api/study/${studyId}/invitation/${sjiId}`);
+}
