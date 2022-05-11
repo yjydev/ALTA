@@ -55,6 +55,7 @@ public class ScheduleAndProblemService {
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
 
+        Study study = optSJI.get().getStudy();
         if(!optSJI.get().getState().equals("가입"))
             throw new AccessDeniedStudyException();
 
@@ -80,6 +81,7 @@ public class ScheduleAndProblemService {
             schedules.add(scheduleAndProblemResponse);
         }
         map.put("readme", schedules);
+        map.put("studyName", study.getName());
         return map;
     }
 
