@@ -43,11 +43,14 @@ public class FileLanguageUtil {
         return fileName;
     }
 
-    public String getFileExtension(String language) {
+    // 파일 이름에 스터디 언어에 따른 확장자 붙여서 반환
+    public String getFullFileName(String fileName, String language) {
+        String extention = "";
         if(!languageToFile.containsKey(language)) {     // 스터디 언어가 잘못 설정되 있으면 git에 txt로 저장
-            return "txt";
+            extention = "txt";
         } else {
-            return languageToFile.get(language);
+            extention = languageToFile.get(language);
         }
+        return fileName + "." + extention;
     }
 }

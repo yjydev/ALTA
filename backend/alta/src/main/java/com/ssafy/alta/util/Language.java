@@ -15,7 +15,7 @@ import lombok.Getter;
  */
 @Getter
 public enum Language {
-    Java("Java", "js"),
+    Java("Java", "java"),
     C("C", "c"),
     CPlus("C++", "cpp"),
     CSharp("C#", "cs"),
