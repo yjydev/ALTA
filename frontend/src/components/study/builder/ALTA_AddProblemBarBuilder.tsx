@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, LinearProgress } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import styled from '@emotion/styled';
 
@@ -59,6 +59,8 @@ export const addProblemBarBackBuilder = (
     const [problemId, _] = useState<number>(id ? id : -1);
     const [problemName, setPropblemName] = useState<string>(name ? name : '');
     const [problemLink, setPropblemLink] = useState<string>(link ? link : '');
+    const [editProblemLoading, setEditProblemLoading] =
+      useState<boolean>(false);
 
     const addProblem = async () => {
       if (!(await checkLogin())) navigate('/');
@@ -84,9 +86,16 @@ export const addProblemBarBackBuilder = (
         return;
       }
 
-      await editProblemApi(studyId, problemId, problemName, problemLink);
-      fliper();
-      getStudyDetail(studyId);
+      setEditProblemLoading(true);
+      try {
+        await editProblemApi(studyId, problemId, problemName, problemLink);
+        fliper();
+        getStudyDetail(studyId);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setEditProblemLoading(false);
+      }
     };
 
     return (
@@ -100,29 +109,37 @@ export const addProblemBarBackBuilder = (
             width: '100%',
           }}
         >
-          <Box sx={{ display: 'flex' }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}
-            >
-              <Typography sx={{ marginRight: '10px' }}>문제 이름</Typography>
-              <Input
-                type="text"
-                value={problemName}
-                onChange={(e) => setPropblemName(e.target.value)}
-              />
+          {editProblemLoading && (
+            <LinearProgress
+              sx={{ width: '100%', margin: '10px' }}
+              color="secondary"
+            />
+          )}
+          {!editProblemLoading && (
+            <Box sx={{ display: 'flex' }}>
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}
+              >
+                <Typography sx={{ marginRight: '10px' }}>문제 이름</Typography>
+                <Input
+                  type="text"
+                  value={problemName}
+                  onChange={(e) => setPropblemName(e.target.value)}
+                />
+              </Box>
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}
+              >
+                <Typography sx={{ marginRight: '10px' }}>링크</Typography>
+                <Input
+                  type="text"
+                  value={problemLink}
+                  style={{ width: '300px' }}
+                  onChange={(e) => setPropblemLink(e.target.value)}
+                />
+              </Box>
             </Box>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}
-            >
-              <Typography sx={{ marginRight: '10px' }}>링크</Typography>
-              <Input
-                type="text"
-                value={problemLink}
-                style={{ width: '300px' }}
-                onChange={(e) => setPropblemLink(e.target.value)}
-              />
-            </Box>
-          </Box>
+          )}
           {!name && <Button onClick={addProblem}>생성</Button>}
           {name && <Button onClick={editProblem}>수정</Button>}
         </Box>

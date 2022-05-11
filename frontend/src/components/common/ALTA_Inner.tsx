@@ -6,7 +6,11 @@ import { Box } from '@mui/material';
 // 사용방법
 // <ALTAInner>children으로 사용하고 싶은 요소</ALTAInner>
 
-export default function ALTA_Inner({ children }) {
+export default function ALTA_Inner({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <Box className="ALTAInner" sx={ALTAInner_style}>
       {children}
