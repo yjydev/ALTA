@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import styled from '@emotion/styled';
 
@@ -7,10 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { blackColor, mainColor } from '../../../modules/colorChart';
 
 import ALTA_Tooltip from '../../common/ALTA_Tooltip';
-import { useContext } from 'react';
-import { UserDataStore } from '../../../context/UserDataContext';
 import { generateError } from '../../../modules/generateAlert';
-import { UserData } from '../../../types/UserDataType';
 
 export const problemBarFrontBuilder = (
   problem: Problem,

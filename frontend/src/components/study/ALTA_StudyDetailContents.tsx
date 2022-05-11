@@ -6,7 +6,6 @@ import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import { StudyData } from '../../types/StudyType';
 import { generateError } from '../../modules/generateAlert';
-import { memberListApi } from '../../api/apis';
 import {
   addTableBarFrontBuilder,
   addTableBarBackBuilder,

@@ -13,6 +13,7 @@ const defaultValue: defaultValueType = {
   members: [],
   studyData: [],
   maxPeople: 0,
+  isLeader: false,
   getStudyDetail: () => null,
   getStudyMembers: () => null,
   editSchedule: () => null,
@@ -24,6 +25,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [studyData, setStudyData] = useState<StudyData[]>([]);
   const [maxPeople, setMaxPeople] = useState<number>(0);
+  const [isLeader, setIsLeader] = useState<boolean>(false);
 
   const getStudyDetail = async (studyId: number) => {
     const loginStatus = await checkLogin();
@@ -63,6 +65,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 
       setMembers(tmpMember);
       setMaxPeople(response.studyMaxPeople);
+      setIsLeader(response.isLeader);
       return { status: 1, message: 'success get member data' };
     } catch (err) {
       return { status: -2, message: 'fail get member data' };
@@ -91,6 +94,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     members,
     studyData,
     maxPeople,
+    isLeader,
     getStudyDetail,
     getStudyMembers,
     editSchedule,
@@ -106,6 +110,7 @@ type defaultValueType = {
   members: Member[];
   studyData: StudyData[];
   maxPeople: number;
+  isLeader: boolean;
   getStudyDetail: (studyId: number) => any;
   getStudyMembers: (studyId: number) => any;
   editSchedule: (

@@ -6,7 +6,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Button, Grid, LinearProgress, Typography, Alert } from '@mui/material';
 
 import { Problem } from '../../types/StudyType';
-import { blackColor, mainColor, subColor } from '../../modules/colorChart';
+import { blackColor, subColor } from '../../modules/colorChart';
 import { problemBarFrontBuilder } from './builder/ALTA_ProblemBarBuilder';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import {

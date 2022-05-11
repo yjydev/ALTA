@@ -6,7 +6,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 import Logo from '../../images/logo.png';
 
-import ALTA_Tooltip from '../common/ALTA_Tooltip';
+import ALTA_Tooltip from './ALTA_Tooltip';
 
 export default function ALTA_Header() {
   const navigate = useNavigate();
