@@ -4,73 +4,62 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-import { getRequest, deleteRequest } from '../../api/request';
-import { CodeReviewStore } from '../../context/CodeReviewContext';
+import { deleteCodeApi } from '../../api/apis';
+import { CodeStore } from '../../context/CodeContext';
 import { CodeProps } from '../../types/CodeBlockType';
 import {
   generateCheck,
   generateError,
   generateTimer,
 } from '../../modules/generateAlert';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
-export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
+export default function ALTA_CodeContents({
+  studyId,
+  codeId,
+  problem,
+}: CodeProps) {
   const navigate = useNavigate();
 
-  const { code, setCode } = useContext(CodeReviewStore);
+  const { code, getCode, user } = useContext(CodeStore);
   const [isCodeEdit, setIsCodeEdit] = useState(false);
-  const [userName, setUserName] = useState<string>('');
-
-  const getCode = async () => {
-    try {
-      const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
-      // console.log(res);
-      setCode(res);
-    } catch (err: any) {
-      if (err.response.status === 403) {
-        navigate('/');
-      }
-    }
-  };
 
   const handleDelete = async () => {
+    if (!(await checkLogin()).status) navigate('/');
     generateTimer('잠시 기다려 주세요', `${code.fileName} 을 삭제중입니다`);
     try {
-      const res = await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
+      await deleteCodeApi(studyId, codeId);
       generateCheck(
         '코드가 삭제되었습니다.',
         `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
         () => goToDetail(studyId),
       );
     } catch (err: any) {
-      if (err.response.status === 403) {
-        navigate('/');
-      }
-      console.log(err);
-      generateError('코드 삭제에 실패하였습니다', ``);
+      generateError(
+        '코드 삭제에 실패하였습니다',
+        `${err.response.data.message}`,
+      );
     }
   };
 
-  const goToDetail = (studyId: string | undefined) =>
+  const goToDetail = (studyId: number) =>
     navigate('/study/detail', { state: { studyId } });
 
   // const goToresubmit = () => navigate('')
 
   useEffect(() => {
-    getCode();
-    const user = localStorage.getItem('UserData');
-    if (user !== null) {
-      setUserName(JSON.parse(user)['nickname']);
-    }
+    (async function () {
+      const status = await getCode(studyId, codeId);
+      if (status === -1) navigate('/');
+      else if (status === -2)
+        generateError('코드 정보를 불러오는데 실패하였습니다', '');
+    })();
   }, []);
-
-  useEffect(() => {
-    getCode();
-  }, [isCodeEdit]);
 
   return (
     <Grid container sx={wrapper} spacing={8}>
@@ -85,12 +74,10 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
             <Grid item sx={codeBlock_wrapper}>
               {isCodeEdit ? (
                 <ALTA_CodeEditor
-                  code={code.code}
-                  language={code.language}
-                  file={code.fileName}
                   setIsCodeEdit={setIsCodeEdit}
                   studyId={studyId}
                   codeId={codeId}
+                  problem={problem}
                 />
               ) : (
                 <Grid container direction="column" spacing={5}>
@@ -107,7 +94,7 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                         >
                           Back
                         </Button>
-                        {code.writer === userName ? (
+                        {code.writer === user ? (
                           <Box>
                             <Button
                               sx={reupBtn}
@@ -135,7 +122,7 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                           </Box>
                         ) : null}
                       </Box>
-                      <Typography sx={problemStyle}>2021.04.13 회문</Typography>
+                      <Typography sx={problemStyle}>{problem}</Typography>
                       <Box sx={titleStyle}>
                         <Typography sx={codeTitleStyle}>
                           {code.fileName}

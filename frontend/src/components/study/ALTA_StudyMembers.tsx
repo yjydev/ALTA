@@ -41,6 +41,10 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
     }
   };
 
+  const goToManagement = (studyId: number) => {
+    navigate('/study/member', { state: { studyId } });
+  };
+
   useEffect(() => {
     getMembers();
   }, []);
@@ -56,7 +60,9 @@ export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
           />
         ))}
       <Link>
-        <Button sx={btnStyle}>멤버 관리</Button>
+        <Button sx={btnStyle} onClick={() => goToManagement(studyId)}>
+          멤버 관리
+        </Button>
       </Link>
     </>
   );
