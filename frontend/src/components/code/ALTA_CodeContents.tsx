@@ -11,6 +11,7 @@ import {
   generateCheck,
   generateError,
   generateTimer,
+  generateConfirm,
 } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 
@@ -31,14 +32,19 @@ export default function ALTA_CodeContents({
 
   const handleDelete = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    generateTimer('잠시 기다려 주세요', `${code.fileName} 을 삭제중입니다`);
+    generateConfirm(
+      '정말 삭제하시겠습니까?',
+      '한번 삭제하면 되돌릴 수 없습니다.',
+      '코드가 삭제되었습니다.',
+      `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
+      async () => delCode(),
+    );
+  };
+
+  const delCode = async () => {
     try {
       await deleteCodeApi(studyId, codeId);
-      generateCheck(
-        '코드가 삭제되었습니다.',
-        `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
-        () => goToDetail(studyId),
-      );
+      goToDetail(studyId);
     } catch (err: any) {
       generateError(
         '코드 삭제에 실패하였습니다',

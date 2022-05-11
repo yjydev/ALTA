@@ -15,7 +15,11 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-import { generateError, generateCheck } from '../../modules/generateAlert';
+import {
+  generateError,
+  generateCheck,
+  generateConfirm,
+} from '../../modules/generateAlert';
 
 import { toggleSolved, editReviewApi, deleteReviewApi } from '../../api/apis';
 import { ReviewData } from '../../types/CodeBlockType';
@@ -73,11 +77,19 @@ export default function ALTA_CodeCommentCard({
 
   const handleDelComment = async () => {
     if (!(await checkLogin()).status) navigate('/');
+    generateConfirm(
+      '정말 삭제하시겠습니까?',
+      '한 번 삭제하면 되돌릴 수 없습니다',
+      '삭제 완료!',
+      `${review.codeNumber} 에 대한 리뷰가 삭제되었습니다`,
+      async () => delComment(),
+    );
+  };
+
+  const delComment = async () => {
     try {
       await deleteReviewApi(review.reviewId);
-      generateCheck('리뷰가 삭제되었습니다.', ``, () =>
-        navigate('/study/code', { state: { studyId, codeId } }),
-      );
+      navigate('/study/code', { state: { studyId, codeId } });
     } catch (err: any) {
       generateError(
         '리뷰 삭제에 실패하였습니다',
