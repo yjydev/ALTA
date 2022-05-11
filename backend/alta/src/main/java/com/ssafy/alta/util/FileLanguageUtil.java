@@ -39,7 +39,7 @@ public class FileLanguageUtil {
         if(index == -1) {   // 확장자가 없음
             return file;
         }
-        String fileName = file.substring(index + 1, file.length());
+        String fileName = file.substring(0, index);
         return fileName;
     }
 
