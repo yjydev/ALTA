@@ -7,6 +7,7 @@ import com.ssafy.alta.service.ReadmeService;
 import com.ssafy.alta.service.UserService;
 import com.ssafy.alta.service.UserService1;
 import io.swagger.annotations.ApiOperation;
+import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -40,14 +41,14 @@ public class UserController1 {
         return new ResponseEntity<>(userService1.selectUser(), HttpStatus.OK);
     }
 
-    @PostMapping(consumes = {"multipart/form-data"}, path = "/info")
+//    @PostMapping(consumes = {"multipart/form-data"}, path = "/info")
+    @PostMapping(path = "/info")
     @ApiOperation(value = "user 개인정보 수정", notes = "user 개인 정보 수정")
 //    public ResponseEntity updateUserInfo(@RequestPart("profileImage") MultipartFile profileImageFile, @ModelAttribute UserUpdateRequest userUpdateRequest) {
     public ResponseEntity updateUserInfo(@RequestBody UserUpdateRequest userUpdateRequest) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+
 //        return new ResponseEntity<>(userService1.updateUser(userUpdateRequest, profileImageFile), HttpStatus.OK);
-        return new ResponseEntity<>(userService1.updateUser(userUpdateRequest), headers, HttpStatus.OK);
+        return new ResponseEntity<>(userService1.updateUser(userUpdateRequest),  HttpStatus.OK);
     }
 
     @PatchMapping("/alert")
