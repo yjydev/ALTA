@@ -105,9 +105,3 @@ const TextArea = styled.textarea`
   border-radius: 5px;
   background-color: rgba(224, 212, 194, 0.6);
 `;
-const Input = styled.input`
-  all: unset;
-  border-bottom: 1px solid black;
-  font-size: 16px;
-  font-weight: 400;
-`;
