@@ -51,10 +51,6 @@ export default function ALTA_CodeEditor({
     if (!(await checkLogin()).status) navigate('/');
     generateTimer('잠시 기다려 주세요', `코드를 수정중입니다`);
     try {
-      const idx = fileName.lastIndexOf('.');
-      if (idx !== -1) {
-        setFileName(fileName.substring(0, idx));
-      }
       await editCodeApi(studyId, codeId, commitMessage, fileName, content);
       setIsCodeEdit(false);
       generateCheck(
