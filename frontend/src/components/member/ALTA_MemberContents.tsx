@@ -23,8 +23,8 @@ export default function ALTA_MemberContents({ studyId }: { studyId: number }) {
     })();
   }, []);
   return (
-    <Box sx={{ position: 'relative' }}>
-      <ALTA_MemberList />
+    <Box>
+      <ALTA_MemberList studyId={studyId} />
       <ALTA_MemberInvite studyId={studyId} />
     </Box>
   );

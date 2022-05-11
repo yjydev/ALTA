@@ -14,9 +14,7 @@ export default function ALTA_Member() {
   const Contents = () => (
     <MemberContext>
       <ALTA_Inner>
-        <Box sx={{ position: 'relative' }}>
-          <ALTA_MemberContents studyId={studyId} />
-        </Box>
+        <ALTA_MemberContents studyId={studyId} />
       </ALTA_Inner>
     </MemberContext>
   );

@@ -1,16 +1,27 @@
 import { useContext } from 'react';
-import { Grid, Box, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Grid, Box, Typography, Button } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { MemberStore } from '../../context/MemberContext';
 
 import ALTA_MemberTable from './ALTA_MemberTable';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
-export default function ALTA_MemberList() {
+export default function ALTA_MemberList({ studyId }: { studyId: number }) {
   const { members, studyCode } = useContext(MemberStore);
+  const navigate = useNavigate();
 
   return (
-    <Box py={4}>
+    <Box pt={4} pb={2}>
+      <Button
+        startIcon={<ChevronLeftIcon />}
+        variant="contained"
+        sx={backBtn}
+        onClick={() => navigate('/study/detail', { state: { studyId } })}
+      >
+        Back
+      </Button>
       <Grid container direction="row" sx={wrapper}>
         <Grid item sm={12}>
           <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
@@ -34,6 +45,10 @@ export default function ALTA_MemberList() {
 
 const wrapper = {
   display: 'flex',
+};
+
+const backBtn = {
+  fontSize: '15px',
 };
 
 const studyCodeStyle = {
