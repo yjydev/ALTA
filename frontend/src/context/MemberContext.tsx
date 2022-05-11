@@ -30,6 +30,7 @@ export default function MemberProvider({ children }: ContextProps) {
       const res = await memberManagementDataApi(studyId);
       setMembers(res.members);
       setStudyCode(res.studyCode);
+      setMaxPeople(res.studyMaxPeople);
       return { status: 1, message: 'success get members data' };
     } catch (err) {
       return { status: -2, message: 'fail get members data' };

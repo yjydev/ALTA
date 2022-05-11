@@ -239,10 +239,16 @@ public class StudyService {
         return study.getName();
     }
 
-    private void checkStudyJoinInfoState(String state) {
-        if(state.equals("가입")) {
-            throw new UserExistStudyException();
-        }
+    public void deleteMember(Long studyId, Long sjiId) {
+        String userId = userService.getCurrentUserId();
+
+        Optional<StudyJoinInfo> optSJIRequester = sjiRepository.findByStudyStudyIdAndUserId(studyId, userId);
+        Optional<StudyJoinInfo> optSJI = sjiRepository.findById(sjiId);
+        checkStudyJoinInfoPosition(optSJIRequester.get().getPosition());
+        if (!optSJI.get().getState().equals("초대대기"))
+            throw new DataNotFoundException();
+
+        sjiRepository.deleteById(sjiId);
     }
 
     public List<PathResponse> selectTree(Long studyId) {
@@ -323,4 +329,15 @@ public class StudyService {
         return newList;
     }
 
+    private void checkStudyJoinInfoPosition(String position) {
+        if(!position.equals("그룹장")) {
+            throw new UnAuthorizedException();
+        }
+    }
+
+    private void checkStudyJoinInfoState(String state) {
+        if(state.equals("가입")) {
+            throw new UserExistStudyException();
+        }
+    }
 }
