@@ -26,7 +26,5 @@ public class CommentUpdateRequest {
     private String content;
     @ApiModelProperty(value = "코드 줄")
     private Integer line;
-    @ApiModelProperty(value = "해결 여부")
-    private Boolean isSolved;
 
 }

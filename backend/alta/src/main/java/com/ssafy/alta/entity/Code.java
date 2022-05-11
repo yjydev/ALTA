@@ -2,6 +2,7 @@ package com.ssafy.alta.entity;
 
 import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.CodeResponse;
+import com.ssafy.alta.util.FileLanguageUtil;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -99,7 +100,7 @@ public class Code {
                 .code(this.content)
                 .createDate(this.createDate)
                 .fileName(this.fileName)
-                .language(language)
+                .language(FileLanguageUtil.getInstanse().getEditorFormat(language))
                 .writer(this.user.getNickname())
                 .build();
     }
