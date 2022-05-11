@@ -1,4 +1,4 @@
-import ALTA_Notice from './ALTA_Notice';
+import ALTA_Notice from './ALTA_Notice.tsx';
 import ALTA_Chat from './ALTA_Chat';
 import { Box } from '@mui/material';
 

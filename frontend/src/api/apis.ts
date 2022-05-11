@@ -42,6 +42,22 @@ export async function reivewDataApi(codeId: number) {
 export async function organizeStudyApi(requestBody: OrganizeStudyRequset) {
   return await await postRequest('/api/study', requestBody);
 }
+//유저 정보 수정 요청
+export async function editUserDataApi(
+  nickname: string,
+  email: string,
+  introduction: string,
+  languageList: string[] | null,
+) {
+  const requestBody = {
+    nickname,
+    email,
+    introduction,
+    languageList,
+  };
+  return await await postRequest('/api/user/info', requestBody);
+}
+
 //스터디 회차 일정 추가 요청
 export async function addScheduleApi(
   studyId: number,
