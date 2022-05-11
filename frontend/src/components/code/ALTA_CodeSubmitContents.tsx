@@ -19,7 +19,7 @@ export default function ALTA_CodeSubmitContents() {
   const problemId = JSON.parse(state).problemId;
   const studyId = JSON.parse(state).studyId;
   const codeId = JSON.parse(state).codeId;
-  console.log(state);
+
   const [commitMessage, setCommitMessage] = useState<string>('');
   const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
   const [fileName, setFileName] = useState<string>('');
