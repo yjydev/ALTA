@@ -50,7 +50,8 @@ export default function ALTA_CodeContents({
   const goToDetail = (studyId: number) =>
     navigate('/study/detail', { state: { studyId } });
 
-  // const goToresubmit = () => navigate('')
+  const goToresubmit = (studyId: number, codeId: number) =>
+    navigate('/code-submit', { state: { studyId, codeId } });
 
   useEffect(() => {
     (async function () {
@@ -99,7 +100,7 @@ export default function ALTA_CodeContents({
                             <Button
                               sx={reupBtn}
                               variant="contained"
-                              // onClick={goToresubmit}
+                              onClick={() => goToresubmit(studyId, codeId)}
                             >
                               재업로드
                             </Button>

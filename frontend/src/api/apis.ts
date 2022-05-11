@@ -160,7 +160,7 @@ export async function editCodeApi(
     codeId,
   };
 
-  return await await putRequest(
+  return await putRequest(
     `/api/study/${studyId}/code/${codeId}/reupload`,
     requestBody,
   );

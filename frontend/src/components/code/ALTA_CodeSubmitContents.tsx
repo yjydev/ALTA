@@ -19,7 +19,7 @@ export default function ALTA_CodeSubmitContents() {
   const problemId = JSON.parse(state).problemId;
   const studyId = JSON.parse(state).studyId;
   const codeId = JSON.parse(state).codeId;
-
+  console.log(state);
   const [commitMessage, setCommitMessage] = useState<string>('');
   const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
   const [fileName, setFileName] = useState<string>('');
@@ -37,6 +37,9 @@ export default function ALTA_CodeSubmitContents() {
   };
 
   const goStudyDetail = () => navigate('/study/detail', { state: { studyId } });
+
+  const goCodeDetail = (newCodeId: number, studyId: number) =>
+    navigate('/study/code', { state: { newCodeId, studyId } });
 
   const summitCode = async () => {
     if (code === '코드를 업로드 해주세요.') {
@@ -56,7 +59,15 @@ export default function ALTA_CodeSubmitContents() {
 
       goStudyDetail();
     } else {
-      await editCodeApi(studyId, codeId, commitMessage, fileName, code);
+      const res = await editCodeApi(
+        studyId,
+        codeId,
+        commitMessage,
+        fileName,
+        code,
+      );
+      const newCodeId = res.codeId;
+      goCodeDetail(newCodeId, studyId);
     }
   };
 
