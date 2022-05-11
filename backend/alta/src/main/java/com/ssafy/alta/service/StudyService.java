@@ -253,7 +253,7 @@ public class StudyService {
         String invitationId = null;
         for(HashMap h : invitationList) {
             HashMap m = (HashMap) h.get("invitee");
-            if(m.get("login").toString().equals(optSJI.get().getUser().getName())) {
+            if(m.get("id").toString().equals(optSJI.get().getUser().getId())) {
                 invitationId = h.get("id").toString();
                 break;
             }
