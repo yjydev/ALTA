@@ -11,6 +11,7 @@ import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +87,10 @@ public class ReadmeService {
         List<Schedule> scheduleList = scheduleRepository.findByStudyStudyIdOrderByStartDateAsc(study.getStudyId());
         int roundIdx = 0;
         for (Schedule schedule : scheduleList) {
-            sb.append(++roundIdx + " 회차 : ").append(schedule.getStartDate()).append(" ~ ").append(schedule.getEndDate()).append(NL);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String startDate = formatter.format(schedule.getStartDate());
+            String endDate = formatter.format(schedule.getEndDate());
+            sb.append(++roundIdx + " 회차 : ").append(startDate).append(" ~ ").append(endDate).append(NL);
             sb.append("|"+"<center>"+"문제"+"</center>"+"|");
             String tableNext = "|:---:|";
             for(int idx = 0; idx < maxPeople; idx++){
