@@ -55,7 +55,7 @@ public class StudyService {
     @Transactional(rollbackFor = Exception.class)
     public void insertStudy(StudyRequest studyRequest) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -90,7 +90,7 @@ public class StudyService {
     @Transactional(rollbackFor = Exception.class)
     public HashMap<String, Object> selectStudyMemberList(Long studyId) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -119,7 +119,7 @@ public class StudyService {
     @Transactional(rollbackFor = Exception.class)
     public Object selectStudyLeaderMemberList(Long studyId) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -156,7 +156,7 @@ public class StudyService {
     @Transactional(rollbackFor = Exception.class)
     public void inviteUser(Long studyId, StudyUserIdRequest studyUserIdRequest) throws MessagingException, JsonProcessingException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
         System.out.println(userId);
 
         Optional<Study> optStudy = Optional.of(studyRepository.findByStudyIdAndUserId(studyId, userId)
@@ -207,7 +207,7 @@ public class StudyService {
     @Transactional(rollbackFor = Exception.class)
     public String updateStudyMember(StudyCodeRequest studyCodeRequest) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> studyOpt = Optional.of(studyRepository.findByCode(studyCodeRequest.getCode())
                 .orElseThrow(DataNotFoundException::new));
@@ -235,7 +235,7 @@ public class StudyService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteMember(Long studyId, Long sjiId) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<StudyJoinInfo> optSJIRequester = sjiRepository.findByStudyStudyIdAndUserId(studyId, userId);
         Optional<StudyJoinInfo> optSJI = sjiRepository.findById(sjiId);

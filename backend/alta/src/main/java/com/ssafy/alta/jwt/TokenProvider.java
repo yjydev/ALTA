@@ -142,7 +142,7 @@ public class TokenProvider implements InitializingBean {
     }
 
     public boolean compareWithRedisData(String token){
-        String storedRT = redisService.getJWTRefreshToken();
+        String storedRT = redisService.getJWTRefreshToken(token);
         if(storedRT.equals(token))
             return true;
         return false;
