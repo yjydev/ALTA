@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger/**",   // swagger
                         "/favicon.ico",
                         "/images/**"
-                );
+                ).;
 //                .antMatchers("/githubLogin"); // 여기다가 선언안하면 404 에러 발생..
     }
 
@@ -73,6 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 모든 요청은 인증이 되어야 하지만, 로그인관련하여 요청은 다 권한은 허락해주어야 한다.
                 .authorizeRequests()
+                .antMatchers("/api/images/**").permitAll()
                 .anyRequest().authenticated()
 
                 // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴
