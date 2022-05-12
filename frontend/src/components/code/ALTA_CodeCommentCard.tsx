@@ -11,15 +11,14 @@ import {
   Link,
   TextField,
   InputAdornment,
+  IconButton,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 
-import {
-  generateError,
-  generateCheck,
-  generateConfirm,
-} from '../../modules/generateAlert';
+import { generateError, generateConfirm } from '../../modules/generateAlert';
 
 import { toggleSolved, editReviewApi, deleteReviewApi } from '../../api/apis';
 import { ReviewData } from '../../types/CodeBlockType';
@@ -182,36 +181,44 @@ export default function ALTA_CodeCommentCard({
                     onChange={(e) => setCommentValue(e.target.value)}
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">
-                          <Typography sx={adornStyle}>
-                            {`${review.codeNumber}번 라인 `}
-                          </Typography>
-                        </InputAdornment>
+                        <>
+                          {review.codeNumber !== 0 ? (
+                            <InputAdornment position="start">
+                              <Typography sx={adornStyle}>
+                                {`${review.codeNumber}번 라인 `}
+                              </Typography>
+                            </InputAdornment>
+                          ) : (
+                            ''
+                          )}
+                        </>
                       ),
                     }}
                   />
                 ) : (
                   <>
-                    <Link
-                      onClick={moveToLine}
-                      sx={commentCodeLine}
-                      underline="none"
-                      mr={1}
-                    >
-                      {review['codeNumber']}번
-                    </Link>
+                    {review.codeNumber !== 0 ? (
+                      <Link
+                        onClick={moveToLine}
+                        sx={commentCodeLine}
+                        underline="none"
+                        mr={1}
+                      >
+                        {review['codeNumber']}번
+                      </Link>
+                    ) : null}
                     <Typography mb={2}>{review['comment']}</Typography>
                   </>
                 )}
               </Grid>
               {isResolved ? (
-                <Button onClick={changeResolved}>
-                  <Typography sx={resolvedStyle}>해결됨</Typography>
-                </Button>
+                <IconButton onClick={changeResolved}>
+                  {<CheckCircleRoundedIcon sx={resolvedStyle} />}
+                </IconButton>
               ) : (
-                <Button onClick={changeResolved}>
-                  <Typography sx={unresolvedStyle}> 미해결 </Typography>
-                </Button>
+                <IconButton onClick={changeResolved}>
+                  {<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}
+                </IconButton>
               )}
             </Grid>
           </Grid>
@@ -290,11 +297,11 @@ const profileStyle = {
 };
 
 const resolvedStyle = {
-  color: '#C6C6C6',
+  color: 'primary.main',
 };
 
 const unresolvedStyle = {
-  color: 'primary.main',
+  color: 'gray',
 };
 
 const commentCodeLine = {
