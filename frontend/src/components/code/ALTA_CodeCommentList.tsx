@@ -15,11 +15,7 @@ import { addReviewApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
 import { ReviewData } from '../../types/CodeBlockType';
 
-import {
-  generateCheck,
-  generateError,
-  generateTimer,
-} from '../../modules/generateAlert';
+import { generateCheck, generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_CodeCommentCard from './ALTA_CodeCommentCard';
@@ -46,7 +42,7 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
   }, [isCompleted]);
 
   useEffect(() => {
-    if (newReview !== '' && codeLine !== 0) {
+    if (newReview !== '') {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
@@ -55,17 +51,12 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
 
   const handleNewReview = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    generateTimer('잠시 기다려 주세요', `리뷰 생성중입니다.`);
     try {
       await addReviewApi(codeId, newReview, codeLine);
       setNewReview('');
-      generateCheck(
-        '리뷰가 생성되었습니다.',
-        `${codeLine} 번 라인에 대한 리뷰가 성공적으로 생성되었습니다`,
-        () => {
-          getReviews(codeId);
-        },
-      );
+      generateCheck('리뷰 생성', `리뷰가 성공적으로 생성되었습니다`, () => {
+        getReviews(codeId);
+      });
     } catch (err: any) {
       generateError(
         '리뷰 생성에 실패하였습니다',

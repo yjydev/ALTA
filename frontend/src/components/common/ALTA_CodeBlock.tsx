@@ -35,12 +35,16 @@ export default function ALTA_CodeBlock({
               background: codeLine === lineNum ? 'rgb(41,62,98)' : 'inherit',
             },
             onClick() {
-              setCodeLine(lineNum);
-              const c = document.getElementById(
-                'outlined-multiline-static-comment',
-              );
-              if (c) {
-                c.scrollIntoView({ behavior: 'smooth' });
+              if (codeLine !== lineNum) {
+                setCodeLine(lineNum);
+                const c = document.getElementById(
+                  'outlined-multiline-static-comment',
+                );
+                if (c) {
+                  c.scrollIntoView({ behavior: 'smooth' });
+                }
+              } else {
+                setCodeLine(0);
               }
             },
           })}
