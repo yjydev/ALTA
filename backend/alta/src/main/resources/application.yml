@@ -75,13 +75,6 @@ jwt:
   refresh-token-validity-in-seconds: 604800
   url: https://algorithmtime.com/auth
 
-
-github:
-  username: ssafytest001
-  secret: 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
-  reponame: test
-  oauth-key : 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
-
 image:
 #  basePath: C:\Github\altaImage\
   basePath: /home/ubuntu/images/
