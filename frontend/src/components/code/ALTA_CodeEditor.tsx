@@ -23,7 +23,7 @@ import {
 } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { CodeStore } from '../../context/CodeContext';
-import { modifyCodeApi } from '../../api/apis';
+import { editCodeApi } from '../../api/apis';
 
 import ALTA_Dialog from '../common/ALTA_Dialog';
 
@@ -41,11 +41,17 @@ export default function ALTA_CodeEditor({
   const [commitMessage, setCommitMessage] = useState<string>('');
   const [content, setContent] = useState<string>(`${code.code}`);
 
+  const handleEditBtn = () => {
+    if (content === code.code && fileName === code.fileName)
+      generateError('수정 내역이 없습니다.', '');
+    else setOpen(true);
+  };
+
   const handleEditCode = async () => {
     if (!(await checkLogin()).status) navigate('/');
     generateTimer('잠시 기다려 주세요', `코드를 수정중입니다`);
     try {
-      await modifyCodeApi(studyId, codeId, commitMessage, fileName, content);
+      await editCodeApi(studyId, codeId, commitMessage, fileName, content);
       setIsCodeEdit(false);
       generateCheck(
         '수정 완료',
@@ -89,8 +95,20 @@ export default function ALTA_CodeEditor({
             <Box sx={titleStyle}>
               <Typography sx={problemStyle}>{problem}</Typography>
               <Box>
-                <Button onClick={() => setOpen(true)}>수정 완료</Button>
-                <Button onClick={() => setIsCodeEdit(false)}>취소</Button>
+                <Button
+                  onClick={handleEditBtn}
+                  variant="contained"
+                  sx={editBtnStyle}
+                >
+                  수정 완료
+                </Button>
+                <Button
+                  sx={cancelBtnStyle}
+                  onClick={() => setIsCodeEdit(false)}
+                  variant="contained"
+                >
+                  취소
+                </Button>
               </Box>
             </Box>
             <Box sx={titleStyle}>
@@ -148,12 +166,26 @@ const titleStyle = {
   alignItems: 'baseline',
 };
 
+const editBtnStyle = {
+  marginRight: 2,
+};
+
+const cancelBtnStyle = {
+  'backgroundColor': 'error.main',
+  '&:hover': {
+    backgroundColor: '#A28080',
+  },
+  'marginRight': 2,
+};
+
 const titleInput = {
   width: '30rem',
 };
 
 const problemStyle = {
   fontSize: '20px',
+  marginBottom: 3,
+  marginTop: 2,
 };
 
 const codeWritterStyle = {

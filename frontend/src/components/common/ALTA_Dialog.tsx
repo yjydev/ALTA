@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
+import { mainColor, errorColor, whiteColor } from '../../modules/colorChart';
 
 export default function ALTA_Dialog({
   title,
@@ -18,7 +19,7 @@ export default function ALTA_Dialog({
     <div>
       <Dialog fullWidth open={open} onClose={() => setOpen(false)}>
         <DialogTitle sx={titleStyle}>{title}</DialogTitle>
-        <DialogContent>{children}</DialogContent>
+        <DialogContent sx={childrenStyle}>{children}</DialogContent>
         <DialogActions>
           <Button onClick={handleComplete} variant="contained" sx={submitBtn}>
             완 료
@@ -34,15 +35,33 @@ export default function ALTA_Dialog({
 
 const titleStyle = {
   marginBottom: 2,
+  marginTop: 3,
+  marginLeft: 2,
+};
+
+const childrenStyle = {
+  marginX: 2,
 };
 
 const delBtn = {
-  backgroundColor: 'error.main',
-  color: '#000000',
+  'backgroundColor': errorColor,
+  '&:hover': {
+    backgroundColor: '#A28080',
+  },
+  'color': whiteColor,
+  'marginBottom': 3,
+  'marginRight': 4,
+  'fontSize': '16px',
+  'padding': '11px',
 };
 
 const submitBtn = {
-  color: '#000000',
+  backgroundColor: mainColor,
+  color: whiteColor,
+  marginBottom: 3,
+  marginRight: 1,
+  fontSize: '16px',
+  padding: '11px',
 };
 
 type Props = {

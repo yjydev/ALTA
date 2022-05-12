@@ -182,19 +182,15 @@ export async function editCodeApi(
   codeId: number,
   commitMessage: string,
   fileName: string,
-  code: string,
+  content: string,
 ) {
   const requestBody = {
     commitMessage,
     fileName,
-    content: code,
-    codeId,
+    content,
   };
 
-  return await await putRequest(
-    `/api/study/${studyId}/code/${codeId}/reupload`,
-    requestBody,
-  );
+  return await putRequest(`/api/study/${studyId}/code/${codeId}`, requestBody);
 }
 //문제 수정 요청
 export async function editProblemApi(
@@ -209,26 +205,6 @@ export async function editProblemApi(
     link,
   };
   return await await putRequest(`/api/study/${studyId}/problem/`, requestBody);
-}
-
-// 코드 수정 요청
-export async function modifyCodeApi(
-  studyId: number,
-  codeId: number,
-  commitMessage: string,
-  fileName: string,
-  content: string,
-) {
-  const requestBody = {
-    commitMessage,
-    fileName,
-    content,
-    codeId,
-  };
-  return await putRequest(
-    `/api/study/${studyId}/code/${codeId}/modify`,
-    requestBody,
-  );
 }
 
 // 리뷰(댓글) 해결 여부 토글 요청

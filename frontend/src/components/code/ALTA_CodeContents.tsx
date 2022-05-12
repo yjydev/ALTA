@@ -9,6 +9,7 @@ import { CodeStore } from '../../context/CodeContext';
 import { CodeProps } from '../../types/CodeBlockType';
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
+import { displayAt } from '../../modules/displayAt';
 
 import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
@@ -51,7 +52,8 @@ export default function ALTA_CodeContents({
   const goToDetail = (studyId: number) =>
     navigate('/study/detail', { state: { studyId } });
 
-  // const goToresubmit = () => navigate('')
+  const goToresubmit = (studyId: number, codeId: number) =>
+    navigate('/code-submit', { state: { studyId, codeId } });
 
   useEffect(() => {
     (async function () {
@@ -70,7 +72,7 @@ export default function ALTA_CodeContents({
         </Box>
       </Grid>
       <Grid item md={10}>
-        <Box pr={15}>
+        <Box pr={10}>
           <Grid container direction="column" rowGap={3}>
             <Grid item sx={codeBlock_wrapper}>
               {isCodeEdit ? (
@@ -100,7 +102,7 @@ export default function ALTA_CodeContents({
                             <Button
                               sx={reupBtn}
                               variant="contained"
-                              // onClick={goToresubmit}
+                              onClick={() => goToresubmit(studyId, codeId)}
                             >
                               재업로드
                             </Button>
@@ -128,9 +130,14 @@ export default function ALTA_CodeContents({
                         <Typography sx={codeTitleStyle}>
                           {code.fileName}
                         </Typography>
-                        <Typography sx={codeWritterStyle} align="right">
-                          작성자 : {code.writer}
-                        </Typography>
+                        <Box>
+                          <Typography sx={codeWritterStyle} align="right">
+                            작성자 : {code.writer}
+                          </Typography>
+                          <Typography sx={dateStyle}>
+                            마지막 수정 : {displayAt(code.createDate)}
+                          </Typography>
+                        </Box>
                       </Box>
                     </Box>
                     <Divider style={{ width: '100%' }} />
@@ -174,17 +181,23 @@ const backBtn = {
 };
 
 const editBtn = {
-  fontSize: '15px',
-  marginRight: ' 10px',
-  backgroundColor: 'secondary.main',
-  color: '#000000',
+  'fontSize': '15px',
+  'marginRight': ' 10px',
+  'backgroundColor': 'secondary.main',
+  '&:hover': {
+    backgroundColor: '#AFA291',
+  },
+  'color': '#212121',
 };
 
 const delBtn = {
-  fontSize: '15px',
-  marginRight: ' 10px',
-  backgroundColor: 'error.main',
-  color: '#000000',
+  'fontSize': '15px',
+  'marginRight': ' 10px',
+  'backgroundColor': 'error.main',
+  'color': '#212121',
+  '&:hover': {
+    backgroundColor: '#A28080',
+  },
 };
 
 const reupBtn = {
@@ -196,11 +209,18 @@ const titleStyle = {
   minWidth: '480px',
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'baseline',
+  alignItems: 'flex-start',
 };
 
 const problemStyle = {
   fontSize: '20px',
+};
+
+const dateStyle = {
+  fontSize: '16px',
+  marginRight: '16px',
+  color: 'gray',
+  marginTop: '8px',
 };
 
 const codeTitleStyle = {
@@ -210,4 +230,5 @@ const codeTitleStyle = {
 const codeWritterStyle = {
   fontSize: '20px',
   marginRight: '16px',
+  marginTop: '8px',
 };

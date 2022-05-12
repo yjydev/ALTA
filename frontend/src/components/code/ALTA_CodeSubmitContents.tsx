@@ -39,6 +39,9 @@ export default function ALTA_CodeSubmitContents() {
 
   const goStudyDetail = () => navigate('/study/detail', { state: { studyId } });
 
+  const goCodeDetail = (codeId: number, studyId: number) =>
+    navigate('/study/code', { state: { codeId, studyId } });
+
   const summitCode = async () => {
     if (code === '코드를 업로드 해주세요.') {
       generateError('코드를 업로드 해주세요', '');
@@ -58,6 +61,7 @@ export default function ALTA_CodeSubmitContents() {
       goStudyDetail();
     } else {
       await editCodeApi(studyId, codeId, commitMessage, fileName, code);
+      goCodeDetail(codeId, studyId);
     }
   };
 
