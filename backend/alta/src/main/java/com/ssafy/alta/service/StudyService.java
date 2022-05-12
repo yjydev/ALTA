@@ -297,14 +297,12 @@ public class StudyService {
                 path2 = cloneList(path1);
                 path2.add(problem.getName());
                 pathResponseList.offer(new PathResponse(path2, 0L));
-                for(StudyJoinInfo info : sjiList) {             // 유저 추가
-                    path3 = cloneList(path2);
-                    path3.add(info.getUser().getName());
+                for(Code code : problem.getCode()) {
+                    path3 = cloneList(path2);           // 해당 코드 작성자 추가
+                    path3.add(code.getUser().getName());
                     pathResponseList.offer(new PathResponse(path3, 0L));
-                }
-                for(Code code : problem.getCode()) {            // 코드 추가
-                    path4 = cloneList(path2);
-                    path4.add(code.getUser().getName());
+
+                    path4 = cloneList(path3);           // 코드 추가
                     path4.add(code.getFileName());
                     pathResponseList.offer(new PathResponse(path4, code.getId()));
                 }
@@ -312,7 +310,8 @@ public class StudyService {
             idx++;
         }
 
-        // 2. 리스트 정렬 - Depth로 정렬
+        // 2. 리스트 정렬
+        // Depth -> 정렬(오름차순)
         //  `일정` -> 시작 날짜로 정렬(내림차순)
         //     `문제 이름` -> 이름으로 정렬(오름차순)
         //        `사용자 이름` -> 이름으로 정렬(오름차순)
