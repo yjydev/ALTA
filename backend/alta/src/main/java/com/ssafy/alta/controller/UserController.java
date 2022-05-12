@@ -37,7 +37,6 @@ public class UserController {
     @GetMapping("/test")
     public void getUserInfo2(@RequestHeader String ACCESS_TOKEN) {
 
-        System.out.println("ref = " + redisService.getJWTRefreshToken());
         System.out.println("acc = " + redisService.getAccessToken());
     }
 

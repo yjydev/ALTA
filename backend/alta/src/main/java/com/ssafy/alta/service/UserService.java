@@ -13,6 +13,7 @@ import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
 import com.ssafy.alta.util.UserLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,9 +35,6 @@ public class UserService {
     private Environment environment;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private StudyJoinInfoRepository studyJoinInfoRepository;
 
     private GitEmailAPI gitEmailAPI = new GitEmailAPI();
@@ -44,6 +42,7 @@ public class UserService {
     private GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
 
     @Autowired
+    @Lazy
     private RedisService redisService;
 
 
@@ -81,7 +80,7 @@ public class UserService {
 
     @Transactional
     public UserResponse updateUserImage(MultipartFile file) {
-        String user_id = userService.getCurrentUserId();
+        String user_id = this.getCurrentUserId();
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
                 .orElseThrow(DataNotFoundException::new));
         User user = optUser.get();
@@ -161,7 +160,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
 //    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file) {
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
-        String user_id = userService.getCurrentUserId();
+        String user_id = this.getCurrentUserId();
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
                 .orElseThrow(DataNotFoundException::new));
@@ -199,7 +198,7 @@ public class UserService {
 
     @Transactional
     public UserResponse selectUser() {
-        String user_id = userService.getCurrentUserId();
+        String user_id = this.getCurrentUserId();
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
                 .orElseThrow(DataNotFoundException::new));
