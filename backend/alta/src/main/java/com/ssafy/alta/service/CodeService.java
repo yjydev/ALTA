@@ -49,6 +49,7 @@ public class CodeService {
     private final UserService userService;
     private final RedisService redisService;
     private final ActivityScoreService activityScoreService;
+    private final ReadmeService readmeService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -87,6 +88,9 @@ public class CodeService {
 
 //        중복 부분 호출 - 코드 github에 업로드
         this.createCodeInGithub(token, study, code, codeRequest);
+
+        // 리드미 업데이트
+        readmeService.updateReadme(studyId);
     }
 
 
@@ -145,6 +149,9 @@ public class CodeService {
         codeRepository.deleteById(code.getId());
 
         this.deleteCodeInGithub(token, study, code, false, "");
+
+        // 리드미 업데이트
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional(rollbackFor = Exception.class)

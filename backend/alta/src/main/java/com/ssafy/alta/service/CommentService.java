@@ -105,7 +105,8 @@ public class CommentService {
 
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
-        if(!userId.equals(comment.getUser().getId()))
+        // 코드 작성자와 댓글 작성자만 가능하도록
+        if(!userId.equals(comment.getUser().getId()) && !userId.equals(comment.getCode().getUser().getId()))
             throw new WriterNotMatchException();
         comment.changeState(isSolved);
     }
