@@ -27,7 +27,8 @@ export default function ALTA_CodeSubmitContents() {
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const files = e.target.files;
     if (files) {
-      setFileName(files[0].name);
+      const tmp = files[0].name.split('.');
+      setFileName(tmp.slice(0, tmp.length - 1).join(''));
 
       const reader = new FileReader();
 
@@ -37,6 +38,9 @@ export default function ALTA_CodeSubmitContents() {
   };
 
   const goStudyDetail = () => navigate('/study/detail', { state: { studyId } });
+
+  const goCodeDetail = (codeId: number, studyId: number) =>
+    navigate('/study/code', { state: { codeId, studyId } });
 
   const summitCode = async () => {
     if (code === '코드를 업로드 해주세요.') {
@@ -57,6 +61,7 @@ export default function ALTA_CodeSubmitContents() {
       goStudyDetail();
     } else {
       await editCodeApi(studyId, codeId, commitMessage, fileName, code);
+      goCodeDetail(codeId, studyId);
     }
   };
 

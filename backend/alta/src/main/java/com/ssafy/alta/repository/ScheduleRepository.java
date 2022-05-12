@@ -22,13 +22,20 @@ import java.util.Optional;
  */
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    Optional<Schedule> findTop1ByStudyStudyIdOrderByRoundDesc(Long studyId);
     List<Schedule> findByStudyStudyIdOrderByStartDateAsc(Long studyId);
+
+    List<Schedule> findByStudyStudyIdOrderByStartDateDesc(Long studyId);
+
     @Query("select s from Schedule s where s.study.studyId = :studyId and s.startDate > :nowDate and s.id != :scheduleId order by s.startDate")
-    List<Schedule> findByStudyStudyIExceptOnedOrderByStartDate(@Param("studyId") Long studyId, @Param("nowDate") Date nowDate, @Param("scheduleId") Long scheduleId);
+    List<Schedule> findByStudyStudyIExceptOneOrderByStartDate(@Param("studyId") Long studyId, @Param("nowDate") Date nowDate, @Param("scheduleId") Long scheduleId);
+
     @Query("select s from Schedule s where s.study.studyId = :studyId and s.startDate > :nowDate order by s.startDate")
     List<Schedule> findByStudyStudyIdOrderByStartDate(@Param("studyId") Long studyId, @Param("nowDate") Date nowDate);
+
     @Query("select s from Schedule s where s.study.studyId = :studyId and s.startDate = :startDate")
     Optional<Schedule> findByStudyStudyIdSameStartDate(@Param("studyId") Long studyId, @Param("startDate") Date startDate);
+
     Optional<Schedule> findByStudyStudyIdAndId(Long studyId, Long scheduleId);
+
+    Optional<Schedule> findTop1ByStudyStudyIdOrderByStartDateDesc(Long studyId);
 }

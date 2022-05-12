@@ -10,6 +10,8 @@ import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.*;
+import com.ssafy.alta.util.ActivityType;
+import com.ssafy.alta.util.FileLanguageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
-import java.util.List;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -45,16 +49,19 @@ public class CodeService {
     private final CommentService commentService;
     private final UserService userService;
     private final RedisService redisService;
+    private final ActivityScoreService activityScoreService;
+    private final ReadmeService readmeService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
     private static final String BRANCH = "main";
+    private FileLanguageUtil fileLanguageUtil = FileLanguageUtil.getInstanse();
 
     @Transactional(rollbackFor = Exception.class)
     public void insertCode(Long studyId, CodeRequest codeRequest) throws JsonProcessingException {
 //         변수값들 가져옴
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
@@ -76,16 +83,22 @@ public class CodeService {
 //        DB에 저장
         codeRepository.save(code);
 
+        // 성실점수 추가
+        activityScoreService.addScoreForCommentOrCode(userId, studyId, code.getId(), ActivityType.CODE.getActivityIdx());
+
 
 //        중복 부분 호출 - 코드 github에 업로드
         this.createCodeInGithub(token, study, code, codeRequest);
+
+        // 리드미 업데이트
+        readmeService.updateReadme(studyId);
     }
 
 
     @Transactional(rollbackFor = Exception.class)
     public CodeInfoResponse selectCode(Long studyId, Long codeId) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
@@ -108,14 +121,14 @@ public class CodeService {
             commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
         }
 
-        return code.toCodeInfoResponse();
+        return code.toCodeInfoResponse(study.getLanguage());
     }
 
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteCode(Long studyId, Long codeId) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
@@ -137,12 +150,15 @@ public class CodeService {
         codeRepository.deleteById(code.getId());
 
         this.deleteCodeInGithub(token, study, code, false, "");
+
+        // 리드미 업데이트
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest, boolean isUpdate) throws JsonProcessingException {
+    public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest) throws JsonProcessingException, ParseException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
@@ -169,16 +185,12 @@ public class CodeService {
         }
 
         // 코드 수정일 경우, -> 파일 이름, 내용 변경 -> DB에 적용
-        if(isUpdate) {
-            code.changeFile(codeRequest.getFileName(), codeRequest.getContent());
-            commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
-        }
-        // 코드 재업로드일 경우, -> 파일 삭제, 파일 생성
-        else {
-            codeRepository.deleteById(codeId);
-            code = codeRequest.toCode(user, code.getProblem());
-            codeRepository.save(code);
-        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        Date nowDate = new Date();
+        nowDate = formatter.parse(formatter.format(nowDate));
+        code.changeFile(codeRequest.getFileName(), codeRequest.getContent(), nowDate);
+        commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
 
         this.updateCodeInGithub(token, study, code, codeRequest, lastFileName);
     }
@@ -186,7 +198,8 @@ public class CodeService {
     @Transactional(rollbackFor = Exception.class)
     public void createCodeInGithub(String token, Study study, Code code, CodeRequest codeRequest) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), codeRequest.getFileName());
+        String fullFileName = fileLanguageUtil.getFullFileName(codeRequest.getFileName(), study.getLanguage());
+        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
         String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
         String commitMessage = this.getCommitMessage(codeRequest.getCommitMessage());
 
@@ -222,7 +235,8 @@ public class CodeService {
     public void deleteCodeInGithub(String token, Study study, Code code, boolean isUpdate, String lastFileName) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String fileName = isUpdate ? lastFileName : code.getFileName();
-        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fileName);
+        String fullFileName = fileLanguageUtil.getFullFileName(fileName, study.getLanguage());
+        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
         String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
 
         GitCodeResponse gitCodeResponse = null;
@@ -250,7 +264,8 @@ public class CodeService {
 
     public GitCodeResponse selectCodeInGithub(String token, Study study, Code code, boolean isUpdate) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
-        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), code.getFileName());
+        String fullFileName = fileLanguageUtil.getFullFileName(code.getFileName(), study.getLanguage());
+        String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
         String url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
 
 

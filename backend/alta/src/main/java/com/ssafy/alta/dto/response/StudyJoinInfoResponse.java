@@ -24,6 +24,7 @@ import java.util.Date;
 @Builder
 @ToString
 public class StudyJoinInfoResponse {
+    private Long id;
     private String nickname;
     private String email;
     private String state;

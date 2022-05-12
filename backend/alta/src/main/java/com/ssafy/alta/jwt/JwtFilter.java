@@ -1,8 +1,11 @@
 package com.ssafy.alta.jwt;
 
+import com.ssafy.alta.service.RedisService;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +36,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AT_HEADER = "ACCESS_TOKEN";
     public static final String RT_HEADER = "REFRESH_TOKEN";
 
@@ -47,8 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // resolveToken함수를 실행하여, request header에서 토큰을 꺼내온다.
-        String at = resolveAccessToken(request);
-        String rt = resolveRefreshToken(request);
+        String at = resolveToken(request, 1);
+        String rt = resolveToken(request, 2);
 
         System.out.println("at = " + at);
         System.out.println("rt = " + rt);
@@ -65,12 +67,14 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         // af가 만료되었을 때
         else if(at != null && rt != null){
-            if (StringUtils.hasText(rt) && tokenProvider.validateToken(rt)) { // JWT ACCESS TOKEN이 정상이면
+            if (StringUtils.hasText(rt) && tokenProvider.validateToken(rt)) { // JWT Refresh TOKEN이 정상이면
                 Authentication authentication = tokenProvider.getAuthentication(rt); // 토큰안에 authentication 객체를 받는다.
                 SecurityContextHolder.getContext().setAuthentication(authentication); // authentication 객체를 securitycontext에 set한다.
+
+                if(!tokenProvider.compareWithRedisData(rt)) // Redis에 저장한 RT와 비교 후, 틀리다면 JWT ERROR반환
+                    throw new JwtException("JWT error");
                 logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), request.getRequestURI());
             } else {
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 logger.debug("Invalid JWT, uri: {}", request.getRequestURI());
             }
         }
@@ -80,21 +84,17 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
     // request header에서 토큰 정보를 꺼내오기 위한 resolvToken 메소드 추가
-    private String resolveAccessToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AT_HEADER);
+    private String resolveToken(HttpServletRequest request, int type) {
+        String bearerToken = null;
+        if(type == 1){
+            bearerToken = request.getHeader(AT_HEADER);
+        }
+        else
+            bearerToken = request.getHeader(RT_HEADER);
+
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
     }
-
-    // request header에서 토큰 정보를 꺼내오기 위한 resolvToken 메소드 추가
-    private String resolveRefreshToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(RT_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
-
 }

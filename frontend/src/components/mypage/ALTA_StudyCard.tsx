@@ -6,9 +6,7 @@ export default function ALTA_StudyCard({ study }: Props) {
   return (
     <Grid container sx={studyCardStyle}>
       <Grid item xs={9}>
-        <Typography sx={[studyNameStyle, elipsisStyle]}>
-          {study.name}
-        </Typography>
+        <Typography sx={studyNameStyle}>{study.name}</Typography>
       </Grid>
       <Grid item xs={3}>
         <Typography sx={{ lineHeight: '50px' }}>
@@ -16,7 +14,7 @@ export default function ALTA_StudyCard({ study }: Props) {
         </Typography>
       </Grid>
       <Grid item xs={9}>
-        <Typography sx={elipsisStyle}>{study.introduction}</Typography>
+        <Typography sx={studyIntroStyle}>{study.introduction}</Typography>
       </Grid>
       <Grid item xs={3}>
         <Typography>{study.language}</Typography>
@@ -29,18 +27,18 @@ type Props = {
   study: Study;
 };
 
-const elipsisStyle = {
+const studyNameStyle = {
+  marginRight: '5px',
+  fontSize: '20px',
+  lineHeight: '50px',
+  fontWeight: 'bold',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 };
 
-const studyNameStyle = {
-  fontSize: '25px',
-  lineHeight: '50px',
-};
-
 const studyIntroStyle = {
+  marginRight: '20px',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',

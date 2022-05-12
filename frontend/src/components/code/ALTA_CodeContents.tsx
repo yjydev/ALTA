@@ -4,73 +4,65 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-import { getRequest, deleteRequest } from '../../api/request';
-import { CodeReviewStore } from '../../context/CodeReviewContext';
+import { deleteCodeApi } from '../../api/apis';
+import { CodeStore } from '../../context/CodeContext';
 import { CodeProps } from '../../types/CodeBlockType';
-import {
-  generateCheck,
-  generateError,
-  generateTimer,
-} from '../../modules/generateAlert';
+import { generateError, generateConfirm } from '../../modules/generateAlert';
+import { checkLogin } from '../../modules/LoginTokenChecker';
+import { displayAt } from '../../modules/displayAt';
 
 import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
-export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
+export default function ALTA_CodeContents({
+  studyId,
+  codeId,
+  problem,
+}: CodeProps) {
   const navigate = useNavigate();
 
-  const { code, setCode } = useContext(CodeReviewStore);
+  const { code, getCode, user } = useContext(CodeStore);
   const [isCodeEdit, setIsCodeEdit] = useState(false);
-  const [userName, setUserName] = useState<string>('');
-
-  const getCode = async () => {
-    try {
-      const res = await getRequest(`/api/study/${studyId}/code/${codeId}`);
-      // console.log(res);
-      setCode(res);
-    } catch (err: any) {
-      if (err.response.status === 403) {
-        navigate('/');
-      }
-    }
-  };
 
   const handleDelete = async () => {
-    generateTimer('잠시 기다려 주세요', `${code.fileName} 을 삭제중입니다`);
+    if (!(await checkLogin()).status) navigate('/');
+    generateConfirm(
+      '정말 삭제하시겠습니까?',
+      '한번 삭제하면 되돌릴 수 없습니다.',
+      '코드가 삭제되었습니다.',
+      `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
+      async () => delCode(),
+    );
+  };
+
+  const delCode = async () => {
     try {
-      const res = await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
-      generateCheck(
-        '코드가 삭제되었습니다.',
-        `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
-        () => goToDetail(studyId),
-      );
+      await deleteCodeApi(studyId, codeId);
+      goToDetail(studyId);
     } catch (err: any) {
-      if (err.response.status === 403) {
-        navigate('/');
-      }
-      console.log(err);
-      generateError('코드 삭제에 실패하였습니다', ``);
+      generateError(
+        '코드 삭제에 실패하였습니다',
+        `${err.response.data.message}`,
+      );
     }
   };
 
-  const goToDetail = (studyId: string | undefined) =>
+  const goToDetail = (studyId: number) =>
     navigate('/study/detail', { state: { studyId } });
 
-  // const goToresubmit = () => navigate('')
+  const goToresubmit = (studyId: number, codeId: number) =>
+    navigate('/code-submit', { state: { studyId, codeId } });
 
   useEffect(() => {
-    getCode();
-    const user = localStorage.getItem('UserData');
-    if (user !== null) {
-      setUserName(JSON.parse(user)['nickname']);
-    }
+    (async function () {
+      const status = await getCode(studyId, codeId);
+      if (status === -1) navigate('/');
+      else if (status === -2)
+        generateError('코드 정보를 불러오는데 실패하였습니다', '');
+    })();
   }, []);
-
-  useEffect(() => {
-    getCode();
-  }, [isCodeEdit]);
 
   return (
     <Grid container sx={wrapper} spacing={8}>
@@ -80,17 +72,15 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
         </Box>
       </Grid>
       <Grid item md={10}>
-        <Box pr={15}>
+        <Box pr={10}>
           <Grid container direction="column" rowGap={3}>
             <Grid item sx={codeBlock_wrapper}>
               {isCodeEdit ? (
                 <ALTA_CodeEditor
-                  code={code.code}
-                  language={code.language}
-                  file={code.fileName}
                   setIsCodeEdit={setIsCodeEdit}
                   studyId={studyId}
                   codeId={codeId}
+                  problem={problem}
                 />
               ) : (
                 <Grid container direction="column" spacing={5}>
@@ -107,12 +97,12 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                         >
                           Back
                         </Button>
-                        {code.writer === userName ? (
+                        {code.writer === user ? (
                           <Box>
                             <Button
                               sx={reupBtn}
                               variant="contained"
-                              // onClick={goToresubmit}
+                              onClick={() => goToresubmit(studyId, codeId)}
                             >
                               재업로드
                             </Button>
@@ -135,14 +125,19 @@ export default function ALTA_CodeContents({ studyId, codeId }: CodeProps) {
                           </Box>
                         ) : null}
                       </Box>
-                      <Typography sx={problemStyle}>2021.04.13 회문</Typography>
+                      <Typography sx={problemStyle}>{problem}</Typography>
                       <Box sx={titleStyle}>
                         <Typography sx={codeTitleStyle}>
                           {code.fileName}
                         </Typography>
-                        <Typography sx={codeWritterStyle} align="right">
-                          작성자 : {code.writer}
-                        </Typography>
+                        <Box>
+                          <Typography sx={codeWritterStyle} align="right">
+                            작성자 : {code.writer}
+                          </Typography>
+                          <Typography sx={dateStyle}>
+                            마지막 수정 : {displayAt(code.createDate)}
+                          </Typography>
+                        </Box>
                       </Box>
                     </Box>
                     <Divider style={{ width: '100%' }} />
@@ -186,17 +181,23 @@ const backBtn = {
 };
 
 const editBtn = {
-  fontSize: '15px',
-  marginRight: ' 10px',
-  backgroundColor: 'secondary.main',
-  color: '#000000',
+  'fontSize': '15px',
+  'marginRight': ' 10px',
+  'backgroundColor': 'secondary.main',
+  '&:hover': {
+    backgroundColor: '#AFA291',
+  },
+  'color': '#212121',
 };
 
 const delBtn = {
-  fontSize: '15px',
-  marginRight: ' 10px',
-  backgroundColor: 'error.main',
-  color: '#000000',
+  'fontSize': '15px',
+  'marginRight': ' 10px',
+  'backgroundColor': 'error.main',
+  'color': '#212121',
+  '&:hover': {
+    backgroundColor: '#A28080',
+  },
 };
 
 const reupBtn = {
@@ -208,11 +209,18 @@ const titleStyle = {
   minWidth: '480px',
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'baseline',
+  alignItems: 'flex-start',
 };
 
 const problemStyle = {
   fontSize: '20px',
+};
+
+const dateStyle = {
+  fontSize: '16px',
+  marginRight: '16px',
+  color: 'gray',
+  marginTop: '8px',
 };
 
 const codeTitleStyle = {
@@ -222,4 +230,5 @@ const codeTitleStyle = {
 const codeWritterStyle = {
   fontSize: '20px',
   marginRight: '16px',
+  marginTop: '8px',
 };

@@ -2,7 +2,7 @@ package com.ssafy.alta.entity;
 
 import com.ssafy.alta.dto.response.CodeInfoResponse;
 import com.ssafy.alta.dto.response.CodeResponse;
-import com.ssafy.alta.util.FileToLanguage;
+import com.ssafy.alta.util.FileLanguageUtil;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -88,18 +88,19 @@ public class Code {
         this.sha = sha;
         this.content = content;
     }
-    public void changeFile(String fileName, String content) {
+    public void changeFile(String fileName, String content, Date date) {
         if(fileName != null && !fileName.equals("") && !this.fileName.equals(fileName)) // 파일 이름이 null이 아니고, 공란이 아니고, 같지 않다면 업데이트
             this.fileName = fileName;
         this.content = content;
+        this.createDate = date;
     }
 
-    public CodeInfoResponse toCodeInfoResponse() {
+    public CodeInfoResponse toCodeInfoResponse(String language) {
         return CodeInfoResponse.builder()
                 .code(this.content)
                 .createDate(this.createDate)
                 .fileName(this.fileName)
-                .language(FileToLanguage.getInstanse().getLanguage(this.fileName))
+                .language(FileLanguageUtil.getInstanse().getEditorFormat(language))
                 .writer(this.user.getNickname())
                 .build();
     }

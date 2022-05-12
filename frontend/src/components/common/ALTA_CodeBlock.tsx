@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Box, Grid } from '@mui/material';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import * as code_themes from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { CodeReviewStore } from '../../context/CodeReviewContext';
+import { CodeStore } from '../../context/CodeContext';
 
 export default function ALTA_CodeBlock({
   code,
@@ -11,7 +11,7 @@ export default function ALTA_CodeBlock({
   code: string;
   language: string;
 }) {
-  const { codeLine, setCodeLine } = useContext(CodeReviewStore);
+  const { codeLine, setCodeLine } = useContext(CodeStore);
 
   return (
     <Grid
@@ -23,7 +23,7 @@ export default function ALTA_CodeBlock({
     >
       <Box>
         <SyntaxHighlighter
-          language={language}
+          language={language.toLowerCase()}
           style={code_themes['darcula']}
           className="highlighter"
           showLineNumbers={true}

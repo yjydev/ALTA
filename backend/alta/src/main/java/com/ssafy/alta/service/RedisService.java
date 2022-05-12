@@ -31,21 +31,12 @@ public class RedisService {
     @Autowired
     private UserRedisRepository userRedisRepository;
 
-    @Autowired
-    private UserService userService;
-
-    public String getAccessToken(){
-
-        String id = userService.getCurrentUserId();
-
+    public String getAccessToken(String id){
         Optional<UserRedis> user = userRedisRepository.findById(id);
         return user.get().getGithub_access_token();
     }
 
-    public String getJWTRefreshToken(){
-
-        String id = userService.getCurrentUserId();
-
+    public String getJWTRefreshToken(String id){
         Optional<UserRedis> user = userRedisRepository.findById(id);
         return user.get().getJwt_refresh_token();
     }

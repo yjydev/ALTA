@@ -1,6 +1,7 @@
+import React from 'react';
 import { Box } from '@mui/material';
 
-export default function ALTA_Template({ header, contents }) {
+export default function ALTA_Template({ header, contents }: Props) {
   return (
     <Box sx={layout}>
       <Box sx={headerStyle}>{header}</Box>
@@ -8,6 +9,11 @@ export default function ALTA_Template({ header, contents }) {
     </Box>
   );
 }
+
+type Props = {
+  header: React.ReactNode;
+  contents: React.ReactNode;
+};
 
 const layout = {
   display: 'flex',

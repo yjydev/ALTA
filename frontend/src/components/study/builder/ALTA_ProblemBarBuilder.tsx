@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import styled from '@emotion/styled';
 
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { blackColor, mainColor } from '../../../modules/colorChart';
 
 import ALTA_Tooltip from '../../common/ALTA_Tooltip';
+import { generateError } from '../../../modules/generateAlert';
 
 export const problemBarFrontBuilder = (
   problem: Problem,
@@ -72,15 +73,22 @@ type SellBtnProps = {
 
 function SellBtn({ code, problem, memberName, studyId }: SellBtnProps) {
   const navigate = useNavigate();
+  const userData = localStorage.getItem('UserData');
 
   const goCodeSumbit = () => {
-    const problemId = problem.id;
-    const fileName = `${problem.name}_${memberName}.txt`;
-    navigate('/code-submit', { state: { problemId, fileName, studyId } });
+    if (userData && JSON.parse(userData).nickname !== memberName) {
+      generateError('다른 사람의 제출 버튼을 누르셨습니다', '');
+    } else {
+      const problemId = problem.id;
+      navigate('/code-submit', { state: { problemId, studyId } });
+    }
   };
 
   const goCodeDetail = () => {
-    if (code) navigate(`/study/${studyId}/code/${code.id}`);
+    if (code)
+      navigate(`/study/code`, {
+        state: { studyId, codeId: code.id, problem: problem.name },
+      });
   };
 
   return (

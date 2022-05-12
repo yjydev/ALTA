@@ -1,12 +1,12 @@
 import { useContext, useState } from 'react';
-import { Button, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import styled from '@emotion/styled';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import { Button, Grid, LinearProgress, Typography, Alert } from '@mui/material';
 
 import { Problem } from '../../types/StudyType';
-import { blackColor, mainColor, subColor } from '../../modules/colorChart';
+import { blackColor, subColor } from '../../modules/colorChart';
 import { problemBarFrontBuilder } from './builder/ALTA_ProblemBarBuilder';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import {
@@ -33,29 +33,59 @@ export default function ALTA_ProblemTable({
   const { members, maxPeople, editSchedule } = useContext(StudyDetailStore);
 
   const [scheduleEditing, setScheduleEditing] = useState<boolean>(false);
+  const [editScheduleError, setEditScheduleError] = useState<boolean>(false);
   const [scheduleString, setScheduleString] = useState<string>(
     `${roundTable.startDate} ~ ${roundTable.endDate}`,
   );
+  const [editScheduleLoading, setEditScheduleLoading] =
+    useState<boolean>(false);
+
   const edit = async (
     studyId: number,
     scheduleId: number,
     dateString: string,
   ) => {
-    editSchedule(studyId, scheduleId, dateString);
+    if (scheduleString === `${roundTable.startDate} ~ ${roundTable.endDate}`) {
+      setEditScheduleError(true);
+      setTimeout(() => {
+        setEditScheduleError(false);
+      }, 2500);
+
+      return;
+    }
+    setEditScheduleLoading(true);
+    await editSchedule(studyId, scheduleId, dateString);
+    setEditScheduleLoading(false);
   };
 
   return (
     <>
       <Box sx={sectionStyle}>
-        <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box
+          sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+        >
           {`${roundTable.round} 회차 : `}
-          <Input
-            type="text"
-            className={`${scheduleEditing && 'editing'}`}
-            value={scheduleString}
-            disabled={!scheduleEditing}
-            onChange={(e) => setScheduleString(e.target.value)}
-          />
+          <Alert
+            sx={[alertStyle, editScheduleError && errorVisible]}
+            severity="error"
+          >
+            일정에 변화가 없어 반영되지 않습니다
+          </Alert>
+          {editScheduleLoading && (
+            <LinearProgress
+              sx={{ width: '200px', marginLeft: '5px' }}
+              color="secondary"
+            />
+          )}
+          {!editScheduleLoading && (
+            <Input
+              type="text"
+              className={`${scheduleEditing && 'editing'}`}
+              value={scheduleString}
+              disabled={!scheduleEditing}
+              onChange={(e) => setScheduleString(e.target.value)}
+            />
+          )}
           <Button
             sx={scheduleEditBtnStyle}
             onClick={() => setScheduleEditing(!scheduleEditing)}
@@ -73,19 +103,24 @@ export default function ALTA_ProblemTable({
               </ALTA_Tooltip>
             )}
           </Button>
-        </Typography>
+        </Box>
       </Box>
       <Box sx={tableStyle}>
         <Box>
           <Box>
             <Grid container sx={tableHeaderStyle}>
-              <Grid item xs={4} sx={sellStyle}>
+              <Grid item xs={4} sx={[sellStyle, ellipsisStyle]}>
                 <Typography>제목</Typography>
               </Grid>
-              <Grid item xs={8} sx={sellStyle}>
+              <Grid item xs={8} sx={[sellStyle, ellipsisStyle]}>
                 <Grid container>
                   {members.map((member, i) => (
-                    <Grid item key={i} xs={12 / maxPeople} sx={sellStyle}>
+                    <Grid
+                      item
+                      key={i}
+                      xs={12 / maxPeople}
+                      sx={[sellStyle, ellipsisStyle]}
+                    >
                       <Typography sx={ellipsisStyle}>
                         {member.nickname ? member.nickname : '-'}
                       </Typography>
@@ -143,6 +178,7 @@ const sellStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  padding: '0 5px',
 };
 
 const ellipsisStyle = {
@@ -150,14 +186,6 @@ const ellipsisStyle = {
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 };
-
-const A = styled.a`
-  all: unset;
-  cursor: pointer;
-  &:hover {
-    color: ${mainColor};
-  }
-`;
 
 const sectionStyle = {
   display: 'flex',
@@ -176,6 +204,20 @@ const scheduleEditBtnStyle = {
   '*': {
     fontSize: '20px',
   },
+};
+
+const alertStyle = {
+  position: 'absolute',
+  bottom: 30,
+  margin: 0,
+  marginLeft: 1,
+  padding: '0 10px',
+  opacity: 0,
+  transition: 'opacity .3s',
+};
+
+const errorVisible = {
+  opacity: 1,
 };
 
 const Input = styled.input`

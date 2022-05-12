@@ -2,9 +2,9 @@ export type ReviewData = {
   reviewId: number;
   reviewerName: string;
   comment: string;
-  commentDate: string;
+  commentDate: Date;
   codeNumber: number;
-  completed?: boolean;
+  completed: boolean;
 };
 
 export type CodeData = {
@@ -23,13 +23,8 @@ export const defaultCodeData = {
   writer: '',
 };
 
-export type PostReview = {
-  codeId: number;
-  content: string;
-  line: number;
-};
-
 export type CodeProps = {
-  studyId: string | undefined;
-  codeId: string | undefined;
+  studyId: number;
+  codeId: number;
+  problem: string;
 };

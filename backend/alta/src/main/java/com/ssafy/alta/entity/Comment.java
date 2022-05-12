@@ -76,13 +76,13 @@ public class Comment {
                 .comment(content)
                 .codeNumber(line)
                 .completed(isSolved)
+                .commentDate(createDate)
                 .build();
     }
 
     public void updateComment(CommentUpdateRequest commentUpdateRequest) {
         this.line = commentUpdateRequest.getLine();
         this.content = commentUpdateRequest.getContent();
-        this.isSolved = commentUpdateRequest.getIsSolved();
     }
 
     public void changeState(boolean isSolved) {

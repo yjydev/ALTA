@@ -65,6 +65,7 @@ public class StudyJoinInfo {
 
     public StudyJoinInfoResponse toStudyJoinInfoResponse(String date) {
         return StudyJoinInfoResponse.builder()
+                .id(id)
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .position(position)

@@ -21,13 +21,13 @@ export default function ALTA_UserDataDisplay() {
             defaultValue={
               userData.introduction === null
                 ? '자기소개를 작성해주세요'
-                : `사용 언어 : ${userData.introduction}`
+                : `${userData.introduction}`
             }
           ></TextArea>
           <Typography>
             {userData.languageList === null
               ? '사용 언어를 설정해주세요'
-              : `사용 언어 : ${userData.languageList}`}
+              : `사용 언어 : ${userData.languageList.join(', ')}`}
           </Typography>
         </Box>
       </Box>

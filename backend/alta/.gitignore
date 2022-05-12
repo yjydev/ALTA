@@ -175,9 +175,9 @@ replay_pid*
 
 
 # yml
-
+*.yml
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java
 
-
+**/Oauth2AuthenticationSuccessHandler.java
 
