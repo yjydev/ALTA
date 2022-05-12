@@ -70,8 +70,11 @@ export const addProblemBarBackBuilder = (
         generateError('문제 이름과 링크를 모두 입력해주세요', '');
         return;
       }
-
-      await addProblemApi(studyId, scheduleId, problemName, problemLink);
+      try {
+        await addProblemApi(studyId, scheduleId, problemName, problemLink);
+      } catch {
+        generateError('문제를 추가할 수 없습니다', '');
+      }
 
       setPropblemName('');
       setPropblemLink('');
@@ -92,7 +95,7 @@ export const addProblemBarBackBuilder = (
         fliper();
         getStudyDetail(studyId);
       } catch (error) {
-        console.log(error);
+        generateError('문제를 수정할 수 없습니다', '');
       } finally {
         setEditProblemLoading(false);
       }

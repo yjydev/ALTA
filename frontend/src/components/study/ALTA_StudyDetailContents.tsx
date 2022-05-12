@@ -25,7 +25,7 @@ export default function ALTA_StudyDetailContents({
   studyId: number;
 }) {
   const navigate = useNavigate();
-  const { studyData, getStudyDetail, getStudyMembers } =
+  const { readmeData, getStudyDetail, getStudyMembers } =
     useContext(StudyDetailStore);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -72,7 +72,7 @@ export default function ALTA_StudyDetailContents({
                   />
                 </Box>
                 <Box sx={{ position: 'relative', marginTop: '150px' }}>
-                  {studyData
+                  {readmeData
                     .map((roundTable: StudyData) => (
                       <Box sx={{ margin: '30px 0 60px' }} key={roundTable.id}>
                         <ALTA_ProblemTable
@@ -90,7 +90,7 @@ export default function ALTA_StudyDetailContents({
           </Grid>
           <Grid item xl={3} lg={6}>
             <ALTA_StudySideContents>
-              <ALTA_StudyBoard />
+              <ALTA_StudyBoard studyId={studyId} />
             </ALTA_StudySideContents>
           </Grid>
         </Grid>
