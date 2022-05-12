@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { UserData, defaultUserData } from '../types/UserDataType';
 import { ContextProps } from '../types/ContextPropsType';
 import { checkLogin } from '../modules/LoginTokenChecker';
-import { userDataApi } from '../api/apis';
+import { userDataApi, editUserDataApi, changeProfileImgApi } from '../api/apis';
 
 //Context 인스턴스 생성
 export const defaultValue: defaultValueType = {
   userData: defaultUserData,
   getUserData: () => null,
+  changeProfile: () => null,
+  editUserData: () => null,
 };
 export const UserDataStore = React.createContext(defaultValue);
 
@@ -17,7 +19,6 @@ export default function UserDataProvider({ children }: ContextProps) {
 
   const getUserData = async () => {
     const loginStatus = await checkLogin();
-
     if (!loginStatus.status)
       return { status: -1, message: 'login token error' };
 
@@ -33,7 +34,41 @@ export default function UserDataProvider({ children }: ContextProps) {
     }
   };
 
-  const value = { userData, getUserData };
+  const editUserData = async (
+    nickname: string,
+    email: string,
+    introduction: string,
+    languageList: string[] | null,
+  ) => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status)
+      return { status: -1, message: 'login token error' };
+    try {
+      await editUserDataApi(nickname, email, introduction, languageList);
+      await getUserData();
+      return { status: 1, message: 'success edit user data' };
+    } catch (err) {
+      return { status: -2, message: 'fail get user data' };
+    }
+  };
+
+  const changeProfile = async (img: FormData) => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status)
+      return { status: -1, message: 'login token error' };
+    try {
+      await changeProfileImgApi(img);
+      await getUserData();
+      return { status: 1, message: 'success edit user data' };
+    } catch (err) {
+      return { status: -2, message: 'fail get user data' };
+    }
+  };
+
+  const value = { userData, getUserData, editUserData, changeProfile };
+
   return (
     <UserDataStore.Provider value={value}>{children}</UserDataStore.Provider>
   );
@@ -43,4 +78,11 @@ export default function UserDataProvider({ children }: ContextProps) {
 type defaultValueType = {
   userData: UserData;
   getUserData: () => any;
+  changeProfile: (img: FormData) => any;
+  editUserData: (
+    nickname: string,
+    email: string,
+    introduction: string,
+    languageList: string[] | null,
+  ) => any;
 };
