@@ -10,6 +10,7 @@ import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitCodeAPI;
 import com.ssafy.alta.repository.*;
+import com.ssafy.alta.util.ActivityType;
 import com.ssafy.alta.util.FileLanguageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -60,7 +61,7 @@ public class CodeService {
     public void insertCode(Long studyId, CodeRequest codeRequest) throws JsonProcessingException {
 //         변수값들 가져옴
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
@@ -83,7 +84,7 @@ public class CodeService {
         codeRepository.save(code);
 
         // 성실점수 추가
-        activityScoreService.addScoreForCommentOrCode(userId, studyId, code.getId(), 2);
+        activityScoreService.addScoreForCommentOrCode(userId, studyId, code.getId(), ActivityType.CODE.getActivityIdx());
 
 
 //        중복 부분 호출 - 코드 github에 업로드
@@ -97,7 +98,7 @@ public class CodeService {
     @Transactional(rollbackFor = Exception.class)
     public CodeInfoResponse selectCode(Long studyId, Long codeId) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
@@ -127,7 +128,7 @@ public class CodeService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteCode(Long studyId, Long codeId) throws JsonProcessingException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));
@@ -157,7 +158,7 @@ public class CodeService {
     @Transactional(rollbackFor = Exception.class)
     public void updateCode(Long studyId, Long codeId, CodeRequest codeRequest) throws JsonProcessingException, ParseException {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Study> optStudy = Optional.ofNullable(studyRepository.findById(studyId)
                 .orElseThrow(DataNotFoundException::new));

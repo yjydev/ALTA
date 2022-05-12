@@ -38,10 +38,6 @@ public class ActivityScoreService {
     @Autowired
     private UserRepository userRepository;
 
-    private int commentPoint = 1;
-    private int probleamUploadPoint = 2;
-    private int codeUploadPoint = 3;
-
     public void addScoreForCommentOrCode(String user_id, Long study_id, Long code_id, int activityType){
 
         Optional<Study> study = Optional.ofNullable(studyRepository.findById(study_id)

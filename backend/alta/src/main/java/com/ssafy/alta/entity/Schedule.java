@@ -58,8 +58,7 @@ public class Schedule {
     @JoinColumn(name = "fk_study_id")
     private Study study;
 
-    @OneToMany
-    @JoinColumn(name = "fk_schedule_id")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Problem> problems = new ArrayList<>();
 
     @Builder

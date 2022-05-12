@@ -34,12 +34,6 @@ public class UserController {
         return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public void getUserInfo2(@RequestHeader String ACCESS_TOKEN) {
-
-        System.out.println("acc = " + redisService.getAccessToken());
-    }
-
     @GetMapping("/search")
     @ApiOperation(value = "user 검색 결과", notes = "user 검색 결과 가져오기, id, nickname, email")
     public ResponseEntity selectUserName(@RequestParam("q") String word) {

@@ -11,6 +11,7 @@ import com.ssafy.alta.exception.WriterNotMatchException;
 import com.ssafy.alta.repository.CodeRepository;
 import com.ssafy.alta.repository.CommentRepository;
 import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.util.ActivityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +68,7 @@ public class CommentService {
 
 
         // 성실점수 추가
-        activityScoreService.addScoreForCommentOrCode(userId, code.getProblem().getSchedule().getStudy().getStudyId(), code.getId(), 1);
+        activityScoreService.addScoreForCommentOrCode(userId, code.getProblem().getSchedule().getStudy().getStudyId(), code.getId(), ActivityType.COMMNET.getActivityIdx());
 
     }
 

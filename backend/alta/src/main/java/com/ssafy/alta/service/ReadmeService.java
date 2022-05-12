@@ -54,8 +54,8 @@ public class ReadmeService {
     private ProblemRepository problemRepository;
 
     public String updateReadme(Long study_id) {
-        String user_id = userService.getCurrentUserId();
-        Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
+        String userId = userService.getCurrentUserId();
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
         User user = optUser.get();
 //        Study study = studyRepository.getById(40L);
@@ -123,11 +123,11 @@ public class ReadmeService {
         System.out.println(sb);
 
         // 테스트 진행
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
         String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), study.getRepositoryName());
         HashMap<String, String> committer = new HashMap<>();
         committer.put("name", user.getName());
-        committer.put("email", gitEmailAPI.selectGithubEmail(redisService.getAccessToken()));
+        committer.put("email", gitEmailAPI.selectGithubEmail(token));
         ReadmeUpdateRequest readmeUpdateRequest = new ReadmeUpdateRequest();
         readmeUpdateRequest.setMessage("update Readme " + user.getName() + " " + LocalDate.now());
         readmeUpdateRequest.setContent(sb.toString());

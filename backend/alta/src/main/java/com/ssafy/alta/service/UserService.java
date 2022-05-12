@@ -42,7 +42,6 @@ public class UserService {
     private GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
 
     @Autowired
-    @Lazy
     private RedisService redisService;
 
 
@@ -198,9 +197,9 @@ public class UserService {
 
     @Transactional
     public UserResponse selectUser() {
-        String user_id = this.getCurrentUserId();
-
-        Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
+        String userId = this.getCurrentUserId();
+        String token = redisService.getAccessToken(userId);
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
         User user = optUser.get();
 
@@ -209,7 +208,7 @@ public class UserService {
 
         List<StudyJoinInfo> sjiList = studyJoinInfoRepository.findByUserId(user.getId());
 
-        String gitEmailData = gitEmailAPI.selectGithubEmail(redisService.getAccessToken());
+        String gitEmailData = gitEmailAPI.selectGithubEmail(token);
 
 
         ArrayList<HashMap<String, Object>> arrayStudyList = new ArrayList<>();
