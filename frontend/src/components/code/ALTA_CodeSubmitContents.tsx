@@ -27,7 +27,8 @@ export default function ALTA_CodeSubmitContents() {
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const files = e.target.files;
     if (files) {
-      setFileName(files[0].name);
+      const tmp = files[0].name.split('.');
+      setFileName(tmp.slice(0, tmp.length - 1).join(''));
 
       const reader = new FileReader();
 
