@@ -79,8 +79,9 @@ export default function ALTA_CodeTree() {
   const handleMove = async (row: CodeTree) => {
     if (row.codeId !== 0) {
       const codeId = row.codeId;
+      const problem = row.path[1];
       try {
-        await navigate('/study/code', { state: { studyId, codeId } });
+        await navigate('/study/code', { state: { studyId, codeId, problem } });
       } catch (err: any) {
         generateError('코드 이동에 실패하였습니다', `${err.response.message}`);
       }

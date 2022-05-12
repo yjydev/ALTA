@@ -7,7 +7,7 @@ import { mainColor, whiteColor, blackColor, errorColor } from './colorChart';
 export function generateCheck(
   title: string,
   text: string,
-  callback: () => void | null,
+  callback: () => void | Promise<void> | null,
 ) {
   Swal.fire({
     title,
