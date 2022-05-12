@@ -24,7 +24,11 @@ export function generateCheck(
   });
 }
 
-export function generateError(title: string, text: string) {
+export function generateError(
+  title: string,
+  text: string,
+  callback?: () => void,
+) {
   Swal.fire({
     title,
     text,
@@ -36,7 +40,7 @@ export function generateError(title: string, text: string) {
     confirmButtonColor: errorColor,
     confirmButtonText: '돌아가기',
   }).then(() => {
-    console.log('end');
+    if (callback) callback();
   });
 }
 
