@@ -42,6 +42,11 @@ export async function reivewDataApi(codeId: number) {
   return await getRequest(`/api/code/review/${codeId}`);
 }
 
+// 코드 트리 정보 요청
+export async function codeTreeApi(studyId: number) {
+  return await getRequest(`/api/study/${studyId}/tree`);
+}
+
 //POST
 //스터디 생성 요청
 export async function organizeStudyApi(requestBody: OrganizeStudyRequset) {

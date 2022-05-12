@@ -66,12 +66,12 @@ export default function ALTA_CodeContents({
 
   return (
     <Grid container sx={wrapper} spacing={8}>
-      <Grid item sx={codeTree_wrapper} md={2}>
+      <Grid item sx={codeTree_wrapper} md={3}>
         <Box pt={4} pl={2}>
           <ALTA_CodeTree />
         </Box>
       </Grid>
-      <Grid item md={10}>
+      <Grid item md={9}>
         <Box pr={10}>
           <Grid container direction="column" rowGap={3}>
             <Grid item sx={codeBlock_wrapper}>
