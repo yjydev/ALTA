@@ -53,7 +53,9 @@ export default function ALTA_CodeTree() {
       return (
         <>
           <Icon component={FolderOpenTwoToneIcon} sx={{}} />
-          &nbsp; {params.rowNode.groupingKey}
+          <span style={{ lineHeight: '28px' }}>
+            &nbsp;{params.rowNode.groupingKey}
+          </span>
         </>
       );
     } else {
