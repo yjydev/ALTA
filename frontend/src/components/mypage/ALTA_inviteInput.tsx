@@ -31,6 +31,7 @@ export default function ALTA_inviteInput() {
         `${res.studyName}스터디에 가입되었습니다`,
         () => navigate('/mypage'),
       );
+      setInviteCode('');
     } catch (err) {
       // console.log(err);
       generateError('이미 가입된 스터디거나 초대 코드가 유효하지 않습니다', ``);
@@ -61,6 +62,7 @@ export default function ALTA_inviteInput() {
             }}
             variant="standard"
             placeholder="초대코드를 입력해주세요"
+            value={inviteCode}
             onChange={(e) => setInviteCode(e.target.value)}
           />
         </Box>
