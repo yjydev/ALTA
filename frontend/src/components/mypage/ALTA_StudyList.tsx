@@ -8,7 +8,11 @@ import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_StudyCard from './ALTA_StudyCard';
 import ALTA_inviteInput from './ALTA_inviteInput';
 
-export default function ALTA_StudyList({ studyList }: { studyList: Study[] }) {
+export default function ALTA_StudyList({
+  studyList,
+}: {
+  studyList: Study[] | null;
+}) {
   const navigate = useNavigate();
 
   const goOrganize = () => {
@@ -28,13 +32,14 @@ export default function ALTA_StudyList({ studyList }: { studyList: Study[] }) {
         <ALTA_inviteInput />
       </Box>
       <Grid sx={[studyListStyle, scrollStyle]} container spacing={3} mb={3}>
-        {studyList.map((study: Study) => (
-          <Grid key={study.id} item xs={6}>
-            <Box onClick={() => goStudyDetail(study.id)}>
-              <ALTA_StudyCard study={study} />
-            </Box>
-          </Grid>
-        ))}
+        {studyList &&
+          studyList.map((study: Study) => (
+            <Grid key={study.id} item xs={6}>
+              <Box onClick={() => goStudyDetail(study.id)}>
+                <ALTA_StudyCard study={study} />
+              </Box>
+            </Grid>
+          ))}
       </Grid>
     </Box>
   );

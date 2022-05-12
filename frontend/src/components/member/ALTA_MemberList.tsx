@@ -9,9 +9,10 @@ import ALTA_MemberTable from './ALTA_MemberTable';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList({ studyId }: { studyId: number }) {
-  const { members, studyCode } = useContext(MemberStore);
+  const { members, studyCode, maxPeople, setInvitable } =
+    useContext(MemberStore);
   const navigate = useNavigate();
-
+  setInvitable(members.length < maxPeople);
   return (
     <Box pt={4} pb={2}>
       <Button

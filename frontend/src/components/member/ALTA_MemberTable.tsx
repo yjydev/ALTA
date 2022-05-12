@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import {
   Table,
   TableContainer,
@@ -8,27 +9,20 @@ import {
 
 import scrollStyle from '../../modules/scrollStyle';
 
-import { Member } from '../../types/MemberType';
+import { Member, Column } from '../../types/MemberType';
+import { MemberStore } from '../../context/MemberContext';
 
 import ALTA_MemberTableBody from './ALTA_MemberTableBody';
 
 export default function ALTA_MemberTable({ members }: { members: Member[] }) {
-  // gmail 은 도메인 제외 최대 30자 제한 + 기본적으론 도메인 제외 최대 64자
-  const columns = [
-    { id: 'nickname', label: '닉네임', width: 30 },
-    { id: 'email', label: '이메일', width: 150 },
-    { id: 'registrationDate', label: '가입일', width: 40 },
-    { id: 'state', label: '상태', width: 15 },
-    // { id: 'score', label: '점수', width: 15 },
-    // { id: 'out', label: '강퇴', width: 30 }
-  ];
+  const { columns } = useContext(MemberStore);
 
   return (
     <TableContainer sx={scrollStyle}>
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow>
-            {columns.map((column) => (
+            {columns.map((column: Column) => (
               <TableCell
                 key={column.id}
                 style={{
@@ -52,14 +46,8 @@ export default function ALTA_MemberTable({ members }: { members: Member[] }) {
       </Table>
       <TableContainer sx={[tableStyle, scrollStyle]}>
         <Table style={{ tableLayout: 'fixed' }}>
-          {members.map((member, index) => {
-            return (
-              <ALTA_MemberTableBody
-                key={index}
-                member={member}
-                columns={columns}
-              />
-            );
+          {members.map((member: Member, index: number) => {
+            return <ALTA_MemberTableBody key={index} member={member} />;
           })}
         </Table>
       </TableContainer>
