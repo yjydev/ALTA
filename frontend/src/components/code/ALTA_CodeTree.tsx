@@ -52,18 +52,24 @@ export default function ALTA_CodeTree() {
     if (params.row.codeId === 0) {
       return (
         <>
-          <Icon component={FolderOpenTwoToneIcon} sx={{}} />
-          <span style={{ lineHeight: '28px' }}>
-            &nbsp;{params.rowNode.groupingKey}
+          <span style={{ position: 'absolute' }}>
+            <FolderOpenTwoToneIcon fontSize="small" color="primary" />
           </span>
+          <span
+            style={{ marginLeft: 30 }}
+          >{`${params.rowNode.groupingKey}`}</span>
         </>
       );
     } else {
       return (
-        <span style={fileStyle}>
-          <InsertDriveFileRoundedIcon />
-          &nbsp; {params.rowNode.groupingKey}
-        </span>
+        <>
+          <span style={{ position: 'absolute' }}>
+            <InsertDriveFileRoundedIcon fontSize="small" color="primary" />
+          </span>
+          <span
+            style={{ marginLeft: 30 }}
+          >{`${params.rowNode.groupingKey}`}</span>
+        </>
       );
     }
   }
