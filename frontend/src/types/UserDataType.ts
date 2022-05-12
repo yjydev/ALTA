@@ -18,11 +18,11 @@ export type UserData = {
   githubMail: string;
   email: string;
   alertList: Alert[];
-  introduction: string | null;
+  introduction: string;
   time: string;
   languageList: string[] | null;
   profileUrl: string;
-  studyList: Study[];
+  studyList: Study[] | null;
 };
 
 export const defaultUserData = {
@@ -30,7 +30,7 @@ export const defaultUserData = {
   githubMail: '',
   email: '',
   alertList: [],
-  introduction: null,
+  introduction: '',
   time: '',
   languageList: null,
   profileUrl: '',
