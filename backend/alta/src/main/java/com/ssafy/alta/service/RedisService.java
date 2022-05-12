@@ -39,7 +39,6 @@ public class RedisService {
     }
 
     public void setJWTRefreshToken(String id, String jwt_ref){
-
         Optional<UserRedis> user = userRedisRepository.findById(id);
         user.get().setJwt_refresh_token(jwt_ref);
         userRedisRepository.save(user.get());
@@ -47,7 +46,6 @@ public class RedisService {
 
     public void insertUser(String id, String github_acc){
         UserRedis userRedis = new UserRedis(id, github_acc);
-
         userRedisRepository.save(userRedis);
     }
 }
