@@ -233,6 +233,14 @@ export async function editReviewApi(
   return await putRequest(`/api/code/review/${reviewId}`, requestBody);
 }
 
+// 초대코드 검증 요청
+export async function confirmInvitationApi(inviteCode: string) {
+  const requestBody = {
+    code: inviteCode,
+  };
+  return await putRequest(`/api/study/invitation`, requestBody);
+}
+
 // delete
 // 코드 삭제 요청
 export async function deleteCodeApi(studyId: number, codeId: number) {
