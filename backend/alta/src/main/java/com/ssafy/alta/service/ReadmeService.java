@@ -59,10 +59,11 @@ public class ReadmeService {
         User user = optUser.get();
 //        Study study = studyRepository.getById(40L);
         Study study = studyRepository.getById(study_id);
+        int maxPeople =  study.getMaxPeople();
         StringBuilder sb = new StringBuilder();
         String NL = "   \n";
         sb.append("# 스터디 이름 : " + study.getName()).append(NL);
-        List<StudyJoinInfo> joinList = studyJoinInfoRepository.findByStudyStudyIdOrderByUserId(study.getStudyId());
+        List<StudyJoinInfo> joinList = studyJoinInfoRepository.findByStudyStudyIdAndStateOrderByUserId(study.getStudyId(), "가입");
         String studyZZang = "";
         List<String> studyZZul = new ArrayList<>();
         for (StudyJoinInfo tmp : joinList) {
@@ -72,7 +73,7 @@ public class ReadmeService {
                 studyZZul.add(tmp.getUser().getName());
         }
 
-        sb.append("## 참여인원 ( " + joinList.size() + " / " + study.getMaxPeople() + ")").append(NL);
+        sb.append("## 참여인원 ( " + joinList.size() + " / " + maxPeople + ")").append(NL);
         System.out.println(sb);
         System.out.println("studyZZang : " + studyZZang);
 
@@ -88,8 +89,8 @@ public class ReadmeService {
             sb.append(++roundIdx + " 회차 : ").append(schedule.getStartDate()).append(" ~ ").append(schedule.getEndDate()).append(NL);
             sb.append("|"+"<center>"+"문제"+"</center>"+"|");
             String tableNext = "|:---:|";
-            for (StudyJoinInfo me : joinList) {
-                sb.append("<center>"+me.getUser().getName()+"</center>" + "|");
+            for(int idx = 0; idx < maxPeople; idx++){
+                sb.append(idx < joinList.size() ? "<center>"+joinList.get(idx).getUser().getName()+"</center>" + "|" : "-|");
                 tableNext += ":---:|";
             }
             sb.append(NL);
@@ -99,19 +100,17 @@ public class ReadmeService {
             for (Problem problem : problemList) {
                 sb.append("|"+"<center>"+problem.getName()+"</center>").append("|");
                 List<Code> codeList = codeRepository.findByProblem_IdOrderByUserId(problem.getId());
-                int codeIdx = 0;
 
-                for (StudyJoinInfo sjiu : joinList) {
-                    User u = sjiu.getUser();
-                    if (codeList != null && codeList.size() > codeIdx && u.getId() == codeList.get(codeIdx).getUser().getId()) {
-                        codeIdx++;
-                        sb.append(u.getName()).append("|");
+                for(int i = 0; i < maxPeople; i++){
+                    if(codeList != null && codeList.size() > i)
+                    System.out.println(codeList.get(i).toString());
+                    if (codeList != null && codeList.size() > i && joinList.get(i).getUser().getId().equals(codeList.get(i).getUser().getId())) {
+                        sb.append(joinList.get(i).getUser().getName()).append("|");
                     } else {
                         sb.append("-").append("|");
                     }
                 }
                 sb.append(NL);
-
             }
 
             sb.append("---").append(NL);

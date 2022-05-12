@@ -44,4 +44,5 @@ public interface StudyJoinInfoRepository extends JpaRepository<StudyJoinInfo, Lo
     @Query("select count(*) from StudyJoinInfo s where s.state = :state and s.study = :study")
     int findByJoinUser(@Param("study") Study study, @Param("state") String state);
 
+    List<StudyJoinInfo> findByStudyStudyIdAndStateOrderByUserId(Long studyId, String state);
 }
