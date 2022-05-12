@@ -84,5 +84,6 @@ github:
 
 image:
 #  basePath: C:\Github\altaImage\
-  basePath: /home/ubuntu/altaProfilImage/
+  basePath: /home/ubuntu/images/
+  urlBasePath : https://algorithmtime.com/api/images/
 

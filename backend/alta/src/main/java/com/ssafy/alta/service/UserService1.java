@@ -1,10 +1,7 @@
 package com.ssafy.alta.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ssafy.alta.dto.request.ReadmeUpdateRequest;
 import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.dto.response.UserResponse;
-import com.ssafy.alta.entity.Alert;
 import com.ssafy.alta.entity.Study;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
@@ -49,6 +46,39 @@ public class UserService1 {
 
     @Autowired
     private RedisService redisService;
+
+    @Transactional
+    public UserResponse updateUserImage(MultipartFile file) {
+        String user_id = userService.getCurrentUserId();
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
+                .orElseThrow(DataNotFoundException::new));
+        User user = optUser.get();
+        // 이미지 저장
+        String filename = UUID.randomUUID() + file.getOriginalFilename();
+        String imagePath = environment.getProperty("image.basePath") + filename;
+        try {
+            file.transferTo(new File(imagePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        User newUser = new User().builder()
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .id(user_id)
+                .image(user.getImage())
+                .introduction(user.getIntroduction())
+                .language(user.getLanguage())
+                .name(user.getName())
+                .role(user.getRole())
+                .siteAlert(user.getSiteAlert())
+                .emailAlert(user.getEmailAlert())
+                .image(environment.getProperty("image.urlBasePath") + filename)
+                .build();
+
+        userRepository.save(newUser);
+        return this.selectUser();
+    }
 
     @Transactional
     public UserResponse updateAlert(int alertSetting) {
@@ -115,13 +145,6 @@ public class UserService1 {
             System.out.println(langString + " : " + langStringMap.get(langString));
         }
 
-        // 이미지 저장
-//        String imagePath = environment.getProperty("image.basePath") + UUID.randomUUID() + file.getOriginalFilename();
-//        try {
-//            file.transferTo(new File(imagePath));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
         // 받은 정보로 유저 정보 업데이트
         User newUser = new User().builder()
