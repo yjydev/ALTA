@@ -12,6 +12,7 @@ import com.ssafy.alta.gitutil.GitReadmeAPI;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
 import com.ssafy.alta.util.UserLanguage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
@@ -27,23 +28,18 @@ import java.io.IOException;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private Environment environment;
+    private final UserRepository userRepository;
+    private final StudyJoinInfoRepository studyJoinInfoRepository;
+    private final RedisService redisService;
 
-    @Autowired
-    private StudyJoinInfoRepository studyJoinInfoRepository;
+    private final GitEmailAPI gitEmailAPI = new GitEmailAPI();
+    private final GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
 
-    private GitEmailAPI gitEmailAPI = new GitEmailAPI();
     private UserLanguage userLanguage;
-    private GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
-
-    @Autowired
-    private RedisService redisService;
-
+    private final Environment environment;
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities(String username) {
