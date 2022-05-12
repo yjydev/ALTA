@@ -8,13 +8,10 @@ import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitEmailAPI;
-import com.ssafy.alta.gitutil.GitReadmeAPI;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
 import com.ssafy.alta.util.UserLanguage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,9 +33,6 @@ public class UserService {
     private final RedisService redisService;
 
     private final GitEmailAPI gitEmailAPI = new GitEmailAPI();
-    private final GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
-
-    private UserLanguage userLanguage;
     private final Environment environment;
 
     @Transactional(readOnly = true)
@@ -79,7 +73,7 @@ public class UserService {
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
                 .orElseThrow(DataNotFoundException::new));
         User user = optUser.get();
-        // 이미지 저장
+
         String filename = UUID.randomUUID() + file.getOriginalFilename();
         String imagePath = environment.getProperty("image.basePath") + filename;
         try {
@@ -117,7 +111,6 @@ public class UserService {
             tmpLen = "0" + tmpLen;
         char[] list = tmpLen.toCharArray();
         System.out.println(tmpLen);
-        // 이메일 일정, 코멘트, 풀이 // 알림 일정, 코멘트, 풀이
         boolean[] alertList = new boolean[4];
         for (int i = 3; i >= 0; i--) {
 
@@ -153,7 +146,6 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-//    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, MultipartFile file) {
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest) {
         String user_id = this.getCurrentUserId();
 
@@ -163,7 +155,7 @@ public class UserService {
 
         String[] langlist = userUpdateRequest.getLanguageList();
 
-        HashMap<String, Integer> langStringMap = userLanguage.getLangStringMap();
+        HashMap<String, Integer> langStringMap = UserLanguage.getLangStringMap();
         int sum = 0;
         for (String langString : langlist) {
             if (langStringMap.containsKey(langString))
@@ -177,7 +169,6 @@ public class UserService {
                 .nickname(userUpdateRequest.getNickname())
                 .email(userUpdateRequest.getEmail())
                 .id(user_id)
-//                .image(imagePath)
                 .introduction(userUpdateRequest.getIntroduction())
                 .language(sum)
                 .name(exUser.getName())
@@ -228,7 +219,7 @@ public class UserService {
         ArrayList<String> langStringList = new ArrayList<>();
         while (lnum.length > lnumIdx) {
             if (lnum[lnumIdx] == '1')
-                langStringList.add((String) userLanguage.getLangIdxMap().get((int) Math.pow(2, lnum.length - 1 - lnumIdx)));
+                langStringList.add((String) UserLanguage.getLangIdxMap().get((int) Math.pow(2, lnum.length - 1 - lnumIdx)));
             lnumIdx++;
         }
 
