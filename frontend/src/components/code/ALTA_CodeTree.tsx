@@ -1,6 +1,6 @@
 import { useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Grid, Icon } from '@mui/material';
+import { Grid } from '@mui/material';
 import {
   DataGridPro,
   GridColumns,
@@ -20,16 +20,7 @@ import { CodeTree } from '../../types/CodeBlockType';
 export default function ALTA_CodeTree() {
   const navigate = useNavigate();
   const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
-  const { codeTree, getCodeTree } = useContext(CodeStore);
-
-  useEffect(() => {
-    (async function () {
-      const status = await getCodeTree(studyId);
-      if (status === -1) navigate('/');
-      else if (status === -2)
-        generateError('폴더 구조를 불러오는데 실패하였습니다', '');
-    })();
-  }, []);
+  const { codeTree } = useContext(CodeStore);
 
   function MinusSquare(props: SvgIconProps) {
     return (
@@ -67,7 +58,7 @@ export default function ALTA_CodeTree() {
             <InsertDriveFileRoundedIcon fontSize="small" color="primary" />
           </span>
           <span
-            style={{ marginLeft: 30 }}
+            style={{ marginLeft: 30, cursor: 'pointer' }}
           >{`${params.rowNode.groupingKey}`}</span>
         </>
       );
@@ -85,10 +76,14 @@ export default function ALTA_CodeTree() {
   const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) =>
     row.path;
 
-  const handleMove = (row: CodeTree) => {
+  const handleMove = async (row: CodeTree) => {
     if (row.codeId !== 0) {
       const codeId = row.codeId;
-      navigate('/study/code', { state: { studyId, codeId } });
+      try {
+        await navigate('/study/code', { state: { studyId, codeId } });
+      } catch (err: any) {
+        generateError('코드 이동에 실패하였습니다', `${err.response.message}`);
+      }
     }
   };
 
@@ -119,8 +114,4 @@ const codeTreeStyle = {
   width: '100%',
   minWidth: '100%',
   maxWidth: '100%',
-};
-
-const fileStyle = {
-  cursor: 'pointer',
 };
