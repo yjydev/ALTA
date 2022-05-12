@@ -68,6 +68,15 @@ export async function editUserDataApi(
   return await await postRequest('/api/user/info', requestBody);
 }
 
+export async function changeProfileImgApi(file: FormData) {
+  return await postRequest('/api/user/image', file, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'ACCESS_TOKEN': `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+}
+
 //스터디 회차 일정 추가 요청
 export async function addScheduleApi(
   studyId: number,
