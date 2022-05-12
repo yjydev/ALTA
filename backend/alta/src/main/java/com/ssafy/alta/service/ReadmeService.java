@@ -11,6 +11,7 @@ import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,16 +54,17 @@ public class ReadmeService {
     private ProblemRepository problemRepository;
 
     public String updateReadme(Long study_id) {
-        String user_id = userService.getCurrentUserId();
-        Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id)
+        String userId = userService.getCurrentUserId();
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
         User user = optUser.get();
 //        Study study = studyRepository.getById(40L);
         Study study = studyRepository.getById(study_id);
+        int maxPeople =  study.getMaxPeople();
         StringBuilder sb = new StringBuilder();
         String NL = "   \n";
         sb.append("# 스터디 이름 : " + study.getName()).append(NL);
-        List<StudyJoinInfo> joinList = studyJoinInfoRepository.findByStudyStudyIdOrderByUserId(study.getStudyId());
+        List<StudyJoinInfo> joinList = studyJoinInfoRepository.findByStudyStudyIdAndStateOrderByUserId(study.getStudyId(), "가입");
         String studyZZang = "";
         List<String> studyZZul = new ArrayList<>();
         for (StudyJoinInfo tmp : joinList) {
@@ -72,7 +74,7 @@ public class ReadmeService {
                 studyZZul.add(tmp.getUser().getName());
         }
 
-        sb.append("## 참여인원 ( " + joinList.size() + " / " + study.getMaxPeople() + ")").append(NL);
+        sb.append("## 참여인원 ( " + joinList.size() + " / " + maxPeople + ")").append(NL);
         System.out.println(sb);
         System.out.println("studyZZang : " + studyZZang);
 
@@ -85,11 +87,14 @@ public class ReadmeService {
         List<Schedule> scheduleList = scheduleRepository.findByStudyStudyIdOrderByStartDateAsc(study.getStudyId());
         int roundIdx = 0;
         for (Schedule schedule : scheduleList) {
-            sb.append(++roundIdx + " 회차 : ").append(schedule.getStartDate()).append(" ~ ").append(schedule.getEndDate()).append(NL);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String startDate = formatter.format(schedule.getStartDate());
+            String endDate = formatter.format(schedule.getEndDate());
+            sb.append(++roundIdx + " 회차 : ").append(startDate).append(" ~ ").append(endDate).append(NL);
             sb.append("|"+"<center>"+"문제"+"</center>"+"|");
             String tableNext = "|:---:|";
-            for (StudyJoinInfo me : joinList) {
-                sb.append("<center>"+me.getUser().getName()+"</center>" + "|");
+            for(int idx = 0; idx < maxPeople; idx++){
+                sb.append(idx < joinList.size() ? "<center>"+joinList.get(idx).getUser().getName()+"</center>" + "|" : "-|");
                 tableNext += ":---:|";
             }
             sb.append(NL);
@@ -99,19 +104,17 @@ public class ReadmeService {
             for (Problem problem : problemList) {
                 sb.append("|"+"<center>"+problem.getName()+"</center>").append("|");
                 List<Code> codeList = codeRepository.findByProblem_IdOrderByUserId(problem.getId());
-                int codeIdx = 0;
 
-                for (StudyJoinInfo sjiu : joinList) {
-                    User u = sjiu.getUser();
-                    if (codeList != null && codeList.size() > codeIdx && u.getId() == codeList.get(codeIdx).getUser().getId()) {
-                        codeIdx++;
-                        sb.append(u.getName()).append("|");
+                for(int i = 0; i < maxPeople; i++){
+                    if(codeList != null && codeList.size() > i)
+                    System.out.println(codeList.get(i).toString());
+                    if (codeList != null && codeList.size() > i && joinList.get(i).getUser().getId().equals(codeList.get(i).getUser().getId())) {
+                        sb.append(joinList.get(i).getUser().getName()).append("|");
                     } else {
                         sb.append("-").append("|");
                     }
                 }
                 sb.append(NL);
-
             }
 
             sb.append("---").append(NL);
@@ -120,11 +123,11 @@ public class ReadmeService {
         System.out.println(sb);
 
         // 테스트 진행
-        String token = redisService.getAccessToken();
-        String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), "test");
+        String token = redisService.getAccessToken(userId);
+        String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), study.getRepositoryName());
         HashMap<String, String> committer = new HashMap<>();
         committer.put("name", user.getName());
-        committer.put("email", gitEmailAPI.selectGithubEmail(redisService.getAccessToken()));
+        committer.put("email", gitEmailAPI.selectGithubEmail(token));
         ReadmeUpdateRequest readmeUpdateRequest = new ReadmeUpdateRequest();
         readmeUpdateRequest.setMessage("update Readme " + user.getName() + " " + LocalDate.now());
         readmeUpdateRequest.setContent(sb.toString());
@@ -133,7 +136,7 @@ public class ReadmeService {
 
         String returnCode = null;
         try {
-            returnCode = gitReadmeAPI.updateReadme(token, user.getName(), "test", readmeUpdateRequest).toString();
+            returnCode = gitReadmeAPI.updateReadme(token, user.getName(), study.getRepositoryName(), readmeUpdateRequest).toString();
             System.out.println(returnCode);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

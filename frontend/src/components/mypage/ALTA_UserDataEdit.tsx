@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { postRequest } from '../../api/request';
+import { editUserDataApi } from '../../api/apis';
 import { UserDataStore } from '../../context/UserDataContext';
+import { generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_LanguageSelector from './ALTA_LanguageSelector';
@@ -14,25 +15,45 @@ export default function ALTA_UserDataEdit({
 }: {
   setIsEditPage: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { userData } = useContext(UserDataStore);
+  const { userData, getUserData } = useContext(UserDataStore);
   const navigate = useNavigate();
 
   const [nickname, setNickname] = useState(userData.nickname);
   const [email, setEmail] = useState(userData.email);
   const [introduction, setIntroduction] = useState(userData.introduction);
   const [languageList, setLanguageList] = useState(userData.languageList);
+  const [editUserDataLoading, setEditUserDataLoading] =
+    useState<boolean>(false);
 
   const editUserData = async () => {
     if (!(await checkLogin())) navigate('/');
 
-    const requestBody = new FormData();
-    const requestData = {
-      nickname,
-      email,
-      introduction,
-      languageList,
-    };
-    await postRequest('/api/user/info', requestBody);
+    if (
+      nickname === userData.nickname &&
+      email === userData.email &&
+      introduction === userData.introduction &&
+      languageList === userData.languageList
+    ) {
+      generateError('변경 사항이 없습니다', '');
+    } else if (!nickname || !email || !introduction || !languageList) {
+      generateError('모든 항목을 채워주세요', '');
+    } else {
+      try {
+        setEditUserDataLoading(true);
+        await editUserDataApi(nickname, email, introduction, languageList);
+        const Userstatus = await getUserData();
+
+        if (Userstatus.status === -1) navigate('/');
+        else if (Userstatus.status === -2)
+          generateError('유저 정보를 변경할 수 없습니다', '');
+        else {
+          setEditUserDataLoading(false);
+          setIsEditPage(false);
+        }
+      } catch (error) {
+        generateError('유저 정보를 수정할 수 없습니다', '');
+      }
+    }
   };
 
   return (
@@ -55,11 +76,16 @@ export default function ALTA_UserDataEdit({
             defaultValue={introduction === null ? '' : `${introduction}`}
             onChange={(e) => setIntroduction(e.target.value)}
           ></TextArea>
-          <ALTA_LanguageSelector setLanguageList={setLanguageList} />
+          <ALTA_LanguageSelector
+            languageList={languageList}
+            setLanguageList={setLanguageList}
+          />
         </Box>
       </Box>
       <Box sx={editButtonStyle}>
-        <Button onClick={editUserData}> 수정 완료</Button>
+        <Button onClick={editUserData}>
+          {editUserDataLoading ? <CircularProgress size={20} /> : '수정 완료'}
+        </Button>
         <Button color="error" onClick={() => setIsEditPage(false)}>
           수정 취소
         </Button>
@@ -104,10 +130,4 @@ const TextArea = styled.textarea`
   margin: 10px 0 20px;
   border-radius: 5px;
   background-color: rgba(224, 212, 194, 0.6);
-`;
-const Input = styled.input`
-  all: unset;
-  border-bottom: 1px solid black;
-  font-size: 16px;
-  font-weight: 400;
 `;

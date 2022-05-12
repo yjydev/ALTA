@@ -12,6 +12,7 @@ import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.*;
 import com.ssafy.alta.gitutil.GitDirectoryAPI;
 import com.ssafy.alta.repository.*;
+import com.ssafy.alta.util.ActivityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,11 +47,13 @@ public class ScheduleAndProblemService {
     private final RedisService redisService;
     private final GitDirectoryAPI gitDirectoryAPI = new GitDirectoryAPI();
     private final UserRepository userRepository;
+    private final ReadmeService readmeService;
+    private final ActivityScoreService activityScoreService;
 
     @Transactional
     public HashMap<String, Object> selectScheduleList(Long studyId){
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -88,7 +91,7 @@ public class ScheduleAndProblemService {
     @Transactional
     public void saveScheduleAndProblem(Long studyId, ScheduleAndProblemRequest scheduleAndProblemRequest) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -154,12 +157,13 @@ public class ScheduleAndProblemService {
         }
 
         scheduleRepository.save(scheduleRequest.toSchedule(false, study));
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional
     public void insertProblem(Long studyId, ProblemCreateRequest problemCreateRequest) {
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<Schedule> optSchedule = Optional.ofNullable(scheduleRepository.findByStudyStudyIdAndId(studyId, problemCreateRequest.getScheduleId())
                 .orElseThrow(DataNotFoundException::new));
@@ -168,6 +172,7 @@ public class ScheduleAndProblemService {
         if(!optSJI.get().getState().equals("가입"))
             throw new AccessDeniedStudyException();
 
+        Schedule schedule = optSchedule.get();
         List<Problem> preProblems = problemCreateRequest.getProblems();
         List<Problem> problems = new ArrayList<>();
         for(Problem problem : preProblems) {
@@ -176,7 +181,9 @@ public class ScheduleAndProblemService {
             }
             problems.add(new Problem(problem.getName(),problem.getLink(), false, optSchedule.get()));
         }
-        problemRepository.saveAll(problems);
+        Long problemId = problemRepository.saveAll(problems).get(0).getId();
+        activityScoreService.addScoreProblem(userId, studyId, problemId, ActivityType.PROBLEM.getActivityIdx());
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -189,7 +196,7 @@ public class ScheduleAndProblemService {
         // 6차, git 변경
 
         String userId = userService.getCurrentUserId();
-        String token = redisService.getAccessToken();
+        String token = redisService.getAccessToken(userId);
 
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -210,6 +217,7 @@ public class ScheduleAndProblemService {
 
         if(!problem.getName().equals(problemUpdateRequest.getName()))
             gitDirectoryAPI.updateDirectory(token, studyLeaderUserName, study.getRepositoryName(), problem.getName(), problemUpdateRequest.getName());
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional
@@ -255,7 +263,8 @@ public class ScheduleAndProblemService {
             }
         }
         
-        schedule.changeDate(scheduleRequest.getStartDate(), scheduleRequest.getEndDate());
+        schedule.changeDate(startDate, endDate);
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional
@@ -279,7 +288,7 @@ public class ScheduleAndProblemService {
         }
 
         scheduleRepository.deleteById(scheduleId);
-
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional
@@ -300,5 +309,6 @@ public class ScheduleAndProblemService {
             throw new ImpossibleDeleteProblemException();
 
         problemRepository.deleteById(problemId);
+        readmeService.updateReadme(studyId);
     }
 }

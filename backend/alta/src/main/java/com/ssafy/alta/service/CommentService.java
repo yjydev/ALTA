@@ -11,6 +11,7 @@ import com.ssafy.alta.exception.WriterNotMatchException;
 import com.ssafy.alta.repository.CodeRepository;
 import com.ssafy.alta.repository.CommentRepository;
 import com.ssafy.alta.repository.UserRepository;
+import com.ssafy.alta.util.ActivityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CodeRepository codeRepository;
     private final UserService userService;
+    private final ActivityScoreService activityScoreService;
 
     public List<CommentResponse> selectCommentList(Long codeId) {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
@@ -63,6 +65,10 @@ public class CommentService {
 
         Comment comment = commentRequest.toEntity(user, code);
         commentRepository.save(comment);
+
+
+        // 성실점수 추가
+        activityScoreService.addScoreForCommentOrCode(userId, code.getProblem().getSchedule().getStudy().getStudyId(), code.getId(), ActivityType.COMMNET.getActivityIdx());
 
     }
 
@@ -100,7 +106,8 @@ public class CommentService {
 
         Optional<Comment> optComment = Optional.ofNullable(commentRepository.findById(commentId)).orElseThrow(DataNotFoundException::new);
         Comment comment = optComment.get();
-        if(!userId.equals(comment.getUser().getId()))
+        // 코드 작성자와 댓글 작성자만 가능하도록
+        if(!userId.equals(comment.getUser().getId()) && !userId.equals(comment.getCode().getUser().getId()))
             throw new WriterNotMatchException();
         comment.changeState(isSolved);
     }

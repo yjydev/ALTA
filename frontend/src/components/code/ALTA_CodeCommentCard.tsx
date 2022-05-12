@@ -11,15 +11,14 @@ import {
   Link,
   TextField,
   InputAdornment,
+  IconButton,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 
-import {
-  generateError,
-  generateCheck,
-  generateConfirm,
-} from '../../modules/generateAlert';
+import { generateError, generateConfirm } from '../../modules/generateAlert';
 
 import { toggleSolved, editReviewApi, deleteReviewApi } from '../../api/apis';
 import { ReviewData } from '../../types/CodeBlockType';
@@ -46,8 +45,11 @@ export default function ALTA_CodeCommentCard({
 
   const changeResolved = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    if (user !== code.writer)
-      generateError('코드 작성자만 변경할 수 있습니다', '');
+    if (user !== code.writer || user !== review.reviewerName)
+      generateError(
+        '변경 불가',
+        '코드 작성자 혹은 리뷰 작성자만 변경할 수 있습니다',
+      );
     else {
       try {
         await toggleSolved(review.reviewId, !review.completed);
@@ -63,14 +65,21 @@ export default function ALTA_CodeCommentCard({
 
   const handleEditComment = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    if (commentValue === '') generateError('내용을 작성해주세요', '');
+    if (commentValue === review.comment)
+      generateError('변경 내역이 없습니다', '');
     else {
-      try {
-        await editReviewApi(review.reviewId, commentValue, review.codeNumber);
-        setIsEdit(false);
-        navigate('/study/code', { state: { studyId, codeId } });
-      } catch (err: any) {
-        generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
+      if (commentValue === '') generateError('내용을 작성해주세요', '');
+      else {
+        try {
+          await editReviewApi(review.reviewId, commentValue, review.codeNumber);
+          setIsEdit(false);
+          navigate('/study/code', { state: { studyId, codeId } });
+        } catch (err: any) {
+          generateError(
+            `수정에 실패하였습니다`,
+            `${err.response.data.message}`,
+          );
+        }
       }
     }
   };
@@ -81,7 +90,7 @@ export default function ALTA_CodeCommentCard({
       '정말 삭제하시겠습니까?',
       '한 번 삭제하면 되돌릴 수 없습니다',
       '삭제 완료!',
-      `${review.codeNumber} 에 대한 리뷰가 삭제되었습니다`,
+      `${review.codeNumber} 번 라인에 대한 리뷰가 삭제되었습니다`,
       async () => delComment(),
     );
   };
@@ -106,9 +115,15 @@ export default function ALTA_CodeCommentCard({
     }
   };
   return (
-    <Box>
-      <Paper style={{ margin: '30px 0' }}>
-        <Grid container direction="row" px={2} py={1} columns={16}>
+    <Box sx={wrapper}>
+      <Paper style={paperWrapper}>
+        <Button
+          startIcon={<CloseIcon />}
+          disableRipple
+          sx={delBtn}
+          onClick={handleDelComment}
+        />
+        <Grid container direction="row" sx={infoWrapper} columns={16}>
           <Grid item pt={2} md={1} sx={profileStyle}>
             <Avatar src={profile} />
           </Grid>
@@ -119,10 +134,10 @@ export default function ALTA_CodeCommentCard({
                 {user === review.reviewerName ? (
                   <>
                     {isEdit ? (
-                      <>
+                      <Box sx={btnWrapper}>
                         <Button
                           disableRipple
-                          sx={[btnStyle, cancelBtn]}
+                          sx={[btnStyle, completeBtn]}
                           onClick={handleEditComment}
                         >
                           수정 완료
@@ -137,22 +152,16 @@ export default function ALTA_CodeCommentCard({
                         >
                           취소
                         </Button>
-                      </>
+                      </Box>
                     ) : (
-                      <>
+                      <Box sx={btnWrapper}>
                         <Button
                           startIcon={<EditIcon />}
                           sx={[btnStyle, editBtn]}
                           disableRipple
                           onClick={() => setIsEdit(true)}
                         />
-                        <Button
-                          startIcon={<DeleteForeverIcon />}
-                          disableRipple
-                          sx={btnStyle}
-                          onClick={handleDelComment}
-                        />
-                      </>
+                      </Box>
                     )}
                   </>
                 ) : null}
@@ -172,36 +181,44 @@ export default function ALTA_CodeCommentCard({
                     onChange={(e) => setCommentValue(e.target.value)}
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">
-                          <Typography sx={adornStyle}>
-                            {`${review.codeNumber}번 라인 `}
-                          </Typography>
-                        </InputAdornment>
+                        <>
+                          {review.codeNumber !== 0 ? (
+                            <InputAdornment position="start">
+                              <Typography sx={adornStyle}>
+                                {`${review.codeNumber}번 라인 `}
+                              </Typography>
+                            </InputAdornment>
+                          ) : (
+                            ''
+                          )}
+                        </>
                       ),
                     }}
                   />
                 ) : (
                   <>
-                    <Link
-                      onClick={moveToLine}
-                      sx={commentCodeLine}
-                      underline="none"
-                      mr={1}
-                    >
-                      {review['codeNumber']}번
-                    </Link>
+                    {review.codeNumber !== 0 ? (
+                      <Link
+                        onClick={moveToLine}
+                        sx={commentCodeLine}
+                        underline="none"
+                        mr={1}
+                      >
+                        {review['codeNumber']}번
+                      </Link>
+                    ) : null}
                     <Typography mb={2}>{review['comment']}</Typography>
                   </>
                 )}
               </Grid>
               {isResolved ? (
-                <Button onClick={changeResolved}>
-                  <Typography sx={resolvedStyle}>해결됨</Typography>
-                </Button>
+                <IconButton onClick={changeResolved}>
+                  {<CheckCircleRoundedIcon sx={resolvedStyle} />}
+                </IconButton>
               ) : (
-                <Button onClick={changeResolved}>
-                  <Typography sx={unresolvedStyle}> 미해결 </Typography>
-                </Button>
+                <IconButton onClick={changeResolved}>
+                  {<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}
+                </IconButton>
               )}
             </Grid>
           </Grid>
@@ -211,6 +228,29 @@ export default function ALTA_CodeCommentCard({
   );
 }
 
+const wrapper = {
+  position: 'relative',
+  marginBottom: 3,
+};
+
+const paperWrapper = {
+  margin: '30px 0',
+};
+
+const infoWrapper = {
+  paddingLeft: 2,
+  paddingRight: 6,
+};
+
+const delBtn = {
+  color: '#212121',
+  position: 'absolute',
+  right: '10px',
+  top: '22px',
+  padding: 0,
+  minWidth: '10px',
+};
+
 const infoStyle = {
   display: 'flex',
   justifyContent: 'space-between',
@@ -219,31 +259,36 @@ const infoStyle = {
 
 const dateStyle = {
   color: 'gray',
-  paddingRight: '10px',
+  marginRight: '10px',
 };
 
 const editStyle = {
   display: 'flex',
 };
 
+const btnWrapper = {
+  display: 'flex',
+  alignItems: 'center',
+  paddingTop: '3px',
+};
+
 const btnStyle = {
-  'color': '#000000',
-  '&:hover': {
-    color: 'primary.main',
-    backgroundColor: 'inherit',
-  },
-  'minWidth': '20px',
+  minWidth: '20px',
+  height: '35px',
 };
 
 const editBtn = {
-  paddingLeft: '16px',
-  paddingRight: 0,
+  marginLeft: '10px',
+  color: '#212121',
+};
+
+const completeBtn = {
+  marginLeft: '5px',
+  marginRight: 1,
 };
 
 const cancelBtn = {
-  paddingLeft: '16px',
-  paddingRight: 1,
-  paddingBottom: 0,
+  color: 'error.main',
 };
 
 const profileStyle = {
@@ -252,11 +297,11 @@ const profileStyle = {
 };
 
 const resolvedStyle = {
-  color: '#C6C6C6',
+  color: 'primary.main',
 };
 
 const unresolvedStyle = {
-  color: 'primary.main',
+  color: 'gray',
 };
 
 const commentCodeLine = {

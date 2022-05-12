@@ -28,3 +28,9 @@ export type CodeProps = {
   codeId: number;
   problem: string;
 };
+
+export type CodeTree = {
+  codeId: number;
+  id: number;
+  path: Array<string>;
+};

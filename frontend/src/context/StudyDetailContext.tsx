@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Member, StudyData } from '../types/StudyType';
 import { ContextProps } from '../types/ContextPropsType';
 import {
+  editNoticeContentApi,
   editScheduleApi,
   memberListApi,
+  noticeContentApi,
   studyDetailDataApi,
 } from '../api/apis';
 import { checkLogin } from '../modules/LoginTokenChecker';
@@ -11,11 +13,14 @@ import { checkLogin } from '../modules/LoginTokenChecker';
 //Context 인스턴스 생성
 const defaultValue: defaultValueType = {
   members: [],
-  studyData: [],
+  readmeData: [],
+  noticeContent: '',
   maxPeople: 0,
   isLeader: false,
   getStudyDetail: () => null,
   getStudyMembers: () => null,
+  getNoticeContent: () => null,
+  editNoticeContent: () => null,
   editSchedule: () => null,
 };
 export const StudyDetailStore = React.createContext(defaultValue);
@@ -23,7 +28,8 @@ export const StudyDetailStore = React.createContext(defaultValue);
 //Context Provider 컴포넌트
 export default function StudyDetailProvider({ children }: ContextProps) {
   const [members, setMembers] = useState<Member[]>([]);
-  const [studyData, setStudyData] = useState<StudyData[]>([]);
+  const [readmeData, setReadmeData] = useState<StudyData[]>([]);
+  const [noticeContent, setNoticeContent] = useState<string>('');
   const [maxPeople, setMaxPeople] = useState<number>(0);
   const [isLeader, setIsLeader] = useState<boolean>(false);
 
@@ -36,7 +42,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     try {
       const response = await studyDetailDataApi(studyId);
 
-      setStudyData(response.readme);
+      setReadmeData(response.readme);
       return { status: 1, message: 'success get study detail data' };
     } catch (err) {
       return { status: -2, message: 'fail get study detail data' };
@@ -72,6 +78,22 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     }
   };
 
+  const getNoticeContent = async (studyId: number) => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status)
+      return { status: -1, message: 'login token error' };
+
+    try {
+      const response = await noticeContentApi(studyId);
+
+      setNoticeContent(response.content);
+      return { status: 1, message: 'success get notice data' };
+    } catch (err) {
+      return { status: -2, message: 'fail get notice data' };
+    }
+  };
+
   const editSchedule = async (
     studyId: number,
     scheduleId: number,
@@ -90,13 +112,29 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     }
   };
 
+  const editNoticeContent = async (studyId: number, content: string) => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status)
+      return { status: -1, message: 'login token error' };
+    try {
+      await editNoticeContentApi(studyId, content);
+      await getNoticeContent(studyId);
+      return { status: 1, message: 'success edit notice' };
+    } catch (err) {
+      return { status: -2, message: 'fail get notice' };
+    }
+  };
   const value = {
     members,
-    studyData,
+    readmeData,
+    noticeContent,
     maxPeople,
     isLeader,
     getStudyDetail,
     getStudyMembers,
+    getNoticeContent,
+    editNoticeContent,
     editSchedule,
   };
   return (
@@ -108,11 +146,14 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 //Context 기본값 타입
 type defaultValueType = {
   members: Member[];
-  studyData: StudyData[];
+  readmeData: StudyData[];
+  noticeContent: string;
   maxPeople: number;
   isLeader: boolean;
   getStudyDetail: (studyId: number) => any;
   getStudyMembers: (studyId: number) => any;
+  getNoticeContent: (studyId: number) => any;
+  editNoticeContent: (studyId: number, content: string) => any;
   editSchedule: (
     studyId: number,
     scheduleId: number,

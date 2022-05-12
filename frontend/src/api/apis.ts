@@ -17,6 +17,11 @@ export async function memberListApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/members`);
 }
 
+//스터디 공지사항 정보 요청
+export async function noticeContentApi(studyId: number) {
+  return await getRequest(`/api/study/${studyId}/notice`);
+}
+
 // 스터디 멤버 관리 - 멤버 정보 요청
 export async function memberManagementDataApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/members/management`);
@@ -37,11 +42,32 @@ export async function reivewDataApi(codeId: number) {
   return await getRequest(`/api/code/review/${codeId}`);
 }
 
+// 코드 트리 정보 요청
+export async function codeTreeApi(studyId: number) {
+  return await getRequest(`/api/study/${studyId}/tree`);
+}
+
 //POST
 //스터디 생성 요청
 export async function organizeStudyApi(requestBody: OrganizeStudyRequset) {
   return await await postRequest('/api/study', requestBody);
 }
+//유저 정보 수정 요청
+export async function editUserDataApi(
+  nickname: string,
+  email: string,
+  introduction: string,
+  languageList: string[] | null,
+) {
+  const requestBody = {
+    nickname,
+    email,
+    introduction,
+    languageList,
+  };
+  return await await postRequest('/api/user/info', requestBody);
+}
+
 //스터디 회차 일정 추가 요청
 export async function addScheduleApi(
   studyId: number,
@@ -125,6 +151,16 @@ export async function addReviewApi(
   };
   return await postRequest('/api/code/review', requestBody);
 }
+
+//스터디 공지사항 수정 요청
+export async function editNoticeContentApi(studyId: number, content: string) {
+  const requestBody = {
+    content,
+  };
+
+  return await postRequest(`/api/study/${studyId}/notice`, requestBody);
+}
+
 //PUT
 //스터디 회차 일정 수정 요청
 export async function editScheduleApi(
@@ -151,19 +187,15 @@ export async function editCodeApi(
   codeId: number,
   commitMessage: string,
   fileName: string,
-  code: string,
+  content: string,
 ) {
   const requestBody = {
     commitMessage,
     fileName,
-    content: code,
-    codeId,
+    content,
   };
 
-  return await await putRequest(
-    `/api/study/${studyId}/code/${codeId}/reupload`,
-    requestBody,
-  );
+  return await putRequest(`/api/study/${studyId}/code/${codeId}`, requestBody);
 }
 //문제 수정 요청
 export async function editProblemApi(
@@ -178,26 +210,6 @@ export async function editProblemApi(
     link,
   };
   return await await putRequest(`/api/study/${studyId}/problem/`, requestBody);
-}
-
-// 코드 수정 요청
-export async function modifyCodeApi(
-  studyId: number,
-  codeId: number,
-  commitMessage: string,
-  fileName: string,
-  content: string,
-) {
-  const requestBody = {
-    commitMessage,
-    fileName,
-    content,
-    codeId,
-  };
-  return await putRequest(
-    `/api/study/${studyId}/code/${codeId}/modify`,
-    requestBody,
-  );
 }
 
 // 리뷰(댓글) 해결 여부 토글 요청
@@ -230,4 +242,9 @@ export async function deleteCodeApi(studyId: number, codeId: number) {
 // 댓글(리뷰) 삭제 요청
 export async function deleteReviewApi(reviewId: number) {
   return await deleteRequest(`/api/code/review/${reviewId}`);
+}
+
+// 초대 대기 삭제 요청
+export async function deleteInvitationApi(studyId: number, sjiId: number) {
+  return await deleteRequest(`/api/study/${studyId}/invitation/${sjiId}`);
 }

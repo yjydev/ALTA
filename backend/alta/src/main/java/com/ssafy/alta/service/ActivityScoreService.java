@@ -38,10 +38,6 @@ public class ActivityScoreService {
     @Autowired
     private UserRepository userRepository;
 
-    private int commentPoint = 1;
-    private int probleamUploadPoint = 2;
-    private int codeUploadPoint = 3;
-
     public void addScoreForCommentOrCode(String user_id, Long study_id, Long code_id, int activityType){
 
         Optional<Study> study = Optional.ofNullable(studyRepository.findById(study_id)
@@ -58,7 +54,7 @@ public class ActivityScoreService {
         String history = "";
 
         if(activityType == 1){
-            history = study_name +"  스터디의 " + code_file_name + " 에 댓글을 남겼습니다.";
+            history = study_name +" 스터디의 " + code_file_name + " 에 댓글을 남겼습니다.";
         }
         else if(activityType == 2){
             history = study_name + " 스터디에 " + code_file_name + " 파일을 업로드 했습니다.";
