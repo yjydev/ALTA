@@ -2,6 +2,7 @@ package com.ssafy.alta.jwt;
 
 import com.ssafy.alta.exception.JwtExpiredExaception;
 import com.ssafy.alta.service.RedisService;
+import com.ssafy.alta.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -50,6 +51,9 @@ public class TokenProvider implements InitializingBean {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private UserService userService;
 
     public TokenProvider(
             @Value("${jwt.secret}") String secret,
@@ -142,7 +146,8 @@ public class TokenProvider implements InitializingBean {
     }
 
     public boolean compareWithRedisData(String token){
-        String storedRT = redisService.getJWTRefreshToken(token);
+        String userId = userService.getCurrentUserId();
+        String storedRT = redisService.getJWTRefreshToken(userId);
         if(storedRT.equals(token))
             return true;
         return false;
