@@ -1,19 +1,12 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Grid,
-  Typography,
-  Box,
-  TextField,
-  Switch,
-  InputAdornment,
-} from '@mui/material';
+import { Grid, Typography, Box, TextField, Switch, InputAdornment } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
 
 import { addReviewApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
-import { ReviewData } from '../../types/CodeBlockType';
+import { ReviewData } from '../../types';
 
 import { generateCheck, generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
@@ -28,9 +21,7 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
 
   const { codeLine, reviews, getReview } = useContext(CodeStore);
 
-  const reviews_data = isCompleted
-    ? reviews
-    : reviews?.filter((rev: ReviewData) => rev.completed === false);
+  const reviews_data = isCompleted ? reviews : reviews?.filter((rev: ReviewData) => rev.completed === false);
 
   const getReviews = async (codeId: number) => {
     const status = await getReview(codeId);
@@ -58,10 +49,7 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
         getReviews(codeId);
       });
     } catch (err: any) {
-      generateError(
-        '리뷰 생성에 실패하였습니다',
-        `${err.response.data.message}`,
-      );
+      generateError('리뷰 생성에 실패하였습니다', `${err.response.data.message}`);
     }
   };
 
@@ -73,14 +61,8 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
             <Typography fontSize={40}>Comments</Typography>
           </Grid>
           <Grid item>
-            <Switch
-              checked={isCompleted}
-              onChange={() => setisCompleted(!isCompleted)}
-              name="isCompleted"
-            />
-            <Typography sx={{ display: 'inline-block' }}>
-              전체 댓글 보기
-            </Typography>
+            <Switch checked={isCompleted} onChange={() => setisCompleted(!isCompleted)} name="isCompleted" />
+            <Typography sx={{ display: 'inline-block' }}>전체 댓글 보기</Typography>
           </Grid>
         </Grid>
       </Grid>
@@ -98,9 +80,7 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
                   startAdornment: (
                     <InputAdornment position="start" sx={codeSelect}>
                       <Typography sx={adornStyle}>
-                        {codeLine === 0
-                          ? '코드를 선택해주세요.'
-                          : `${codeLine}번 라인`}
+                        {codeLine === 0 ? '코드를 선택해주세요.' : `${codeLine}번 라인`}
                       </Typography>
                     </InputAdornment>
                   ),

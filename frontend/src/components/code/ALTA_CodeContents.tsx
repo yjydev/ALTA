@@ -6,7 +6,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { deleteCodeApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
-import { CodeProps } from '../../types/CodeBlockType';
+import { CodeProps } from '../../types';
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
@@ -17,11 +17,7 @@ import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
-export default function ALTA_CodeContents({
-  studyId,
-  codeId,
-  problem,
-}: CodeProps) {
+export default function ALTA_CodeContents({ studyId, codeId, problem }: CodeProps) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
   const { code, getCode, user, getCodeTree } = useContext(CodeStore);
@@ -43,18 +39,13 @@ export default function ALTA_CodeContents({
       await deleteCodeApi(studyId, codeId);
       goToDetail(studyId);
     } catch (err: any) {
-      generateError(
-        '코드 삭제에 실패하였습니다',
-        `${err.response.data.message}`,
-      );
+      generateError('코드 삭제에 실패하였습니다', `${err.response.data.message}`);
     }
   };
 
-  const goToDetail = (studyId: number) =>
-    navigate('/study/detail', { state: { studyId } });
+  const goToDetail = (studyId: number) => navigate('/study/detail', { state: { studyId } });
 
-  const goToresubmit = (studyId: number, codeId: number) =>
-    navigate('/code-submit', { state: { studyId, codeId } });
+  const goToresubmit = (studyId: number, codeId: number) => navigate('/code-submit', { state: { studyId, codeId } });
 
   useEffect(() => {
     (async function () {

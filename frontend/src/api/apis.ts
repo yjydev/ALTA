@@ -1,4 +1,5 @@
-import { OrganizeStudyRequset } from '../types/StudyType';
+import { AxiosResponse } from 'axios';
+import { OrganizeStudyRequset } from '../types';
 import { getRequest, postRequest, putRequest, deleteRequest } from './request';
 
 //GET
@@ -78,11 +79,7 @@ export async function changeProfileImgApi(file: FormData) {
 }
 
 //스터디 회차 일정 추가 요청
-export async function addScheduleApi(
-  studyId: number,
-  startDate: Date | null,
-  endDate: Date | null,
-) {
+export async function addScheduleApi(studyId: number, startDate: Date | null, endDate: Date | null) {
   const refineDate = (date: Date | null): string | null => {
     if (date) {
       const year = date.getFullYear();
@@ -103,12 +100,7 @@ export async function addScheduleApi(
   return await postRequest(`/api/study/${studyId}/schedule`, requestBody);
 }
 //문제 추가 요청
-export async function addProblemApi(
-  studyId: number,
-  scheduleId: number,
-  name: string,
-  link: string,
-) {
+export async function addProblemApi(studyId: number, scheduleId: number, name: string, link: string) {
   const requestBody = {
     problems: [
       {
@@ -148,11 +140,7 @@ export async function sendMailApi(studyId: number, userId: number) {
 }
 
 // 댓글(리뷰) 추가 요청
-export async function addReviewApi(
-  codeId: number,
-  content: string,
-  line: number,
-) {
+export async function addReviewApi(codeId: number, content: string, line: number) {
   const requestBody = {
     codeId,
     content,
@@ -172,11 +160,7 @@ export async function editNoticeContentApi(studyId: number, content: string) {
 
 //PUT
 //스터디 회차 일정 수정 요청
-export async function editScheduleApi(
-  studyId: number,
-  scheduleId: number,
-  dateString: string,
-) {
+export async function editScheduleApi(studyId: number, scheduleId: number, dateString: string) {
   const tmp = dateString.split(' ~ ');
   const requestBody = {
     scheduleId,
@@ -185,10 +169,7 @@ export async function editScheduleApi(
   };
 
   console.log(requestBody);
-  return await putRequest(
-    `/api/study/${studyId}/schedule/${scheduleId}`,
-    requestBody,
-  );
+  return await putRequest(`/api/study/${studyId}/schedule/${scheduleId}`, requestBody);
 }
 //코드 수정 요청
 export async function editCodeApi(
@@ -207,12 +188,7 @@ export async function editCodeApi(
   return await putRequest(`/api/study/${studyId}/code/${codeId}`, requestBody);
 }
 //문제 수정 요청
-export async function editProblemApi(
-  studyId: number,
-  problemId: number,
-  name: string,
-  link: string,
-) {
+export async function editProblemApi(studyId: number, problemId: number, name: string, link: string) {
   const requestBody = {
     id: problemId,
     name,
@@ -222,7 +198,7 @@ export async function editProblemApi(
 }
 
 // 리뷰(댓글) 해결 여부 토글 요청
-export async function toggleSolved(reviewId: number, isSolved: boolean) {
+export async function toggleSolved(reviewId: number, isSolved: boolean): Promise<AxiosResponse> {
   const requestBody = {
     isSolved,
   };
@@ -230,11 +206,7 @@ export async function toggleSolved(reviewId: number, isSolved: boolean) {
 }
 
 // 리뷰(댓글) 수정 요청
-export async function editReviewApi(
-  reviewId: number,
-  content: string,
-  line: number,
-) {
+export async function editReviewApi(reviewId: number, content: string, line: number): Promise<AxiosResponse> {
   const requestBody = {
     content,
     line,
@@ -252,16 +224,16 @@ export async function confirmInvitationApi(inviteCode: string) {
 
 // delete
 // 코드 삭제 요청
-export async function deleteCodeApi(studyId: number, codeId: number) {
+export async function deleteCodeApi(studyId: number, codeId: number): Promise<AxiosResponse> {
   return await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
 }
 
 // 댓글(리뷰) 삭제 요청
-export async function deleteReviewApi(reviewId: number) {
+export async function deleteReviewApi(reviewId: number): Promise<AxiosResponse> {
   return await deleteRequest(`/api/code/review/${reviewId}`);
 }
 
 // 초대 대기 삭제 요청
-export async function deleteInvitationApi(studyId: number, sjiId: number) {
+export async function deleteInvitationApi(studyId: number, sjiId: number): Promise<AxiosResponse> {
   return await deleteRequest(`/api/study/${studyId}/invitation/${sjiId}`);
 }

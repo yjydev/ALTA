@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  ReviewData,
-  CodeData,
-  defaultCodeData,
-  CodeTree,
-} from '../types/CodeBlockType';
+import { ReviewData, CodeData, defaultCodeData, CodeTree } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
 import { codeDataApi, reivewDataApi, codeTreeApi } from '../api/apis';
 
@@ -51,8 +46,7 @@ export default function CodeContext({ children }: Props) {
 
   const getCode = async (studyId: number, codeId: number) => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       const res = await codeDataApi(studyId, codeId);
       setCode(res);
@@ -63,8 +57,7 @@ export default function CodeContext({ children }: Props) {
   };
   const getReview = async (codeId: number) => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       const res = await reivewDataApi(codeId);
       setReviews(res);
@@ -75,8 +68,7 @@ export default function CodeContext({ children }: Props) {
   };
   const getCodeTree = async (studyId: number) => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       const res = await codeTreeApi(studyId);
       setCodeTree(res);

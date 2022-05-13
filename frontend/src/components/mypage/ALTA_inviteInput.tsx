@@ -53,18 +53,16 @@ export default function ALTA_inviteInput() {
   };
 
   return (
-    <Box sx={wrapper}>
+    <Box sx={wrapperStyle}>
       <Box>
         <Button
           onClick={() => handleisToggle(!isToggle)}
-          sx={inputBtn}
+          sx={inputBtnStyle}
           disableElevation
           disableRipple
-          endIcon={
-            isToggle ? <ArrowForwardIosSharpIcon /> : <ArrowBackIosNewIcon />
-          }
+          endIcon={isToggle ? <ArrowForwardIosSharpIcon /> : <ArrowBackIosNewIcon />}
         >
-          <Typography sx={[inputText]}>초대코드</Typography>
+          <Typography sx={[inputTextStyle]}>초대코드</Typography>
         </Button>
       </Box>
       <Box sx={[fieldStyle, isToggle ? { width: '250px' } : { width: '0px' }]}>
@@ -80,35 +78,35 @@ export default function ALTA_inviteInput() {
             onChange={(e) => setInviteCode(e.target.value)}
           />
         </Box>
-        <Box sx={completeBtn}>
-          {isToggle ? (
+        <Box sx={completeBtnStyle}>
+          {isToggle && (
             <Button variant="outlined" onClick={handleInvite}>
               입력
             </Button>
-          ) : null}
+          )}
         </Box>
       </Box>
     </Box>
   );
 }
 
-const wrapper = {
+const wrapperStyle = {
   display: 'flex',
   margin: '10px 0',
   minHeight: '50px',
   justifyContent: 'right',
 };
 
-const inputText = {
+const inputTextStyle = {
   marginRight: 1,
   fontWeight: 'bold',
 };
 
-const inputBtn = {
+const inputBtnStyle = {
   color: '#212121',
 };
 
-const completeBtn = {
+const completeBtnStyle = {
   marginLeft: 2,
 };
 

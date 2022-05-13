@@ -14,7 +14,7 @@ import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRound
 
 import { generateError } from '../../modules/generateAlert';
 import { CodeStore } from '../../context/CodeContext';
-import { CodeTree } from '../../types/CodeBlockType';
+import { CodeTree } from '../../types';
 // import scrollStyle from '../../modules/scrollStyle';
 
 export default function ALTA_CodeTree() {
@@ -73,8 +73,7 @@ export default function ALTA_CodeTree() {
       width: 320,
     },
   ];
-  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) =>
-    row.path;
+  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
   const handleMove = async (row: CodeTree) => {
     if (row.codeId !== 0) {
