@@ -15,7 +15,7 @@ export default function ALTA_UserDataEdit({
 }: {
   setIsEditPage: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { userData, getUserData } = useContext(UserDataStore);
+  const { userData, editUserData } = useContext(UserDataStore);
   const navigate = useNavigate();
 
   const [nickname, setNickname] = useState(userData.nickname);
@@ -25,7 +25,7 @@ export default function ALTA_UserDataEdit({
   const [editUserDataLoading, setEditUserDataLoading] =
     useState<boolean>(false);
 
-  const editUserData = async () => {
+  const edit = async () => {
     if (!(await checkLogin())) navigate('/');
 
     if (
@@ -38,21 +38,18 @@ export default function ALTA_UserDataEdit({
     } else if (!nickname || !email || !introduction || !languageList) {
       generateError('모든 항목을 채워주세요', '');
     } else {
-      try {
-        setEditUserDataLoading(true);
-        await editUserDataApi(nickname, email, introduction, languageList);
-        const Userstatus = await getUserData();
+      setEditUserDataLoading(true);
+      const userStatus = await editUserData(
+        nickname,
+        email,
+        introduction,
+        languageList,
+      );
 
-        if (Userstatus.status === -1) navigate('/');
-        else if (Userstatus.status === -2)
-          generateError('유저 정보를 변경할 수 없습니다', '');
-        else {
-          setEditUserDataLoading(false);
-          setIsEditPage(false);
-        }
-      } catch (error) {
+      if (userStatus.status === -1) navigate('/');
+      else if (userStatus.status === -2)
         generateError('유저 정보를 수정할 수 없습니다', '');
-      }
+      else setEditUserDataLoading(false);
     }
   };
 
@@ -83,7 +80,7 @@ export default function ALTA_UserDataEdit({
         </Box>
       </Box>
       <Box sx={editButtonStyle}>
-        <Button onClick={editUserData}>
+        <Button onClick={edit}>
           {editUserDataLoading ? <CircularProgress size={20} /> : '수정 완료'}
         </Button>
         <Button color="error" onClick={() => setIsEditPage(false)}>

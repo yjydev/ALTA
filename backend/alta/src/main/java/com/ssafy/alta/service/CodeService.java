@@ -171,7 +171,6 @@ public class CodeService {
 
         Study study = optStudy.get();
         Code code = optCode.get();
-        User user = optUser.get();
         String lastFileName = code.getFileName();
 
         // 검증
