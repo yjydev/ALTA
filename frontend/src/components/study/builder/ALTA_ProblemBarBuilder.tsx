@@ -78,7 +78,7 @@ function SellBtn({ codeId, problem, memberName, studyId }: SellBtnProps) {
       generateError('다른 사람의 제출 버튼을 누르셨습니다', '');
     } else {
       const problemId = problem.id;
-      navigate('/code-submit', { state: { problemId, studyId } });
+      navigate(`/study/${studyId}/${problemId}/${problem.name}/0/code-submit`);
     }
   };
 

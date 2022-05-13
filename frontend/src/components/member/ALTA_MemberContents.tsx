@@ -20,8 +20,7 @@ export default function ALTA_MemberContents() {
     (async function () {
       const status = await getMembers(Number(studyId));
       if (status.status === -1) navigate('/');
-      else if (status.status === -2)
-        generateError('멤버 정보를 불러오는데 실패하였습니다', '');
+      else if (status.status === -2) generateError('멤버 정보를 불러오는데 실패하였습니다', '');
       else setLoading(false);
     })();
   }, []);

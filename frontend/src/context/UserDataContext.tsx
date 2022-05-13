@@ -24,7 +24,6 @@ export default function UserDataProvider({ children }: ContextProps) {
 
   const getUserData = async (): Promise<PromiseType> => {
     const loginStatus = await checkLogin();
-
     if (!loginStatus.status) return { status: -1, message: 'login token error' };
 
     try {
@@ -39,7 +38,34 @@ export default function UserDataProvider({ children }: ContextProps) {
     }
   };
 
-  const value = { userData, getUserData };
+  const editUserData = async (nickname: string, email: string, introduction: string, languageList: string[] | null) => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    try {
+      await editUserDataApi(nickname, email, introduction, languageList);
+      await getUserData();
+      return { status: 1, message: 'success edit user data' };
+    } catch (err) {
+      return { status: -2, message: 'fail get user data' };
+    }
+  };
+
+  const changeProfile = async (img: FormData) => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    try {
+      await changeProfileImgApi(img);
+      await getUserData();
+      return { status: 1, message: 'success edit user data' };
+    } catch (err) {
+      return { status: -2, message: 'fail get user data' };
+    }
+  };
+
+  const value = { userData, getUserData, editUserData, changeProfile };
+
   return <UserDataStore.Provider value={value}>{children}</UserDataStore.Provider>;
 }
 
@@ -48,10 +74,5 @@ type defaultValueType = {
   userData: UserData;
   getUserData: () => any;
   changeProfile: (img: FormData) => any;
-  editUserData: (
-    nickname: string,
-    email: string,
-    introduction: string,
-    languageList: string[] | null,
-  ) => any;
+  editUserData: (nickname: string, email: string, introduction: string, languageList: string[] | null) => any;
 };
