@@ -8,6 +8,7 @@ import com.ssafy.alta.gitutil.GitEmailAPI;
 import com.ssafy.alta.gitutil.GitReadmeAPI;
 import com.ssafy.alta.repository.*;
 import com.ssafy.alta.util.Language;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,35 +34,26 @@ import java.util.Optional;
  * 2022-05-06	        김유진  		        최초 생성
  */
 @Service
+@RequiredArgsConstructor
 public class ReadmeService {
-    private GitEmailAPI gitEmailAPI = new GitEmailAPI();
-    private GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
-    @Autowired
-    private RedisService redisService;
-    @Autowired
-    private UserRepository userRepository;
+    private final GitEmailAPI gitEmailAPI = new GitEmailAPI();
+    private final GitReadmeAPI gitReadmeAPI = new GitReadmeAPI();
 
-    @Autowired
-    private StudyJoinInfoRepository studyJoinInfoRepository;
-    @Autowired
-    private StudyRepository studyRepository;
+    private final UserRepository userRepository;
+    private final StudyJoinInfoRepository studyJoinInfoRepository;
+    private final StudyRepository studyRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final CodeRepository codeRepository;
+    private final ProblemRepository problemRepository;
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private CodeRepository codeRepository;
-    @Autowired
-    private ProblemRepository problemRepository;
+    private final RedisService redisService;
+    private final UserService userService;
 
     public String updateReadme(Long study_id) {
         String userId = userService.getCurrentUserId();
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
         User user = optUser.get();
-//        Study study = studyRepository.getById(40L);
         Study study = studyRepository.getById(study_id);
         int maxPeople = study.getMaxPeople();
         StringBuilder sb = new StringBuilder();
@@ -138,9 +130,7 @@ public class ReadmeService {
             sb.append("---").append(NL);
 
         }
-        System.out.println(sb);
 
-        // 테스트 진행
         String token = redisService.getAccessToken(userId);
         String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), study.getRepositoryName());
         HashMap<String, String> committer = new HashMap<>();
