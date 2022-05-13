@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect } from 'react';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { Grid, Box, Typography, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
@@ -9,9 +9,13 @@ import ALTA_MemberTable from './ALTA_MemberTable';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList({ studyId }: { studyId: number }) {
+  const navigate: NavigateFunction = useNavigate();
+
   const { members, studyCode, maxPeople, setInvitable } = useContext(MemberStore);
-  const navigate = useNavigate();
-  setInvitable(members.length < maxPeople);
+
+  useEffect((): void => {
+    setInvitable(members.length < maxPeople);
+  }, []);
   return (
     <Box pt={4} pb={2}>
       <Button

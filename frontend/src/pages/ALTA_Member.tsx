@@ -1,6 +1,4 @@
-import { Box } from '@mui/material';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import MemberContext from '../context/MemberContext';
 
 import ALTA_Template from '../components/common/ALTA_Template';
