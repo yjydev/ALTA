@@ -70,5 +70,21 @@ public class User {
     @Column(name = "user_role")
     private String role;
 
+    public void updateImageUrl(String imageUrl) {
+        this.image = imageUrl;
+    }
+
+    public void updateInfo(int sum, String nick, String email, String introduction) {
+        this.language = sum == 0 ? null : sum;
+        this.nickname = nick;
+        this.email = email;
+        this.introduction = introduction;
+    }
+
+    public void updateAlert(int email, int site) {
+        this.emailAlert = email;
+        this.siteAlert = site;
+    }
+
 }
 

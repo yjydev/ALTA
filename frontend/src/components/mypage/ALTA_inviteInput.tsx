@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Typography, TextField, Box } from '@mui/material';
@@ -6,24 +6,50 @@ import { Button, Typography, TextField, Box } from '@mui/material';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import { putRequest } from '../../api/request';
-import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
+import { confirmInvitationApi } from '../../api/apis';
+import { checkLogin } from '../../modules/LoginTokenChecker';
+import { UserDataStore } from '../../context/UserDataContext';
 
 export default function ALTA_inviteInput() {
   const navigate = useNavigate();
+  const { getUserData } = useContext(UserDataStore);
   const [isToggle, handleisToggle] = useState(false);
   const [inviteCode, setInviteCode] = useState<string>('');
 
   const handleInvite = async () => {
-    generateTimer('잠시 기다려 주세요', `초대코드 검증 중입니다.`);
-    const request = { code: inviteCode };
-    try {
-      const res = await putRequest(`/api/study/invitation`, JSON.stringify(request));
-      generateCheck('가입 완료', `${res.studyName}스터디에 가입되었습니다`, () => navigate('/mypage'));
-      setInviteCode('');
-    } catch (err) {
-      generateError('이미 가입된 스터디거나 초대 코드가 유효하지 않습니다', ``);
+    if (inviteCode === '') generateError('코드를 입력해주세요', '');
+    else {
+      if (!(await checkLogin()).status) navigate('/');
+      generateTimer('잠시 기다려 주세요', `초대코드 검증 중입니다.`);
+      try {
+        const studyName = await confirmInvitationApi(inviteCode);
+        generateCheck(
+          '가입 완료',
+          `${studyName}스터디에 가입되었습니다`,
+          async () => getStudy(),
+        );
+        setInviteCode('');
+      } catch (err: any) {
+        // console.log(err);
+        generateError(
+          '이미 가입된 스터디거나 초대 코드가 유효하지 않습니다',
+          `${err.response.data.message}`,
+        );
+      }
     }
+  };
+
+  const getStudy = async () => {
+    const Userstatus = await getUserData();
+
+    if (Userstatus.status === -1) navigate('/');
+    else if (Userstatus.status === -2)
+      generateError('유저 정보를 불러올 수 없습니다', '', () => navigate('/'));
   };
 
   return (

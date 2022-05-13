@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { UserData, defaultUserData } from '../types';
 import { ContextProps } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
-import { userDataApi } from '../api/apis';
+import { userDataApi, editUserDataApi, changeProfileImgApi } from '../api/apis';
 
 //Context 인스턴스 생성
 export const defaultValue: defaultValueType = {
   userData: defaultUserData,
   getUserData: () => null,
+  changeProfile: () => null,
+  editUserData: () => null,
 };
 export const UserDataStore = React.createContext(defaultValue);
 
@@ -45,4 +47,11 @@ export default function UserDataProvider({ children }: ContextProps) {
 type defaultValueType = {
   userData: UserData;
   getUserData: () => any;
+  changeProfile: (img: FormData) => any;
+  editUserData: (
+    nickname: string,
+    email: string,
+    introduction: string,
+    languageList: string[] | null,
+  ) => any;
 };
