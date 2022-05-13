@@ -1,13 +1,7 @@
 import { useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
-import {
-  DataGridPro,
-  GridColumns,
-  GridRowsProp,
-  DataGridProProps,
-  GridValueGetterParams,
-} from '@mui/x-data-grid-pro';
+import { DataGridPro, GridColumns, GridRowsProp, DataGridProProps, GridValueGetterParams } from '@mui/x-data-grid-pro';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 import FolderOpenTwoToneIcon from '@mui/icons-material/FolderOpenTwoTone';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
@@ -46,9 +40,7 @@ export default function ALTA_CodeTree() {
           <span style={{ position: 'absolute' }}>
             <FolderOpenTwoToneIcon fontSize="small" color="primary" />
           </span>
-          <span
-            style={{ marginLeft: 30 }}
-          >{`${params.rowNode.groupingKey}`}</span>
+          <span style={{ marginLeft: 30 }}>{`${params.rowNode.groupingKey}`}</span>
         </>
       );
     } else {
@@ -57,9 +49,7 @@ export default function ALTA_CodeTree() {
           <span style={{ position: 'absolute' }}>
             <InsertDriveFileRoundedIcon fontSize="small" color="primary" />
           </span>
-          <span
-            style={{ marginLeft: 30, cursor: 'pointer' }}
-          >{`${params.rowNode.groupingKey}`}</span>
+          <span style={{ marginLeft: 30, cursor: 'pointer' }}>{`${params.rowNode.groupingKey}`}</span>
         </>
       );
     }
@@ -73,8 +63,7 @@ export default function ALTA_CodeTree() {
       width: 320,
     },
   ];
-  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) =>
-    row.path;
+  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
   const handleMove = async (row: CodeTree) => {
     if (row.codeId !== 0) {

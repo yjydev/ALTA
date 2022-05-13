@@ -4,11 +4,7 @@ import Swal from 'sweetalert2';
 import '../style/AlertStyle.css';
 import { mainColor, whiteColor, blackColor, errorColor } from './colorChart';
 
-export function generateCheck(
-  title: string,
-  text: string,
-  callback: () => void | Promise<void> | null,
-) {
+export function generateCheck(title: string, text: string, callback: () => void | Promise<void> | null) {
   Swal.fire({
     title,
     text,
@@ -24,11 +20,7 @@ export function generateCheck(
   });
 }
 
-export function generateError(
-  title: string,
-  text: string,
-  callback?: () => void,
-) {
+export function generateError(title: string, text: string, callback?: () => void) {
   Swal.fire({
     title,
     text,
