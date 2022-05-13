@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   Avatar,
@@ -26,14 +26,20 @@ import { CodeStore } from '../../context/CodeContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
 
+type ParamType = {
+  studyId: string | undefined;
+  codeId: string | undefined;
+  problem: string | undefined;
+};
+
 export default function ALTA_CodeCommentCard({ review }: { review: ReviewData }) {
   const navigate = useNavigate();
   const [isResolved, setisResolved] = useState<boolean>(review.completed);
-  const { setCodeLine, user, code } = useContext(CodeStore);
+  const { setCodeLine, user, code, getReview } = useContext(CodeStore);
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const [commentValue, setCommentValue] = useState<string>(review.comment);
-  const { studyId, codeId } = JSON.parse(JSON.stringify(useLocation().state));
+  const { studyId, codeId, problem } = useParams<ParamType>();
   const userData = localStorage.getItem('UserData');
   const profile = userData ? JSON.parse(userData)['profileUrl'] : 'profile_default.png';
 
@@ -55,14 +61,16 @@ export default function ALTA_CodeCommentCard({ review }: { review: ReviewData })
     if (!(await checkLogin()).status) navigate('/');
     if (commentValue === review.comment) generateError('변경 내역이 없습니다', '');
     else {
-      if (commentValue === '') generateError('내용을 작성해주세요', '');
-      else {
-        try {
-          await editReviewApi(review.reviewId, commentValue, review.codeNumber);
-          setIsEdit(false);
-          navigate('/study/code', { state: { studyId, codeId } });
-        } catch (err: any) {
-          generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
+      if (codeId) {
+        if (commentValue === '') generateError('내용을 작성해주세요', '');
+        else {
+          try {
+            await editReviewApi(review.reviewId, commentValue, review.codeNumber);
+            setIsEdit(false);
+            getReview(parseInt(codeId));
+          } catch (err: any) {
+            generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
+          }
         }
       }
     }
@@ -80,11 +88,13 @@ export default function ALTA_CodeCommentCard({ review }: { review: ReviewData })
   };
 
   const delComment = async () => {
-    try {
-      await deleteReviewApi(review.reviewId);
-      navigate('/study/code', { state: { studyId, codeId } });
-    } catch (err: any) {
-      generateError('리뷰 삭제에 실패하였습니다', `${err.response.data.message}`);
+    if (codeId) {
+      try {
+        await deleteReviewApi(review.reviewId);
+        getReview(parseInt(codeId));
+      } catch (err: any) {
+        generateError('리뷰 삭제에 실패하였습니다', `${err.response.data.message}`);
+      }
     }
   };
 

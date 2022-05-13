@@ -42,19 +42,13 @@ export default function ALTA_UserData() {
       const userStatus = await changeProfile(img);
 
       if (userStatus.status === -1) navigate('/');
-      else if (userStatus.status === -2)
-        generateError('프로필을 수정할 수 없습니다', '');
+      else if (userStatus.status === -2) generateError('프로필을 수정할 수 없습니다', '');
     }
   };
 
   return (
     <Box sx={wrapper}>
-      <Input
-        id="file"
-        type="file"
-        accept="image/*"
-        onChange={(e) => changeProfileImage(e.target.files)}
-      />
+      <Input id="file" type="file" accept="image/*" onChange={(e) => changeProfileImage(e.target.files)} />
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
       <Box sx={[userDataStyle, alertFold && unfold]}>
         {isEditPage && (
@@ -64,7 +58,7 @@ export default function ALTA_UserData() {
         )}
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}>
-            <img src={userData.profileUrl || defaultProfile} alt="기본 프로필 이미지" />
+            <img src={userData.profileUrl || defaultProfile} alt="프로필 이미지" />
           </Box>
           <ALTA_Tooltip title="프로필 사진 변경">
             <PhotoButton>

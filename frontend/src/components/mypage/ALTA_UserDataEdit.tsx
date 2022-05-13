@@ -3,7 +3,6 @@ import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { editUserDataApi } from '../../api/apis';
 import { UserDataStore } from '../../context/UserDataContext';
 import { generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
@@ -24,7 +23,7 @@ export default function ALTA_UserDataEdit({
   const [languageList, setLanguageList] = useState<string[] | null>(userData.languageList);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const editUserData = async (): Promise<void> => {
+  const edit = async (): Promise<void> => {
     if (!(await checkLogin())) navigate('/');
 
     if (
@@ -37,20 +36,12 @@ export default function ALTA_UserDataEdit({
     } else if (!nickname || !email || !introduction || !languageList) {
       generateError('모든 항목을 채워주세요', '');
     } else {
-      try {
-        setLoading(true);
-        await editUserDataApi(nickname, email, introduction, languageList);
-        const Userstatus = await getUserData();
+      setLoading(true);
+      const userStatus = await editUserData(nickname, email, introduction, languageList);
 
-        if (Userstatus.status === -1) navigate('/');
-        else if (Userstatus.status === -2) generateError('유저 정보를 변경할 수 없습니다', '');
-        else {
-          setLoading(false);
-          setIsEditPage(false);
-        }
-      } catch (error) {
-        generateError('유저 정보를 수정할 수 없습니다', '');
-      else setEditUserDataLoading(false);
+      if (userStatus.status === -1) navigate('/');
+      else if (userStatus.status === -2) generateError('유저 정보를 수정할 수 없습니다', '');
+      else setLoading(false);
     }
   };
 
@@ -78,7 +69,7 @@ export default function ALTA_UserDataEdit({
         </Box>
       </Box>
       <Box sx={editButtonStyle}>
-        <Button onClick={editUserData}>{loading ? <CircularProgress size={20} /> : '수정 완료'}</Button>
+        <Button onClick={edit}>{loading ? <CircularProgress size={20} /> : '수정 완료'}</Button>
         <Button color="error" onClick={() => setIsEditPage(false)}>
           수정 취소
         </Button>
