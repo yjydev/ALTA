@@ -40,18 +40,22 @@ export default function ALTA_CodeContents() {
       '한번 삭제하면 되돌릴 수 없습니다.',
       '코드가 삭제되었습니다.',
       `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
-      async (): Promise<void> => delCode(),
+      async (): Promise<boolean> => delCode(),
     );
   };
 
-  const delCode = async (): Promise<void> => {
+  const delCode = async (): Promise<boolean> => {
     if (studyId && codeId) {
       try {
         await deleteCodeApi(parseInt(studyId), parseInt(codeId));
         goToDetail();
+        return true;
       } catch (err: any) {
         generateError('코드 삭제에 실패하였습니다', `${err.response.data.message}`);
+        return false;
       }
+    } else {
+      return false;
     }
   };
 
@@ -75,7 +79,7 @@ export default function ALTA_CodeContents() {
         navigate('/code/404-not-found');
       }
     })();
-  }, [codeId]);
+  }, [codeId, isCodeEdit]);
 
   return (
     <>
