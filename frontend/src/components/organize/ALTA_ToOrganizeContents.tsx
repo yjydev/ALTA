@@ -17,11 +17,7 @@ import { languages } from '../../modules/languageSources';
 import { OrganizeStudyRequset } from '../../types/StudyType';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { organizeStudyApi } from '../../api/apis';
-import {
-  generateCheck,
-  generateError,
-  generateTimer,
-} from '../../modules/generateAlert';
+import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
 
 import ALTA_InputItem from '../common/ALTA_InputItem';
 
@@ -39,17 +35,13 @@ export default function ALTA_ToOrganizeContents() {
     repositoryName: '',
   });
 
-  const changeFocus = (label: string) => setFocusedItem(label);
+  const changeFocus = (label: string): void => setFocusedItem(label);
 
   const handleRequestData = (eventValue: string, key: string): void => {
     const newData: OrganizeStudyRequset = { ...requestData };
     newData[key] = String(eventValue);
 
-    if (
-      !Object.values(newData).includes('') &&
-      checkEmpty() &&
-      checkRepoName()
-    ) {
+    if (!Object.values(newData).includes('') && checkEmpty() && checkRepoName()) {
       setSumitBtn(true);
     } else {
       setSumitBtn(false);
@@ -92,13 +84,10 @@ export default function ALTA_ToOrganizeContents() {
     return true;
   };
 
-  const organize = async () => {
+  const organize = async (): Promise<void> => {
     if (!(await checkLogin())) navigate('/');
 
-    generateTimer(
-      '잠시 기다려 주세요',
-      `Github에 ${requestData.name} 레포지토리를 생성 중입니다`,
-    );
+    generateTimer('잠시 기다려 주세요', `Github에 ${requestData.name} 레포지토리를 생성 중입니다`);
 
     try {
       await organizeStudyApi(requestData);
@@ -112,16 +101,12 @@ export default function ALTA_ToOrganizeContents() {
     }
   };
 
-  const cancel = () => navigate('/mypage');
+  const cancel = (): void => navigate('/mypage');
 
   return (
-    <Box sx={wrapper}>
-      <Box sx={organizationCard}>
-        <ALTA_InputItem
-          label="스터디 이름"
-          focused={focusedItem === '스터디 이름'}
-          focusHandler={changeFocus}
-        >
+    <Box sx={wrapperStyle}>
+      <Box sx={organizationCardStyle}>
+        <ALTA_InputItem label="스터디 이름" focused={focusedItem === '스터디 이름'} focusHandler={changeFocus}>
           <TextField
             id="스터디 이름"
             autoFocus
@@ -134,35 +119,25 @@ export default function ALTA_ToOrganizeContents() {
           />
           <Typography sx={guideStyle} className={requestData.name && `checked`}>
             <span>{!requestData.name && '스터디 이름을 채워주세요'}</span>
-            <span>
-              {requestData.name &&
-                `"${requestData.name}" 가 스터디 이름으로 등록됩니다.`}
-            </span>
+            <span>{requestData.name && `"${requestData.name}" 가 스터디 이름으로 등록됩니다.`}</span>
           </Typography>
         </ALTA_InputItem>
-        <ALTA_InputItem
-          label="풀이 언어"
-          focused={focusedItem === '풀이 언어'}
-          focusHandler={changeFocus}
-        >
+        <ALTA_InputItem label="풀이 언어" focused={focusedItem === '풀이 언어'} focusHandler={changeFocus}>
           <Select
             variant="standard"
             value={requestData.language}
             onChange={(e) => handleRequestData(e.target.value, 'language')}
-            // defaultValue={languages[0].language}
           >
-            {languages.map((lan) => (
-              <MenuItem key={lan} value={lan}>
-                {lan}
-              </MenuItem>
-            ))}
+            {languages.map(
+              (lan: string): JSX.Element => (
+                <MenuItem key={lan} value={lan}>
+                  {lan}
+                </MenuItem>
+              ),
+            )}
           </Select>
         </ALTA_InputItem>
-        <ALTA_InputItem
-          label="인원 수"
-          focused={focusedItem === '인원 수'}
-          focusHandler={changeFocus}
-        >
+        <ALTA_InputItem label="인원 수" focused={focusedItem === '인원 수'} focusHandler={changeFocus}>
           <TextField
             id="인원 수"
             type="number"
@@ -171,69 +146,29 @@ export default function ALTA_ToOrganizeContents() {
             onChange={(e) => handleMaxPeople(Number(e.target.value))}
           />
         </ALTA_InputItem>
-        <ALTA_InputItem
-          label="공개 여부"
-          focused={focusedItem === '공개 여부'}
-          focusHandler={changeFocus}
-        >
-          <RadioGroup
-            row
-            value={requestData.isPublic}
-            onChange={(e) => handleRequestData(e.target.value, 'isPublic')}
-          >
-            <FormControlLabel
-              value="true"
-              control={<Radio id="공개 여부" />}
-              label="공개"
-            />
-            <FormControlLabel
-              value="false"
-              control={<Radio id="공개 여부" />}
-              label="비공개"
-            />
+        <ALTA_InputItem label="공개 여부" focused={focusedItem === '공개 여부'} focusHandler={changeFocus}>
+          <RadioGroup row value={requestData.isPublic} onChange={(e) => handleRequestData(e.target.value, 'isPublic')}>
+            <FormControlLabel value="true" control={<Radio id="공개 여부" />} label="공개" />
+            <FormControlLabel value="false" control={<Radio id="공개 여부" />} label="비공개" />
           </RadioGroup>
         </ALTA_InputItem>
-        <ALTA_InputItem
-          label="Repo 이름"
-          focused={focusedItem === 'Repo 이름'}
-          focusHandler={changeFocus}
-        >
+        <ALTA_InputItem label="Repo 이름" focused={focusedItem === 'Repo 이름'} focusHandler={changeFocus}>
           <TextField
             id="Repo 이름"
             variant="standard"
             placeholder="레포지토리 이름을 적어주세요"
             value={requestData.repositoryName}
-            onChange={(e) =>
-              handleRequestData(e.target.value, 'repositoryName')
-            }
+            onChange={(e) => handleRequestData(e.target.value, 'repositoryName')}
             sx={{ width: '100%' }}
             inputProps={{ style: { fontSize: 18, padding: '0 0 3px' } }}
           />
-          <Typography
-            sx={guideStyle}
-            className={`${
-              requestData.repositoryName && checkRepoName() && 'checked'
-            }`}
-          >
-            <span>
-              {!requestData.repositoryName && '레포지토리 이름을 채워주세요'}
-            </span>
-            <span>
-              {!checkRepoName() &&
-                '레포지토리는 한글과 공백을 포함할 수 없습니다'}
-            </span>
-            <span>
-              {requestData.repositoryName &&
-                checkRepoName() &&
-                '레포지토리 이름으로 사용 가능합니다'}
-            </span>
+          <Typography sx={guideStyle} className={`${requestData.repositoryName && checkRepoName() && 'checked'}`}>
+            <span>{!requestData.repositoryName && '레포지토리 이름을 채워주세요'}</span>
+            <span>{!checkRepoName() && '레포지토리는 한글과 공백을 포함할 수 없습니다'}</span>
+            <span>{requestData.repositoryName && checkRepoName() && '레포지토리 이름으로 사용 가능합니다'}</span>
           </Typography>
         </ALTA_InputItem>
-        <ALTA_InputItem
-          label="스터디 소개"
-          focused={focusedItem === '스터디 소개'}
-          focusHandler={changeFocus}
-        >
+        <ALTA_InputItem label="스터디 소개" focused={focusedItem === '스터디 소개'} focusHandler={changeFocus}>
           <StyledTextArea
             id="스터디 소개"
             rows={4}
@@ -241,25 +176,13 @@ export default function ALTA_ToOrganizeContents() {
             value={requestData.introduction}
             onChange={(e) => handleStudyIntro(e.target.value)}
           />
-          <Typography
-            sx={guideStyle}
-            className={requestData.introduction && `checked`}
-          >
-            <span>
-              {!requestData.introduction && '스터디 이름을 채워주세요'}
-            </span>
-            <span>
-              {requestData.introduction && '스터디 소개가 등록되었습니다'}
-            </span>
+          <Typography sx={guideStyle} className={requestData.introduction && `checked`}>
+            <span>{!requestData.introduction && '스터디 이름을 채워주세요'}</span>
+            <span>{requestData.introduction && '스터디 소개가 등록되었습니다'}</span>
           </Typography>
         </ALTA_InputItem>
-        <Box sx={btnGroup}>
-          <Button
-            variant="contained"
-            sx={btn}
-            disabled={!sumitBtn}
-            onClick={organize}
-          >
+        <Box sx={btnGroupStyle}>
+          <Button variant="contained" sx={btnStyle} disabled={!sumitBtn} onClick={organize}>
             {sumitBtn ? (
               <>
                 <span>생</span>
@@ -269,7 +192,7 @@ export default function ALTA_ToOrganizeContents() {
               <span>모든 항목을 채워주세요</span>
             )}
           </Button>
-          <Button variant="contained" color="error" sx={btn} onClick={cancel}>
+          <Button variant="contained" color="error" sx={btnStyle} onClick={cancel}>
             <span>취</span>
             <span>소</span>
           </Button>
@@ -279,7 +202,7 @@ export default function ALTA_ToOrganizeContents() {
   );
 }
 
-const wrapper = {
+const wrapperStyle = {
   display: 'flex',
   width: '100%',
   height: '100%',
@@ -287,19 +210,19 @@ const wrapper = {
   alignItems: 'center',
 };
 
-const organizationCard = {
+const organizationCardStyle = {
   width: '100%',
   backgroundColor: '#fff',
   padding: '50px',
   borderRadius: '5px',
 };
-const btnGroup = {
+const btnGroupStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   width: '100%',
   marginTop: '30px',
 };
-const btn = {
+const btnStyle = {
   display: 'flex',
   justifyContent: 'space-evenly',
   width: '49%',
