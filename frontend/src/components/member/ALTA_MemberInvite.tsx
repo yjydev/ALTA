@@ -22,7 +22,7 @@ import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList({ studyId }: { studyId: number }) {
   const navigate: NavigateFunction = useNavigate();
-  const { invitable } = useContext(MemberStore);
+  const { invitable, setIsRefresh } = useContext(MemberStore);
 
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>('');
@@ -57,7 +57,7 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
           try {
             const res = await sendMailApi(studyId, parseInt(selectUser.id));
             generateCheck('초대 완료', `${selectUser.nickname} 님에게 초대 메일을 발송하였습니다`, () =>
-              navigate(`/study/${studyId}/member`),
+              setIsRefresh(true),
             );
           } catch (err: any) {
             generateError(`초대를 보낼 수 없습니다`, `${err.response.data.message}`);
