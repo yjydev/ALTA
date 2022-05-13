@@ -7,6 +7,7 @@ import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitEmailAPI;
 import com.ssafy.alta.gitutil.GitReadmeAPI;
 import com.ssafy.alta.repository.*;
+import com.ssafy.alta.util.FileLanguageUtil;
 import com.ssafy.alta.util.Language;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class ReadmeService {
 
     private final RedisService redisService;
     private final UserService userService;
+
+    private final FileLanguageUtil fileLanguageUtil = FileLanguageUtil.getInstanse();
 
     public String updateReadme(Long study_id) {
         String userId = userService.getCurrentUserId();
@@ -102,6 +105,7 @@ public class ReadmeService {
 
                 for (int i = 0; i < maxPeople; i++) {
                     Optional<Code> codeOpt = codeRepository.findTopByProblem_IdAndUser_IdOrderByIdDesc(problem.getId(), i < joinList.size() ? joinList.get(i).getUser().getId() : "-1");
+
                     if (codeOpt.isEmpty())
                         sb.append("-").append("|");
                     else {
@@ -109,12 +113,13 @@ public class ReadmeService {
                         String fileName = code.getFileName();
                         String userName = code.getUser().getName();
                         String problemLink = "";
+
                         try {
                             problemLink = URLEncoder.encode("풀이모음", "UTF-8") + "/"
                                     + URLEncoder.encode(problemName, "UTF-8") + "/"
                                     + URLEncoder.encode(userName, "UTF-8") + "/"
                                     + URLEncoder.encode(fileName, "UTF-8") + "." +
-                                    Language.valueOf(study.getLanguage()).getExtension();
+                                    fileLanguageUtil.getExtention(study.getLanguage());
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }

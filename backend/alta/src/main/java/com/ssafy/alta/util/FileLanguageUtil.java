@@ -54,6 +54,10 @@ public class FileLanguageUtil {
         return fileName + "." + extention;
     }
 
+    public String getExtention(String language) {
+        return languageToFile.get(language);
+    }
+
     public String getEditorFormat(String language) {
         return languageToEditerFormat.get(language);
     }
