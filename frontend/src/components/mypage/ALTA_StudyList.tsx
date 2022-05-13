@@ -8,17 +8,16 @@ import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_StudyCard from './ALTA_StudyCard';
 import ALTA_inviteInput from './ALTA_inviteInput';
 
-export default function ALTA_StudyList({
-  studyList,
-}: {
+type Props = {
   studyList: Study[] | null;
-}) {
+};
+export default function ALTA_StudyList({ studyList }: Props) {
   const navigate = useNavigate();
 
-  const goOrganize = () => {
+  const goOrganize = (): void => {
     navigate('/organize');
   };
-  const goStudyDetail = (studyId: number) => {
+  const goStudyDetail = (studyId: number): void => {
     navigate('/study/detail', { state: { studyId } });
   };
 

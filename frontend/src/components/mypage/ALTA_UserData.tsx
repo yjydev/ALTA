@@ -20,7 +20,7 @@ export default function ALTA_UserData() {
   const [alertFold, setAlertFold] = useState<boolean>(true);
   const [isEditPage, setIsEditPage] = useState<boolean>(false);
 
-  const openEditPage = () => {
+  const openEditPage = (): void => {
     setAlertFold(true);
     setIsEditPage(!isEditPage);
   };
@@ -28,18 +28,15 @@ export default function ALTA_UserData() {
   return (
     <Box sx={wrapper}>
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
-      <Box sx={[userDataStyle, alertFold ? null : unfold]}>
-        {isEditPage ? null : (
+      <Box sx={[userDataStyle, alertFold && unfold]}>
+        {isEditPage && (
           <ALTA_Tooltip title="내 정보 수정">
             <EditIcon sx={[editButtonStyle, inTop]} onClick={openEditPage} />
           </ALTA_Tooltip>
         )}
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}>
-            <img
-              src={userData.profileUrl || defaultProfile}
-              alt="기본 프로필 이미지"
-            />
+            <img src={userData.profileUrl || defaultProfile} alt="기본 프로필 이미지" />
           </Box>
           <ALTA_Tooltip title="프로필 사진 변경">
             <PhotoButton>
@@ -47,11 +44,7 @@ export default function ALTA_UserData() {
             </PhotoButton>
           </ALTA_Tooltip>
           <Box sx={profileDataStyle}>
-            {isEditPage ? (
-              <ALTA_UserDataEdit setIsEditPage={setIsEditPage} />
-            ) : (
-              <ALTA_UserDataDisplay />
-            )}
+            {isEditPage ? <ALTA_UserDataEdit setIsEditPage={setIsEditPage} /> : <ALTA_UserDataDisplay />}
           </Box>
         </Box>
         <Box>
@@ -60,10 +53,7 @@ export default function ALTA_UserData() {
         {isEditPage ? (
           <></>
         ) : (
-          <Button
-            sx={[editButtonStyle, inBottom]}
-            onClick={() => setAlertFold(!alertFold)}
-          >
+          <Button sx={[editButtonStyle, inBottom]} onClick={() => setAlertFold(!alertFold)}>
             {alertFold ? '알림 설정' : '설정 완료'}
           </Button>
         )}
@@ -101,6 +91,9 @@ const unfold = {
 };
 
 const profileImgStyle = {
+  'display': 'flex',
+  'justifyContent': 'center',
+  'alignItems': 'center',
   'width': '200px',
   'height': '200px',
   'overflow': 'hidden',

@@ -12,8 +12,10 @@ import { checkLogin } from '../../../modules/LoginTokenChecker';
 import { useNavigate } from 'react-router-dom';
 import { addScheduleApi } from '../../../api/apis';
 
+type FliperProps = { fliper: () => void };
+
 export const addTableBarFrontBuilder = () =>
-  function ALTA_AddTableBarFront({ fliper }: { fliper: () => void }) {
+  function ALTA_AddTableBarFront({ fliper }: FliperProps) {
     return (
       <PlainBtn onClick={fliper}>
         <Box sx={addTableBarFrontWrapper}>
@@ -25,7 +27,7 @@ export const addTableBarFrontBuilder = () =>
   };
 
 export const addTableBarBackBuilder = (studyId: number, getReadmeContents: (studyId: number) => void) =>
-  function Back({ fliper }: { fliper: () => void }) {
+  function Back({ fliper }: FliperProps) {
     const navigate = useNavigate();
 
     const [startDate, setStartDate] = useState<Date | null>(new Date());

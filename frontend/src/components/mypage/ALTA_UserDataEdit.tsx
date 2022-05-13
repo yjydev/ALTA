@@ -18,14 +18,13 @@ export default function ALTA_UserDataEdit({
   const { userData, getUserData } = useContext(UserDataStore);
   const navigate = useNavigate();
 
-  const [nickname, setNickname] = useState(userData.nickname);
-  const [email, setEmail] = useState(userData.email);
-  const [introduction, setIntroduction] = useState(userData.introduction);
-  const [languageList, setLanguageList] = useState(userData.languageList);
-  const [editUserDataLoading, setEditUserDataLoading] =
-    useState<boolean>(false);
+  const [nickname, setNickname] = useState<string>(userData.nickname);
+  const [email, setEmail] = useState<string>(userData.email);
+  const [introduction, setIntroduction] = useState<string>(userData.introduction);
+  const [languageList, setLanguageList] = useState<string[] | null>(userData.languageList);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const editUserData = async () => {
+  const editUserData = async (): Promise<void> => {
     if (!(await checkLogin())) navigate('/');
 
     if (
@@ -39,15 +38,14 @@ export default function ALTA_UserDataEdit({
       generateError('모든 항목을 채워주세요', '');
     } else {
       try {
-        setEditUserDataLoading(true);
+        setLoading(true);
         await editUserDataApi(nickname, email, introduction, languageList);
         const Userstatus = await getUserData();
 
         if (Userstatus.status === -1) navigate('/');
-        else if (Userstatus.status === -2)
-          generateError('유저 정보를 변경할 수 없습니다', '');
+        else if (Userstatus.status === -2) generateError('유저 정보를 변경할 수 없습니다', '');
         else {
-          setEditUserDataLoading(false);
+          setLoading(false);
           setIsEditPage(false);
         }
       } catch (error) {
@@ -76,16 +74,11 @@ export default function ALTA_UserDataEdit({
             defaultValue={introduction === null ? '' : `${introduction}`}
             onChange={(e) => setIntroduction(e.target.value)}
           ></TextArea>
-          <ALTA_LanguageSelector
-            languageList={languageList}
-            setLanguageList={setLanguageList}
-          />
+          <ALTA_LanguageSelector languageList={languageList} setLanguageList={setLanguageList} />
         </Box>
       </Box>
       <Box sx={editButtonStyle}>
-        <Button onClick={editUserData}>
-          {editUserDataLoading ? <CircularProgress size={20} /> : '수정 완료'}
-        </Button>
+        <Button onClick={editUserData}>{loading ? <CircularProgress size={20} /> : '수정 완료'}</Button>
         <Button color="error" onClick={() => setIsEditPage(false)}>
           수정 취소
         </Button>

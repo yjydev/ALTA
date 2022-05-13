@@ -12,8 +12,10 @@ import { addProblemApi, editProblemApi } from '../../../api/apis';
 
 import ALTA_Tooltip from '../../common/ALTA_Tooltip';
 
+type FliperProps = { fliper: () => void };
+
 export const addProblemBarFrontBuilder = () =>
-  function Front({ fliper }: { fliper: () => void }) {
+  function Front({ fliper }: FliperProps) {
     return (
       <ALTA_Tooltip title="문제 추가하기">
         <PlainBtn onClick={fliper}>
@@ -32,7 +34,7 @@ export const addProblemBarBackBuilder = (
   link?: string,
   id?: number,
 ) =>
-  function Back({ fliper }: { fliper: () => void }) {
+  function Back({ fliper }: FliperProps) {
     const { getStudyDetail } = useContext(StudyDetailStore);
     const navigate = useNavigate();
 
