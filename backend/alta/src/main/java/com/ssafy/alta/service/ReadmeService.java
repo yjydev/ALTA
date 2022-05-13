@@ -7,16 +7,19 @@ import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.gitutil.GitEmailAPI;
 import com.ssafy.alta.gitutil.GitReadmeAPI;
 import com.ssafy.alta.repository.*;
-import io.swagger.models.auth.In;
+import com.ssafy.alta.util.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -60,7 +63,7 @@ public class ReadmeService {
         User user = optUser.get();
 //        Study study = studyRepository.getById(40L);
         Study study = studyRepository.getById(study_id);
-        int maxPeople =  study.getMaxPeople();
+        int maxPeople = study.getMaxPeople();
         StringBuilder sb = new StringBuilder();
         String NL = "   \n";
         sb.append("# 스터디 이름 : " + study.getName()).append(NL);
@@ -78,7 +81,7 @@ public class ReadmeService {
         System.out.println(sb);
         System.out.println("studyZZang : " + studyZZang);
 
-        sb.append("스터디장 : "+studyZZang ).append(NL).append("스터디원 : ");
+        sb.append("스터디장 : " + studyZZang).append(NL).append("스터디원 : ");
         for (String member : studyZZul) {
             sb.append(member + ", ");
         }
@@ -91,10 +94,10 @@ public class ReadmeService {
             String startDate = formatter.format(schedule.getStartDate());
             String endDate = formatter.format(schedule.getEndDate());
             sb.append(++roundIdx + " 회차 : ").append(startDate).append(" ~ ").append(endDate).append(NL);
-            sb.append("|"+"<center>"+"문제"+"</center>"+"|");
+            sb.append("|" + "<center>" + "문제" + "</center>" + "|");
             String tableNext = "|:---:|";
-            for(int idx = 0; idx < maxPeople; idx++){
-                sb.append(idx < joinList.size() ? "<center>"+joinList.get(idx).getUser().getName()+"</center>" + "|" : "-|");
+            for (int idx = 0; idx < maxPeople; idx++) {
+                sb.append(idx < joinList.size() ? "<center>" + joinList.get(idx).getUser().getName() + "</center>" + "|" : "-|");
                 tableNext += ":---:|";
             }
             sb.append(NL);
@@ -102,17 +105,32 @@ public class ReadmeService {
             List<Problem> problemList = problemRepository.findByScheduleIdOrderById(schedule.getId());
 
             for (Problem problem : problemList) {
-                sb.append("|"+"<center>"+problem.getName()+"</center>").append("|");
-                List<Code> codeList = codeRepository.findByProblem_IdOrderByUserId(problem.getId());
+                String problemName = problem.getName();
+                sb.append("|" + "<center>" + problemName + "</center>").append("|");
 
-                for(int i = 0; i < maxPeople; i++){
-                    if(codeList != null && codeList.size() > i)
-                    System.out.println(codeList.get(i).toString());
-                    if (codeList != null && codeList.size() > i && joinList.get(i).getUser().getId().equals(codeList.get(i).getUser().getId())) {
-                        sb.append(joinList.get(i).getUser().getName()).append("|");
-                    } else {
+                for (int i = 0; i < maxPeople; i++) {
+                    Optional<Code> codeOpt = codeRepository.findTopByProblem_IdAndUser_IdOrderByIdDesc(problem.getId(), i < joinList.size() ? joinList.get(i).getUser().getId() : "-1");
+                    if (codeOpt.isEmpty())
                         sb.append("-").append("|");
+                    else {
+                        Code code = codeOpt.get();
+                        String fileName = code.getFileName();
+                        String userName = code.getUser().getName();
+                        String problemLink = "";
+                        try {
+                            problemLink = URLEncoder.encode("풀이모음", "UTF-8") + "/"
+                                    + URLEncoder.encode(problemName, "UTF-8") + "/"
+                                    + URLEncoder.encode(userName, "UTF-8") + "/"
+                                    + URLEncoder.encode(fileName, "UTF-8") + "." +
+                                    Language.valueOf(study.getLanguage()).getExtension();
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        problemLink = problemLink.replaceAll("[+]", "%20");
+                        System.out.println(code + ", " + fileName + ", " + userName + ", " + problemName);
+                        sb.append("[" + fileName + "]").append("(" + problemLink + ")").append("|");
                     }
+
                 }
                 sb.append(NL);
             }
