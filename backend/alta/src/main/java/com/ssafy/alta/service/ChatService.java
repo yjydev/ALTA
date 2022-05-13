@@ -1,12 +1,21 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.request.ChatRequest;
+import com.ssafy.alta.dto.response.ChatResponse;
 import com.ssafy.alta.entity.Chat;
+import com.ssafy.alta.entity.StudyJoinInfo;
+import com.ssafy.alta.entity.User;
+import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.ChatRepository;
+import com.ssafy.alta.repository.StudyJoinInfoRepository;
+import com.ssafy.alta.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -23,12 +32,41 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatService {
     private final ChatRepository chatRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    private final StudyJoinInfoRepository sjiRepository;
 
-    public void insertMessage(Chat chat) {
-        chatRepository.save(chat);
+    public ChatResponse insertMessage(Long studyId, ChatRequest chatRequest) {
+        String userId = chatRequest.getUserid();
+
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+
+        Chat chat = chatRequest.toChat(optUser.get(), optSJI.get().getStudy(), new Date());
+        Chat chatResponse = chatRepository.save(chat);
+
+        return chatResponse.toChatSubResponse();
     }
 
-    public List<Chat> selectChatList(Long studyId) {
-        return chatRepository.findByStudyStudyId(studyId);
+    public List<ChatResponse> selectChatList(Long studyId) {
+        String userId = userService.getCurrentUserId();
+
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+
+        List<Chat> chatList = chatRepository.findByStudyStudyId(studyId);
+        List<ChatResponse> chatResponses = new ArrayList<>();
+        if (chatList.size() == 0) {
+            chatResponses.add(new ChatResponse());
+        } else {
+            for (Chat c : chatList) {
+                chatResponses.add(c.toChatSubResponse());
+            }
+        }
+        return chatResponses;
     }
 }

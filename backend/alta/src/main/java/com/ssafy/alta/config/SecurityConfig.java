@@ -48,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/webjars/**",
                         "/swagger/**",   // swagger
                         "/favicon.ico",
-                        "/images/**"
+                        "/images/**",
+                        "/chat/**"
                 );
 //                .antMatchers("/githubLogin"); // 여기다가 선언안하면 404 에러 발생..
     }

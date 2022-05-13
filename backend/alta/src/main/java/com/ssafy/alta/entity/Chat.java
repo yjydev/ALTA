@@ -1,11 +1,9 @@
 package com.ssafy.alta.entity;
 
+import com.ssafy.alta.dto.response.ChatResponse;
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,8 +23,10 @@ import java.util.Date;
 @Table(name = "chat")
 @Getter
 @ToString
+@Builder
 @DynamicInsert
 @NoArgsConstructor
+@AllArgsConstructor
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,4 +49,13 @@ public class Chat {
     @ManyToOne
     @JoinColumn(name = "fk_user_id")
     private User user;
+
+    public ChatResponse toChatSubResponse() {
+        return ChatResponse.builder()
+                .nickname(user.getNickname())
+                .image(user.getImage())
+                .message(message)
+                .writeDate(writeDate)
+                .build();
+    }
 }

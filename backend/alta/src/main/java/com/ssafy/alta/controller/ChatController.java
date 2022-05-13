@@ -1,13 +1,20 @@
 package com.ssafy.alta.controller;
 
-import com.ssafy.alta.entity.Chat;
+import com.ssafy.alta.dto.request.ChatRequest;
+import com.ssafy.alta.dto.response.ChatResponse;
 import com.ssafy.alta.service.ChatService;
+import com.ssafy.alta.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.Message;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,10 +33,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
+    private final UserService userService;
 
-    @MessageMapping("/api/message")
-    public void message(@Payload Chat chatMessage) {
-        chatService.insertMessage(chatMessage);
-        template.convertAndSend("/sub/"+chatMessage.getStudy().getStudyId(), chatMessage);
+    @MessageMapping("/chat/{studyId}")
+    public void message(@DestinationVariable("studyId") Long studyId, ChatRequest chatRequest) {
+        ChatResponse chat = chatService.insertMessage(studyId, chatRequest);
+        template.convertAndSend("/topic/"+studyId, chat);
+    }
+
+    @GetMapping("/api/chat/{studyId}")
+    public ResponseEntity selectChatList(@PathVariable("studyId") Long studyId) {
+        return new ResponseEntity<>(chatService.selectChatList(studyId), HttpStatus.OK);
     }
 }
