@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { UserData, defaultUserData } from '../types/UserDataType';
-import { ContextProps } from '../types/ContextPropsType';
+import { UserData, defaultUserData } from '../types';
+import { ContextProps } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
 import { userDataApi, editUserDataApi, changeProfileImgApi } from '../api/apis';
 
@@ -13,11 +13,16 @@ export const defaultValue: defaultValueType = {
 };
 export const UserDataStore = React.createContext(defaultValue);
 
+type PromiseType = {
+  status: number;
+  message: string;
+};
+
 //Context Provider 컴포넌트
 export default function UserDataProvider({ children }: ContextProps) {
   const [userData, setUserData] = useState<UserData>(defaultUserData);
 
-  const getUserData = async () => {
+  const getUserData = async (): Promise<PromiseType> => {
     const loginStatus = await checkLogin();
     if (!loginStatus.status) return { status: -1, message: 'login token error' };
 

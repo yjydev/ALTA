@@ -51,9 +51,7 @@ export default function ALTA_LanguageSelector({
         >
           {languages.map((language) => (
             <MenuItem key={language} value={language}>
-              {languageList && (
-                <Checkbox checked={languageList.indexOf(language) > -1} />
-              )}
+              {languageList && <Checkbox checked={languageList.indexOf(language) > -1} />}
               <ListItemText primary={language} />
             </MenuItem>
           ))}

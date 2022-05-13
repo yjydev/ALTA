@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 
 import { addReviewApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
-import { ReviewData } from '../../types/CodeBlockType';
+import { ReviewData } from '../../types';
 
 import { generateCheck, generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';

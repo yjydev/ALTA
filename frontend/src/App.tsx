@@ -31,8 +31,8 @@ function App() {
             <Route path="/auth" element={<ALTA_AuthPage />} />
             <Route path="/study/:studyId/:problemId/:problem/:codeId/code-submit" element={<ALTA_CodeSubmit />} />
             <Route path="/organize" element={<ALTA_ToOrganize />} />
-            <Route path="/study/detail" element={<ALTA_StudyDetail />} />
-            <Route path="/study/member" element={<ALTA_Member />} />
+            <Route path="/study/:studyId/detail" element={<ALTA_StudyDetail />} />
+            <Route path="/study/:studyId/member" element={<ALTA_Member />} />
             <Route path="/mypage" element={<ALTA_Mypage />} />
           </Routes>
         </BrowserRouter>

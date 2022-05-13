@@ -20,7 +20,7 @@ export function generateCheck(title: string, text: string, callback: () => void 
   });
 }
 
-export function generateError(title: string, text: string, callback?: () => void) {
+export function generateError(title: string, text: string, callback?: any) {
   Swal.fire({
     title,
     text,

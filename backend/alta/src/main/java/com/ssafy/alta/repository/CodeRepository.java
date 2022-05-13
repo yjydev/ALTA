@@ -4,6 +4,7 @@ import com.ssafy.alta.entity.Code;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * packageName 	: com.ssafy.alta.repository
@@ -27,4 +28,5 @@ public interface CodeRepository extends JpaRepository<Code, Long> {
 
     Code findCodeByFileNameAndUser_IdAndProblem_Id(String filename, String userId, long problemId);
 
+    Optional<Code> findTopByProblem_IdAndUser_IdOrderByIdDesc(long problemId, String userId);
 }

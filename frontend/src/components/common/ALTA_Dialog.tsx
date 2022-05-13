@@ -1,20 +1,8 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { mainColor, errorColor, whiteColor } from '../../modules/colorChart';
 
-export default function ALTA_Dialog({
-  title,
-  children,
-  open,
-  setOpen,
-  handleComplete,
-}: Props) {
+export default function ALTA_Dialog({ title, children, open, setOpen, handleComplete }: Props) {
   return (
     <div>
       <Dialog fullWidth open={open} onClose={() => setOpen(false)}>

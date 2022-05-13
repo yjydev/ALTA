@@ -21,7 +21,7 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 
 import { toggleSolved, editReviewApi, deleteReviewApi } from '../../api/apis';
-import { ReviewData } from '../../types/CodeBlockType';
+import { ReviewData } from '../../types';
 import { CodeStore } from '../../context/CodeContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';

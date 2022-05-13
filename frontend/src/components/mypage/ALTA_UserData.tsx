@@ -20,10 +20,10 @@ export default function ALTA_UserData() {
   const { userData, changeProfile } = useContext(UserDataStore);
   const navigate = useNavigate();
 
-  const [alertFold, setAlertFold] = useState<boolean>(true);
+  const [alertFold, setAlertFold] = useState<boolean>(false);
   const [isEditPage, setIsEditPage] = useState<boolean>(false);
 
-  const openEditPage = () => {
+  const openEditPage = (): void => {
     setAlertFold(true);
     setIsEditPage(!isEditPage);
   };
@@ -50,8 +50,8 @@ export default function ALTA_UserData() {
     <Box sx={wrapper}>
       <Input id="file" type="file" accept="image/*" onChange={(e) => changeProfileImage(e.target.files)} />
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
-      <Box sx={[userDataStyle, alertFold ? null : unfold]}>
-        {isEditPage ? null : (
+      <Box sx={[userDataStyle, alertFold && unfold]}>
+        {isEditPage && (
           <ALTA_Tooltip title="내 정보 수정">
             <EditIcon sx={[editButtonStyle, inTop]} onClick={openEditPage} />
           </ALTA_Tooltip>
@@ -115,6 +115,9 @@ const unfold = {
 };
 
 const profileImgStyle = {
+  'display': 'flex',
+  'justifyContent': 'center',
+  'alignItems': 'center',
   'width': '200px',
   'height': '200px',
   'overflow': 'hidden',

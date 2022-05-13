@@ -1,10 +1,12 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Box, Grid } from '@mui/material';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import * as code_themes from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { CodeStore } from '../../context/CodeContext';
 
-export default function ALTA_CodeBlock({ code, language }: { code: string; language: string }) {
+type Props = { code: string; language: string };
+
+export default function ALTA_CodeBlock({ code, language }: Props) {
   const { codeLine, setCodeLine } = useContext(CodeStore);
 
   return (

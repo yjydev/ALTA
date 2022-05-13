@@ -1,4 +1,5 @@
-import { OrganizeStudyRequset } from '../types/StudyType';
+import { AxiosResponse } from 'axios';
+import { OrganizeStudyRequset } from '../types';
 import { getRequest, postRequest, putRequest, deleteRequest } from './request';
 
 //GET

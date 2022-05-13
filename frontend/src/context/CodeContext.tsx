@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ReviewData, CodeData, defaultCodeData, CodeTree } from '../types/CodeBlockType';
+import { ReviewData, CodeData, defaultCodeData, CodeTree } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
 import { codeDataApi, reivewDataApi, codeTreeApi } from '../api/apis';
 
