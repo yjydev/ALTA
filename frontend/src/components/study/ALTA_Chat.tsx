@@ -1,13 +1,21 @@
 import { Box } from '@mui/material';
 
 export default function ALTA_Chat() {
-  return <Box sx={chat}>notice</Box>;
+  return (
+    <>
+      <Box sx={titleStyle}>소통창구</Box>
+      <Box>채팅란</Box>
+      <Box>채팅창</Box>
+    </>
+  );
 }
 
-const chat = {
-  height: '200px',
+const titleStyle = {
+  position: 'relative',
   marginBottom: '10px',
-  padding: '10px',
+  padding: '5px 10px',
   boxSizing: 'border-box',
-  backgroundColor: '#fff',
+  borderBottom: '1px solid black',
+  fontSize: '20px',
+  textAlign: 'center',
 };

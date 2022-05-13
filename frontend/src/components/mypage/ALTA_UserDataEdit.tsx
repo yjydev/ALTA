@@ -15,7 +15,7 @@ export default function ALTA_UserDataEdit({
 }: {
   setIsEditPage: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { userData, getUserData } = useContext(UserDataStore);
+  const { userData, editUserData } = useContext(UserDataStore);
   const navigate = useNavigate();
 
   const [nickname, setNickname] = useState<string>(userData.nickname);
@@ -50,7 +50,7 @@ export default function ALTA_UserDataEdit({
         }
       } catch (error) {
         generateError('유저 정보를 수정할 수 없습니다', '');
-      }
+      else setEditUserDataLoading(false);
     }
   };
 

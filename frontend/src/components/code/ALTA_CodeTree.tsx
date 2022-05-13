@@ -1,7 +1,13 @@
 import { useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Grid, Icon } from '@mui/material';
-import { DataGridPro, GridColumns, GridRowsProp, DataGridProProps, GridValueGetterParams } from '@mui/x-data-grid-pro';
+import { Grid } from '@mui/material';
+import {
+  DataGridPro,
+  GridColumns,
+  GridRowsProp,
+  DataGridProProps,
+  GridValueGetterParams,
+} from '@mui/x-data-grid-pro';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 import FolderOpenTwoToneIcon from '@mui/icons-material/FolderOpenTwoTone';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
@@ -14,15 +20,7 @@ import { CodeTree } from '../../types';
 export default function ALTA_CodeTree() {
   const navigate = useNavigate();
   const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
-  const { codeTree, getCodeTree } = useContext(CodeStore);
-
-  useEffect(() => {
-    (async function () {
-      const status = await getCodeTree(studyId);
-      if (status === -1) navigate('/');
-      else if (status === -2) generateError('폴더 구조를 불러오는데 실패하였습니다', '');
-    })();
-  }, []);
+  const { codeTree } = useContext(CodeStore);
 
   function MinusSquare(props: SvgIconProps) {
     return (
@@ -45,16 +43,24 @@ export default function ALTA_CodeTree() {
     if (params.row.codeId === 0) {
       return (
         <>
-          <Icon component={FolderOpenTwoToneIcon} sx={{}} />
-          <span style={{ lineHeight: '28px' }}>&nbsp;{params.rowNode.groupingKey}</span>
+          <span style={{ position: 'absolute' }}>
+            <FolderOpenTwoToneIcon fontSize="small" color="primary" />
+          </span>
+          <span
+            style={{ marginLeft: 30 }}
+          >{`${params.rowNode.groupingKey}`}</span>
         </>
       );
     } else {
       return (
-        <span style={fileStyle}>
-          <InsertDriveFileRoundedIcon />
-          &nbsp; {params.rowNode.groupingKey}
-        </span>
+        <>
+          <span style={{ position: 'absolute' }}>
+            <InsertDriveFileRoundedIcon fontSize="small" color="primary" />
+          </span>
+          <span
+            style={{ marginLeft: 30, cursor: 'pointer' }}
+          >{`${params.rowNode.groupingKey}`}</span>
+        </>
       );
     }
   }
@@ -69,10 +75,15 @@ export default function ALTA_CodeTree() {
   ];
   const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
-  const handleMove = (row: CodeTree) => {
+  const handleMove = async (row: CodeTree) => {
     if (row.codeId !== 0) {
       const codeId = row.codeId;
-      navigate('/study/code', { state: { studyId, codeId } });
+      const problem = row.path[1];
+      try {
+        await navigate('/study/code', { state: { studyId, codeId, problem } });
+      } catch (err: any) {
+        generateError('코드 이동에 실패하였습니다', `${err.response.message}`);
+      }
     }
   };
 
@@ -103,8 +114,4 @@ const codeTreeStyle = {
   width: '100%',
   minWidth: '100%',
   maxWidth: '100%',
-};
-
-const fileStyle = {
-  cursor: 'pointer',
 };
