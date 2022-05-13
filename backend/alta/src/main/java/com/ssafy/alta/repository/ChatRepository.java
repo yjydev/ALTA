@@ -17,5 +17,5 @@ import java.util.List;
  * 2022-05-12       jisoon Lee         최초 생성
  */
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    List<Chat> findByStudyStudyId(Long studyId);
+    List<Chat> findByStudyStudyIdOrderByWriteDateDesc(Long studyId);
 }

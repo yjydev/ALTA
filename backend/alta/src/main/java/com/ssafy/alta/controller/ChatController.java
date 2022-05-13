@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
-    private final UserService userService;
 
     @MessageMapping("/chat/{studyId}")
     public void message(@DestinationVariable("studyId") Long studyId, ChatRequest chatRequest) {
