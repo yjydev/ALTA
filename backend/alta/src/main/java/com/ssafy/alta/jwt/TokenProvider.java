@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,38 +39,24 @@ import java.util.stream.Collectors;
  */
 
 @Component
+@RequiredArgsConstructor
 public class TokenProvider implements InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "auth";
-
-    private final String secret;
-    private final long accessTokenValidityInMilliseconds;
-    private final long refreshTokenValidityInMilliseconds;
-
+    private final Environment environment;
     private Key key;
+    private final RedisService redisService;
+    private final UserService userService;
 
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private UserService userService;
-
-    public TokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-validity-in-seconds}") long tokenValidityInSeconds,
-            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
-        this.secret = secret;
-        this.accessTokenValidityInMilliseconds = tokenValidityInSeconds * 1000; // 현재 jwt accesstoken 토큰은 1 hours이다. -> 테스트를 위해 1주일로 변경
-        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000; // jwt refresh은 1주일
-    }
 
     //    implements InitializingBean
 //    afterPropertiesSet()` 을 오버라이드 한 이유는
 //    BEAN이 생성이 되고 주입을 받은 후에 secret값을 Base64 Decode해서 Key 변수에 할당
     @Override
     public void afterPropertiesSet() {
+                String secret = environment.getProperty("jwt.secret");
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -81,7 +68,8 @@ public class TokenProvider implements InitializingBean {
 
         long now = (new Date()).getTime();
         Date issuedTime = new Date();
-        Date validity = new Date(now + this.accessTokenValidityInMilliseconds);
+        Long exp = Long.valueOf(environment.getProperty("jwt.access-token-validity-in-seconds"));
+        Date validity = new Date(now + exp);
 
         return Jwts.builder()
                 .setSubject(authentication.getName()) // github_id
@@ -96,7 +84,8 @@ public class TokenProvider implements InitializingBean {
 
         long now = (new Date()).getTime();
         Date issuedTime = new Date();
-        Date validity = new Date(now + this.refreshTokenValidityInMilliseconds);
+        Long exp = Long.valueOf(environment.getProperty("jwt.refresh-token-validity-in-seconds"));
+        Date validity = new Date(now + exp);
 
         return Jwts.builder()
                 .setSubject(authentication.getName()) // github_id

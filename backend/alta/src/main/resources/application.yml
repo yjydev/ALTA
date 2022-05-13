@@ -72,7 +72,7 @@ jwt:
   #echo 'silvernine-tech-spring-boot-jwt-tutorial-secret-silvernine-tech-spring-boot-jwt-tutorial-secret'|base64
   secret: c2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
   access-token-validity-in-seconds: 101606400 #3600 : 1hour #604800 : 1 wee; #60 1mit 3   #10분 : 600000
-  refresh-token-validity-in-seconds: 604800
+  refresh-token-validity-in-seconds: 604800000
   url: https://algorithmtime.com/auth
 
 
