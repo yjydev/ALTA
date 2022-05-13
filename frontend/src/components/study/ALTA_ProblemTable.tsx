@@ -83,8 +83,8 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
               <Grid item xs={8} sx={[sellStyle, ellipsisStyle]}>
                 <Grid container>
                   {members.map(
-                    (member: StudyMember): JSX.Element => (
-                      <Grid item key={member.nickname} xs={12 / maxPeople} sx={[sellStyle, ellipsisStyle]}>
+                    (member: StudyMember, i: number): JSX.Element => (
+                      <Grid item key={`${i}-${member.nickname}`} xs={12 / maxPeople} sx={[sellStyle, ellipsisStyle]}>
                         <Typography sx={ellipsisStyle}>{member.nickname ? member.nickname : '-'}</Typography>
                       </Grid>
                     ),
