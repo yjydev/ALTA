@@ -111,7 +111,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
       <Grid item>
         {reviews_data?.map(
           (review: ReviewData): JSX.Element => (
-            <ALTA_CodeCommentCard key={review.reviewId} review={review} />
+            <ALTA_CodeCommentCard key={review.reviewId} review={review} codeId={codeId} />
           ),
         )}
       </Grid>
