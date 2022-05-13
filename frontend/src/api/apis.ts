@@ -198,7 +198,7 @@ export async function editProblemApi(studyId: number, problemId: number, name: s
 }
 
 // 리뷰(댓글) 해결 여부 토글 요청
-export async function toggleSolved(reviewId: number, isSolved: boolean): Promise<AxiosResponse> {
+export async function toggleSolved(reviewId: number, isSolved: boolean) {
   const requestBody = {
     isSolved,
   };
@@ -206,7 +206,7 @@ export async function toggleSolved(reviewId: number, isSolved: boolean): Promise
 }
 
 // 리뷰(댓글) 수정 요청
-export async function editReviewApi(reviewId: number, content: string, line: number): Promise<AxiosResponse> {
+export async function editReviewApi(reviewId: number, content: string, line: number) {
   const requestBody = {
     content,
     line,
@@ -224,16 +224,16 @@ export async function confirmInvitationApi(inviteCode: string) {
 
 // delete
 // 코드 삭제 요청
-export async function deleteCodeApi(studyId: number, codeId: number): Promise<AxiosResponse> {
+export async function deleteCodeApi(studyId: number, codeId: number) {
   return await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
 }
 
 // 댓글(리뷰) 삭제 요청
-export async function deleteReviewApi(reviewId: number): Promise<AxiosResponse> {
+export async function deleteReviewApi(reviewId: number) {
   return await deleteRequest(`/api/code/review/${reviewId}`);
 }
 
 // 초대 대기 삭제 요청
-export async function deleteInvitationApi(studyId: number, sjiId: number): Promise<AxiosResponse> {
+export async function deleteInvitationApi(studyId: number, sjiId: number) {
   return await deleteRequest(`/api/study/${studyId}/invitation/${sjiId}`);
 }

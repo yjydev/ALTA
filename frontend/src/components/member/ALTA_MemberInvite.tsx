@@ -1,24 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Grid,
-  Box,
-  TextField,
-  Button,
-  InputLabel,
-  Autocomplete,
-  CircularProgress,
-  Typography,
-} from '@mui/material';
+import { Grid, Box, TextField, Button, InputLabel, Autocomplete, CircularProgress, Typography } from '@mui/material';
 
 import { sendMailApi, searchMemberApi } from '../../api/apis';
 import { MemberStore } from '../../context/MemberContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
-import {
-  generateCheck,
-  generateError,
-  generateTimer,
-} from '../../modules/generateAlert';
+import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
@@ -28,9 +15,7 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
 
   const [userList, setUserList] = useState<userList[]>([]);
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(
-    searchOpen && userList.length === 0,
-  );
+  const [loading, setLoading] = useState<boolean>(searchOpen && userList.length === 0);
   const [inputValue, setInputValue] = useState<string>('');
 
   const [selectUser, setSelectUser] = useState<userList>(defaultUser);
@@ -54,33 +39,21 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
 
   const handleInvite = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    if (!invitable)
-      generateError('초대가 불가합니다', '스터디 최대 인원에 도달하였습니다');
+    if (!invitable) generateError('초대가 불가합니다', '스터디 최대 인원에 도달하였습니다');
     else {
-      generateTimer(
-        '잠시 기다려 주세요',
-        `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`,
-      );
+      generateTimer('잠시 기다려 주세요', `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`);
       if (inputValue) {
         if (selectUser.email) {
           try {
             const res = await sendMailApi(studyId, parseInt(selectUser.id));
-            generateCheck(
-              '초대 완료',
-              `${selectUser.nickname} 님에게 초대 메일을 발송하였습니다`,
-              () => navigate(`/study/member`, { state: { studyId } }),
+            generateCheck('초대 완료', `${selectUser.nickname} 님에게 초대 메일을 발송하였습니다`, () =>
+              navigate(`/study/member`, { state: { studyId } }),
             );
           } catch (err: any) {
-            generateError(
-              `초대를 보낼 수 없습니다`,
-              `${err.response.data.message}`,
-            );
+            generateError(`초대를 보낼 수 없습니다`, `${err.response.data.message}`);
           }
         } else {
-          generateError(
-            `${selectUser.nickname} 님의 이메일이 존재하지 않습니다.`,
-            ``,
-          );
+          generateError(`${selectUser.nickname} 님의 이메일이 존재하지 않습니다.`, ``);
         }
       } else {
         generateError(`초대할 사람의 닉네임을 입력해주세요`, ``);
@@ -138,9 +111,7 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
                           ...params.InputProps,
                           endAdornment: (
                             <React.Fragment>
-                              {loading ? (
-                                <CircularProgress color="inherit" size={20} />
-                              ) : null}
+                              {loading ? <CircularProgress color="inherit" size={20} /> : null}
                             </React.Fragment>
                           ),
                         }}

@@ -1,6 +1,6 @@
 import { Box, Grid } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
@@ -16,7 +16,12 @@ import ALTA_StudySideContents from '../../components/study/ALTA_StudySideContent
 import ALTA_StudyMembers from '../../components/study/ALTA_StudyMembers';
 import ALTA_StudyBoard from '../../components/study/ALTA_StudyBoard';
 
-export default function ALTA_StudyDetailContents({ studyId }: { studyId: number }) {
+type Params = {
+  studyId: string | undefined;
+};
+
+export default function ALTA_StudyDetailContents() {
+  const { studyId } = useParams<Params>();
   const navigate = useNavigate();
   const { readmeData, getStudyDetail, getStudyMembers } = useContext(StudyDetailStore);
 
@@ -24,12 +29,17 @@ export default function ALTA_StudyDetailContents({ studyId }: { studyId: number 
 
   useEffect(() => {
     (async function () {
-      const [DetailStatus, MemberStatus] = await Promise.all([getStudyDetail(studyId), getStudyMembers(studyId)]);
+      if (studyId) {
+        const [DetailStatus, MemberStatus] = await Promise.all([
+          getStudyDetail(Number(studyId)),
+          getStudyMembers(Number(studyId)),
+        ]);
 
-      if (DetailStatus.status === -1 || MemberStatus.status === -1) navigate('/');
-      else if (DetailStatus.status === -2) generateError('스터디 진행 정보를 불러올 수 없습니다', '');
-      else if (MemberStatus.status === -2) generateError('스터디 멤버 정보를 불러올 수 없습니다', '');
-      else setLoading(false);
+        if (DetailStatus.status === -1 || MemberStatus.status === -1) navigate('/');
+        else if (DetailStatus.status === -2) generateError('스터디 진행 정보를 불러올 수 없습니다', '');
+        else if (MemberStatus.status === -2) generateError('스터디 멤버 정보를 불러올 수 없습니다', '');
+        else setLoading(false);
+      }
     })();
   }, []);
 
@@ -40,7 +50,7 @@ export default function ALTA_StudyDetailContents({ studyId }: { studyId: number 
         <Grid sx={gridContainerStyle} container justifyContent="center">
           <Grid item xl={3} lg={6}>
             <ALTA_StudySideContents>
-              <ALTA_StudyMembers studyId={studyId} />
+              <ALTA_StudyMembers />
             </ALTA_StudySideContents>
           </Grid>
           <Grid item xl={6}>
@@ -50,16 +60,16 @@ export default function ALTA_StudyDetailContents({ studyId }: { studyId: number 
                   <ALTA_FlipBar
                     height="80px"
                     Front={addTableBarFrontBuilder()}
-                    Back={addTableBarBackBuilder(studyId, getStudyDetail)}
+                    Back={addTableBarBackBuilder(Number(studyId), getStudyDetail)}
                   />
                 </Box>
                 <Box sx={{ position: 'relative', marginTop: '150px' }}>
                   {readmeData
                     .map(
-                      (table: TableData): JSX.Element => (
-                        <Box sx={tableWrapperStyle} key={table.id}>
+                      (table: TableData, i: number): JSX.Element => (
+                        <Box sx={tableWrapperStyle} key={`${i}-${table.id}`}>
                           <ALTA_ProblemTable
-                            studyId={studyId}
+                            studyId={Number(studyId)}
                             scheduleId={table.id}
                             problems={table.problems}
                             table={table}
@@ -74,7 +84,7 @@ export default function ALTA_StudyDetailContents({ studyId }: { studyId: number 
           </Grid>
           <Grid item xl={3} lg={6}>
             <ALTA_StudySideContents>
-              <ALTA_StudyBoard studyId={studyId} />
+              <ALTA_StudyBoard />
             </ALTA_StudySideContents>
           </Grid>
         </Grid>

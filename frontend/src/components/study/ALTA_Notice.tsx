@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Box, Button, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { useContext } from 'react';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import { blackColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
@@ -13,11 +12,14 @@ import scrollStyle from '../../modules/scrollStyle';
 
 import ALTA_Tooltip from '../../components/common/ALTA_Tooltip';
 
-type Props = { studyId: number };
+type Params = {
+  studyId: string | undefined;
+};
 
-export default function ALTA_Notice({ studyId }: Props) {
+export default function ALTA_Notice() {
   const { noticeContent, editNoticeContent } = useContext(StudyDetailStore);
   const navigate = useNavigate();
+  const { studyId } = useParams();
 
   const [notice, setNotice] = useState<string>(noticeContent.replaceAll('<br />', '\n'));
   const [noticeEditing, setNoticeEditing] = useState<boolean>(false);
@@ -29,7 +31,7 @@ export default function ALTA_Notice({ studyId }: Props) {
     }
 
     setLoading(true);
-    const noticeStatus = await editNoticeContent(studyId, notice.replaceAll('\n', '<br />'));
+    const noticeStatus = await editNoticeContent(Number(studyId), notice.replaceAll('\n', '<br />'));
     if (noticeStatus.status === -1) navigate('/');
     else if (noticeStatus.status === -2) generateError('공지사항을 변경할 수 없습니다', '');
     else {

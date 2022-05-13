@@ -18,7 +18,7 @@ export default function ALTA_StudyList({ studyList }: Props) {
     navigate('/organize');
   };
   const goStudyDetail = (studyId: number): void => {
-    navigate('/study/detail', { state: { studyId } });
+    navigate(`/study/${studyId}/detail`);
   };
 
   return (

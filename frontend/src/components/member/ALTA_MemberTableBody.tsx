@@ -9,10 +9,9 @@ import { MemberStore } from '../../context/MemberContext';
 import { deleteInvitationApi } from '../../api/apis';
 import { generateConfirm, generateError } from '../../modules/generateAlert';
 
-export default function ALTA_MemberTableBody({ member }: { member: Member }) {
+export default function ALTA_MemberTableBody({ member, studyId }: { member: Member; studyId: number }) {
   const navigate = useNavigate();
   const { columns } = useContext(MemberStore);
-  const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
 
   const handleDelInvite = async () => {
     if (!(await checkLogin()).status) navigate('/');

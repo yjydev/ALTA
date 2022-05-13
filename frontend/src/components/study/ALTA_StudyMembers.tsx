@@ -1,23 +1,24 @@
 import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { StudyMember } from '../../types';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
 
-type Props = {
-  studyId: number;
+type Params = {
+  studyId: string | undefined;
 };
 
-export default function ALTA_StudyMembers({ studyId }: Props) {
+export default function ALTA_StudyMembers() {
+  const { studyId } = useParams<Params>();
   const { members, isLeader } = useContext(StudyDetailStore);
   const navigate = useNavigate();
 
-  const goMemberManagement = (studyId: number): void => {
-    navigate('/study/member', { state: { studyId } });
+  const goMemberManagement = (): void => {
+    navigate(`/study/${studyId}/member`);
   };
 
   return (
@@ -28,7 +29,7 @@ export default function ALTA_StudyMembers({ studyId }: Props) {
         ),
       )}
       {isLeader && (
-        <StyledLink onClick={(): void => goMemberManagement(studyId)}>
+        <StyledLink onClick={(): void => goMemberManagement()}>
           <Button sx={btnStyle}>멤버 관리</Button>
         </StyledLink>
       )}

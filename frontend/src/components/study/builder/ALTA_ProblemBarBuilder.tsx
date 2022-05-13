@@ -39,8 +39,8 @@ export const problemBarFrontBuilder = (problem: Problem, members: StudyMember[],
         <Grid item xs={8} sx={sellStyle}>
           <Grid container>
             {members.map(
-              (member: StudyMember): JSX.Element => (
-                <Grid item key={member.nickname} xs={12 / maxPeople} sx={sellStyle}>
+              (member: StudyMember, i: number): JSX.Element => (
+                <Grid item key={`${i}-${member.nickname}`} xs={12 / maxPeople} sx={sellStyle}>
                   <Typography>
                     {member.nickname ? (
                       <SellBtn
@@ -83,10 +83,7 @@ function SellBtn({ codeId, problem, memberName, studyId }: SellBtnProps) {
   };
 
   const goCodeDetail = (): void => {
-    if (codeId)
-      navigate(`/study/code`, {
-        state: { studyId, codeId, problem: problem.name },
-      });
+    if (codeId) navigate(`/study/${studyId}/${problem.name}/code/${codeId}`);
   };
 
   return (
