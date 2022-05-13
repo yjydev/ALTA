@@ -69,11 +69,7 @@ export async function editUserDataApi(
 }
 
 //스터디 회차 일정 추가 요청
-export async function addScheduleApi(
-  studyId: number,
-  startDate: Date | null,
-  endDate: Date | null,
-) {
+export async function addScheduleApi(studyId: number, startDate: Date | null, endDate: Date | null) {
   const refineDate = (date: Date | null): string | null => {
     if (date) {
       const year = date.getFullYear();
@@ -94,12 +90,7 @@ export async function addScheduleApi(
   return await postRequest(`/api/study/${studyId}/schedule`, requestBody);
 }
 //문제 추가 요청
-export async function addProblemApi(
-  studyId: number,
-  scheduleId: number,
-  name: string,
-  link: string,
-) {
+export async function addProblemApi(studyId: number, scheduleId: number, name: string, link: string) {
   const requestBody = {
     problems: [
       {
@@ -139,11 +130,7 @@ export async function sendMailApi(studyId: number, userId: number) {
 }
 
 // 댓글(리뷰) 추가 요청
-export async function addReviewApi(
-  codeId: number,
-  content: string,
-  line: number,
-) {
+export async function addReviewApi(codeId: number, content: string, line: number) {
   const requestBody = {
     codeId,
     content,
@@ -163,11 +150,7 @@ export async function editNoticeContentApi(studyId: number, content: string) {
 
 //PUT
 //스터디 회차 일정 수정 요청
-export async function editScheduleApi(
-  studyId: number,
-  scheduleId: number,
-  dateString: string,
-) {
+export async function editScheduleApi(studyId: number, scheduleId: number, dateString: string) {
   const tmp = dateString.split(' ~ ');
   const requestBody = {
     scheduleId,
@@ -176,10 +159,7 @@ export async function editScheduleApi(
   };
 
   console.log(requestBody);
-  return await putRequest(
-    `/api/study/${studyId}/schedule/${scheduleId}`,
-    requestBody,
-  );
+  return await putRequest(`/api/study/${studyId}/schedule/${scheduleId}`, requestBody);
 }
 //코드 수정 요청
 export async function editCodeApi(
@@ -198,12 +178,7 @@ export async function editCodeApi(
   return await putRequest(`/api/study/${studyId}/code/${codeId}`, requestBody);
 }
 //문제 수정 요청
-export async function editProblemApi(
-  studyId: number,
-  problemId: number,
-  name: string,
-  link: string,
-) {
+export async function editProblemApi(studyId: number, problemId: number, name: string, link: string) {
   const requestBody = {
     id: problemId,
     name,
@@ -221,11 +196,7 @@ export async function toggleSolved(reviewId: number, isSolved: boolean) {
 }
 
 // 리뷰(댓글) 수정 요청
-export async function editReviewApi(
-  reviewId: number,
-  content: string,
-  line: number,
-) {
+export async function editReviewApi(reviewId: number, content: string, line: number) {
   const requestBody = {
     content,
     line,
