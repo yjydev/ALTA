@@ -71,6 +71,7 @@ export function generateConfirm(
     background: whiteColor,
   }).then((result) => {
     if (result.isConfirmed) {
+      if (callback) callback();
       Swal.fire({
         title: `${subTitle}`,
         text: `${subText}`,
@@ -80,8 +81,6 @@ export function generateConfirm(
         confirmButtonText: '확인',
         color: blackColor,
         background: whiteColor,
-      }).then(() => {
-        if (callback) callback();
       });
     }
   });

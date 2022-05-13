@@ -9,17 +9,9 @@ import { blackColor, mainColor } from '../../../modules/colorChart';
 import ALTA_Tooltip from '../../common/ALTA_Tooltip';
 import { generateError } from '../../../modules/generateAlert';
 
-export const problemBarFrontBuilder = (
-  problem: Problem,
-  members: Member[],
-  maxPeople: number,
-  studyId: number,
-) =>
+export const problemBarFrontBuilder = (problem: Problem, members: Member[], maxPeople: number, studyId: number) =>
   function Front({ fliper }: { fliper: () => void }) {
-    const findCode = (
-      nickname: string,
-      codes: Code[],
-    ): { id: number; path: string } | null => {
+    const findCode = (nickname: string, codes: Code[]): { id: number; path: string } | null => {
       for (const code of codes) {
         if (code.nickname === nickname) return { id: code.id, path: code.path };
       }
@@ -80,15 +72,11 @@ function SellBtn({ code, problem, memberName, studyId }: SellBtnProps) {
       generateError('다른 사람의 제출 버튼을 누르셨습니다', '');
     } else {
       const problemId = problem.id;
-      navigate('/code-submit', { state: { problemId, studyId } });
+      navigate(`/study/${studyId}/${problemId}/${problem.name}/0/code-submit`);
     }
   };
-
   const goCodeDetail = () => {
-    if (code)
-      navigate(`/study/code`, {
-        state: { studyId, codeId: code.id, problem: problem.name },
-      });
+    if (code) navigate(`/study/${studyId}/${problem.name}/code/${code.id}`);
   };
 
   return (

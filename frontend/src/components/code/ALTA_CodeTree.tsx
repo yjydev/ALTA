@@ -1,5 +1,5 @@
-import { useEffect, useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import { DataGridPro, GridColumns, GridRowsProp, DataGridProProps, GridValueGetterParams } from '@mui/x-data-grid-pro';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
@@ -11,9 +11,13 @@ import { CodeStore } from '../../context/CodeContext';
 import { CodeTree } from '../../types/CodeBlockType';
 // import scrollStyle from '../../modules/scrollStyle';
 
+type ParamType = {
+  studyId: string | undefined;
+};
+
 export default function ALTA_CodeTree() {
   const navigate = useNavigate();
-  const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
+  const { studyId } = useParams<ParamType>();
   const { codeTree } = useContext(CodeStore);
 
   function MinusSquare(props: SvgIconProps) {
@@ -70,7 +74,7 @@ export default function ALTA_CodeTree() {
       const codeId = row.codeId;
       const problem = row.path[1];
       try {
-        await navigate('/study/code', { state: { studyId, codeId, problem } });
+        navigate(`/study/${studyId}/${problem}/code/${codeId}`);
       } catch (err: any) {
         generateError('코드 이동에 실패하였습니다', `${err.response.message}`);
       }

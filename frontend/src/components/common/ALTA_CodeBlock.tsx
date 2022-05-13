@@ -4,23 +4,11 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import * as code_themes from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { CodeStore } from '../../context/CodeContext';
 
-export default function ALTA_CodeBlock({
-  code,
-  language,
-}: {
-  code: string;
-  language: string;
-}) {
+export default function ALTA_CodeBlock({ code, language }: { code: string; language: string }) {
   const { codeLine, setCodeLine } = useContext(CodeStore);
 
   return (
-    <Grid
-      container
-      direction="column"
-      spacing={5}
-      sx={codeBlockStyle}
-      className="codeBlock"
-    >
+    <Grid container direction="column" spacing={5} sx={codeBlockStyle} className="codeBlock">
       <Box>
         <SyntaxHighlighter
           language={language.toLowerCase()}
@@ -37,9 +25,7 @@ export default function ALTA_CodeBlock({
             onClick() {
               if (codeLine !== lineNum) {
                 setCodeLine(lineNum);
-                const c = document.getElementById(
-                  'outlined-multiline-static-comment',
-                );
+                const c = document.getElementById('outlined-multiline-static-comment');
                 if (c) {
                   c.scrollIntoView({ behavior: 'smooth' });
                 }
