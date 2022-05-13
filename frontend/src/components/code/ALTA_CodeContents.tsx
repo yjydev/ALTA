@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, NavigateFunction } from 'react-router-dom';
 
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -24,13 +24,13 @@ type ParamType = {
 };
 
 export default function ALTA_CodeContents() {
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
   const { studyId, codeId, problem } = useParams<ParamType>();
   const { code, getCode, user, getCodeTree } = useContext(CodeStore);
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [isCodeEdit, setIsCodeEdit] = useState(false);
+  const [isCodeEdit, setIsCodeEdit] = useState<boolean>(false);
 
   const handleDelete = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
