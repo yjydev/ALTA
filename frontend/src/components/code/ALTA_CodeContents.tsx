@@ -11,8 +11,9 @@ import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
 
 import ALTA_Loading from '../common/ALTA_Loading';
-import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
+
+import ALTA_CodeEditor from './ALTA_CodeEditor';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
@@ -24,23 +25,26 @@ type ParamType = {
 
 export default function ALTA_CodeContents() {
   const navigate = useNavigate();
+
   const { studyId, codeId, problem } = useParams<ParamType>();
-  const [loading, setLoading] = useState<boolean>(true);
   const { code, getCode, user, getCodeTree } = useContext(CodeStore);
+
+  const [loading, setLoading] = useState<boolean>(true);
   const [isCodeEdit, setIsCodeEdit] = useState(false);
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
+
     generateConfirm(
       '정말 삭제하시겠습니까?',
       '한번 삭제하면 되돌릴 수 없습니다.',
       '코드가 삭제되었습니다.',
       `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
-      async () => delCode(),
+      async (): Promise<void> => delCode(),
     );
   };
 
-  const delCode = async () => {
+  const delCode = async (): Promise<void> => {
     if (studyId && codeId) {
       try {
         await deleteCodeApi(parseInt(studyId), parseInt(codeId));
@@ -51,13 +55,13 @@ export default function ALTA_CodeContents() {
     }
   };
 
-  const goToDetail = () => navigate(`/study/${studyId}/detail`);
+  const goToDetail = (): void => navigate(`/study/${studyId}/detail`);
 
-  const goToresubmit = () => navigate(`/study/${studyId}/0/${problem}/${codeId}/code-submit`);
+  const goToresubmit = (): void => navigate(`/study/${studyId}/0/${problem}/${codeId}/code-submit`);
 
-  useEffect(() => {
+  useEffect((): void => {
     setLoading(true);
-    (async function () {
+    (async function (): Promise<void> {
       if (studyId && codeId) {
         const [codeStatus, TreeStatus] = await Promise.all([
           getCode(parseInt(studyId), parseInt(codeId)),
@@ -77,46 +81,51 @@ export default function ALTA_CodeContents() {
     <>
       {loading && <ALTA_Loading />}
       {!loading && (
-        <Grid container sx={wrapper} spacing={8}>
-          <Grid item sx={codeTree_wrapper} md={3}>
-            <Box pt={4} pl={2}>
-              <ALTA_CodeTree />
+        <Grid className="codeContentGrid" container sx={codeContentStyle} spacing={8}>
+          <Grid item sx={codeTreeStyle} md={3}>
+            <Box className="codeTreeBox" sx={codeTreeBoxStyle}>
+              <ALTA_CodeTree studyId={studyId} />
             </Box>
           </Grid>
           <Grid item md={9}>
-            <Box pr={10}>
+            <Box className="codeBlockBox" sx={codeBlockBoxStyle}>
               <Grid container direction="column" rowGap={3}>
-                <Grid item sx={codeBlock_wrapper}>
+                <Grid item>
                   {isCodeEdit ? (
-                    <ALTA_CodeEditor setIsCodeEdit={setIsCodeEdit} />
+                    <ALTA_CodeEditor
+                      setIsCodeEdit={setIsCodeEdit}
+                      studyId={studyId}
+                      codeId={codeId}
+                      problem={problem}
+                    />
                   ) : (
                     <Grid container direction="column" spacing={5}>
                       <Grid item>
-                        <Box pt={3} pb={3}>
-                          <Box sx={titleStyle}>
+                        <Box className="codeBlockHeader" sx={codeBlockHeaderStyle}>
+                          <Box className="codeBlockTitle" sx={titleStyle}>
                             <Button
                               startIcon={<ChevronLeftIcon />}
                               variant="contained"
-                              sx={backBtn}
+                              sx={backBtnStyle}
                               onClick={goToDetail}
                             >
                               Back
                             </Button>
                             {code.writer === user ? (
-                              <Box>
-                                <Button sx={reupBtn} variant="contained" onClick={goToresubmit}>
+                              <Box className="codeBlockBtnGroup">
+                                <Button sx={reupBtnStyle} variant="contained" onClick={goToresubmit}>
                                   재업로드
                                 </Button>
                                 <Button
                                   variant="contained"
-                                  sx={editBtn}
-                                  onClick={() => {
+                                  sx={editBtnStyle}
+                                  onClick={(): void => {
                                     setIsCodeEdit(true);
                                   }}
                                 >
                                   수정
                                 </Button>
-                                <Button sx={delBtn} variant="contained" onClick={handleDelete}>
+                                <Button sx={delBtnStyle} variant="contained" onClick={handleDelete}>
                                   삭제
                                 </Button>
                               </Box>
@@ -126,9 +135,7 @@ export default function ALTA_CodeContents() {
                           <Box sx={titleStyle}>
                             <Typography sx={codeTitleStyle}>{code.fileName}</Typography>
                             <Box>
-                              <Typography sx={codeWritterStyle} align="right">
-                                작성자 : {code.writer}
-                              </Typography>
+                              <Typography sx={codeWritterStyle}>작성자 : {code.writer}</Typography>
                               <Typography sx={dateStyle}>마지막 수정 : {displayAt(code.createDate)}</Typography>
                             </Box>
                           </Box>
@@ -141,9 +148,9 @@ export default function ALTA_CodeContents() {
                     </Grid>
                   )}
                 </Grid>
-                <Grid item sx={codeComment_wrapper}>
+                <Grid item sx={codeCommentStyle}>
                   <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-                  <ALTA_CodeCommentList />
+                  <ALTA_CodeCommentList codeId={codeId} />
                 </Grid>
               </Grid>
             </Box>
@@ -154,28 +161,38 @@ export default function ALTA_CodeContents() {
   );
 }
 
-const codeComment_wrapper = {
+const codeCommentStyle = {
   padding: '10px',
 };
 
-const codeBlock_wrapper = {
-  // maxWidth: '100vw',
+const codeBlockBoxStyle = {
+  paddingRight: 10,
 };
 
-const codeTree_wrapper = {
+const codeBlockHeaderStyle = {
+  paddingTop: 3,
+  paddingBottom: 3,
+};
+
+const codeTreeStyle = {
   display: { xs: 'none', md: 'block' },
 };
 
-const wrapper = {
+const codeTreeBoxStyle = {
+  paddingTop: 4,
+  paddingLeft: 2,
+};
+
+const codeContentStyle = {
   width: '100%',
 };
 
-const backBtn = {
+const backBtnStyle = {
   fontSize: '15px',
   marginBottom: '18px',
 };
 
-const editBtn = {
+const editBtnStyle = {
   'fontSize': '15px',
   'marginRight': ' 10px',
   'backgroundColor': 'secondary.main',
@@ -185,7 +202,7 @@ const editBtn = {
   'color': '#212121',
 };
 
-const delBtn = {
+const delBtnStyle = {
   'fontSize': '15px',
   'marginRight': ' 10px',
   'backgroundColor': 'error.main',
@@ -195,7 +212,7 @@ const delBtn = {
   },
 };
 
-const reupBtn = {
+const reupBtnStyle = {
   fontSize: '15px',
   marginRight: ' 10px',
 };
@@ -226,4 +243,5 @@ const codeWritterStyle = {
   fontSize: '20px',
   marginRight: '16px',
   marginTop: '8px',
+  textAlign: 'right',
 };

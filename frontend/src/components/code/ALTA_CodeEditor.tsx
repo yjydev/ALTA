@@ -1,5 +1,5 @@
 import React, { useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Box, Grid, Typography, Divider, Button, TextField } from '@mui/material';
 import MonacoEditor from '@uiw/react-monacoeditor';
 
@@ -10,23 +10,23 @@ import { editCodeApi } from '../../api/apis';
 
 import ALTA_Dialog from '../common/ALTA_Dialog';
 
-type ParamType = {
+type Props = {
+  setIsCodeEdit: Dispatch<SetStateAction<boolean>>;
   studyId: string | undefined;
   codeId: string | undefined;
   problem: string | undefined;
 };
 
-export default function ALTA_CodeEditor({ setIsCodeEdit }: editorProps) {
+export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, problem }: Props) {
   const navigate = useNavigate();
-  const { studyId, codeId, problem } = useParams<ParamType>();
   const { code } = useContext(CodeStore);
-  const [open, setOpen] = useState<boolean>(false);
 
   const [fileName, setFileName] = useState<string>(`${code.fileName}`);
-  const [commitMessage, setCommitMessage] = useState<string>('');
   const [content, setContent] = useState<string>(`${code.code}`);
+  const [open, setOpen] = useState<boolean>(false);
+  const [commitMessage, setCommitMessage] = useState<string>('');
 
-  const handleEditBtn = () => {
+  const handleEditBtn = (): void => {
     if (content === code.code && fileName === code.fileName) generateError('수정 내역이 없습니다.', '');
     else setOpen(true);
   };
@@ -160,8 +160,4 @@ const problemStyle = {
 const codeWritterStyle = {
   fontSize: '20px',
   marginRight: '16px',
-};
-
-type editorProps = {
-  setIsCodeEdit: Dispatch<SetStateAction<boolean>>;
 };

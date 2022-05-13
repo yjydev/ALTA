@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 import { Grid } from '@mui/material';
 import { DataGridPro, GridColumns, GridRowsProp, DataGridProProps, GridValueGetterParams } from '@mui/x-data-grid-pro';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
@@ -9,15 +10,13 @@ import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRound
 import { generateError } from '../../modules/generateAlert';
 import { CodeStore } from '../../context/CodeContext';
 import { CodeTree } from '../../types';
-// import scrollStyle from '../../modules/scrollStyle';
 
-type ParamType = {
+type Props = {
   studyId: string | undefined;
 };
 
-export default function ALTA_CodeTree() {
+export default function ALTA_CodeTree({ studyId }: Props) {
   const navigate = useNavigate();
-  const { studyId } = useParams<ParamType>();
   const { codeTree } = useContext(CodeStore);
 
   function MinusSquare(props: SvgIconProps) {

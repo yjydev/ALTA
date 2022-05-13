@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Grid, Typography, Box, TextField, Switch, InputAdornment } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
@@ -13,13 +13,12 @@ import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_CodeCommentCard from './ALTA_CodeCommentCard';
 
-type ParamType = {
+type Props = {
   codeId: string | undefined;
 };
 
-export default function ALTA_CodeCommentList() {
+export default function ALTA_CodeCommentList({ codeId }: Props) {
   const navigate = useNavigate();
-  const { codeId } = useParams();
   const [isCompleted, setisCompleted] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [newReview, setNewReview] = useState<string>('');
