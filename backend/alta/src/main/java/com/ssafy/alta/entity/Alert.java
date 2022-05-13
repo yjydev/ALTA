@@ -43,8 +43,9 @@ public class Alert {
     private User sender;
 
     @NonNull
+    @Convert(converter = AlertConverter.class)
     @Column(name = "alert_type")
-    private int type;
+    private AlertType type;
 
     @NonNull
     @Column(name = "alert_content")
