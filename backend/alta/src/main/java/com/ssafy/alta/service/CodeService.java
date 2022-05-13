@@ -211,11 +211,16 @@ public class CodeService {
             System.out.println("조회할 파일이 github에 없음");
             e.printStackTrace();
         }
-//        같은 파일이 이미 Git에 업로도 되어 있으면 -> Exception 발생
+        // 같은 파일이 이미 Git에 업로도 되어 있으면
+        // 문제명_유저명_시간-분.java -> 이런식으로 파일명 수정되서 올라가도록!
         if(gitCodeResponse != null) {
-            throw new DuplicateFileInGithubException();
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            String nowTime = formatter.format(new Date());
+            String newFileName = String.format("%s_%s_%s", code.getProblem().getName(), code.getUser().getName(), nowTime);
+            fullFileName = fileLanguageUtil.getFullFileName(newFileName, study.getLanguage());
+            path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
+            url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
         }
-
         String base64Content = Base64.getEncoder().encodeToString(code.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeUpdateRequest request = GitCodeUpdateRequest.builder()
                 .content(base64Content)
