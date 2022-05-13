@@ -1,4 +1,4 @@
-import { OrganizeStudyRequset } from '../types/StudyType';
+import { OrganizeStudyRequset } from '../types';
 import { getRequest, postRequest, putRequest, deleteRequest } from './request';
 
 //GET

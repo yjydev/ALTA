@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
-import { TableData } from '../../types/StudyType';
+import { TableData } from '../../types';
 import { generateError } from '../../modules/generateAlert';
 import { addTableBarFrontBuilder, addTableBarBackBuilder } from './builder/ALTA_AddTableBarBuilder';
 

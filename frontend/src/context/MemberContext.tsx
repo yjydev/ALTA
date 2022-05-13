@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Member, Column } from '../types/MemberType';
-import { ContextProps } from '../types/ContextPropsType';
+import { Member, Column, ContextProps } from '../types';
 import { memberManagementDataApi } from '../api/apis';
 import { checkLogin } from '../modules/LoginTokenChecker';
 
@@ -38,8 +37,7 @@ export default function MemberProvider({ children }: ContextProps) {
 
   const getMembers = async (studyId: number) => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
 
     try {
       const res = await memberManagementDataApi(studyId);

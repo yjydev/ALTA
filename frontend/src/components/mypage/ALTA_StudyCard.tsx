@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 
-import { Study } from '../../types/UserDataType';
+import { Study } from '../../types';
 
 type Props = {
   study: Study;

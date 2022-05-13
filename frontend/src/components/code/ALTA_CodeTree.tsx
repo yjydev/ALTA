@@ -1,20 +1,14 @@
 import { useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Grid, Icon } from '@mui/material';
-import {
-  DataGridPro,
-  GridColumns,
-  GridRowsProp,
-  DataGridProProps,
-  GridValueGetterParams,
-} from '@mui/x-data-grid-pro';
+import { DataGridPro, GridColumns, GridRowsProp, DataGridProProps, GridValueGetterParams } from '@mui/x-data-grid-pro';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 import FolderOpenTwoToneIcon from '@mui/icons-material/FolderOpenTwoTone';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 
 import { generateError } from '../../modules/generateAlert';
 import { CodeStore } from '../../context/CodeContext';
-import { CodeTree } from '../../types/CodeBlockType';
+import { CodeTree } from '../../types';
 // import scrollStyle from '../../modules/scrollStyle';
 
 export default function ALTA_CodeTree() {
@@ -26,8 +20,7 @@ export default function ALTA_CodeTree() {
     (async function () {
       const status = await getCodeTree(studyId);
       if (status === -1) navigate('/');
-      else if (status === -2)
-        generateError('폴더 구조를 불러오는데 실패하였습니다', '');
+      else if (status === -2) generateError('폴더 구조를 불러오는데 실패하였습니다', '');
     })();
   }, []);
 
@@ -53,9 +46,7 @@ export default function ALTA_CodeTree() {
       return (
         <>
           <Icon component={FolderOpenTwoToneIcon} sx={{}} />
-          <span style={{ lineHeight: '28px' }}>
-            &nbsp;{params.rowNode.groupingKey}
-          </span>
+          <span style={{ lineHeight: '28px' }}>&nbsp;{params.rowNode.groupingKey}</span>
         </>
       );
     } else {
@@ -76,8 +67,7 @@ export default function ALTA_CodeTree() {
       width: 320,
     },
   ];
-  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) =>
-    row.path;
+  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.path;
 
   const handleMove = (row: CodeTree) => {
     if (row.codeId !== 0) {

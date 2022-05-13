@@ -1,11 +1,9 @@
 import { Box, Card, Typography } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 
-import { Member } from '../../types/StudyType';
+import { StudyMember } from '../../types';
 
-type Props = {
-  member: Member;
-};
+type Props = { member: StudyMember };
 
 export default function ALTA_StudyMemberCard({ member }: Props) {
   return (

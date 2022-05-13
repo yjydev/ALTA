@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Member } from '../../types/StudyType';
+import { StudyMember } from '../../types';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
@@ -23,7 +23,7 @@ export default function ALTA_StudyMembers({ studyId }: Props) {
   return (
     <div>
       {members.map(
-        (member: Member, i: number): JSX.Element => (
+        (member: StudyMember, i: number): JSX.Element => (
           <ALTA_StudyMemberCard key={`${i}-${member.nickname}-${member.email}`} member={member} />
         ),
       )}

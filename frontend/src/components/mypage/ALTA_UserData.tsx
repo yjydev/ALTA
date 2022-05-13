@@ -17,7 +17,7 @@ import ALTA_Tooltip from '../common/ALTA_Tooltip';
 export default function ALTA_UserData() {
   const { userData } = useContext(UserDataStore);
 
-  const [alertFold, setAlertFold] = useState<boolean>(true);
+  const [alertFold, setAlertFold] = useState<boolean>(false);
   const [isEditPage, setIsEditPage] = useState<boolean>(false);
 
   const openEditPage = (): void => {

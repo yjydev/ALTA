@@ -6,7 +6,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { deleteCodeApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
-import { CodeProps } from '../../types/CodeBlockType';
+import { CodeProps } from '../../types';
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
@@ -16,11 +16,7 @@ import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
-export default function ALTA_CodeContents({
-  studyId,
-  codeId,
-  problem,
-}: CodeProps) {
+export default function ALTA_CodeContents({ studyId, codeId, problem }: CodeProps) {
   const navigate = useNavigate();
 
   const { code, getCode, user } = useContext(CodeStore);
@@ -42,25 +38,19 @@ export default function ALTA_CodeContents({
       await deleteCodeApi(studyId, codeId);
       goToDetail(studyId);
     } catch (err: any) {
-      generateError(
-        '코드 삭제에 실패하였습니다',
-        `${err.response.data.message}`,
-      );
+      generateError('코드 삭제에 실패하였습니다', `${err.response.data.message}`);
     }
   };
 
-  const goToDetail = (studyId: number) =>
-    navigate('/study/detail', { state: { studyId } });
+  const goToDetail = (studyId: number) => navigate('/study/detail', { state: { studyId } });
 
-  const goToresubmit = (studyId: number, codeId: number) =>
-    navigate('/code-submit', { state: { studyId, codeId } });
+  const goToresubmit = (studyId: number, codeId: number) => navigate('/code-submit', { state: { studyId, codeId } });
 
   useEffect(() => {
     (async function () {
       const status = await getCode(studyId, codeId);
       if (status === -1) navigate('/');
-      else if (status === -2)
-        generateError('코드 정보를 불러오는데 실패하였습니다', '');
+      else if (status === -2) generateError('코드 정보를 불러오는데 실패하였습니다', '');
     })();
   }, []);
 
@@ -76,12 +66,7 @@ export default function ALTA_CodeContents({
           <Grid container direction="column" rowGap={3}>
             <Grid item sx={codeBlock_wrapper}>
               {isCodeEdit ? (
-                <ALTA_CodeEditor
-                  setIsCodeEdit={setIsCodeEdit}
-                  studyId={studyId}
-                  codeId={codeId}
-                  problem={problem}
-                />
+                <ALTA_CodeEditor setIsCodeEdit={setIsCodeEdit} studyId={studyId} codeId={codeId} problem={problem} />
               ) : (
                 <Grid container direction="column" spacing={5}>
                   <Grid item>
@@ -99,11 +84,7 @@ export default function ALTA_CodeContents({
                         </Button>
                         {code.writer === user ? (
                           <Box>
-                            <Button
-                              sx={reupBtn}
-                              variant="contained"
-                              onClick={() => goToresubmit(studyId, codeId)}
-                            >
+                            <Button sx={reupBtn} variant="contained" onClick={() => goToresubmit(studyId, codeId)}>
                               재업로드
                             </Button>
                             <Button
@@ -115,11 +96,7 @@ export default function ALTA_CodeContents({
                             >
                               수정
                             </Button>
-                            <Button
-                              sx={delBtn}
-                              variant="contained"
-                              onClick={handleDelete}
-                            >
+                            <Button sx={delBtn} variant="contained" onClick={handleDelete}>
                               삭제
                             </Button>
                           </Box>
@@ -127,16 +104,12 @@ export default function ALTA_CodeContents({
                       </Box>
                       <Typography sx={problemStyle}>{problem}</Typography>
                       <Box sx={titleStyle}>
-                        <Typography sx={codeTitleStyle}>
-                          {code.fileName}
-                        </Typography>
+                        <Typography sx={codeTitleStyle}>{code.fileName}</Typography>
                         <Box>
                           <Typography sx={codeWritterStyle} align="right">
                             작성자 : {code.writer}
                           </Typography>
-                          <Typography sx={dateStyle}>
-                            마지막 수정 : {displayAt(code.createDate)}
-                          </Typography>
+                          <Typography sx={dateStyle}>마지막 수정 : {displayAt(code.createDate)}</Typography>
                         </Box>
                       </Box>
                     </Box>

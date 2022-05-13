@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import styled from '@emotion/styled';
 
-import { Member, Problem, Code } from '../../../types/StudyType';
+import { StudyMember, Problem, Code } from '../../../types';
 import { useNavigate } from 'react-router-dom';
 import { blackColor, mainColor } from '../../../modules/colorChart';
 
@@ -13,7 +13,7 @@ type FilperProps = {
   fliper: () => void;
 };
 
-export const problemBarFrontBuilder = (problem: Problem, members: Member[], maxPeople: number, studyId: number) =>
+export const problemBarFrontBuilder = (problem: Problem, members: StudyMember[], maxPeople: number, studyId: number) =>
   function Front({ fliper }: FilperProps) {
     const findCodeId = (nickname: string, codes: Code[]): number | null => {
       for (const code of codes) {
@@ -39,7 +39,7 @@ export const problemBarFrontBuilder = (problem: Problem, members: Member[], maxP
         <Grid item xs={8} sx={sellStyle}>
           <Grid container>
             {members.map(
-              (member: Member): JSX.Element => (
+              (member: StudyMember): JSX.Element => (
                 <Grid item key={member.nickname} xs={12 / maxPeople} sx={sellStyle}>
                   <Typography>
                     {member.nickname ? (

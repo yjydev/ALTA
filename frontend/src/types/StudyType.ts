@@ -8,7 +8,7 @@ export type OrganizeStudyRequset = {
   repositoryName: string;
 };
 
-export type Member = {
+export type StudyMember = {
   [index: string]: string;
   nickname: string;
   position: string;

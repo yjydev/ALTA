@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
 
-import { ContextProps as Props } from '../../types/ContextPropsType';
+import { ContextProps as Props } from '../../types';
 
 export default function ALTA_StudyMembers({ children }: Props) {
   const [visibility, setVisibility] = useState<boolean>(true);

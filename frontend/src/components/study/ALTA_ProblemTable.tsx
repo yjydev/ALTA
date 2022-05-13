@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { Button, Grid, LinearProgress, Typography, Alert } from '@mui/material';
 
-import { Member, Problem } from '../../types/StudyType';
+import { StudyMember, Problem } from '../../types';
 import { blackColor, subColor } from '../../modules/colorChart';
 import { problemBarFrontBuilder } from './builder/ALTA_ProblemBarBuilder';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
@@ -83,7 +83,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
               <Grid item xs={8} sx={[sellStyle, ellipsisStyle]}>
                 <Grid container>
                   {members.map(
-                    (member: Member): JSX.Element => (
+                    (member: StudyMember): JSX.Element => (
                       <Grid item key={member.nickname} xs={12 / maxPeople} sx={[sellStyle, ellipsisStyle]}>
                         <Typography sx={ellipsisStyle}>{member.nickname ? member.nickname : '-'}</Typography>
                       </Grid>

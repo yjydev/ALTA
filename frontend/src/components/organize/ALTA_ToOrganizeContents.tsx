@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 import { languages } from '../../modules/languageSources';
-import { OrganizeStudyRequset } from '../../types/StudyType';
+import { OrganizeStudyRequset } from '../../types';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { organizeStudyApi } from '../../api/apis';
 import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
