@@ -2,6 +2,7 @@ package com.ssafy.alta.service;
 
 import com.ssafy.alta.entity.UserRedis;
 import com.ssafy.alta.repository.UserRedisRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,13 +24,9 @@ import java.util.Optional;
  */
 
 @Service
+@AllArgsConstructor
 public class RedisService {
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-
-    @Autowired
-    private UserRedisRepository userRedisRepository;
+    private final UserRedisRepository userRedisRepository;
 
     public String getAccessToken(String id){
         Optional<UserRedis> user = userRedisRepository.findById(id);
@@ -42,7 +39,6 @@ public class RedisService {
     }
 
     public void setJWTRefreshToken(String id, String jwt_ref){
-
         Optional<UserRedis> user = userRedisRepository.findById(id);
         user.get().setJwt_refresh_token(jwt_ref);
         userRedisRepository.save(user.get());
@@ -50,7 +46,6 @@ public class RedisService {
 
     public void insertUser(String id, String github_acc){
         UserRedis userRedis = new UserRedis(id, github_acc);
-
         userRedisRepository.save(userRedis);
     }
 }
