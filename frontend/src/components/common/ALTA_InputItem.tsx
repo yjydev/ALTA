@@ -1,27 +1,5 @@
 import { Box, Typography } from '@mui/material';
 
-export default function ALTA_InputItem({
-  label,
-  labelSize = 'm',
-  children,
-  focused,
-  focusHandler,
-}: Props) {
-  return (
-    <Box
-      sx={[wrapper, focused ? focus : null]}
-      onFocus={() => (focusHandler ? focusHandler(label) : null)}
-    >
-      <label htmlFor={label}>
-        <Typography sx={labelSize === 'm' ? labelstyle_m : labelstyle_s}>
-          {label}
-        </Typography>
-      </label>
-      <Box sx={[fieldStyle]}>{children}</Box>
-    </Box>
-  );
-}
-
 type Props = {
   label: string;
   labelSize?: string;
@@ -29,6 +7,17 @@ type Props = {
   focused?: boolean;
   focusHandler?: (label: string) => void;
 };
+
+export default function ALTA_InputItem({ label, labelSize = 'm', children, focused, focusHandler }: Props) {
+  return (
+    <Box sx={[wrapper, focused ? focus : null]} onFocus={() => focusHandler && focusHandler(label)}>
+      <label htmlFor={label}>
+        <Typography sx={labelSize === 'm' ? labelstyle_m : labelstyle_s}>{label}</Typography>
+      </label>
+      <Box sx={[fieldStyle]}>{children}</Box>
+    </Box>
+  );
+}
 
 const wrapper = {
   display: 'flex',
