@@ -19,7 +19,7 @@ type Params = {
 export default function ALTA_Notice() {
   const { noticeContent, editNoticeContent } = useContext(StudyDetailStore);
   const navigate = useNavigate();
-  const { studyId } = useParams();
+  const { studyId } = useParams<Params>();
 
   const [notice, setNotice] = useState<string>(noticeContent.replaceAll('<br />', '\n'));
   const [noticeEditing, setNoticeEditing] = useState<boolean>(false);
