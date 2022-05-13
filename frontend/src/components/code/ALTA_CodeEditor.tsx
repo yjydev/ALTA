@@ -1,6 +1,8 @@
 import React, { useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
+
 import { Box, Grid, Typography, Divider, Button, TextField } from '@mui/material';
+
 import MonacoEditor from '@uiw/react-monacoeditor';
 
 import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
@@ -18,7 +20,7 @@ type Props = {
 };
 
 export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, problem }: Props) {
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
   const { code } = useContext(CodeStore);
 
   const [fileName, setFileName] = useState<string>(`${code.fileName}`);
@@ -31,14 +33,14 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
     else setOpen(true);
   };
 
-  const handleEditCode = async () => {
+  const handleEditCode = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
     if (studyId && codeId && problem) {
       generateTimer('잠시 기다려 주세요', `코드를 수정중입니다`);
       try {
         await editCodeApi(parseInt(studyId), parseInt(codeId), commitMessage, fileName, content);
         setIsCodeEdit(false);
-        generateCheck('수정 완료', `${fileName} 을(를) 성공적으로 수정하였습니다`, () =>
+        generateCheck('수정 완료', `${fileName} 을(를) 성공적으로 수정하였습니다`, (): void =>
           navigate(`/study/${studyId}/${problem}/code/${codeId}`),
         );
       } catch (err: any) {
@@ -48,7 +50,7 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
     }
   };
 
-  useEffect(() => {
+  useEffect((): void => {
     setCommitMessage(`Update ${fileName}`);
   }, [fileName]);
 
@@ -68,28 +70,26 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
       </ALTA_Dialog>
       <Grid container direction="column" spacing={5}>
         <Grid item>
-          <Box pt={3} pb={3}>
+          <Box sx={codeEditorHeaderStyle}>
             <Box sx={titleStyle}>
               <Typography sx={problemStyle}>{problem}</Typography>
               <Box>
                 <Button onClick={handleEditBtn} variant="contained" sx={editBtnStyle}>
                   수정 완료
                 </Button>
-                <Button sx={cancelBtnStyle} onClick={() => setIsCodeEdit(false)} variant="contained">
+                <Button sx={cancelBtnStyle} onClick={(): void => setIsCodeEdit(false)} variant="contained">
                   취소
                 </Button>
               </Box>
             </Box>
             <Box sx={titleStyle}>
               <TextField
-                sx={titleInput}
+                sx={titleInputStyle}
                 defaultValue={code.fileName}
                 inputProps={{ style: { fontSize: 35 } }}
-                onChange={(e) => setFileName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setFileName(e.target.value)}
               />
-              <Typography sx={codeWritterStyle} align="right">
-                작성자 : {code.writer}
-              </Typography>
+              <Typography sx={codeWritterStyle}>작성자 : {code.writer}</Typography>
             </Box>
           </Box>
           <Divider style={{ width: '100%' }} />
@@ -104,7 +104,7 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
                 theme: 'vs-dark',
                 smoothScrolling: true,
               }}
-              onChange={(evn) => {
+              onChange={(evn: string): void => {
                 setContent(evn);
               }}
             />
@@ -114,6 +114,10 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
     </>
   );
 }
+
+const codeEditorHeaderStyle = {
+  paddingY: 3,
+};
 
 const codeBlockStyle = {
   height: '33rem',
@@ -147,7 +151,7 @@ const cancelBtnStyle = {
   'marginRight': 2,
 };
 
-const titleInput = {
+const titleInputStyle = {
   width: '30rem',
 };
 
@@ -160,4 +164,5 @@ const problemStyle = {
 const codeWritterStyle = {
   fontSize: '20px',
   marginRight: '16px',
+  textAlign: 'right',
 };

@@ -77,7 +77,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
       </Grid>
       <Grid item>
         <Box sx={addCommentStyle}>
-          <Grid container sx={comment_wrapper} columns={17}>
+          <Grid container sx={commentGridStyle} columns={17}>
             <Grid item xs={16}>
               <TextField
                 id="outlined-multiline-static-comment"
@@ -87,7 +87,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
                 fullWidth
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start" sx={codeSelect}>
+                    <InputAdornment position="start" sx={codeSelectStyle}>
                       <Typography sx={adornStyle}>
                         {codeLine === 0 ? '코드를 선택해주세요.' : `${codeLine}번 라인`}
                       </Typography>
@@ -102,7 +102,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
             </Grid>
             <Grid item xs={1}>
               <IconButton onClick={handleNewReview} disabled={isDisabled}>
-                <AddCircleIcon style={addButton} />
+                <AddCircleIcon style={addButtonStyle} />
               </IconButton>
             </Grid>
           </Grid>
@@ -136,16 +136,16 @@ const addCommentStyle = {
   marginTop: 4,
 };
 
-const addButton = {
+const addButtonStyle = {
   fontSize: '50',
 };
 
-const comment_wrapper = {
+const commentGridStyle = {
   justifyContent: 'center',
   alignItems: 'center',
 };
 
-const codeSelect = {
+const codeSelectStyle = {
   alignItems: 'flex-end',
   paddingTop: '2px',
 };
