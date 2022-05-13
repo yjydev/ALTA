@@ -1,24 +1,17 @@
 import { useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  Typography,
-} from '@mui/material';
+import { TableBody, TableRow, TableCell, Button, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { checkLogin } from '../../modules/LoginTokenChecker';
-import { Member } from '../../types/MemberType';
+import { Member } from '../../types';
 import { MemberStore } from '../../context/MemberContext';
 import { deleteInvitationApi } from '../../api/apis';
 import { generateConfirm, generateError } from '../../modules/generateAlert';
 
-export default function ALTA_MemberTableBody({ member }: { member: Member }) {
+export default function ALTA_MemberTableBody({ member, studyId }: { member: Member; studyId: number }) {
   const navigate = useNavigate();
   const { columns } = useContext(MemberStore);
-  const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
 
   const handleDelInvite = async () => {
     if (!(await checkLogin()).status) navigate('/');
@@ -36,10 +29,7 @@ export default function ALTA_MemberTableBody({ member }: { member: Member }) {
       navigate(`/study/member`, { state: { studyId } });
     } catch (err: any) {
       console.log(err);
-      generateError(
-        '초대 취소에 실패하였습니다',
-        `${err.response.data.message}`,
-      );
+      generateError('초대 취소에 실패하였습니다', `${err.response.data.message}`);
     }
   };
   return (
@@ -59,11 +49,7 @@ export default function ALTA_MemberTableBody({ member }: { member: Member }) {
             align="left"
           >
             {column.id === 'state' && member['state'] === '초대대기' ? (
-              <Button
-                endIcon={<CloseIcon />}
-                sx={inviteClearBtn}
-                onClick={handleDelInvite}
-              >
+              <Button endIcon={<CloseIcon />} sx={inviteClearBtn} onClick={handleDelInvite}>
                 <Typography sx={inviteText}>초대대기</Typography>
               </Button>
             ) : (

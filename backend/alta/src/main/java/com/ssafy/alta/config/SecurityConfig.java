@@ -51,7 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/images/**",
                         "/chat/**"
                 );
-//                .antMatchers("/githubLogin"); // 여기다가 선언안하면 404 에러 발생..
     }
 
     @Override
@@ -67,13 +66,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
 
-//                    .exceptionHandling()//exception 핸들링할 때, 우리가 만든 두 클래스를 사용하겠서요.
-//                .authenticationEntryPoint()
-                //                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .exceptionHandling()//exception 핸들링할 때, 우리가 만든 두 클래스를 사용하겠서요.
+//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
 //                .and()
 
                 // 모든 요청은 인증이 되어야 하지만, 로그인관련하여 요청은 다 권한은 허락해주어야 한다.
                 .authorizeRequests()
+                .antMatchers("/api/images/**").permitAll()
                 .anyRequest().authenticated()
 
                 // 1. 코드 받기(인증), 2.엑세스 토큰(권한) 3.사용자 프로필 정보를 가져옴

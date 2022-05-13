@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   Avatar,
@@ -21,64 +21,56 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 
 import { toggleSolved, editReviewApi, deleteReviewApi } from '../../api/apis';
-import { ReviewData } from '../../types/CodeBlockType';
+import { ReviewData } from '../../types';
 import { CodeStore } from '../../context/CodeContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
 
-export default function ALTA_CodeCommentCard({
-  review,
-}: {
-  review: ReviewData;
-}) {
+type ParamType = {
+  studyId: string | undefined;
+  codeId: string | undefined;
+  problem: string | undefined;
+};
+
+export default function ALTA_CodeCommentCard({ review }: { review: ReviewData }) {
   const navigate = useNavigate();
   const [isResolved, setisResolved] = useState<boolean>(review.completed);
-  const { setCodeLine, user, code } = useContext(CodeStore);
+  const { setCodeLine, user, code, getReview } = useContext(CodeStore);
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const [commentValue, setCommentValue] = useState<string>(review.comment);
-  const { studyId, codeId } = JSON.parse(JSON.stringify(useLocation().state));
+  const { studyId, codeId, problem } = useParams<ParamType>();
   const userData = localStorage.getItem('UserData');
-  const profile = userData
-    ? JSON.parse(userData)['profileUrl']
-    : 'profile_default.png';
+  const profile = userData ? JSON.parse(userData)['profileUrl'] : 'profile_default.png';
 
   const changeResolved = async () => {
     if (!(await checkLogin()).status) navigate('/');
     if (user !== code.writer || user !== review.reviewerName)
-      generateError(
-        '변경 불가',
-        '코드 작성자 혹은 리뷰 작성자만 변경할 수 있습니다',
-      );
+      generateError('변경 불가', '코드 작성자 혹은 리뷰 작성자만 변경할 수 있습니다');
     else {
       try {
         await toggleSolved(review.reviewId, !review.completed);
         setisResolved(!isResolved);
       } catch (err: any) {
-        generateError(
-          '상태 변경에 실패하였습니다',
-          `${err.response.data.message}`,
-        );
+        generateError('상태 변경에 실패하였습니다', `${err.response.data.message}`);
       }
     }
   };
 
   const handleEditComment = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    if (commentValue === review.comment)
-      generateError('변경 내역이 없습니다', '');
+    if (commentValue === review.comment) generateError('변경 내역이 없습니다', '');
     else {
-      if (commentValue === '') generateError('내용을 작성해주세요', '');
-      else {
-        try {
-          await editReviewApi(review.reviewId, commentValue, review.codeNumber);
-          setIsEdit(false);
-          navigate('/study/code', { state: { studyId, codeId } });
-        } catch (err: any) {
-          generateError(
-            `수정에 실패하였습니다`,
-            `${err.response.data.message}`,
-          );
+      if (codeId) {
+        if (commentValue === '') generateError('내용을 작성해주세요', '');
+        else {
+          try {
+            await editReviewApi(review.reviewId, commentValue, review.codeNumber);
+            setIsEdit(false);
+            getReview(parseInt(codeId));
+          } catch (err: any) {
+            generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
+          }
         }
       }
     }
@@ -96,14 +88,13 @@ export default function ALTA_CodeCommentCard({
   };
 
   const delComment = async () => {
-    try {
-      await deleteReviewApi(review.reviewId);
-      navigate('/study/code', { state: { studyId, codeId } });
-    } catch (err: any) {
-      generateError(
-        '리뷰 삭제에 실패하였습니다',
-        `${err.response.data.message}`,
-      );
+    if (codeId) {
+      try {
+        await deleteReviewApi(review.reviewId);
+        getReview(parseInt(codeId));
+      } catch (err: any) {
+        generateError('리뷰 삭제에 실패하였습니다', `${err.response.data.message}`);
+      }
     }
   };
 
@@ -117,12 +108,7 @@ export default function ALTA_CodeCommentCard({
   return (
     <Box sx={wrapper}>
       <Paper style={paperWrapper}>
-        <Button
-          startIcon={<CloseIcon />}
-          disableRipple
-          sx={delBtn}
-          onClick={handleDelComment}
-        />
+        <Button startIcon={<CloseIcon />} disableRipple sx={delBtn} onClick={handleDelComment} />
         <Grid container direction="row" sx={infoWrapper} columns={16}>
           <Grid item pt={2} md={1} sx={profileStyle}>
             <Avatar src={profile} />
@@ -135,11 +121,7 @@ export default function ALTA_CodeCommentCard({
                   <>
                     {isEdit ? (
                       <Box sx={btnWrapper}>
-                        <Button
-                          disableRipple
-                          sx={[btnStyle, completeBtn]}
-                          onClick={handleEditComment}
-                        >
+                        <Button disableRipple sx={[btnStyle, completeBtn]} onClick={handleEditComment}>
                           수정 완료
                         </Button>
                         <Button
@@ -166,9 +148,7 @@ export default function ALTA_CodeCommentCard({
                   </>
                 ) : null}
               </Box>
-              <Typography sx={dateStyle}>
-                {displayAt(review.commentDate)}
-              </Typography>
+              <Typography sx={dateStyle}>{displayAt(review.commentDate)}</Typography>
             </Grid>
             <Grid sx={infoStyle}>
               <Grid container sx={commentStyle}>
@@ -184,9 +164,7 @@ export default function ALTA_CodeCommentCard({
                         <>
                           {review.codeNumber !== 0 ? (
                             <InputAdornment position="start">
-                              <Typography sx={adornStyle}>
-                                {`${review.codeNumber}번 라인 `}
-                              </Typography>
+                              <Typography sx={adornStyle}>{`${review.codeNumber}번 라인 `}</Typography>
                             </InputAdornment>
                           ) : (
                             ''
@@ -198,12 +176,7 @@ export default function ALTA_CodeCommentCard({
                 ) : (
                   <>
                     {review.codeNumber !== 0 ? (
-                      <Link
-                        onClick={moveToLine}
-                        sx={commentCodeLine}
-                        underline="none"
-                        mr={1}
-                      >
+                      <Link onClick={moveToLine} sx={commentCodeLine} underline="none" mr={1}>
                         {review['codeNumber']}번
                       </Link>
                     ) : null}
@@ -212,9 +185,7 @@ export default function ALTA_CodeCommentCard({
                 )}
               </Grid>
               {isResolved ? (
-                <IconButton onClick={changeResolved}>
-                  {<CheckCircleRoundedIcon sx={resolvedStyle} />}
-                </IconButton>
+                <IconButton onClick={changeResolved}>{<CheckCircleRoundedIcon sx={resolvedStyle} />}</IconButton>
               ) : (
                 <IconButton onClick={changeResolved}>
                   {<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}

@@ -1,20 +1,13 @@
 import { useContext } from 'react';
-import {
-  Table,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-} from '@mui/material';
+import { Table, TableContainer, TableHead, TableRow, TableCell } from '@mui/material';
 
 import scrollStyle from '../../modules/scrollStyle';
 
-import { Member, Column } from '../../types/MemberType';
+import { Member, Column } from '../../types';
 import { MemberStore } from '../../context/MemberContext';
 
 import ALTA_MemberTableBody from './ALTA_MemberTableBody';
-
-export default function ALTA_MemberTable({ members }: { members: Member[] }) {
+export default function ALTA_MemberTable({ members, studyId }: { members: Member[]; studyId: number }) {
   const { columns } = useContext(MemberStore);
 
   return (
@@ -47,7 +40,7 @@ export default function ALTA_MemberTable({ members }: { members: Member[] }) {
       <TableContainer sx={[tableStyle, scrollStyle]}>
         <Table style={{ tableLayout: 'fixed' }}>
           {members.map((member: Member, index: number) => {
-            return <ALTA_MemberTableBody key={index} member={member} />;
+            return <ALTA_MemberTableBody key={index} member={member} studyId={studyId} />;
           })}
         </Table>
       </TableContainer>

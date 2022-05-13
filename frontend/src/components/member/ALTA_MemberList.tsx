@@ -9,8 +9,7 @@ import ALTA_MemberTable from './ALTA_MemberTable';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList({ studyId }: { studyId: number }) {
-  const { members, studyCode, maxPeople, setInvitable } =
-    useContext(MemberStore);
+  const { members, studyCode, maxPeople, setInvitable } = useContext(MemberStore);
   const navigate = useNavigate();
   setInvitable(members.length < maxPeople);
   return (
@@ -19,14 +18,14 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
         startIcon={<ChevronLeftIcon />}
         variant="contained"
         sx={backBtn}
-        onClick={() => navigate('/study/detail', { state: { studyId } })}
+        onClick={() => navigate(`/study/${studyId}/detail`, { state: { studyId } })}
       >
         Back
       </Button>
       <Grid container direction="row" sx={wrapper}>
         <Grid item sm={12}>
           <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
-          <ALTA_MemberTable members={members} />
+          <ALTA_MemberTable members={members} studyId={studyId} />
           <Grid container pl={1}>
             <Typography mt={3} fontSize="17px" sx={studyCode_wrapper}>
               스터디 고유 코드 :

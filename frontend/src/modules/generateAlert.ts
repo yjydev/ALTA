@@ -4,11 +4,7 @@ import Swal from 'sweetalert2';
 import '../style/AlertStyle.css';
 import { mainColor, whiteColor, blackColor, errorColor } from './colorChart';
 
-export function generateCheck(
-  title: string,
-  text: string,
-  callback: () => void | null,
-) {
+export function generateCheck(title: string, text: string, callback: () => void | Promise<void> | null) {
   Swal.fire({
     title,
     text,
@@ -24,7 +20,7 @@ export function generateCheck(
   });
 }
 
-export function generateError(title: string, text: string) {
+export function generateError(title: string, text: string, callback?: any) {
   Swal.fire({
     title,
     text,
@@ -36,7 +32,7 @@ export function generateError(title: string, text: string) {
     confirmButtonColor: errorColor,
     confirmButtonText: '돌아가기',
   }).then(() => {
-    console.log('end');
+    if (callback) callback();
   });
 }
 
@@ -75,6 +71,7 @@ export function generateConfirm(
     background: whiteColor,
   }).then((result) => {
     if (result.isConfirmed) {
+      if (callback) callback();
       Swal.fire({
         title: `${subTitle}`,
         text: `${subText}`,
@@ -84,8 +81,6 @@ export function generateConfirm(
         confirmButtonText: '확인',
         color: blackColor,
         background: whiteColor,
-      }).then(() => {
-        if (callback) callback();
       });
     }
   });

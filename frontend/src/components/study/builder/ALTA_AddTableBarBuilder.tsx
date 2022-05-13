@@ -8,61 +8,32 @@ import DatePicker from '@mui/lab/DatePicker';
 
 import { generateError } from '../../../modules/generateAlert';
 import { blackColor } from '../../../modules/colorChart';
-import { postRequest } from '../../../api/request';
 import { checkLogin } from '../../../modules/LoginTokenChecker';
 import { useNavigate } from 'react-router-dom';
 import { addScheduleApi } from '../../../api/apis';
 
+type FliperProps = { fliper: () => void };
+
 export const addTableBarFrontBuilder = () =>
-  function ALTA_AddTableBarFront({ fliper }: { fliper: () => void }) {
+  function ALTA_AddTableBarFront({ fliper }: FliperProps) {
     return (
       <PlainBtn onClick={fliper}>
-        <Box
-          sx={{
-            display: 'flex',
-            height: 80,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <AddIcon
-            sx={{ color: blackColor, opacity: '0.5', fontSize: '40px' }}
-          />
-          <Typography
-            sx={{ color: blackColor, opacity: '0.5', fontSize: '14px' }}
-          >
-            테이블 추가
-          </Typography>
+        <Box sx={addTableBarFrontWrapper}>
+          <AddIcon sx={addIconStyle} />
+          <Typography sx={addTextStyle}>테이블 추가</Typography>
         </Box>
       </PlainBtn>
     );
   };
 
-const PlainBtn = styled.button`
-  all: unset;
-  width: 100%;
-  &:active {
-    transform: scale(0.99);
-  }
-  background-color: lightgray;
-  &:hover {
-    background-color: gray;
-  }
-  transition: background-color 0.3s;
-`;
-
-export const addTableBarBackBuilder = (
-  studyId: number,
-  getReadmeContents: (studyId: number) => void,
-) =>
-  function Back({ fliper }: { fliper: () => void }) {
+export const addTableBarBackBuilder = (studyId: number, getReadmeContents: (studyId: number) => void) =>
+  function Back({ fliper }: FliperProps) {
     const navigate = useNavigate();
 
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(new Date());
 
-    const addProblemTable = async () => {
+    const addProblemTable = async (): Promise<void> => {
       if (!(await checkLogin())) () => navigate('/');
 
       //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
@@ -80,8 +51,7 @@ export const addTableBarBackBuilder = (
         await addScheduleApi(studyId, startDate, endDate);
         fliper();
       } catch (err: any) {
-        if (err.response.data.code === 'S001')
-          generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
+        if (err.response.data.code === 'S001') generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
         else generateError('새로운 회차를 생성할 수 없습니다', '');
       }
       getReadmeContents(studyId);
@@ -143,3 +113,26 @@ export const addTableBarBackBuilder = (
       </>
     );
   };
+
+const PlainBtn = styled.button`
+  all: unset;
+  width: 100%;
+  &:active {
+    transform: scale(0.99);
+  }
+  background-color: lightgray;
+  &:hover {
+    background-color: gray;
+  }
+  transition: background-color 0.3s;
+`;
+
+const addIconStyle = { color: blackColor, opacity: '0.5', fontSize: '40px' };
+const addTextStyle = { color: blackColor, opacity: '0.5', fontSize: '14px' };
+const addTableBarFrontWrapper = {
+  display: 'flex',
+  height: 80,
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+};

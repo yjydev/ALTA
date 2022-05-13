@@ -18,43 +18,32 @@ export default function ALTA_LoginContents() {
   }, []);
 
   return (
-    <Box sx={wrapper}>
-      <Grid
-        container
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-      >
+    <Box sx={wrapperStyle}>
+      <Grid container direction="row" justifyContent="center" alignItems="center">
         <Grid item xs={12} sx={titleStyle}>
           <Typography color="primary" sx={titleTextStyle}>
             Algorithm Time
           </Typography>
           <Box>
-            <Img src={Logo} alt="" />
+            <StyledImg src={Logo} alt="" />
           </Box>
         </Grid>
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
-          <Box sx={loginForm}>
+          <Box sx={loginFormStyle}>
             {loading ? (
               <>
-                <Button disabled>
+                <StyledButton disabled>
                   <CircularProgress sx={{ color: '#fff' }} />
-                </Button>
+                </StyledButton>
               </>
             ) : (
               <>
-                <A
-                  href={`${process.env.REACT_APP_BUTTON_URL}:8000/githubLogin`}
-                  onClick={() => setLoading(true)}
-                >
-                  <GithubButton
-                    label="Github 계정으로 로그인하기"
-                    style={{ width: '100%' }}
-                  />
-                </A>
+                <StyledA href={`${process.env.REACT_APP_BUTTON_URL}:8000/githubLogin`} onClick={() => setLoading(true)}>
+                  <GithubButton label="Github 계정으로 로그인하기" style={{ width: '100%' }} />
+                </StyledA>
               </>
             )}
-            <Typography sx={[userInput, signUpGuide]}>
+            <Typography sx={[userInputStyle, signUpGuideStyle]}>
               Github 계정이 없으신가요?
               <Link
                 href="https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home"
@@ -71,8 +60,7 @@ export default function ALTA_LoginContents() {
   );
 }
 
-//style object
-const wrapper = {
+const wrapperStyle = {
   height: '100vh',
   display: 'flex',
   justifyContent: 'center',
@@ -91,30 +79,30 @@ const titleTextStyle = {
   marginRight: '15px',
 };
 
-const loginForm = {
+const loginFormStyle = {
   padding: '50px 10px',
 };
 
-const userInput = {
+const userInputStyle = {
   width: '100%',
   marginTop: '10px',
 };
 
-const signUpGuide = {
+const signUpGuideStyle = {
   textAlign: 'center',
   fontSize: '14px',
   cursor: 'pointer',
 };
 
-const Img = styled.img`
+const StyledImg = styled.img`
   width: 150px;
 `;
 
-const A = styled.a`
+const StyledA = styled.a`
   all: unset;
 `;
 
-const Button = styled.button`
+const StyledButton = styled.button`
   width: 100%;
   background-color: #000;
 `;

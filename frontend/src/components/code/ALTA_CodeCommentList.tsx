@@ -1,36 +1,32 @@
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Grid,
-  Typography,
-  Box,
-  TextField,
-  Switch,
-  InputAdornment,
-} from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Grid, Typography, Box, TextField, Switch, InputAdornment } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
 
 import { addReviewApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
-import { ReviewData } from '../../types/CodeBlockType';
+import { ReviewData } from '../../types';
 
 import { generateCheck, generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import ALTA_CodeCommentCard from './ALTA_CodeCommentCard';
 
-export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
+type ParamType = {
+  codeId: string | undefined;
+};
+
+export default function ALTA_CodeCommentList() {
   const navigate = useNavigate();
+  const { codeId } = useParams();
   const [isCompleted, setisCompleted] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [newReview, setNewReview] = useState<string>('');
 
   const { codeLine, reviews, getReview } = useContext(CodeStore);
 
-  const reviews_data = isCompleted
-    ? reviews
-    : reviews?.filter((rev: ReviewData) => rev.completed === false);
+  const reviews_data = isCompleted ? reviews : reviews?.filter((rev: ReviewData) => rev.completed === false);
 
   const getReviews = async (codeId: number) => {
     const status = await getReview(codeId);
@@ -38,7 +34,7 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
   };
 
   useEffect(() => {
-    getReviews(codeId);
+    if (codeId) getReviews(parseInt(codeId));
   }, [isCompleted]);
 
   useEffect(() => {
@@ -51,17 +47,16 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
 
   const handleNewReview = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    try {
-      await addReviewApi(codeId, newReview, codeLine);
-      setNewReview('');
-      generateCheck('리뷰 생성', `리뷰가 성공적으로 생성되었습니다`, () => {
-        getReviews(codeId);
-      });
-    } catch (err: any) {
-      generateError(
-        '리뷰 생성에 실패하였습니다',
-        `${err.response.data.message}`,
-      );
+    if (codeId) {
+      try {
+        await addReviewApi(parseInt(codeId), newReview, codeLine);
+        setNewReview('');
+        generateCheck('리뷰 생성', `리뷰가 성공적으로 생성되었습니다`, () => {
+          getReviews(parseInt(codeId));
+        });
+      } catch (err: any) {
+        generateError('리뷰 생성에 실패하였습니다', `${err.response.data.message}`);
+      }
     }
   };
 
@@ -73,14 +68,8 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
             <Typography fontSize={40}>Comments</Typography>
           </Grid>
           <Grid item>
-            <Switch
-              checked={isCompleted}
-              onChange={() => setisCompleted(!isCompleted)}
-              name="isCompleted"
-            />
-            <Typography sx={{ display: 'inline-block' }}>
-              전체 댓글 보기
-            </Typography>
+            <Switch checked={isCompleted} onChange={() => setisCompleted(!isCompleted)} name="isCompleted" />
+            <Typography sx={{ display: 'inline-block' }}>전체 댓글 보기</Typography>
           </Grid>
         </Grid>
       </Grid>
@@ -98,9 +87,7 @@ export default function ALTA_CodeCommentList({ codeId }: { codeId: number }) {
                   startAdornment: (
                     <InputAdornment position="start" sx={codeSelect}>
                       <Typography sx={adornStyle}>
-                        {codeLine === 0
-                          ? '코드를 선택해주세요.'
-                          : `${codeLine}번 라인`}
+                        {codeLine === 0 ? '코드를 선택해주세요.' : `${codeLine}번 라인`}
                       </Typography>
                     </InputAdornment>
                   ),
