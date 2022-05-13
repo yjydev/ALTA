@@ -1,12 +1,13 @@
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
+
 import { Grid, Typography, Box, TextField, Switch, InputAdornment } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
 
 import { addReviewApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
-import { ReviewData } from '../../types';
+import { ReviewData, ContextPromiseType } from '../../types';
 
 import { generateCheck, generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
@@ -18,25 +19,27 @@ type Props = {
 };
 
 export default function ALTA_CodeCommentList({ codeId }: Props) {
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
   const [isCompleted, setisCompleted] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [newReview, setNewReview] = useState<string>('');
 
   const { codeLine, reviews, getReview } = useContext(CodeStore);
 
-  const reviews_data = isCompleted ? reviews : reviews?.filter((rev: ReviewData) => rev.completed === false);
+  const reviews_data: ReviewData[] = isCompleted
+    ? reviews
+    : reviews?.filter((rev: ReviewData): boolean => rev.completed === false);
 
-  const getReviews = async (codeId: number) => {
-    const status = await getReview(codeId);
-    if (status === -1) navigate('/');
+  const getReviewList = async (codeId: number): Promise<void> => {
+    const status: ContextPromiseType = await getReview(codeId);
+    if (status.status === -1) navigate('/');
   };
 
-  useEffect(() => {
-    if (codeId) getReviews(parseInt(codeId));
+  useEffect((): void => {
+    if (codeId) getReviewList(parseInt(codeId));
   }, [isCompleted]);
 
-  useEffect(() => {
+  useEffect((): void => {
     if (newReview !== '') {
       setIsDisabled(false);
     } else {
@@ -44,14 +47,14 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
     }
   }, [newReview, codeLine]);
 
-  const handleNewReview = async () => {
+  const handleNewReview = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
     if (codeId) {
       try {
         await addReviewApi(parseInt(codeId), newReview, codeLine);
         setNewReview('');
-        generateCheck('리뷰 생성', `리뷰가 성공적으로 생성되었습니다`, () => {
-          getReviews(parseInt(codeId));
+        generateCheck('리뷰 생성', `리뷰가 성공적으로 생성되었습니다`, (): void => {
+          getReviewList(parseInt(codeId));
         });
       } catch (err: any) {
         generateError('리뷰 생성에 실패하였습니다', `${err.response.data.message}`);
@@ -63,12 +66,12 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
     <Grid container direction="column">
       <Grid item>
         <Grid container alignItems="baseline">
-          <Grid item mr={4}>
-            <Typography fontSize={40}>Comments</Typography>
+          <Grid item sx={codeCommentGridStyle}>
+            <Typography sx={codeCommentTitleStyle}>Comments</Typography>
           </Grid>
           <Grid item>
-            <Switch checked={isCompleted} onChange={() => setisCompleted(!isCompleted)} name="isCompleted" />
-            <Typography sx={{ display: 'inline-block' }}>전체 댓글 보기</Typography>
+            <Switch checked={isCompleted} onChange={(): void => setisCompleted(!isCompleted)} name="isCompleted" />
+            <Typography sx={codeCommentToggleTitleStyle}>전체 댓글 보기</Typography>
           </Grid>
         </Grid>
       </Grid>
@@ -92,7 +95,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
                   ),
                 }}
                 value={newReview}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                   setNewReview(e.target.value);
                 }}
               />
@@ -106,13 +109,27 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
         </Box>
       </Grid>
       <Grid item>
-        {reviews_data?.map((review: ReviewData) => (
-          <ALTA_CodeCommentCard key={review.reviewId} review={review} />
-        ))}
+        {reviews_data?.map(
+          (review: ReviewData): JSX.Element => (
+            <ALTA_CodeCommentCard key={review.reviewId} review={review} />
+          ),
+        )}
       </Grid>
     </Grid>
   );
 }
+
+const codeCommentGridStyle = {
+  marginRight: 4,
+};
+
+const codeCommentTitleStyle = {
+  fontSize: 40,
+};
+
+const codeCommentToggleTitleStyle = {
+  display: 'inline-block',
+};
 
 const addCommentStyle = {
   height: '7rem',
