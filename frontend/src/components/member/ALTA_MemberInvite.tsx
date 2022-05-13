@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { sendMailApi, searchMemberApi } from '../../api/apis';
+import { userList, defaultUser } from '../../types';
 import { MemberStore } from '../../context/MemberContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
@@ -186,16 +187,4 @@ const inputBoxStyle = {
   display: 'flex',
   justifyContent: 'center',
   marginTop: 4,
-};
-
-type userList = {
-  id: string;
-  email: string;
-  nickname: string;
-};
-
-const defaultUser: userList = {
-  id: '',
-  email: '',
-  nickname: '',
 };
