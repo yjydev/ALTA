@@ -4,53 +4,53 @@ import { getRequest, postRequest, putRequest, deleteRequest } from './request';
 
 //GET
 //유저 정보 요청
-export async function userDataApi(): Promise<AxiosResponse> {
+export async function userDataApi() {
   return await getRequest('/api/user/info');
 }
 
 //스터디 상세 정보 요청
-export async function studyDetailDataApi(studyId: number): Promise<AxiosResponse> {
+export async function studyDetailDataApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}`);
 }
 
 //스터디 참여자 정보 요청
-export async function memberListApi(studyId: number): Promise<AxiosResponse> {
+export async function memberListApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/members`);
 }
 
 //스터디 공지사항 정보 요청
-export async function noticeContentApi(studyId: number): Promise<AxiosResponse> {
+export async function noticeContentApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/notice`);
 }
 
 // 스터디 멤버 관리 - 멤버 정보 요청
-export async function memberManagementDataApi(studyId: number): Promise<AxiosResponse> {
+export async function memberManagementDataApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/members/management`);
 }
 
 // 스터디 멤버 관리 - 유저 검색 요청
-export async function searchMemberApi(nickname: string): Promise<AxiosResponse> {
+export async function searchMemberApi(nickname: string) {
   return await getRequest(`/api/user/search?q=${nickname}`);
 }
 
 // 코드 요청
-export async function codeDataApi(studyId: number, codeId: number): Promise<AxiosResponse> {
+export async function codeDataApi(studyId: number, codeId: number) {
   return await getRequest(`/api/study/${studyId}/code/${codeId}`);
 }
 
 // 댓글 리뷰 정보 요청
-export async function reivewDataApi(codeId: number): Promise<AxiosResponse> {
+export async function reivewDataApi(codeId: number) {
   return await getRequest(`/api/code/review/${codeId}`);
 }
 
 // 코드 트리 정보 요청
-export async function codeTreeApi(studyId: number): Promise<AxiosResponse> {
+export async function codeTreeApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/tree`);
 }
 
 //POST
 //스터디 생성 요청
-export async function organizeStudyApi(requestBody: OrganizeStudyRequset): Promise<AxiosResponse> {
+export async function organizeStudyApi(requestBody: OrganizeStudyRequset) {
   return await await postRequest('/api/study', requestBody);
 }
 //유저 정보 수정 요청
@@ -70,11 +70,7 @@ export async function editUserDataApi(
 }
 
 //스터디 회차 일정 추가 요청
-export async function addScheduleApi(
-  studyId: number,
-  startDate: Date | null,
-  endDate: Date | null,
-): Promise<AxiosResponse> {
+export async function addScheduleApi(studyId: number, startDate: Date | null, endDate: Date | null) {
   const refineDate = (date: Date | null): string | null => {
     if (date) {
       const year = date.getFullYear();
@@ -95,12 +91,7 @@ export async function addScheduleApi(
   return await postRequest(`/api/study/${studyId}/schedule`, requestBody);
 }
 //문제 추가 요청
-export async function addProblemApi(
-  studyId: number,
-  scheduleId: number,
-  name: string,
-  link: string,
-): Promise<AxiosResponse> {
+export async function addProblemApi(studyId: number, scheduleId: number, name: string, link: string) {
   const requestBody = {
     problems: [
       {
@@ -120,7 +111,7 @@ export async function submitCodeApi(
   commitMessage: string,
   fileName: string,
   code: string,
-): Promise<AxiosResponse> {
+) {
   const requestBody = {
     commitMessage,
     fileName,
@@ -132,7 +123,7 @@ export async function submitCodeApi(
 }
 
 // 스터디 초대 메일 발송 요청
-export async function sendMailApi(studyId: number, userId: number): Promise<AxiosResponse> {
+export async function sendMailApi(studyId: number, userId: number) {
   const requestBody = {
     userId,
   };
@@ -140,7 +131,7 @@ export async function sendMailApi(studyId: number, userId: number): Promise<Axio
 }
 
 // 댓글(리뷰) 추가 요청
-export async function addReviewApi(codeId: number, content: string, line: number): Promise<AxiosResponse> {
+export async function addReviewApi(codeId: number, content: string, line: number) {
   const requestBody = {
     codeId,
     content,
@@ -150,7 +141,7 @@ export async function addReviewApi(codeId: number, content: string, line: number
 }
 
 //스터디 공지사항 수정 요청
-export async function editNoticeContentApi(studyId: number, content: string): Promise<AxiosResponse> {
+export async function editNoticeContentApi(studyId: number, content: string) {
   const requestBody = {
     content,
   };
@@ -160,7 +151,7 @@ export async function editNoticeContentApi(studyId: number, content: string): Pr
 
 //PUT
 //스터디 회차 일정 수정 요청
-export async function editScheduleApi(studyId: number, scheduleId: number, dateString: string): Promise<AxiosResponse> {
+export async function editScheduleApi(studyId: number, scheduleId: number, dateString: string) {
   const tmp = dateString.split(' ~ ');
   const requestBody = {
     scheduleId,
@@ -178,7 +169,7 @@ export async function editCodeApi(
   commitMessage: string,
   fileName: string,
   content: string,
-): Promise<AxiosResponse> {
+) {
   const requestBody = {
     commitMessage,
     fileName,
@@ -188,12 +179,7 @@ export async function editCodeApi(
   return await putRequest(`/api/study/${studyId}/code/${codeId}`, requestBody);
 }
 //문제 수정 요청
-export async function editProblemApi(
-  studyId: number,
-  problemId: number,
-  name: string,
-  link: string,
-): Promise<AxiosResponse> {
+export async function editProblemApi(studyId: number, problemId: number, name: string, link: string) {
   const requestBody = {
     id: problemId,
     name,
@@ -203,7 +189,7 @@ export async function editProblemApi(
 }
 
 // 리뷰(댓글) 해결 여부 토글 요청
-export async function toggleSolved(reviewId: number, isSolved: boolean): Promise<AxiosResponse> {
+export async function toggleSolved(reviewId: number, isSolved: boolean) {
   const requestBody = {
     isSolved,
   };
@@ -211,7 +197,7 @@ export async function toggleSolved(reviewId: number, isSolved: boolean): Promise
 }
 
 // 리뷰(댓글) 수정 요청
-export async function editReviewApi(reviewId: number, content: string, line: number): Promise<AxiosResponse> {
+export async function editReviewApi(reviewId: number, content: string, line: number) {
   const requestBody = {
     content,
     line,
@@ -221,16 +207,16 @@ export async function editReviewApi(reviewId: number, content: string, line: num
 
 // delete
 // 코드 삭제 요청
-export async function deleteCodeApi(studyId: number, codeId: number): Promise<AxiosResponse> {
+export async function deleteCodeApi(studyId: number, codeId: number) {
   return await deleteRequest(`/api/study/${studyId}/code/${codeId}`);
 }
 
 // 댓글(리뷰) 삭제 요청
-export async function deleteReviewApi(reviewId: number): Promise<AxiosResponse> {
+export async function deleteReviewApi(reviewId: number) {
   return await deleteRequest(`/api/code/review/${reviewId}`);
 }
 
 // 초대 대기 삭제 요청
-export async function deleteInvitationApi(studyId: number, sjiId: number): Promise<AxiosResponse> {
+export async function deleteInvitationApi(studyId: number, sjiId: number) {
   return await deleteRequest(`/api/study/${studyId}/invitation/${sjiId}`);
 }
