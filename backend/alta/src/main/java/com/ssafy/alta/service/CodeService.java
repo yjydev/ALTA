@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -51,6 +52,7 @@ public class CodeService {
     private final RedisService redisService;
     private final ActivityScoreService activityScoreService;
     private final ReadmeService readmeService;
+    private final AlertService alertService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -86,6 +88,13 @@ public class CodeService {
         // 성실점수 추가
         activityScoreService.addScoreForCommentOrCode(userId, studyId, code.getId(), ActivityType.CODE.getActivityIdx());
 
+        // 알림 발생 - 해당 스터디의 팀원들 모두에게
+        List<StudyJoinInfo> sjiList = studyJoinInfoRepository.findByStudyStudyIdWhereState(studyId, "가입");
+        for(StudyJoinInfo sji : sjiList) {
+            // 코드 작성자에게는 알림 발생 X
+            if(sji.getUser().getId().equals(code.getUser().getId())) continue;
+            alertService.processAlert(sji.getUser(), code.getUser(), AlertType.CODE, code);
+        }
 
 //        중복 부분 호출 - 코드 github에 업로드
         this.createCodeInGithub(token, study, code, codeRequest);

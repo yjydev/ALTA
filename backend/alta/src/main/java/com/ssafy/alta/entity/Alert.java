@@ -74,4 +74,8 @@ public class Alert {
                 .isChecked(this.isChecked)
                 .build();
     }
+
+    public void changeChecked() {
+        this.isChecked = true;
+    }
 }

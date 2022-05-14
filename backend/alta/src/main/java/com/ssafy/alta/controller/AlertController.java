@@ -49,8 +49,8 @@ public class AlertController {
 
     @PutMapping("/{alert_id}/checked")
     @ApiOperation(value = "특정 알림을 읽음으로 변경", notes = "특정한 알림을 읽음으로 변경합니다.")
-    public ResponseEntity updateAlertChecked() {
-        alertService.updateAlertChecked();
+    public ResponseEntity updateAlertChecked(@PathVariable("alert_id") Long alertId) {
+        alertService.updateAlertChecked(alertId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
