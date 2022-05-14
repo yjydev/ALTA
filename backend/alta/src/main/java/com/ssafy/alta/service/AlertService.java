@@ -34,4 +34,9 @@ public class AlertService {
     @Transactional(rollbackFor = Exception.class)
     public void updateAlertChecked() {
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void insertAlert() {
+
+    }
 }
