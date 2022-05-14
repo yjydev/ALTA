@@ -33,11 +33,26 @@ import java.util.List;
 public class AlertController {
     private final AlertService alertService;
 
-    @GetMapping("/unchecked")
-    @ApiOperation(value = "아직 확인하지 않은 알림 리스트 조회", notes = "아직 확인하지 않은 알림 리스트를 조회합니다.")
-    public ResponseEntity selectAlertUnChecked() {
+    @GetMapping
+    @ApiOperation(value = "알림 리스트 조회", notes = "알림 리스트를 조회합니다.")
+    public ResponseEntity selectAlertList() {
         List<AlertResponse> alertResponse = alertService.selectAlertUnChecked();
         return new ResponseEntity<>(alertResponse, HttpStatus.OK);
     }
+
+    @PutMapping("/checked")
+    @ApiOperation(value = "알림 모두 읽음으로 변경", notes = "알림을 모두 읽음 상태로 변경합니다")
+    public ResponseEntity updateAlertListChecked() {
+        alertService.updateAlertListChecked();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/{alert_id}/checked")
+    @ApiOperation(value = "특정 알림을 읽음으로 변경", notes = "특정한 알림을 읽음으로 변경합니다.")
+    public ResponseEntity updateAlertChecked() {
+        alertService.updateAlertChecked();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 }

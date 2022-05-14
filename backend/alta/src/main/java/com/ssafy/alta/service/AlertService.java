@@ -26,4 +26,12 @@ public class AlertService {
     public List<AlertResponse> selectAlertUnChecked() {
         return null;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAlertListChecked() {
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAlertChecked() {
+    }
 }

@@ -41,6 +41,8 @@ public class AlertResponse {
     private Date time;
 
     @ApiModelProperty(value = "알림 url")
-    private String redirectUrl;
+    private String url;
 
+    @ApiModelProperty(value = "알림 확인 여부")
+    private Boolean isChecked;
 }
