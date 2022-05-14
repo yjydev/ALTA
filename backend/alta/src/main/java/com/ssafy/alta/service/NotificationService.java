@@ -1,8 +1,14 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.response.AlertResponse;
+import com.ssafy.alta.entity.Alert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -19,12 +25,47 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationService {
     private final UserService userService;
+    private static Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();  // multi-thread에서 동시에 작업하기 위한 map 클래스
 
     private static final Long DEFAULT_TIMEOUT = 60L * 60 * 1000;  // 타임아웃 시간 - 1시간(ms)
 
     public SseEmitter subscribe() {
         String userId = userService.getCurrentUserId();
 
-        return null;
+        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+
+        String dummyData = "EventStream Created! userId : " + userId;
+        this.sendToClient(emitter, userId, dummyData);
+        emitters.put(userId, emitter);
+
+        emitter.onCompletion(() -> emitters.remove(userId));
+        emitter.onTimeout(() -> emitters.remove(userId));
+
+        return emitter;
+    }
+
+    public void sendAlertEvent(Alert alert, String userId) {
+        AlertResponse alertResponse = alert.toDto();
+
+        if (emitters.containsKey(userId)) {
+            SseEmitter emitter = emitters.get(userId);
+            try {
+                this.sendToClient(emitter, userId, alert);
+            } catch (Exception e) {
+                emitters.remove(userId);
+            }
+        }
+
+    }
+
+    private void sendToClient(SseEmitter emitter, String userId, Object data) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(userId)
+                    .name("sse")
+                    .data(data));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
