@@ -21,10 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -53,6 +50,7 @@ public class CodeService {
     private final ActivityScoreService activityScoreService;
     private final ReadmeService readmeService;
     private final AlertService alertService;
+    private final NotificationService notificationService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -90,10 +88,12 @@ public class CodeService {
 
         // 알림 발생 - 해당 스터디의 팀원들 모두에게
         List<StudyJoinInfo> sjiList = studyJoinInfoRepository.findByStudyStudyIdWhereState(studyId, "가입");
+        List<Alert> alertList = new LinkedList<>();
         for(StudyJoinInfo sji : sjiList) {
             // 코드 작성자에게는 알림 발생 X
             if(sji.getUser().getId().equals(code.getUser().getId())) continue;
-            alertService.processAlert(sji.getUser(), code.getUser(), AlertType.CODE, code);
+            Alert alert = alertService.processAlert(sji.getUser(), code.getUser(), AlertType.CODE, code);
+            alertList.add(alert);
         }
 
 //        중복 부분 호출 - 코드 github에 업로드
@@ -101,6 +101,11 @@ public class CodeService {
 
         // 리드미 업데이트
         readmeService.updateReadme(studyId);
+
+        // 프론트로 알림 발생시키기(DB조작, Git조작 다 끝나고 보내도록 마지막에 호출)
+        for(Alert alert : alertList) {
+            notificationService.sendAlertEvent(alert);
+        }
     }
 
 

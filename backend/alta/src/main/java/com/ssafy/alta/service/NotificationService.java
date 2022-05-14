@@ -43,14 +43,15 @@ public class NotificationService {
 
         return emitter;
     }
-
-    public void sendAlertEvent(Alert alert, String userId) {
+    
+    public void sendAlertEvent(Alert alert) {
         AlertResponse alertResponse = alert.toDto();
+        String userId = alert.getReceiver().getId();  // 받을 사람에게 알림 발생할거라
 
         if (emitters.containsKey(userId)) {
             SseEmitter emitter = emitters.get(userId);
             try {
-                this.sendToClient(emitter, userId, alert);
+                this.sendToClient(emitter, userId, alertResponse);
             } catch (Exception e) {
                 emitters.remove(userId);
             }

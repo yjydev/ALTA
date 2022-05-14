@@ -60,9 +60,10 @@ public class AlertService {
 
     // 알림을 처리하는 메서드
     @Transactional(rollbackFor = Exception.class)
-    public void processAlert(User receiver, User sender, AlertType type, Code code) {
+    public Alert processAlert(User receiver, User sender, AlertType type, Code code) {
         Alert alert = makeAlert(receiver, sender, type, code);
         insertAlert(alert);
+        return alert;
     }
 
     // 알림 entity 만들기
