@@ -34,3 +34,15 @@ export type TableData = {
   round: number;
   problems: Problem[];
 };
+
+export type chat = {
+  userId: string;
+  content: string;
+};
+
+export type chatResponse = {
+  nickname: string;
+  image: string;
+  message: string;
+  writeDate: string;
+};
