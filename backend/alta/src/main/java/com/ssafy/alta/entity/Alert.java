@@ -71,7 +71,7 @@ public class Alert {
                 .content(this.content)
                 .time(this.transTime)
                 .url(this.redirect_url)
-                .isChecked(this.isChecked)
+                .isChecked(this.isChecked != null && this.isChecked)
                 .build();
     }
 

@@ -8,10 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -60,9 +58,10 @@ public class AlertService {
 
     // 알림을 처리하는 메서드
     @Transactional(rollbackFor = Exception.class)
-    public void processAlert(User receiver, User sender, AlertType type, Code code) {
+    public Alert processAlert(User receiver, User sender, AlertType type, Code code) {
         Alert alert = makeAlert(receiver, sender, type, code);
         insertAlert(alert);
+        return alert;
     }
 
     // 알림 entity 만들기
@@ -88,5 +87,15 @@ public class AlertService {
     @Transactional(rollbackFor = Exception.class)
     public void insertAlert(Alert alert) {
         alertRepository.save(alert);
+    }
+
+    // 스케줄링으로 알림 삭제
+    @Transactional
+    public void deleteAlertByPeriod(Integer period) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -period);  // 주어진 기간(일) 전의 날짜를 구함
+        Date date = new Date(cal.getTimeInMillis());
+        
+        alertRepository.deleteAlertByPreviousDate(date); // 이 날짜 이전의 알림들을 삭제
     }
 }
