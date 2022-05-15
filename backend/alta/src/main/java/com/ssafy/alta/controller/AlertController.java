@@ -61,7 +61,7 @@ public class AlertController {
 
     // EventSource를 통해 날아오는 요청을 처리 / MIME 타입 - 'text/event-stream'으로 설정
     // accept header가 produces에 명시한 MIME 타입과 같을 때만 해당 타입으로 response 보냄
-    @GetMapping(value = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ApiOperation(value = "서버와 sse 연결 요청", notes = "서버와 sse 연결을 맺습니다.")
     public SseEmitter subscribe() {
         return notificationService.subscribe();
