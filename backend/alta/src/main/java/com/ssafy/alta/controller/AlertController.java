@@ -1,5 +1,6 @@
 package com.ssafy.alta.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.alta.dto.request.CommentUpdateSolvedRequest;
 import com.ssafy.alta.dto.response.AlertResponse;
 import com.ssafy.alta.service.AlertService;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -57,7 +59,9 @@ public class AlertController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(produces = "text/event-stream")
+    // EventSource를 통해 날아오는 요청을 처리 / MIME 타입 - 'text/event-stream'으로 설정
+    // accept header가 produces에 명시한 MIME 타입과 같을 때만 해당 타입으로 response 보냄
+    @GetMapping(value = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ApiOperation(value = "서버와 sse 연결 요청", notes = "서버와 sse 연결을 맺습니다.")
     public SseEmitter subscribe() {
         return notificationService.subscribe();
