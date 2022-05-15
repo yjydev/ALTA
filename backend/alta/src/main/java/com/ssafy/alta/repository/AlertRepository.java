@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,4 +28,8 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     @Modifying
     @Query("update Alert a set a.isChecked=true where a.receiver.id = :userId and a.isChecked=false")
     void updateAlertStatusChecked(@Param("userId") String userId);
+
+    @Modifying
+    @Query("delete from Alert a where a.transTime <= :date")
+    void deleteAlertByPreviousDate(@Param("date") Date date);
 }
