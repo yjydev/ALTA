@@ -3,6 +3,7 @@ package com.ssafy.alta.service;
 import com.ssafy.alta.dto.request.CommentCreateRequest;
 import com.ssafy.alta.dto.request.CommentUpdateRequest;
 import com.ssafy.alta.dto.response.CommentResponse;
+import com.ssafy.alta.entity.AlertType;
 import com.ssafy.alta.entity.Code;
 import com.ssafy.alta.entity.Comment;
 import com.ssafy.alta.entity.User;
@@ -40,6 +41,7 @@ public class CommentService {
     private final CodeRepository codeRepository;
     private final UserService userService;
     private final ActivityScoreService activityScoreService;
+    private final AlertService alertService;
 
     public List<CommentResponse> selectCommentList(Long codeId) {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
@@ -53,7 +55,7 @@ public class CommentService {
         return commentResponseList;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void insertComment(CommentCreateRequest commentRequest) {
         String userId = userService.getCurrentUserId();
 
@@ -69,6 +71,10 @@ public class CommentService {
 
         // 성실점수 추가
         activityScoreService.addScoreForCommentOrCode(userId, code.getProblem().getSchedule().getStudy().getStudyId(), code.getId(), ActivityType.COMMNET.getActivityIdx());
+
+        // 알림 발생
+        if(!code.getUser().getId().equals(comment.getUser().getId()))       // 본인이 코드 작성자이면서 댓글 작성자이면 알림 발생 X
+            alertService.processAlert(code.getUser(), comment.getUser(), AlertType.COMMENT, code);
 
     }
 
