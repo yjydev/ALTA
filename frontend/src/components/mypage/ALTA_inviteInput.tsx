@@ -6,7 +6,11 @@ import { Button, Typography, TextField, Box } from '@mui/material';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
 import { confirmInvitationApi } from '../../api/apis';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { UserDataStore } from '../../context/UserDataContext';
@@ -24,11 +28,18 @@ export default function ALTA_inviteInput() {
       generateTimer('잠시 기다려 주세요', `초대코드 검증 중입니다.`);
       try {
         const studyName = await confirmInvitationApi(inviteCode);
-        generateCheck('가입 완료', `${studyName}스터디에 가입되었습니다`, async () => getStudy());
+        generateCheck(
+          '가입 완료',
+          `${studyName}스터디에 가입되었습니다`,
+          async () => getStudy(),
+        );
         setInviteCode('');
       } catch (err: any) {
         // console.log(err);
-        generateError('이미 가입된 스터디거나 초대 코드가 유효하지 않습니다', `${err.response.data.message}`);
+        generateError(
+          '이미 가입된 스터디거나 초대 코드가 유효하지 않습니다',
+          `${err.response.data.message}`,
+        );
       }
     }
   };
@@ -37,20 +48,23 @@ export default function ALTA_inviteInput() {
     const Userstatus = await getUserData();
 
     if (Userstatus.status === -1) navigate('/');
-    else if (Userstatus.status === -2) generateError('유저 정보를 불러올 수 없습니다', '', () => navigate('/'));
+    else if (Userstatus.status === -2)
+      generateError('유저 정보를 불러올 수 없습니다', '', () => navigate('/'));
   };
 
   return (
-    <Box sx={wrapperStyle}>
+    <Box sx={wrapper}>
       <Box>
         <Button
           onClick={() => handleisToggle(!isToggle)}
-          sx={inputBtnStyle}
+          sx={inputBtn}
           disableElevation
           disableRipple
-          endIcon={isToggle ? <ArrowForwardIosSharpIcon /> : <ArrowBackIosNewIcon />}
+          endIcon={
+            isToggle ? <ArrowForwardIosSharpIcon /> : <ArrowBackIosNewIcon />
+          }
         >
-          <Typography sx={[inputTextStyle]}>초대코드</Typography>
+          <Typography sx={[inputText]}>초대코드</Typography>
         </Button>
       </Box>
       <Box sx={[fieldStyle, isToggle ? { width: '250px' } : { width: '0px' }]}>
@@ -66,35 +80,35 @@ export default function ALTA_inviteInput() {
             onChange={(e) => setInviteCode(e.target.value)}
           />
         </Box>
-        <Box sx={completeBtnStyle}>
-          {isToggle && (
+        <Box sx={completeBtn}>
+          {isToggle ? (
             <Button variant="outlined" onClick={handleInvite}>
               입력
             </Button>
-          )}
+          ) : null}
         </Box>
       </Box>
     </Box>
   );
 }
 
-const wrapperStyle = {
+const wrapper = {
   display: 'flex',
   margin: '10px 0',
   minHeight: '50px',
   justifyContent: 'right',
 };
 
-const inputTextStyle = {
+const inputText = {
   marginRight: 1,
   fontWeight: 'bold',
 };
 
-const inputBtnStyle = {
+const inputBtn = {
   color: '#212121',
 };
 
-const completeBtnStyle = {
+const completeBtn = {
   marginLeft: 2,
 };
 

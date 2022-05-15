@@ -14,12 +14,16 @@ export default function ALTA_UserDataDisplay() {
           <Typography sx={nicknameStyle}>
             {userData.nickname}
             <br />
-            <StyledSpan>{userData.email}</StyledSpan>
+            <Span>{userData.email}</Span>
           </Typography>
-          <StyledTextArea
+          <TextArea
             disabled
-            defaultValue={userData.introduction === null ? '자기소개를 작성해주세요' : `${userData.introduction}`}
-          ></StyledTextArea>
+            defaultValue={
+              userData.introduction === null
+                ? '자기소개를 작성해주세요'
+                : `${userData.introduction}`
+            }
+          ></TextArea>
           <Typography>
             {userData.languageList === null
               ? '사용 언어를 설정해주세요'
@@ -55,7 +59,7 @@ const nicknameStyle = {
   fontSize: '20px',
   fontWeight: 'bold',
 };
-const StyledTextArea = styled.textarea`
+const TextArea = styled.textarea`
   all: unset;
   width: 90%;
   padding: 0 10px;
@@ -63,7 +67,7 @@ const StyledTextArea = styled.textarea`
   border-radius: 5px;
   background-color: rgba(224, 212, 194, 0.6);
 `;
-const StyledSpan = styled.span`
+const Span = styled.span`
   font-size: 16px;
   font-weight: 400;
 `;

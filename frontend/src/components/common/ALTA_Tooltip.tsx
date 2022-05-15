@@ -13,11 +13,11 @@ const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
+export default function ALTA_Tooltip({ children, title }: Props) {
+  return <CustomTooltip title={title}>{children}</CustomTooltip>;
+}
+
 type Props = {
   children: any;
   title: string;
 };
-
-export default function ALTA_Tooltip({ children, title }: Props) {
-  return <CustomTooltip title={title}>{children}</CustomTooltip>;
-}

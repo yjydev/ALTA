@@ -1,50 +1,50 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Box, Button, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import styled from '@emotion/styled';
-import { useNavigate, useParams } from 'react-router-dom';
 
+import { useContext } from 'react';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import { blackColor } from '../../modules/colorChart';
+import styled from '@emotion/styled';
+import ALTA_Tooltip from '../../components/common/ALTA_Tooltip';
 import { generateError } from '../../modules/generateAlert';
+import { useNavigate } from 'react-router-dom';
 import scrollStyle from '../../modules/scrollStyle';
 
-import ALTA_Tooltip from '../../components/common/ALTA_Tooltip';
-
-type Params = {
-  studyId: string | undefined;
-};
-
-export default function ALTA_Notice() {
+export default function ALTA_Notice({ studyId }: { studyId: number }) {
   const { noticeContent, editNoticeContent } = useContext(StudyDetailStore);
   const navigate = useNavigate();
-  const { studyId } = useParams<Params>();
 
-  const [notice, setNotice] = useState<string>(noticeContent.replaceAll('<br />', '\n'));
-  const [noticeEditing, setNoticeEditing] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [notice, setNotice] = useState(
+    noticeContent.replaceAll('<br />', '\n'),
+  );
+  const [noticeEditing, setNoticeEditing] = useState(false);
+  const [noticeEditingLoading, setNoticeEditingLoading] = useState(false);
 
-  const edit = async (): Promise<void> => {
+  const edit = async () => {
     if (notice === noticeContent) {
       return;
     }
 
-    setLoading(true);
-    const noticeStatus = await editNoticeContent(Number(studyId), notice.replaceAll('\n', '<br />'));
+    setNoticeEditingLoading(true);
+    const noticeStatus = await editNoticeContent(
+      studyId,
+      notice.replaceAll('\n', '<br />'),
+    );
     if (noticeStatus.status === -1) navigate('/');
-    else if (noticeStatus.status === -2) generateError('공지사항을 변경할 수 없습니다', '');
+    else if (noticeStatus.status === -2)
+      generateError('공지사항을 변경할 수 없습니다', '');
     else {
       setNoticeEditing(false);
     }
-    setLoading(false);
+    setNoticeEditingLoading(false);
   };
-
   return (
     <>
       <Box sx={titleStyle}>
         공지사항
-        <Button sx={btnStyle} onClick={(): void => setNoticeEditing(!noticeEditing)}>
+        <Button sx={btnStyle} onClick={() => setNoticeEditing(!noticeEditing)}>
           {!noticeEditing && (
             <ALTA_Tooltip title="일정 수정하기">
               <EditIcon />
@@ -58,7 +58,7 @@ export default function ALTA_Notice() {
         </Button>
       </Box>
       <Box sx={[noticeStyle, scrollStyle]}>
-        {loading && (
+        {noticeEditingLoading && (
           <Box
             sx={{
               display: 'flex',
@@ -70,8 +70,8 @@ export default function ALTA_Notice() {
             <CircularProgress />
           </Box>
         )}
-        {!loading && (
-          <StyledTextArea
+        {!noticeEditingLoading && (
+          <TextArea
             value={notice}
             disabled={!noticeEditing}
             onChange={(e) => {
@@ -119,7 +119,7 @@ const noticeStyle = {
   borderRadius: '5px',
 };
 
-const StyledTextArea = styled.textarea`
+const TextArea = styled.textarea`
   all: unset;
   flex: 1 1 auto;
   width: 100%;

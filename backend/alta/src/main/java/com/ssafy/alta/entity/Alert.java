@@ -1,7 +1,5 @@
 package com.ssafy.alta.entity;
 
-import com.ssafy.alta.dto.response.AlertResponse;
-import com.ssafy.alta.dto.response.CommentResponse;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -45,9 +43,8 @@ public class Alert {
     private User sender;
 
     @NonNull
-    @Convert(converter = AlertConverter.class)
     @Column(name = "alert_type")
-    private AlertType type;
+    private int type;
 
     @NonNull
     @Column(name = "alert_content")
@@ -60,22 +57,8 @@ public class Alert {
     @Column(name = "alert_redirect_url")
     private String redirect_url;
 
-    @Column(name = "alert_is_checked")
-    private Boolean isChecked;
-
-    public AlertResponse toDto() {
-        return AlertResponse.builder()
-                .alertId(this.id)
-                .senderNickName(this.sender.getName())
-                .type(this.type.name())
-                .content(this.content)
-                .time(this.transTime)
-                .url(this.redirect_url)
-                .isChecked(this.isChecked != null && this.isChecked)
-                .build();
-    }
-
-    public void changeChecked() {
-        this.isChecked = true;
-    }
+    @NonNull
+    @Column(name = "alert_is_checked", columnDefinition = "TINYINT", length = 1)
+    @ColumnDefault("0")
+    private int isChecked;
 }

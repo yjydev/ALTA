@@ -20,10 +20,10 @@ export default function ALTA_UserData() {
   const { userData, changeProfile } = useContext(UserDataStore);
   const navigate = useNavigate();
 
-  const [alertFold, setAlertFold] = useState<boolean>(false);
+  const [alertFold, setAlertFold] = useState<boolean>(true);
   const [isEditPage, setIsEditPage] = useState<boolean>(false);
 
-  const openEditPage = (): void => {
+  const openEditPage = () => {
     setAlertFold(true);
     setIsEditPage(!isEditPage);
   };
@@ -42,23 +42,32 @@ export default function ALTA_UserData() {
       const userStatus = await changeProfile(img);
 
       if (userStatus.status === -1) navigate('/');
-      else if (userStatus.status === -2) generateError('프로필을 수정할 수 없습니다', '');
+      else if (userStatus.status === -2)
+        generateError('프로필을 수정할 수 없습니다', '');
     }
   };
 
   return (
     <Box sx={wrapper}>
-      <Input id="file" type="file" accept="image/*" onChange={(e) => changeProfileImage(e.target.files)} />
+      <Input
+        id="file"
+        type="file"
+        accept="image/*"
+        onChange={(e) => changeProfileImage(e.target.files)}
+      />
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
-      <Box sx={[userDataStyle, alertFold && unfold]}>
-        {isEditPage && (
+      <Box sx={[userDataStyle, alertFold ? null : unfold]}>
+        {isEditPage ? null : (
           <ALTA_Tooltip title="내 정보 수정">
             <EditIcon sx={[editButtonStyle, inTop]} onClick={openEditPage} />
           </ALTA_Tooltip>
         )}
         <Box sx={userDataTopStyle}>
           <Box sx={profileImgStyle}>
-            <img src={userData.profileUrl || defaultProfile} alt="프로필 이미지" />
+            <img
+              src={userData.profileUrl || defaultProfile}
+              alt="프로필 이미지"
+            />
           </Box>
           <ALTA_Tooltip title="프로필 사진 변경">
             <PhotoButton>
@@ -68,7 +77,11 @@ export default function ALTA_UserData() {
             </PhotoButton>
           </ALTA_Tooltip>
           <Box sx={profileDataStyle}>
-            {isEditPage ? <ALTA_UserDataEdit setIsEditPage={setIsEditPage} /> : <ALTA_UserDataDisplay />}
+            {isEditPage ? (
+              <ALTA_UserDataEdit setIsEditPage={setIsEditPage} />
+            ) : (
+              <ALTA_UserDataDisplay />
+            )}
           </Box>
         </Box>
         <Box>
@@ -77,7 +90,10 @@ export default function ALTA_UserData() {
         {isEditPage ? (
           <></>
         ) : (
-          <Button sx={[editButtonStyle, inBottom]} onClick={() => setAlertFold(!alertFold)}>
+          <Button
+            sx={[editButtonStyle, inBottom]}
+            onClick={() => setAlertFold(!alertFold)}
+          >
             {alertFold ? '알림 설정' : '설정 완료'}
           </Button>
         )}
@@ -115,9 +131,6 @@ const unfold = {
 };
 
 const profileImgStyle = {
-  'display': 'flex',
-  'justifyContent': 'center',
-  'alignItems': 'center',
   'width': '200px',
   'height': '200px',
   'overflow': 'hidden',

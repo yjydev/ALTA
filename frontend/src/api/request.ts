@@ -16,18 +16,29 @@ const makeHeaders = (): HeaderType => {
   };
 };
 
-export const postRequest = async (url: string, body: any, headers = makeHeaders()): Promise<any> => {
+export const postRequest = async (
+  url: string,
+  body: any,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.post(url, body, headers);
 
   return response.data;
 };
 
-export const getRequest = async (url: string, headers = makeHeaders()): Promise<any> => {
+export const getRequest = async (
+  url: string,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.get(url, headers);
   return response.data;
 };
 
-export const putRequest = async (url: string, body: any, headers = makeHeaders()): Promise<any> => {
+export const putRequest = async (
+  url: string,
+  body: any,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.put(url, body, headers);
 
   return response.data;
@@ -46,7 +57,10 @@ export const refreshToken = async (): Promise<any> => {
   return response.data;
 };
 
-export const deleteRequest = async (url: string, headers = makeHeaders()): Promise<any> => {
+export const deleteRequest = async (
+  url: string,
+  headers = makeHeaders(),
+): Promise<any> => {
   const response = await axiosInstance.delete(url, headers);
   return response.data;
 };

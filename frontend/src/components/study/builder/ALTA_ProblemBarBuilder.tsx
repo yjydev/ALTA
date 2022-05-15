@@ -2,22 +2,26 @@ import { Button, Grid, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import styled from '@emotion/styled';
 
-import { StudyMember, Problem, Code } from '../../../types';
+import { Member, Problem, Code } from '../../../types/StudyType';
 import { useNavigate } from 'react-router-dom';
 import { blackColor, mainColor } from '../../../modules/colorChart';
 
 import ALTA_Tooltip from '../../common/ALTA_Tooltip';
 import { generateError } from '../../../modules/generateAlert';
 
-type FilperProps = {
-  fliper: () => void;
-};
-
-export const problemBarFrontBuilder = (problem: Problem, members: StudyMember[], maxPeople: number, studyId: number) =>
-  function Front({ fliper }: FilperProps) {
-    const findCodeId = (nickname: string, codes: Code[]): number | null => {
+export const problemBarFrontBuilder = (
+  problem: Problem,
+  members: Member[],
+  maxPeople: number,
+  studyId: number,
+) =>
+  function Front({ fliper }: { fliper: () => void }) {
+    const findCode = (
+      nickname: string,
+      codes: Code[],
+    ): { id: number; path: string } | null => {
       for (const code of codes) {
-        if (code.nickname === nickname) return code.id;
+        if (code.nickname === nickname) return { id: code.id, path: code.path };
       }
       return null;
     };
@@ -38,24 +42,22 @@ export const problemBarFrontBuilder = (problem: Problem, members: StudyMember[],
         </Grid>
         <Grid item xs={8} sx={sellStyle}>
           <Grid container>
-            {members.map(
-              (member: StudyMember, i: number): JSX.Element => (
-                <Grid item key={`${i}-${member.nickname}`} xs={12 / maxPeople} sx={sellStyle}>
-                  <Typography>
-                    {member.nickname ? (
-                      <SellBtn
-                        codeId={findCodeId(member.nickname, problem.codes)}
-                        problem={problem}
-                        memberName={member.nickname}
-                        studyId={studyId}
-                      />
-                    ) : (
-                      '-'
-                    )}
-                  </Typography>
-                </Grid>
-              ),
-            )}
+            {members.map((member, i) => (
+              <Grid item key={i} xs={12 / maxPeople} sx={sellStyle}>
+                <Typography>
+                  {member.nickname ? (
+                    <SellBtn
+                      code={findCode(member.nickname, problem.codes)}
+                      problem={problem}
+                      memberName={member.nickname}
+                      studyId={studyId}
+                    />
+                  ) : (
+                    '-'
+                  )}
+                </Typography>
+              </Grid>
+            ))}
           </Grid>
         </Grid>
       </Grid>
@@ -63,32 +65,35 @@ export const problemBarFrontBuilder = (problem: Problem, members: StudyMember[],
   };
 
 type SellBtnProps = {
-  codeId: number | null;
+  code: { id: number; path: string } | null;
   problem: Problem;
   memberName: string;
   studyId: number;
 };
 
-function SellBtn({ codeId, problem, memberName, studyId }: SellBtnProps) {
+function SellBtn({ code, problem, memberName, studyId }: SellBtnProps) {
   const navigate = useNavigate();
   const userData = localStorage.getItem('UserData');
 
-  const goCodeSumbit = (): void => {
+  const goCodeSumbit = () => {
     if (userData && JSON.parse(userData).nickname !== memberName) {
       generateError('다른 사람의 제출 버튼을 누르셨습니다', '');
     } else {
       const problemId = problem.id;
-      navigate(`/study/${studyId}/${problemId}/${problem.name}/0/code-submit`);
+      navigate('/code-submit', { state: { problemId, studyId } });
     }
   };
 
-  const goCodeDetail = (): void => {
-    if (codeId) navigate(`/study/${studyId}/${problem.name}/code/${codeId}`);
+  const goCodeDetail = () => {
+    if (code)
+      navigate(`/study/code`, {
+        state: { studyId, codeId: code.id, problem: problem.name },
+      });
   };
 
   return (
     <>
-      {codeId ? (
+      {code ? (
         <a>
           <Button onClick={goCodeDetail}>코드 보기</Button>
         </a>

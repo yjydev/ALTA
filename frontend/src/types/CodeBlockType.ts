@@ -23,6 +23,12 @@ export const defaultCodeData = {
   writer: '',
 };
 
+export type CodeProps = {
+  studyId: number;
+  codeId: number;
+  problem: string;
+};
+
 export type CodeTree = {
   codeId: number;
   id: number;
