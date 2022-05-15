@@ -1,9 +1,11 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 
-type Props = { children: React.ReactNode };
-
-export default function ALTA_ContentsTitle({ children }: Props) {
+export default function ALTA_ContentsTitle({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <Typography sx={title}>{children}</Typography>;
 }
 

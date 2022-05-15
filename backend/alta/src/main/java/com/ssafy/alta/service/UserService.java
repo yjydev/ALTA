@@ -183,7 +183,6 @@ public class UserService {
         userResponse.getUserData().put("languageList", langStringList);
         userResponse.getUserData().put("profileUrl", user.getImage());
         userResponse.getUserData().put("studyList", arrayStudyList);
-        userResponse.getUserData().put("id", userId);
 
         return userResponse;
     }

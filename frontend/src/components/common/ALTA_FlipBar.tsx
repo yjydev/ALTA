@@ -4,14 +4,22 @@ import { useState } from 'react';
 export default function ALTA_FlipBar({ height, Front, Back }: Props) {
   const [flip, setFlip] = useState<number>(180);
 
-  const fliper = (): void => setFlip(flip > 0 ? 0 : 180);
+  const fliper = () => setFlip(flip > 0 ? 0 : 180);
 
   return (
-    <Box sx={wrapperStyle}>
-      <Box sx={[frontStyle, { height }, { transform: `rotateX(${180 - flip}deg)` }]}>
+    <Box sx={wrapper}>
+      <Box
+        sx={[
+          frontStyle,
+          { height },
+          { transform: `rotateX(${180 - flip}deg)` },
+        ]}
+      >
         <Front fliper={fliper} />
       </Box>
-      <Box sx={[backStyle, { height }, { transform: `rotateX(${0 - flip}deg)` }]}>
+      <Box
+        sx={[backStyle, { height }, { transform: `rotateX(${0 - flip}deg)` }]}
+      >
         <Back fliper={fliper} />
       </Box>
     </Box>
@@ -24,7 +32,7 @@ type Props = {
   Back: ({ fliper }: { fliper: () => void }) => JSX.Element;
 };
 
-const wrapperStyle = {
+const wrapper = {
   position: 'relative',
   width: '100%',
   cursor: 'pointer',

@@ -4,7 +4,11 @@ import Swal from 'sweetalert2';
 import '../style/AlertStyle.css';
 import { mainColor, whiteColor, blackColor, errorColor } from './colorChart';
 
-export function generateCheck(title: string, text: string, callback: () => void | Promise<void> | null) {
+export function generateCheck(
+  title: string,
+  text: string,
+  callback: () => void | Promise<void> | null,
+) {
   Swal.fire({
     title,
     text,
@@ -20,7 +24,11 @@ export function generateCheck(title: string, text: string, callback: () => void 
   });
 }
 
-export function generateError(title: string, text: string, callback?: any) {
+export function generateError(
+  title: string,
+  text: string,
+  callback?: () => void,
+) {
   Swal.fire({
     title,
     text,
@@ -57,7 +65,7 @@ export function generateConfirm(
   text: string,
   subTitle: string,
   subText: string,
-  callback: () => Promise<any> | null,
+  callback: () => Promise<void> | null,
 ) {
   Swal.fire({
     title,
@@ -71,20 +79,17 @@ export function generateConfirm(
     background: whiteColor,
   }).then((result) => {
     if (result.isConfirmed) {
-      generateTimer('로딩중', '잠시만 기다려주세요');
-      callback()?.then((result) => {
-        if (result) {
-          Swal.fire({
-            title: `${subTitle}`,
-            text: `${subText}`,
-            icon: 'success',
-            showConfirmButton: true,
-            confirmButtonColor: mainColor,
-            confirmButtonText: '확인',
-            color: blackColor,
-            background: whiteColor,
-          });
-        }
+      Swal.fire({
+        title: `${subTitle}`,
+        text: `${subText}`,
+        icon: 'success',
+        showConfirmButton: true,
+        confirmButtonColor: mainColor,
+        confirmButtonText: '확인',
+        color: blackColor,
+        background: whiteColor,
+      }).then(() => {
+        if (callback) callback();
       });
     }
   });

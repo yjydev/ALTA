@@ -256,6 +256,8 @@ public class ScheduleAndProblemService {
         for(Schedule temp : schedules) {
             long tempStartTime = temp.getStartDate().getTime();
             long tempEndTime = temp.getEndDate().getTime();
+            System.out.println(temp.getStartDate());
+            System.out.println(temp.getEndDate());
             if(endTime >= tempStartTime && startTime <= tempEndTime) {
                 throw new InvalidScheduleException();
             }

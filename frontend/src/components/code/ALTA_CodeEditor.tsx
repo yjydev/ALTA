@@ -1,95 +1,126 @@
-import React, { useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
-import { useNavigate, NavigateFunction } from 'react-router-dom';
-
-import { Box, Grid, Typography, Divider, Button, TextField } from '@mui/material';
-
+import React, {
+  useState,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Grid,
+  Typography,
+  Divider,
+  Button,
+  TextField,
+} from '@mui/material';
 import MonacoEditor from '@uiw/react-monacoeditor';
 
-import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { CodeStore } from '../../context/CodeContext';
 import { editCodeApi } from '../../api/apis';
 
 import ALTA_Dialog from '../common/ALTA_Dialog';
 
-type Props = {
-  setIsCodeEdit: Dispatch<SetStateAction<boolean>>;
-  studyId: string | undefined;
-  codeId: string | undefined;
-  problem: string | undefined;
-};
-
-export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, problem }: Props) {
-  const navigate: NavigateFunction = useNavigate();
+export default function ALTA_CodeEditor({
+  setIsCodeEdit,
+  studyId,
+  codeId,
+  problem,
+}: editorProps) {
+  const navigate = useNavigate();
   const { code } = useContext(CodeStore);
+  const [open, setOpen] = useState<boolean>(false);
 
   const [fileName, setFileName] = useState<string>(`${code.fileName}`);
-  const [content, setContent] = useState<string>(`${code.code}`);
-  const [open, setOpen] = useState<boolean>(false);
   const [commitMessage, setCommitMessage] = useState<string>('');
+  const [content, setContent] = useState<string>(`${code.code}`);
 
-  const handleEditBtn = (): void => {
-    if (content === code.code && fileName === code.fileName) generateError('수정 내역이 없습니다.', '');
+  const handleEditBtn = () => {
+    if (content === code.code && fileName === code.fileName)
+      generateError('수정 내역이 없습니다.', '');
     else setOpen(true);
   };
 
-  const handleEditCode = async (): Promise<void> => {
+  const handleEditCode = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    if (studyId && codeId && problem) {
-      generateTimer('잠시 기다려 주세요', `코드를 수정중입니다`);
-      try {
-        await editCodeApi(parseInt(studyId), parseInt(codeId), commitMessage, fileName, content);
-        setIsCodeEdit(false);
-        generateCheck('수정 완료', `${fileName} 을(를) 성공적으로 수정하였습니다`, (): void =>
-          navigate(`/study/${studyId}/${problem}/code/${codeId}`),
-        );
-      } catch (err: any) {
-        generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
-      }
-      setOpen(false);
+    generateTimer('잠시 기다려 주세요', `코드를 수정중입니다`);
+    try {
+      await editCodeApi(studyId, codeId, commitMessage, fileName, content);
+      setIsCodeEdit(false);
+      generateCheck(
+        '수정 완료',
+        `${fileName} 을(를) 성공적으로 수정하였습니다`,
+        () => navigate(`/study/code`, { state: { studyId, codeId, problem } }),
+      );
+    } catch (err: any) {
+      generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
     }
+    setOpen(false);
   };
 
-  useEffect((): void => {
+  useEffect(() => {
     setCommitMessage(`Update ${fileName}`);
   }, [fileName]);
 
   return (
     <>
-      <ALTA_Dialog open={open} setOpen={setOpen} title="커밋 메세지" handleComplete={handleEditCode}>
+      <ALTA_Dialog
+        open={open}
+        setOpen={setOpen}
+        title="커밋 메세지"
+        handleComplete={handleEditCode}
+      >
         <Box sx={commitStyle}>
           <TextField
             id="코드 수정"
             variant="standard"
             placeholder="커밋 메세지를 입력해주세요"
             value={commitMessage}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setCommitMessage(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+              setCommitMessage(e.target.value)
+            }
             sx={messageStyle}
           />
         </Box>
       </ALTA_Dialog>
       <Grid container direction="column" spacing={5}>
         <Grid item>
-          <Box sx={codeEditorHeaderStyle}>
+          <Box pt={3} pb={3}>
             <Box sx={titleStyle}>
               <Typography sx={problemStyle}>{problem}</Typography>
               <Box>
-                <Button onClick={handleEditBtn} variant="contained" sx={editBtnStyle}>
+                <Button
+                  onClick={handleEditBtn}
+                  variant="contained"
+                  sx={editBtnStyle}
+                >
                   수정 완료
                 </Button>
-                <Button sx={cancelBtnStyle} onClick={(): void => setIsCodeEdit(false)} variant="contained">
+                <Button
+                  sx={cancelBtnStyle}
+                  onClick={() => setIsCodeEdit(false)}
+                  variant="contained"
+                >
                   취소
                 </Button>
               </Box>
             </Box>
             <Box sx={titleStyle}>
               <TextField
-                sx={titleInputStyle}
+                sx={titleInput}
                 defaultValue={code.fileName}
                 inputProps={{ style: { fontSize: 35 } }}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setFileName(e.target.value)}
+                onChange={(e) => setFileName(e.target.value)}
               />
-              <Typography sx={codeWritterStyle}>작성자 : {code.writer}</Typography>
+              <Typography sx={codeWritterStyle} align="right">
+                작성자 : {code.writer}
+              </Typography>
             </Box>
           </Box>
           <Divider style={{ width: '100%' }} />
@@ -104,7 +135,7 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
                 theme: 'vs-dark',
                 smoothScrolling: true,
               }}
-              onChange={(evn: string): void => {
+              onChange={(evn) => {
                 setContent(evn);
               }}
             />
@@ -114,10 +145,6 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
     </>
   );
 }
-
-const codeEditorHeaderStyle = {
-  paddingY: 3,
-};
 
 const codeBlockStyle = {
   height: '33rem',
@@ -151,7 +178,7 @@ const cancelBtnStyle = {
   'marginRight': 2,
 };
 
-const titleInputStyle = {
+const titleInput = {
   width: '30rem',
 };
 
@@ -164,5 +191,11 @@ const problemStyle = {
 const codeWritterStyle = {
   fontSize: '20px',
   marginRight: '16px',
-  textAlign: 'right',
+};
+
+type editorProps = {
+  setIsCodeEdit: Dispatch<SetStateAction<boolean>>;
+  codeId: number;
+  studyId: number;
+  problem: string;
 };

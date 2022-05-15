@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, NavigateFunction } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 import {
   Grid,
   Box,
@@ -10,28 +9,33 @@ import {
   Autocomplete,
   CircularProgress,
   Typography,
-  AutocompleteRenderInputParams,
 } from '@mui/material';
 
 import { sendMailApi, searchMemberApi } from '../../api/apis';
-import { userList, defaultUser } from '../../types';
 import { MemberStore } from '../../context/MemberContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
-import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
+import {
+  generateCheck,
+  generateError,
+  generateTimer,
+} from '../../modules/generateAlert';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList({ studyId }: { studyId: number }) {
-  const navigate: NavigateFunction = useNavigate();
-  const { invitable, setIsRefresh } = useContext(MemberStore);
+  const navigate = useNavigate();
+  const { invitable } = useContext(MemberStore);
 
-  const [searchOpen, setSearchOpen] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>('');
   const [userList, setUserList] = useState<userList[]>([]);
-  const [loading, setLoading] = useState<boolean>(searchOpen && userList.length === 0);
+  const [searchOpen, setSearchOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(
+    searchOpen && userList.length === 0,
+  );
+  const [inputValue, setInputValue] = useState<string>('');
+
   const [selectUser, setSelectUser] = useState<userList>(defaultUser);
 
-  const searchName = async (nickname: string): Promise<void> => {
+  const searchName = async (nickname: string) => {
     setInputValue(nickname);
     if (!(await checkLogin()).status) navigate('/');
     setLoading(true);
@@ -43,28 +47,40 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
       if (select) {
         setSelectUser(select);
       }
-    } catch {
+    } catch (err) {
       setLoading(false);
     }
   };
 
-  const handleInvite = async (): Promise<void> => {
+  const handleInvite = async () => {
     if (!(await checkLogin()).status) navigate('/');
-    if (!invitable) generateError('초대가 불가합니다', '스터디 최대 인원에 도달하였습니다');
+    if (!invitable)
+      generateError('초대가 불가합니다', '스터디 최대 인원에 도달하였습니다');
     else {
-      generateTimer('잠시 기다려 주세요', `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`);
+      generateTimer(
+        '잠시 기다려 주세요',
+        `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`,
+      );
       if (inputValue) {
         if (selectUser.email) {
           try {
             const res = await sendMailApi(studyId, parseInt(selectUser.id));
-            generateCheck('초대 완료', `${selectUser.nickname} 님에게 초대 메일을 발송하였습니다`, () =>
-              setIsRefresh(true),
+            generateCheck(
+              '초대 완료',
+              `${selectUser.nickname} 님에게 초대 메일을 발송하였습니다`,
+              () => navigate(`/study/member`, { state: { studyId } }),
             );
           } catch (err: any) {
-            generateError(`초대를 보낼 수 없습니다`, `${err.response.data.message}`);
+            generateError(
+              `초대를 보낼 수 없습니다`,
+              `${err.response.data.message}`,
+            );
           }
         } else {
-          generateError(`${selectUser.nickname} 님의 이메일이 존재하지 않습니다.`, ``);
+          generateError(
+            `${selectUser.nickname} 님의 이메일이 존재하지 않습니다.`,
+            ``,
+          );
         }
       } else {
         generateError(`초대할 사람의 닉네임을 입력해주세요`, ``);
@@ -75,40 +91,40 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
   };
 
   return (
-    <Box sx={inviteBoxStyle}>
+    <Box pb={3}>
       <ALTA_ContentsTitle> 멤버 초대 </ALTA_ContentsTitle>
-      <Box sx={inputBoxStyle}>
+      <Box sx={wrapper} mt={4}>
         {invitable ? (
-          <Grid container columns={14} spacing={2}>
+          <Grid container columns={14} pl={3} spacing={2}>
             <Grid item xs={11}>
               <Autocomplete
                 open={searchOpen}
-                onOpen={(): void => {
+                onOpen={() => {
                   setSearchOpen(true);
                 }}
-                onClose={(): void => {
+                onClose={() => {
                   setSearchOpen(false);
                 }}
-                isOptionEqualToValue={(option, value): boolean => option === value}
+                isOptionEqualToValue={(option, value) => option === value}
                 // 자동완성 기능으로 특정 옵션을 선택한 경우
-                onChange={(e: React.SyntheticEvent<Element, Event>, obj: userList | null): void => {
+                onChange={(e, obj) => {
                   if (obj) {
                     setSelectUser(obj);
                     setInputValue(obj.nickname);
                   }
                 }}
-                onInputChange={(e: React.SyntheticEvent<Element, Event>): void => {
+                onInputChange={(e) => {
                   if (e) searchName((e.target as HTMLInputElement).value);
                 }}
                 inputValue={inputValue}
-                getOptionLabel={(option: userList): string => option.nickname}
+                getOptionLabel={(option) => option.nickname}
                 options={[selectUser, ...userList]}
                 noOptionsText={'일치하는 데이터가 없습니다'}
                 loading={loading}
-                renderInput={(params: AutocompleteRenderInputParams): JSX.Element => (
+                renderInput={(params) => (
                   <Grid container alignItems="center">
                     <Grid item xs={2} sx={labelStyle}>
-                      <InputLabel htmlFor="nickname-input" sx={nameLabelStyle}>
+                      <InputLabel htmlFor="nickname-input" sx={nameLabel}>
                         닉네임
                       </InputLabel>
                     </Grid>
@@ -122,7 +138,9 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
                           ...params.InputProps,
                           endAdornment: (
                             <React.Fragment>
-                              {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                              {loading ? (
+                                <CircularProgress color="inherit" size={20} />
+                              ) : null}
                             </React.Fragment>
                           ),
                         }}
@@ -133,7 +151,7 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
               />
             </Grid>
             <Grid item xs={3} sx={btnStyle}>
-              <Button variant="contained" sx={inviteBtnStyle} onClick={handleInvite}>
+              <Button variant="contained" sx={inviteBtn} onClick={handleInvite}>
                 초대
               </Button>
             </Grid>
@@ -146,13 +164,9 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
   );
 }
 
-const inviteBoxStyle = {
-  paddingBottom: 3,
-};
-
 // default btn color = primary'rgb(109,152,134,1)' / hover = 'rgb(76, 106, 93)'
 
-const inviteBtnStyle = {
+const inviteBtn = {
   'backgroundColor': 'secondary.main',
   'color': '#000000',
   '&:hover': {
@@ -165,7 +179,7 @@ const messageStyle = {
   fontWeight: 'bold',
 };
 
-const nameLabelStyle = {
+const nameLabel = {
   fontWeight: 'bold',
   color: '#000000',
 };
@@ -180,11 +194,22 @@ const btnStyle = {
   alignItems: 'left',
 };
 
-const inputBoxStyle = {
+const wrapper = {
   backgroundColor: '#ffffff',
   height: '4.5rem',
   alignItems: 'center',
   display: 'flex',
   justifyContent: 'center',
-  marginTop: 4,
+};
+
+type userList = {
+  id: string;
+  email: string;
+  nickname: string;
+};
+
+const defaultUser: userList = {
+  id: '',
+  email: '',
+  nickname: '',
 };

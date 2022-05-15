@@ -1,27 +1,32 @@
 import { Box, Card, Typography } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 
-import { StudyMember } from '../../types';
-
-type Props = { member: StudyMember };
+import { Member } from '../../types/StudyType';
 
 export default function ALTA_StudyMemberCard({ member }: Props) {
   return (
     <Card
-      className="memberCard"
       variant="outlined"
-      sx={[memberCardStyle, member.email === '' && memberCardStyle_Empth]}
+      sx={[card, { opacity: `${member.email === '' ? '.5' : ''}` }]}
     >
-      <Box className="profileImg" sx={profileStyle}></Box>
-      <Typography className="nickname" sx={nicknameStyle}>
+      <Box sx={profile}></Box>
+      <Typography sx={nickname}>
         <span>{member.nickname}</span>
-        {member.position === '그룹장' ? <StarIcon sx={LeaderIconStyle} /> : null}
+        {member.position === '그룹장' ? (
+          <StarIcon
+            sx={{ fontSize: 'medium', margin: '5px', color: 'secondary.main' }}
+          />
+        ) : null}
       </Typography>
     </Card>
   );
 }
 
-const memberCardStyle = {
+type Props = {
+  member: Member;
+};
+
+const card = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -30,22 +35,16 @@ const memberCardStyle = {
   backgroundColor: 'primary.main',
 };
 
-const memberCardStyle_Empth = {
-  opacity: '.5',
-};
-
-const profileStyle = {
+const profile = {
   width: '40px',
   height: '40px',
   borderRadius: '50px',
   backgroundColor: 'black',
 };
 
-const nicknameStyle = {
+const nickname = {
   display: 'flex',
   alignItems: 'center',
   flex: '1 1 auto',
   marginLeft: '20px',
 };
-
-const LeaderIconStyle = { fontSize: 'medium', margin: '5px', color: 'secondary.main' };

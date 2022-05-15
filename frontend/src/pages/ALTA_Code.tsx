@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import CodeContext from '../context/CodeContext';
 
@@ -11,11 +12,18 @@ export default function ALTA_Code() {
   useEffect(() => {
     document.title = 'ALTA | 코드 상세보기';
   }, []);
+  const { studyId, codeId, problem } = JSON.parse(
+    JSON.stringify(useLocation().state),
+  );
   const Header = () => <ALTA_Header />;
   const Contents = () => (
     <CodeContext>
       <Div>
-        <ALTA_CodeContents />
+        <ALTA_CodeContents
+          studyId={studyId}
+          codeId={codeId}
+          problem={problem}
+        />
       </Div>
     </CodeContext>
   );

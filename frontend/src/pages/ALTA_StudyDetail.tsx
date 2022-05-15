@@ -21,9 +21,11 @@ function Header() {
 }
 
 function Contents() {
+  //useLocation type 오류로 인한 임시 방편
+  const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
   return (
     <StudyDetailContext>
-      <ALTA_StudyDetailContents />
+      <ALTA_StudyDetailContents studyId={studyId} />
     </StudyDetailContext>
   );
 }

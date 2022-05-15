@@ -1,100 +1,90 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams, NavigateFunction } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { deleteCodeApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
+import { CodeProps } from '../../types/CodeBlockType';
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
 
 import ALTA_Loading from '../common/ALTA_Loading';
-import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
-
 import ALTA_CodeEditor from './ALTA_CodeEditor';
+import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 import ALTA_CodeTree from './ALTA_CodeTree';
 import ALTA_CodeCommentList from './ALTA_CodeCommentList';
 
-type ParamType = {
-  studyId: string | undefined;
-  codeId: string | undefined;
-  problem: string | undefined;
-};
-
-export default function ALTA_CodeContents() {
-  const navigate: NavigateFunction = useNavigate();
-
-  const { studyId, codeId, problem } = useParams<ParamType>();
-  const { code, getCode, user, getCodeTree } = useContext(CodeStore);
-
+export default function ALTA_CodeContents({
+  studyId,
+  codeId,
+  problem,
+}: CodeProps) {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
-  const [isCodeEdit, setIsCodeEdit] = useState<boolean>(false);
+  const { code, getCode, user, getCodeTree } = useContext(CodeStore);
+  const [isCodeEdit, setIsCodeEdit] = useState(false);
 
-  const handleDelete = async (): Promise<void> => {
+  const handleDelete = async () => {
     if (!(await checkLogin()).status) navigate('/');
-
     generateConfirm(
       '정말 삭제하시겠습니까?',
       '한번 삭제하면 되돌릴 수 없습니다.',
       '코드가 삭제되었습니다.',
       `${code.fileName} 이(가) 성공적으로 삭제되었습니다`,
-      async (): Promise<boolean> => delCode(),
+      async () => delCode(),
     );
   };
 
-  const delCode = async (): Promise<boolean> => {
-    if (studyId && codeId) {
-      try {
-        await deleteCodeApi(parseInt(studyId), parseInt(codeId));
-        goToDetail();
-        return true;
-      } catch (err: any) {
-        generateError('코드 삭제에 실패하였습니다', `${err.response.data.message}`);
-        return false;
-      }
-    } else {
-      return false;
+  const delCode = async () => {
+    try {
+      await deleteCodeApi(studyId, codeId);
+      goToDetail(studyId);
+    } catch (err: any) {
+      generateError(
+        '코드 삭제에 실패하였습니다',
+        `${err.response.data.message}`,
+      );
     }
   };
 
-  const goToDetail = (): void => navigate(`/study/${studyId}/detail`);
+  const goToDetail = (studyId: number) =>
+    navigate('/study/detail', { state: { studyId } });
 
-  const goToresubmit = (): void => navigate(`/study/${studyId}/0/${problem}/${codeId}/code-submit`);
+  const goToresubmit = (studyId: number, codeId: number) =>
+    navigate('/code-submit', { state: { studyId, codeId } });
 
-  useEffect((): void => {
-    setLoading(true);
-    (async function (): Promise<void> {
-      if (studyId && codeId) {
-        const [codeStatus, TreeStatus] = await Promise.all([
-          getCode(parseInt(studyId), parseInt(codeId)),
-          getCodeTree(parseInt(studyId)),
-        ]);
-        if (codeStatus.status === -1 || TreeStatus.status === -1) navigate('/');
-        else if (codeStatus.status === -2) generateError('코드 정보를 불러오는데 실패하였습니다', '');
-        else if (TreeStatus.status === -2) generateError('폴더 구조를 불러오는데 실패하였습니다', '');
-        else setLoading(false);
-      } else {
-        navigate('/code/404-not-found');
-      }
+  useEffect(() => {
+    (async function () {
+      const [codeStatus, TreeStatus] = await Promise.all([
+        getCode(studyId, codeId),
+        getCodeTree(studyId),
+      ]);
+      if (codeStatus.status === -1 || TreeStatus.status === -1) navigate('/');
+      else if (codeStatus.status === -2)
+        generateError('코드 정보를 불러오는데 실패하였습니다', '');
+      else if (TreeStatus.status === -2)
+        generateError('폴더 구조를 불러오는데 실패하였습니다', '');
+      else setLoading(false);
     })();
-  }, [codeId, isCodeEdit]);
+  }, []);
 
   return (
     <>
       {loading && <ALTA_Loading />}
       {!loading && (
-        <Grid className="codeContentGrid" container sx={codeContentStyle} spacing={8}>
-          <Grid item sx={codeTreeStyle} md={3}>
-            <Box className="codeTreeBox" sx={codeTreeBoxStyle}>
-              <ALTA_CodeTree studyId={studyId} />
+        <Grid container sx={wrapper} spacing={8}>
+          <Grid item sx={codeTree_wrapper} md={3}>
+            <Box pt={4} pl={2}>
+              <ALTA_CodeTree />
             </Box>
           </Grid>
           <Grid item md={9}>
-            <Box className="codeBlockBox" sx={codeBlockBoxStyle}>
+            <Box pr={10}>
               <Grid container direction="column" rowGap={3}>
-                <Grid item>
+                <Grid item sx={codeBlock_wrapper}>
                   {isCodeEdit ? (
                     <ALTA_CodeEditor
                       setIsCodeEdit={setIsCodeEdit}
@@ -105,31 +95,41 @@ export default function ALTA_CodeContents() {
                   ) : (
                     <Grid container direction="column" spacing={5}>
                       <Grid item>
-                        <Box className="codeBlockHeader" sx={codeBlockHeaderStyle}>
-                          <Box className="codeBlockTitle" sx={titleStyle}>
+                        <Box pt={3} pb={3}>
+                          <Box sx={titleStyle}>
                             <Button
                               startIcon={<ChevronLeftIcon />}
                               variant="contained"
-                              sx={backBtnStyle}
-                              onClick={goToDetail}
+                              sx={backBtn}
+                              onClick={() => {
+                                goToDetail(studyId);
+                              }}
                             >
                               Back
                             </Button>
                             {code.writer === user ? (
-                              <Box className="codeBlockBtnGroup">
-                                <Button sx={reupBtnStyle} variant="contained" onClick={goToresubmit}>
+                              <Box>
+                                <Button
+                                  sx={reupBtn}
+                                  variant="contained"
+                                  onClick={() => goToresubmit(studyId, codeId)}
+                                >
                                   재업로드
                                 </Button>
                                 <Button
                                   variant="contained"
-                                  sx={editBtnStyle}
-                                  onClick={(): void => {
+                                  sx={editBtn}
+                                  onClick={() => {
                                     setIsCodeEdit(true);
                                   }}
                                 >
                                   수정
                                 </Button>
-                                <Button sx={delBtnStyle} variant="contained" onClick={handleDelete}>
+                                <Button
+                                  sx={delBtn}
+                                  variant="contained"
+                                  onClick={handleDelete}
+                                >
                                   삭제
                                 </Button>
                               </Box>
@@ -137,22 +137,31 @@ export default function ALTA_CodeContents() {
                           </Box>
                           <Typography sx={problemStyle}>{problem}</Typography>
                           <Box sx={titleStyle}>
-                            <Typography sx={codeTitleStyle}>{code.fileName}</Typography>
+                            <Typography sx={codeTitleStyle}>
+                              {code.fileName}
+                            </Typography>
                             <Box>
-                              <Typography sx={codeWritterStyle}>작성자 : {code.writer}</Typography>
-                              <Typography sx={dateStyle}>마지막 수정 : {displayAt(code.createDate)}</Typography>
+                              <Typography sx={codeWritterStyle} align="right">
+                                작성자 : {code.writer}
+                              </Typography>
+                              <Typography sx={dateStyle}>
+                                마지막 수정 : {displayAt(code.createDate)}
+                              </Typography>
                             </Box>
                           </Box>
                         </Box>
                         <Divider style={{ width: '100%' }} />
                       </Grid>
                       <Grid item id="code-block">
-                        <ALTA_CodeBlock code={code.code} language={code.language} />
+                        <ALTA_CodeBlock
+                          code={code.code}
+                          language={code.language}
+                        />
                       </Grid>
                     </Grid>
                   )}
                 </Grid>
-                <Grid item sx={codeCommentStyle}>
+                <Grid item sx={codeComment_wrapper}>
                   <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
                   <ALTA_CodeCommentList codeId={codeId} />
                 </Grid>
@@ -165,38 +174,28 @@ export default function ALTA_CodeContents() {
   );
 }
 
-const codeCommentStyle = {
+const codeComment_wrapper = {
   padding: '10px',
 };
 
-const codeBlockBoxStyle = {
-  paddingRight: 10,
+const codeBlock_wrapper = {
+  // maxWidth: '100vw',
 };
 
-const codeBlockHeaderStyle = {
-  paddingTop: 3,
-  paddingBottom: 3,
-};
-
-const codeTreeStyle = {
+const codeTree_wrapper = {
   display: { xs: 'none', md: 'block' },
 };
 
-const codeTreeBoxStyle = {
-  paddingTop: 4,
-  paddingLeft: 2,
-};
-
-const codeContentStyle = {
+const wrapper = {
   width: '100%',
 };
 
-const backBtnStyle = {
+const backBtn = {
   fontSize: '15px',
   marginBottom: '18px',
 };
 
-const editBtnStyle = {
+const editBtn = {
   'fontSize': '15px',
   'marginRight': ' 10px',
   'backgroundColor': 'secondary.main',
@@ -206,7 +205,7 @@ const editBtnStyle = {
   'color': '#212121',
 };
 
-const delBtnStyle = {
+const delBtn = {
   'fontSize': '15px',
   'marginRight': ' 10px',
   'backgroundColor': 'error.main',
@@ -216,7 +215,7 @@ const delBtnStyle = {
   },
 };
 
-const reupBtnStyle = {
+const reupBtn = {
   fontSize: '15px',
   marginRight: ' 10px',
 };
@@ -247,5 +246,4 @@ const codeWritterStyle = {
   fontSize: '20px',
   marginRight: '16px',
   marginTop: '8px',
-  textAlign: 'right',
 };

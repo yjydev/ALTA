@@ -29,9 +29,6 @@ public class CommentResponse {
     @ApiModelProperty(value = "댓글 작성자 이름")
     private String reviewerName;
 
-    @ApiModelProperty(value = "댓글 작성자 프로필 url")
-    private String imageUrl;
-
     @ApiModelProperty(value = "댓글 내용")
     private String comment;
 
