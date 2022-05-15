@@ -12,15 +12,33 @@ import { addProblemApi, editProblemApi } from '../../../api/apis';
 
 import ALTA_Tooltip from '../../common/ALTA_Tooltip';
 
-type FliperProps = { fliper: () => void };
-
 export const addProblemBarFrontBuilder = () =>
-  function Front({ fliper }: FliperProps) {
+  function Front({ fliper }: { fliper: () => void }) {
+    const PlainBtn = styled.button`
+      all: unset;
+      width: 100%;
+      &:active {
+        transform: scale(0.99);
+      }
+      background-color: lightgray;
+      &:hover {
+        background-color: gray;
+      }
+      transition: background-color 0.3s;
+    `;
     return (
       <ALTA_Tooltip title="문제 추가하기">
         <PlainBtn onClick={fliper}>
-          <Box sx={addProblemBarFrontStyle}>
-            <AddCircleIcon sx={addIconStyle} />
+          <Box
+            sx={{
+              display: 'flex',
+              height: 40,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <AddCircleIcon sx={{ color: blackColor, opacity: '0.5' }} />{' '}
           </Box>
         </PlainBtn>
       </ALTA_Tooltip>
@@ -34,18 +52,20 @@ export const addProblemBarBackBuilder = (
   link?: string,
   id?: number,
 ) =>
-  function Back({ fliper }: FliperProps) {
+  function Back({ fliper }: { fliper: () => void }) {
     const { getStudyDetail } = useContext(StudyDetailStore);
     const navigate = useNavigate();
 
     const [problemId, _] = useState<number>(id ? id : -1);
     const [problemName, setPropblemName] = useState<string>(name ? name : '');
     const [problemLink, setPropblemLink] = useState<string>(link ? link : '');
-    const [editProblemLoading, setEditProblemLoading] = useState<boolean>(false);
+    const [editProblemLoading, setEditProblemLoading] =
+      useState<boolean>(false);
 
-    const addProblem = async (): Promise<void> => {
+    const addProblem = async () => {
       if (!(await checkLogin())) navigate('/');
 
+      //unix 시간을 비교하여 시작 > 마감의 경우 예외 처리
       if (!problemName || !problemLink) {
         generateError('문제 이름과 링크를 모두 입력해주세요', '');
         return;
@@ -61,7 +81,7 @@ export const addProblemBarBackBuilder = (
       getStudyDetail(studyId);
     };
 
-    const editProblem = async (): Promise<void> => {
+    const editProblem = async () => {
       if (!(await checkLogin())) navigate('/');
 
       if (name && name === problemName && link && link === problemLink) {
@@ -92,14 +112,27 @@ export const addProblemBarBackBuilder = (
             width: '100%',
           }}
         >
-          {editProblemLoading && <LinearProgress sx={{ width: '100%', margin: '10px' }} color="secondary" />}
+          {editProblemLoading && (
+            <LinearProgress
+              sx={{ width: '100%', margin: '10px' }}
+              color="secondary"
+            />
+          )}
           {!editProblemLoading && (
             <Box sx={{ display: 'flex' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}
+              >
                 <Typography sx={{ marginRight: '10px' }}>문제 이름</Typography>
-                <Input type="text" value={problemName} onChange={(e) => setPropblemName(e.target.value)} />
+                <Input
+                  type="text"
+                  value={problemName}
+                  onChange={(e) => setPropblemName(e.target.value)}
+                />
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}
+              >
                 <Typography sx={{ marginRight: '10px' }}>링크</Typography>
                 <Input
                   type="text"
@@ -120,15 +153,6 @@ export const addProblemBarBackBuilder = (
     );
   };
 
-const addIconStyle = { color: blackColor, opacity: '0.5' };
-const addProblemBarFrontStyle = {
-  display: 'flex',
-  height: 40,
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
-
 const Input = styled.input`
   all: unset;
   width: 200px;
@@ -138,17 +162,4 @@ const Input = styled.input`
   box-sizing: border-box;
   border-bottom: 1px solid ${subColor};
   background-color: ${whiteColor};
-`;
-
-const PlainBtn = styled.button`
-  all: unset;
-  width: 100%;
-  &:active {
-    transform: scale(0.99);
-  }
-  background-color: lightgray;
-  &:hover {
-    background-color: gray;
-  }
-  transition: background-color 0.3s;
 `;

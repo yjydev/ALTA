@@ -5,11 +5,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { Button, Grid, LinearProgress, Typography, Alert } from '@mui/material';
 
-import { StudyMember, Problem } from '../../types';
+import { Problem } from '../../types/StudyType';
 import { blackColor, subColor } from '../../modules/colorChart';
 import { problemBarFrontBuilder } from './builder/ALTA_ProblemBarBuilder';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
-import { addProblemBarBackBuilder, addProblemBarFrontBuilder } from './builder/ALTA_AddProblemBarBuilder';
+import {
+  addProblemBarBackBuilder,
+  addProblemBarFrontBuilder,
+} from './builder/ALTA_AddProblemBarBuilder';
 
 import ALTA_FlipBar from '../common/ALTA_FlipBar';
 import ALTA_Tooltip from '../common/ALTA_Tooltip';
@@ -18,48 +21,75 @@ type Props = {
   problems: Problem[];
   studyId: number;
   scheduleId: number;
-  table: any;
+  roundTable: any;
 };
 
-export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table }: Props) {
+export default function ALTA_ProblemTable({
+  problems,
+  studyId,
+  scheduleId,
+  roundTable,
+}: Props) {
   const { members, maxPeople, editSchedule } = useContext(StudyDetailStore);
 
   const [scheduleEditing, setScheduleEditing] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
-  const [schedule, setSchedule] = useState<string>(`${table.startDate} ~ ${table.endDate}`);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [editScheduleError, setEditScheduleError] = useState<boolean>(false);
+  const [scheduleString, setScheduleString] = useState<string>(
+    `${roundTable.startDate} ~ ${roundTable.endDate}`,
+  );
+  const [editScheduleLoading, setEditScheduleLoading] =
+    useState<boolean>(false);
 
-  const edit = async (studyId: number, scheduleId: number, dateString: string): Promise<void> => {
-    if (schedule === `${table.startDate} ~ ${table.endDate}`) {
-      setIsError(true);
+  const edit = async (
+    studyId: number,
+    scheduleId: number,
+    dateString: string,
+  ) => {
+    if (scheduleString === `${roundTable.startDate} ~ ${roundTable.endDate}`) {
+      setEditScheduleError(true);
       setTimeout(() => {
-        setIsError(false);
+        setEditScheduleError(false);
       }, 2500);
+
+      return;
     }
-    setLoading(true);
+    setEditScheduleLoading(true);
     await editSchedule(studyId, scheduleId, dateString);
-    setLoading(false);
+    setEditScheduleLoading(false);
   };
 
   return (
     <>
       <Box sx={sectionStyle}>
-        <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          {`${table.round} 회차 : `}
-          <Alert sx={[alertStyle, isError && errorVisible]} severity="error">
+        <Box
+          sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+        >
+          {`${roundTable.round} 회차 : `}
+          <Alert
+            sx={[alertStyle, editScheduleError && errorVisible]}
+            severity="error"
+          >
             일정에 변화가 없어 반영되지 않습니다
           </Alert>
-          {loading && <LinearProgress sx={{ width: '200px', marginLeft: '5px' }} color="secondary" />}
-          {!loading && (
-            <StyledInput
-              type="text"
-              className={`${scheduleEditing && 'editing'}`}
-              value={schedule}
-              disabled={!scheduleEditing}
-              onChange={(e) => setSchedule(e.target.value)}
+          {editScheduleLoading && (
+            <LinearProgress
+              sx={{ width: '200px', marginLeft: '5px' }}
+              color="secondary"
             />
           )}
-          <Button sx={scheduleEditBtnStyle} onClick={() => setScheduleEditing(!scheduleEditing)}>
+          {!editScheduleLoading && (
+            <Input
+              type="text"
+              className={`${scheduleEditing && 'editing'}`}
+              value={scheduleString}
+              disabled={!scheduleEditing}
+              onChange={(e) => setScheduleString(e.target.value)}
+            />
+          )}
+          <Button
+            sx={scheduleEditBtnStyle}
+            onClick={() => setScheduleEditing(!scheduleEditing)}
+          >
             {!scheduleEditing && (
               <ALTA_Tooltip title="일정 수정하기">
                 <EditIcon />
@@ -67,7 +97,9 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
             )}
             {scheduleEditing && (
               <ALTA_Tooltip title="저장하기">
-                <SaveIcon onClick={() => edit(studyId, table.id, schedule)} />
+                <SaveIcon
+                  onClick={() => edit(studyId, roundTable.id, scheduleString)}
+                />
               </ALTA_Tooltip>
             )}
           </Button>
@@ -82,13 +114,18 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
               </Grid>
               <Grid item xs={8} sx={[sellStyle, ellipsisStyle]}>
                 <Grid container>
-                  {members.map(
-                    (member: StudyMember, i: number): JSX.Element => (
-                      <Grid item key={`${i}-${member.nickname}`} xs={12 / maxPeople} sx={[sellStyle, ellipsisStyle]}>
-                        <Typography sx={ellipsisStyle}>{member.nickname ? member.nickname : '-'}</Typography>
-                      </Grid>
-                    ),
-                  )}
+                  {members.map((member, i) => (
+                    <Grid
+                      item
+                      key={i}
+                      xs={12 / maxPeople}
+                      sx={[sellStyle, ellipsisStyle]}
+                    >
+                      <Typography sx={ellipsisStyle}>
+                        {member.nickname ? member.nickname : '-'}
+                      </Typography>
+                    </Grid>
+                  ))}
                 </Grid>
               </Grid>
             </Grid>
@@ -96,17 +133,26 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
         </Box>
         <Box>
           {problems &&
-            problems.map(
-              (problem: Problem): JSX.Element => (
-                <Box sx={{ height: '40px' }} key={problem.id}>
-                  <ALTA_FlipBar
-                    height="40px"
-                    Front={problemBarFrontBuilder(problem, members, maxPeople, studyId)}
-                    Back={addProblemBarBackBuilder(studyId, scheduleId, problem.name, problem.link, problem.id)}
-                  />
-                </Box>
-              ),
-            )}
+            problems.map((problem) => (
+              <Box sx={{ height: '40px' }} key={problem.id}>
+                <ALTA_FlipBar
+                  height="40px"
+                  Front={problemBarFrontBuilder(
+                    problem,
+                    members,
+                    maxPeople,
+                    studyId,
+                  )}
+                  Back={addProblemBarBackBuilder(
+                    studyId,
+                    scheduleId,
+                    problem.name,
+                    problem.link,
+                    problem.id,
+                  )}
+                />
+              </Box>
+            ))}
         </Box>
         <ALTA_FlipBar
           height="40px"
@@ -174,7 +220,7 @@ const errorVisible = {
   opacity: 1,
 };
 
-const StyledInput = styled.input`
+const Input = styled.input`
   all: unset;
   width: 200px;
   margin-left: 5px;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Member, Column, ContextProps } from '../types';
+import { Member, Column } from '../types/MemberType';
+import { ContextProps } from '../types/ContextPropsType';
 import { memberManagementDataApi } from '../api/apis';
 import { checkLogin } from '../modules/LoginTokenChecker';
 
@@ -16,8 +17,6 @@ const defaultValue: defaultValueType = {
   setInvitable: () => null,
   columns: [],
   setColumns: () => null,
-  isRefresh: false,
-  setIsRefresh: () => null,
 };
 export const MemberStore = React.createContext(defaultValue);
 
@@ -37,11 +36,10 @@ export default function MemberProvider({ children }: ContextProps) {
     // { id: 'out', label: '강퇴', width: 30 }
   ]);
 
-  const [isRefresh, setIsRefresh] = useState<boolean>(false);
-
   const getMembers = async (studyId: number) => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    if (!loginStatus.status)
+      return { status: -1, message: 'login token error' };
 
     try {
       const res = await memberManagementDataApi(studyId);
@@ -66,8 +64,6 @@ export default function MemberProvider({ children }: ContextProps) {
     setInvitable,
     columns,
     setColumns,
-    isRefresh,
-    setIsRefresh,
   };
   return <MemberStore.Provider value={value}>{children}</MemberStore.Provider>;
 }
@@ -84,6 +80,4 @@ type defaultValueType = {
   setInvitable: (newData: boolean) => void;
   columns: Column[];
   setColumns: (newData: Column[]) => void;
-  isRefresh: boolean;
-  setIsRefresh: (newData: boolean) => void;
 };

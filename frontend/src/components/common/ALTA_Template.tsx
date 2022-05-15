@@ -1,21 +1,21 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-type Props = {
-  header: React.ReactNode;
-  contents: React.ReactNode;
-};
-
 export default function ALTA_Template({ header, contents }: Props) {
   return (
-    <Box sx={layoutStyle}>
+    <Box sx={layout}>
       <Box sx={headerStyle}>{header}</Box>
       <Box sx={contentsStyle}>{contents}</Box>
     </Box>
   );
 }
 
-const layoutStyle = {
+type Props = {
+  header: React.ReactNode;
+  contents: React.ReactNode;
+};
+
+const layout = {
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',

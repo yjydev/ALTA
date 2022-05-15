@@ -73,7 +73,6 @@ public class Comment {
         return CommentResponse.builder()
                 .reviewId(id)
                 .reviewerName(user.getNickname())
-                .imageUrl(user.getImage())
                 .comment(content)
                 .codeNumber(line)
                 .completed(isSolved)

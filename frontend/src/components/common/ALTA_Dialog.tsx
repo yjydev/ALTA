@@ -1,27 +1,30 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-
+import React, { useState, Dispatch, SetStateAction } from 'react';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 import { mainColor, errorColor, whiteColor } from '../../modules/colorChart';
 
-type Props = {
-  title: string;
-  children: React.ReactNode;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  handleComplete: () => void;
-};
-
-export default function ALTA_Dialog({ title, children, open, setOpen, handleComplete }: Props) {
+export default function ALTA_Dialog({
+  title,
+  children,
+  open,
+  setOpen,
+  handleComplete,
+}: Props) {
   return (
     <div>
-      <Dialog fullWidth open={open} onClose={(): void => setOpen(false)}>
+      <Dialog fullWidth open={open} onClose={() => setOpen(false)}>
         <DialogTitle sx={titleStyle}>{title}</DialogTitle>
         <DialogContent sx={childrenStyle}>{children}</DialogContent>
         <DialogActions>
-          <Button onClick={handleComplete} variant="contained" sx={submitBtnStyle}>
+          <Button onClick={handleComplete} variant="contained" sx={submitBtn}>
             완 료
           </Button>
-          <Button onClick={(): void => setOpen(false)} sx={delBtnStyle}>
+          <Button onClick={() => setOpen(false)} sx={delBtn}>
             취 소
           </Button>
         </DialogActions>
@@ -40,7 +43,7 @@ const childrenStyle = {
   marginX: 2,
 };
 
-const delBtnStyle = {
+const delBtn = {
   'backgroundColor': errorColor,
   '&:hover': {
     backgroundColor: '#A28080',
@@ -52,11 +55,19 @@ const delBtnStyle = {
   'padding': '11px',
 };
 
-const submitBtnStyle = {
+const submitBtn = {
   backgroundColor: mainColor,
   color: whiteColor,
   marginBottom: 3,
   marginRight: 1,
   fontSize: '16px',
   padding: '11px',
+};
+
+type Props = {
+  title: string;
+  children: React.ReactNode;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  handleComplete: () => void;
 };
