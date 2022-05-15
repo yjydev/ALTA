@@ -48,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/webjars/**",
                         "/swagger/**",   // swagger
                         "/favicon.ico",
-                        "/images/**"
+                        "/images/**",
+                        "/chat/**"
                 );
     }
 
