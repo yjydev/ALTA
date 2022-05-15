@@ -13,3 +13,15 @@ export type Column = {
   label: string;
   width: number;
 };
+
+export type userList = {
+  id: string;
+  email: string;
+  nickname: string;
+};
+
+export const defaultUser: userList = {
+  id: '',
+  email: '',
+  nickname: '',
+};
