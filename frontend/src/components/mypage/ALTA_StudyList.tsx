@@ -1,25 +1,24 @@
 import { Box, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import { Study } from '../../types/UserDataType';
+import { Study } from '../../types';
 import scrollStyle from '../../modules/scrollStyle';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_StudyCard from './ALTA_StudyCard';
 import ALTA_inviteInput from './ALTA_inviteInput';
 
-export default function ALTA_StudyList({
-  studyList,
-}: {
+type Props = {
   studyList: Study[] | null;
-}) {
+};
+export default function ALTA_StudyList({ studyList }: Props) {
   const navigate = useNavigate();
 
-  const goOrganize = () => {
+  const goOrganize = (): void => {
     navigate('/organize');
   };
-  const goStudyDetail = (studyId: number) => {
-    navigate('/study/detail', { state: { studyId } });
+  const goStudyDetail = (studyId: number): void => {
+    navigate(`/study/${studyId}/detail`);
   };
 
   return (

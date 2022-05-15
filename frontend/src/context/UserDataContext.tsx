@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { UserData, defaultUserData } from '../types/UserDataType';
-import { ContextProps } from '../types/ContextPropsType';
+import { UserData, defaultUserData } from '../types';
+import { ContextProps } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
 import { userDataApi, editUserDataApi, changeProfileImgApi } from '../api/apis';
 
@@ -13,14 +13,18 @@ export const defaultValue: defaultValueType = {
 };
 export const UserDataStore = React.createContext(defaultValue);
 
+type PromiseType = {
+  status: number;
+  message: string;
+};
+
 //Context Provider 컴포넌트
 export default function UserDataProvider({ children }: ContextProps) {
   const [userData, setUserData] = useState<UserData>(defaultUserData);
 
-  const getUserData = async () => {
+  const getUserData = async (): Promise<PromiseType> => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
 
     try {
       const response = await userDataApi();
@@ -34,16 +38,10 @@ export default function UserDataProvider({ children }: ContextProps) {
     }
   };
 
-  const editUserData = async (
-    nickname: string,
-    email: string,
-    introduction: string,
-    languageList: string[] | null,
-  ) => {
+  const editUserData = async (nickname: string, email: string, introduction: string, languageList: string[] | null) => {
     const loginStatus = await checkLogin();
 
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       await editUserDataApi(nickname, email, introduction, languageList);
       await getUserData();
@@ -56,8 +54,7 @@ export default function UserDataProvider({ children }: ContextProps) {
   const changeProfile = async (img: FormData) => {
     const loginStatus = await checkLogin();
 
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       await changeProfileImgApi(img);
       await getUserData();
@@ -69,9 +66,7 @@ export default function UserDataProvider({ children }: ContextProps) {
 
   const value = { userData, getUserData, editUserData, changeProfile };
 
-  return (
-    <UserDataStore.Provider value={value}>{children}</UserDataStore.Provider>
-  );
+  return <UserDataStore.Provider value={value}>{children}</UserDataStore.Provider>;
 }
 
 //Context 기본값 타입
@@ -79,10 +74,5 @@ type defaultValueType = {
   userData: UserData;
   getUserData: () => any;
   changeProfile: (img: FormData) => any;
-  editUserData: (
-    nickname: string,
-    email: string,
-    introduction: string,
-    languageList: string[] | null,
-  ) => any;
+  editUserData: (nickname: string, email: string, introduction: string, languageList: string[] | null) => any;
 };

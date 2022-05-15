@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  ReviewData,
-  CodeData,
-  defaultCodeData,
-  CodeTree,
-} from '../types/CodeBlockType';
+import { ReviewData, CodeData, defaultCodeData, CodeTree, ContextProps, ContextPromiseType } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
 import { codeDataApi, reivewDataApi, codeTreeApi } from '../api/apis';
 
@@ -39,20 +34,15 @@ const defaultValue: defaultValueType = {
 };
 export const CodeStore = React.createContext(defaultValue);
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export default function CodeContext({ children }: Props) {
+export default function CodeContext({ children }: ContextProps) {
   const [code, setCode] = useState<CodeData>(defaultCodeData);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [codeLine, setCodeLine] = useState<number>(0);
   const [codeTree, setCodeTree] = useState<CodeTree[]>([]);
 
-  const getCode = async (studyId: number, codeId: number) => {
+  const getCode = async (studyId: number, codeId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       const res = await codeDataApi(studyId, codeId);
       setCode(res);
@@ -61,10 +51,9 @@ export default function CodeContext({ children }: Props) {
       return { status: -2, message: 'fail get code data' };
     }
   };
-  const getReview = async (codeId: number) => {
+  const getReview = async (codeId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       const res = await reivewDataApi(codeId);
       setReviews(res);
@@ -73,10 +62,9 @@ export default function CodeContext({ children }: Props) {
       return { status: -2, message: 'fail get review data' };
     }
   };
-  const getCodeTree = async (studyId: number) => {
+  const getCodeTree = async (studyId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
-    if (!loginStatus.status)
-      return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
     try {
       const res = await codeTreeApi(studyId);
       setCodeTree(res);
@@ -86,8 +74,8 @@ export default function CodeContext({ children }: Props) {
     }
   };
 
-  const getuser = localStorage.getItem('UserData');
-  const user = getuser ? JSON.parse(getuser)['nickname'] : '';
+  const getuser: string | null = localStorage.getItem('UserData');
+  const user: string = getuser ? JSON.parse(getuser)['nickname'] : '';
 
   const value = {
     code,
