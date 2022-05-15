@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalTime;
-
 /**
  * packageName 	: com.ssafy.alta.util
  * fileName 	: Schedule
@@ -22,11 +20,11 @@ import java.time.LocalTime;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class Schedule {
+public class Scheduling {
     private final AlertService alertService;
     private final Integer ALERT_SAVE_PERIOD = 30;  // 알림 30일 저장
 
-    @Scheduled(cron = "0 55 10 * * *") // Cron 표현법 - 매일 2시 실행
+    @Scheduled(cron = "0 0 2 * * *") // Cron 표현법 - 매일 2시 실행
     public void scheduleDeleteAlertTask() {
         alertService.deleteAlertByPeriod(ALERT_SAVE_PERIOD);
     }
