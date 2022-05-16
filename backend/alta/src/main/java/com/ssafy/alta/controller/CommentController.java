@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class CommentController {
 
     @PostMapping
     @ApiOperation(value = "코드 댓글 추가", notes = "새 댓글을 생성합니다.")
-    public ResponseEntity insertComment(@ApiParam(value = "댓글 정보", required = true) @RequestBody CommentCreateRequest commentRequest) {
+    public ResponseEntity insertComment(@ApiParam(value = "댓글 정보", required = true) @RequestBody CommentCreateRequest commentRequest) throws MessagingException {
         commentService.insertComment(commentRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
