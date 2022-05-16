@@ -1,36 +1,46 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
-import { Box, Menu, MenuItem, Badge, IconButton } from '@mui/material';
+import { Box, Menu, Badge, Tabs, Tab, Typography, IconButton } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 
 import { AlertData } from '../../types';
-import { readAlertApi } from '../../api/apis';
 import ALTA_Tooltip from './ALTA_Tooltip';
+import ALTA_AlertMenu from './ALTA_AlertMenu';
+import { readAlertAllApi } from '../../api/apis';
+import { checkLogin } from '../../modules/LoginTokenChecker';
 
 import { AlertDataStore } from '../../context/AlertContext';
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
 export default function ALTA_Alert() {
   const navigate: NavigateFunction = useNavigate();
-  const { alertData, getAlertData, setAlertData } = useContext(AlertDataStore);
+  const { alertData, getAlertData, setAlertData, badgeCnt, setBadgeCnt } = useContext(AlertDataStore);
   const [open, setOpen] = useState<boolean>(false);
+  const [value, setValue] = useState<number>(0);
+  const [allRead, setAllRead] = useState<boolean>(false);
+
   const anchorRef = useRef<SVGSVGElement>(null);
 
   const [listening, setListening] = useState<boolean>(false);
   const EventSource = EventSourcePolyfill;
 
-  const changeChecked = async (d: AlertData): Promise<void> => {
-    await readAlertApi(Number(d.alertId));
-    d.isChecked = true;
-  };
+  const newAlert: AlertData[] = alertData.filter((d: AlertData): boolean => d.isChecked === false);
 
   useEffect((): void => {
+    setAllRead(false);
     (async function (): Promise<void> {
       const status = await getAlertData();
       if (status.status === -1) navigate('/');
     })();
+    setBadgeCnt(alertData.filter((d: AlertData): boolean => d.isChecked === false).length);
     if (!listening) {
       const eventSource = new EventSource(`${process.env.REACT_APP_BUTTON_URL}:8000/api/user/alert/subscribe`, {
         headers: {
@@ -50,11 +60,29 @@ export default function ALTA_Alert() {
     }
   }, []);
 
+  useEffect(() => {
+    setBadgeCnt(newAlert.length);
+  }, [newAlert]);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  const allChecked = async (): Promise<void> => {
+    if (!(await checkLogin()).status) navigate('/');
+    setAllRead(true);
+    await readAlertAllApi();
+    setOpen(false);
+    const status = await getAlertData();
+    if (status.status === -1) navigate('/');
+    setBadgeCnt(0);
+  };
+
   return (
     <Box>
       <ALTA_Tooltip title="알림">
         <Badge
-          badgeContent={alertData.length}
+          badgeContent={badgeCnt}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           overlap="circular"
           sx={badgeStyle}
@@ -79,37 +107,41 @@ export default function ALTA_Alert() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        {alertData.map((d) => (
-          <>
-            <Box sx={menuStyle} key={d.alertId}>
-              <MenuItem
-                onClick={() => {
-                  navigate(`${d.url}`);
-                  setOpen(!open);
-                }}
-              >
-                {d.content}
-              </MenuItem>
-              {d.isChecked ? (
-                <IconButton>{<CheckCircleRoundedIcon sx={resolvedStyle} />}</IconButton>
-              ) : (
-                <IconButton onClick={() => changeChecked(d)}>
-                  {<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}
-                </IconButton>
-              )}
-            </Box>
-            <hr />
-          </>
-        ))}
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+            <Tab label="안읽은 알림만 보기" {...a11yProps(0)} />
+            <Tab label="전체 알림 보기" {...a11yProps(1)} />
+          </Tabs>
+        </Box>
+        <Box sx={menuStyle}>
+          <TabPanel value={value} index={0}>
+            {badgeCnt ? (
+              <Box>
+                전체 읽음
+                {allRead ? (
+                  <IconButton>{<CheckCircleRoundedIcon sx={resolvedStyle} />}</IconButton>
+                ) : (
+                  <IconButton onClick={allChecked}>{<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}</IconButton>
+                )}
+                <ALTA_AlertMenu data={newAlert} setOpen={setOpen} />
+              </Box>
+            ) : (
+              <Typography sx={{ color: 'error.main', fontSize: '20px' }}>새로운 알림이 없습니다</Typography>
+            )}
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <ALTA_AlertMenu data={alertData} setOpen={setOpen} />
+          </TabPanel>
+        </Box>
       </Menu>
     </Box>
   );
 }
 
 const menuStyle = {
-  width: '100%',
-  backgroundColor: 'inherit',
+  width: '35rem',
   display: 'flex',
+  height: '30rem',
 };
 
 const badgeStyle = {
@@ -126,3 +158,30 @@ const resolvedStyle = {
 const unresolvedStyle = {
   color: 'gray',
 };
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    'id': `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}

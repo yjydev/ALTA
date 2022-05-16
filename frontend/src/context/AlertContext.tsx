@@ -8,6 +8,8 @@ export const defaultValue: defaultValueType = {
   alertData: [],
   setAlertData: () => null,
   getAlertData: () => null,
+  badgeCnt: 0,
+  setBadgeCnt: () => null,
 };
 export const AlertDataStore = React.createContext(defaultValue);
 
@@ -19,6 +21,9 @@ type PromiseType = {
 //Context Provider 컴포넌트
 export default function AlertDataProvider({ children }: ContextProps) {
   const [alertData, setAlertData] = useState<AlertData[]>([]);
+  const [badgeCnt, setBadgeCnt] = useState<number>(
+    alertData.filter((d: AlertData): boolean => d.isChecked === false).length,
+  );
 
   const getAlertData = async (): Promise<PromiseType> => {
     const loginStatus = await checkLogin();
@@ -32,7 +37,7 @@ export default function AlertDataProvider({ children }: ContextProps) {
     }
   };
 
-  const value = { alertData, setAlertData, getAlertData };
+  const value = { alertData, setAlertData, getAlertData, badgeCnt, setBadgeCnt };
 
   return <AlertDataStore.Provider value={value}>{children}</AlertDataStore.Provider>;
 }
@@ -42,4 +47,6 @@ type defaultValueType = {
   alertData: AlertData[];
   setAlertData: (newAlert: AlertData[]) => void;
   getAlertData: () => any;
+  badgeCnt: number;
+  setBadgeCnt: (newCnt: number) => void;
 };

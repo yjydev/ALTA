@@ -39,7 +39,7 @@ export const defaultUserData = {
 
 export type AlertData = {
   alertId: number;
-  senderNickname: string;
+  senderNickName: string;
   type: string;
   content: string;
   time: Date;
