@@ -1,10 +1,13 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
 import styled from '@emotion/styled';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { Button, Grid, LinearProgress, Typography, Alert } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Button, Grid, LinearProgress, Typography, Alert, CircularProgress } from '@mui/material';
 
+import { generateError } from '../../modules/generateAlert';
 import { StudyMember, Problem } from '../../types';
 import { blackColor, subColor } from '../../modules/colorChart';
 import { problemBarFrontBuilder } from './builder/ALTA_ProblemBarBuilder';
@@ -22,12 +25,14 @@ type Props = {
 };
 
 export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table }: Props) {
-  const { members, maxPeople, editSchedule } = useContext(StudyDetailStore);
+  const navigate = useNavigate();
+  const { members, maxPeople, editSchedule, deleteSchedule } = useContext(StudyDetailStore);
 
   const [scheduleEditing, setScheduleEditing] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [schedule, setSchedule] = useState<string>(`${table.startDate} ~ ${table.endDate}`);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [editLoading, setEditLoading] = useState<boolean>(false);
+  const [removeLoading, setRemoveLoading] = useState<boolean>(false);
 
   const edit = async (studyId: number, scheduleId: number, dateString: string): Promise<void> => {
     if (schedule === `${table.startDate} ~ ${table.endDate}`) {
@@ -35,10 +40,29 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
       setTimeout(() => {
         setIsError(false);
       }, 2500);
+    } else {
+      setEditLoading(true);
+
+      const editApiStatue = await editSchedule(studyId, scheduleId, dateString);
+
+      if (editApiStatue.status === -1) navigate('/');
+      else if (editApiStatue.status === -2) generateError('일정을 수정하지 못했습니다', editApiStatue.message);
+
+      setEditLoading(false);
     }
-    setLoading(true);
-    await editSchedule(studyId, scheduleId, dateString);
-    setLoading(false);
+  };
+
+  const remove = async (studyId: number, scheduleId: number): Promise<void> => {
+    setRemoveLoading(true);
+    const editApiStatue = await deleteSchedule(studyId, scheduleId);
+
+    setTimeout(() => {
+      setRemoveLoading(false);
+    }, 1000);
+    if (editApiStatue.status === -1) navigate('/');
+    else if (editApiStatue.status === -2) generateError('일정을 삭제하지 못했습니다', editApiStatue.message);
+
+    setRemoveLoading(false);
   };
 
   return (
@@ -49,8 +73,8 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
           <Alert sx={[alertStyle, isError && errorVisible]} severity="error">
             일정에 변화가 없어 반영되지 않습니다
           </Alert>
-          {loading && <LinearProgress sx={{ width: '200px', marginLeft: '5px' }} color="secondary" />}
-          {!loading && (
+          {editLoading && <LinearProgress sx={{ width: '200px', marginLeft: '5px' }} color="secondary" />}
+          {!editLoading && (
             <StyledInput
               type="text"
               className={`${scheduleEditing && 'editing'}`}
@@ -59,7 +83,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
               onChange={(e) => setSchedule(e.target.value)}
             />
           )}
-          <Button sx={scheduleEditBtnStyle} onClick={() => setScheduleEditing(!scheduleEditing)}>
+          <Button sx={btnStyle} onClick={() => setScheduleEditing(!scheduleEditing)}>
             {!scheduleEditing && (
               <ALTA_Tooltip title="일정 수정하기">
                 <EditIcon />
@@ -71,6 +95,16 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
               </ALTA_Tooltip>
             )}
           </Button>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {!removeLoading && (
+            <ALTA_Tooltip title="테이블 삭제">
+              <Button sx={btnStyle}>
+                <DeleteIcon onClick={() => remove(studyId, scheduleId)} />
+              </Button>
+            </ALTA_Tooltip>
+          )}
+          {removeLoading && <CircularProgress size={20} sx={{ marginRight: 1 }} />}
         </Box>
       </Box>
       <Box sx={tableStyle}>
@@ -147,7 +181,7 @@ const sectionStyle = {
   alignItems: 'center',
 };
 
-const scheduleEditBtnStyle = {
+const btnStyle = {
   'minWidth': '20px',
   'padding': 0.5,
   'cursor': 'pointer',

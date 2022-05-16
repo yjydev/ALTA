@@ -5,13 +5,16 @@ import com.ssafy.alta.dto.response.ChatResponse;
 import com.ssafy.alta.entity.Chat;
 import com.ssafy.alta.entity.StudyJoinInfo;
 import com.ssafy.alta.entity.User;
+import com.ssafy.alta.exception.BadRequestMessage;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.ChatRepository;
 import com.ssafy.alta.repository.StudyJoinInfoRepository;
 import com.ssafy.alta.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +39,13 @@ public class ChatService {
     private final UserRepository userRepository;
     private final StudyJoinInfoRepository sjiRepository;
 
-    public ChatResponse insertMessage(Long studyId, ChatRequest chatRequest) {
-        String userId = chatRequest.getUserid();
+    @Transactional(rollbackFor = Exception.class)
+    public ChatResponse insertMessage(Long studyId, ChatRequest chatRequest, Principal user) {
+        String userId = user.getName();
+
+        if (chatRequest.getContent().length() == 0) {
+            throw new BadRequestMessage();
+        }
 
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new));
@@ -50,6 +58,7 @@ public class ChatService {
         return chatResponse.toChatSubResponse();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public List<ChatResponse> selectChatList(Long studyId) {
         String userId = userService.getCurrentUserId();
 

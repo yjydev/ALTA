@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,7 @@ public class CommentService {
     private final ActivityScoreService activityScoreService;
     private final AlertService alertService;
     private final NotificationService notificationService;
+    private final MailService mailService;
 
     public List<CommentResponse> selectCommentList(Long codeId) {
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(codeId)
@@ -54,7 +56,7 @@ public class CommentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void insertComment(CommentCreateRequest commentRequest) {
+    public void insertComment(CommentCreateRequest commentRequest) throws MessagingException {
         String userId = userService.getCurrentUserId();
 
         Optional<Code> optCode = Optional.ofNullable(codeRepository.findById(commentRequest.getCodeId())
@@ -71,10 +73,14 @@ public class CommentService {
         activityScoreService.addScoreForCommentOrCode(userId, code.getProblem().getSchedule().getStudy().getStudyId(), code.getId(), ActivityType.COMMNET.getActivityIdx());
 
         // 알림 발생 + 프론트로 알림 발생시키기
-        if(!code.getUser().getId().equals(comment.getUser().getId())) {       // 본인이 코드 작성자이면서 댓글 작성자이면 알림 발생 X
+        // 피드백 등록 메일 보내기
+        //if(!code.getUser().getId().equals(comment.getUser().getId())) {       // 본인이 코드 작성자이면서 댓글 작성자이면 알림 발생 X
             Alert alert = alertService.processAlert(code.getUser(), comment.getUser(), AlertType.COMMENT, code);
             notificationService.sendAlertEvent(alert);
-        }
+
+            // 메일 보냄
+            mailService.sendAlertMail(code.getUser().getEmail(), alert.getContent());
+        //}
     }
 
     @Transactional

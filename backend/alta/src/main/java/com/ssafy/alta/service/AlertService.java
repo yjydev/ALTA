@@ -28,7 +28,6 @@ import java.util.*;
 public class AlertService {
     private final UserService userService;
     private final AlertRepository alertRepository;
-    private final String URL_FORMAT = "/study/%s/%s/code/%s";
 
     public List<AlertResponse> selectAlertUnChecked() {
         String userId = userService.getCurrentUserId();
@@ -72,7 +71,7 @@ public class AlertService {
 
         String content = String.format(type.getMessage(), sender.getNickname(), problem.getName());
         Date nowTime = new Date();
-        String url = String.format(URL_FORMAT, study.getStudyId(), problem.getName(), code.getId());
+        String url = String.format(type.getUrlFormat(), study.getStudyId(), problem.getName(), code.getId());
         return Alert.builder()
                 .receiver(receiver)
                 .sender(sender)
