@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.mail.MessagingException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,7 @@ public class CodeService {
     private final CodeRepository codeRepository;
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
+    private final ScheduleRepository scheduleRepository;
     private final StudyRepository studyRepository;
     private final StudyJoinInfoRepository studyJoinInfoRepository;
     private final CommentService commentService;
@@ -51,6 +53,7 @@ public class CodeService {
     private final ReadmeService readmeService;
     private final AlertService alertService;
     private final NotificationService notificationService;
+    private final MailService mailService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -328,6 +331,25 @@ public class CodeService {
         }
     }
 
+    // 오늘 마감인데 코드 미제출한 사람에게 메일 보냄
+    public void sendAlertMailCodeDeadline() throws ParseException, MessagingException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowDate = formatter.parse(formatter.format(new Date()));
+
+        // nowDate까지인 일정들 가져오고
+        List<Schedule> scheduleList = scheduleRepository.findBySameEndDate(nowDate);
+        // 이 스터디의 유저들 가져와서
+        for(Schedule schedule : scheduleList) {
+            List<StudyJoinInfo>  sjtList = studyJoinInfoRepository.findByStudyStudyIdWhereState(schedule.getStudy().getStudyId(), "가입");
+            // 일단 보냄
+            String message = String.format(AlertType.SCHEDULE.getMessage(), schedule.getStudy().getName());
+            for(StudyJoinInfo studyJoinInfo : sjtList) {
+                mailService.sendAlertMail(studyJoinInfo.getUser().getEmail(), message);
+            }
+        }
+
+    }
+
     private void checkUserId(String userId, String id) {
         if(!userId.equals(id))
             throw new WriterNotMatchException();
@@ -345,7 +367,7 @@ public class CodeService {
             throw new DuplicateFileException();
     }
 
-    public String getPath(String problemName, String userName, String fileName) {
+    private String getPath(String problemName, String userName, String fileName) {
         return "/풀이모음/" + problemName + "/" + userName + "/" + fileName;
     }
 
@@ -353,7 +375,7 @@ public class CodeService {
         return "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
     }
 
-    public String getCommitMessage(String commitMessage) {
+    private String getCommitMessage(String commitMessage) {
         if(commitMessage == null || commitMessage.equals("")) {
             commitMessage = CREATE_MESSAGE;
         }

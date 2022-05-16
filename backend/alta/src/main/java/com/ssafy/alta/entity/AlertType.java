@@ -20,7 +20,7 @@ import java.util.Arrays;
 public enum AlertType {
     CODE(1, "%s님이 %s문제에 풀이를 등록했습니다.", "/study/%s/%s/code/%s"),
     COMMENT(2, "%s님이 %s문제의 코드에 댓글을 달았습니다.", "/study/%s/%s/code/%s"),
-    SCHEDULE(3, "%s문제의 마감시간이 12시간 남았습니다!", "/study/%s/detail");
+    SCHEDULE(3, "%s스터디의 문제 마감시간이 12시간 남았습니다!", "/study/%s/detail");
 
     private Integer code;
     private String message;

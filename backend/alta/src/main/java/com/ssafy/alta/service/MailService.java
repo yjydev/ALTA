@@ -3,6 +3,7 @@ package com.ssafy.alta.service;
 import com.ssafy.alta.mailutil.MailHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -26,8 +27,10 @@ import javax.mail.MessagingException;
 public class MailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final String SERVICE_URL = "https://algorithmtime.com";
 
-    public void sendAlertMail(String email, String message, String url) throws MessagingException {
+    @Async("mailExecutor")
+    public void sendAlertMail(String email, String message) throws MessagingException {
         MailHandler mailHandler = new MailHandler(mailSender);
         mailHandler.setTo(email);
         mailHandler.setFrom("alta.invitation@gmail.com");
@@ -35,7 +38,7 @@ public class MailService {
 
         Context context = new Context();
         context.setVariable("message", message);
-        context.setVariable("url", url);
+        // context.setVariable("url", SERVICE_URL + url);
         String html = templateEngine.process("alertTemplate", context);
         mailHandler.setText(html, true);
 
