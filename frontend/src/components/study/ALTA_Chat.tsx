@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, NavigateFunction } from 'react-router-dom';
 import { Box, Input, Button, Avatar, Grid, Typography } from '@mui/material';
 
 import scrollStyle from '../../modules/scrollStyle';
@@ -17,15 +17,13 @@ import { displayAt } from '../../modules/displayAt';
 // import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
-type Params = {
-  studyId: string | undefined;
-};
-
 const headers = {
   ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
 };
-// const socket: WebSocket = new SockJS(`${process.env.REACT_APP_BUTTON_URL}:8000/chat`);
-// stompClient.debug = (...args: string[]): any => console.log(args);
+
+type Params = {
+  studyId: string | undefined;
+};
 
 type Props = {
   stompClient: Stomp.Client;
@@ -33,17 +31,17 @@ type Props = {
 
 export default function ALTA_Chat({ stompClient }: Props) {
   const { studyId } = useParams<Params>();
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
   const { chatContents, setChatContents, getChatContent } = useContext(StudyDetailStore);
-  const chatInput = useRef<any>(null);
+  const chatInput: React.MutableRefObject<any> = useRef<any>(null);
   let name = '';
-  const userData = localStorage.getItem('UserData');
+  const userData: string | null = localStorage.getItem('UserData');
   if (userData) {
     name = JSON.parse(userData)['nickname'];
   }
 
   const [message, setMessage] = useState<string>('');
-  stompClient.debug = () => {
+  stompClient.debug = (): void => {
     'blank';
   };
 
@@ -58,18 +56,18 @@ export default function ALTA_Chat({ stompClient }: Props) {
   }, [studyId]);
 
   useEffect((): void => {
-    stompClient.connect(headers, () => {
+    stompClient.connect(headers, (): void => {
       // console.log('접속');
-      stompClient.subscribe(`/topic/${studyId}`, (data) => {
+      stompClient.subscribe(`/topic/${studyId}`, (data: Stomp.Message): void => {
         // console.log('구독');
         const newMessage: chatResponse = JSON.parse(data.body);
-        setChatContents([...chatContents, newMessage]);
+        addMessage(newMessage);
       });
     });
     scrollBottom();
   }, [chatContents]);
 
-  const scrollBottom = () => {
+  const scrollBottom = (): void => {
     if (chatInput.current) {
       chatInput.current.scrollTo({
         top: chatInput.current.scrollHeight,
@@ -77,7 +75,11 @@ export default function ALTA_Chat({ stompClient }: Props) {
     }
   };
 
-  const handleEnter = () => {
+  const addMessage = (message: chatResponse): void => {
+    setChatContents([...chatContents, message]);
+  };
+
+  const handleEnter = (): void => {
     if (message === '') generateError('채팅을 입력해주세요', '');
     else {
       const newMessage: chat = { content: message };
@@ -91,49 +93,51 @@ export default function ALTA_Chat({ stompClient }: Props) {
       <Box sx={titleStyle}>소통창구</Box>
       <Box sx={[chatBoxStyle, scrollStyle]} ref={chatInput}>
         <Box>
-          {chatContents.map((mes, idx) => (
-            <Grid container key={idx} sx={infoStyle} columns={14}>
-              {name === mes.nickname ? (
-                <>
-                  <Grid item md={12} sx={rightListStyle}>
-                    <Grid item sx={chatRightStyle}>
-                      <Typography sx={nameRightStyle}>{mes.nickname}</Typography>
-                      <Grid container>
-                        <Grid item sx={dateRightStyle}>
-                          <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
-                        </Grid>
-                        <Grid item sx={bubbleRightStyle}>
-                          {mes.message}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item md={2} sx={profileRightStyle}>
-                    <Avatar src={mes.image} />
-                  </Grid>
-                </>
-              ) : (
-                <>
-                  <Grid item md={2} sx={profileLeftStyle}>
-                    <Avatar src={mes.image} />
-                  </Grid>
-                  <Grid item md={12} sx={leftListStyle}>
-                    <Grid item sx={chatLeftStyle}>
-                      <Typography>{mes.nickname}</Typography>
-                      <Grid container>
-                        <Grid item sx={bubbleLeftStyle}>
-                          {mes.message}
-                        </Grid>
-                        <Grid item sx={dateLeftStyle}>
-                          <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+          {chatContents.map(
+            (mes: chatResponse, idx: number): JSX.Element => (
+              <Grid container key={idx} sx={infoStyle} columns={14}>
+                {name === mes.nickname ? (
+                  <>
+                    <Grid item md={12} sx={rightListStyle}>
+                      <Grid item sx={chatRightStyle}>
+                        <Typography sx={nameRightStyle}>{mes.nickname}</Typography>
+                        <Grid container>
+                          <Grid item sx={dateRightStyle}>
+                            <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+                          </Grid>
+                          <Grid item sx={bubbleRightStyle}>
+                            {mes.message}
+                          </Grid>
                         </Grid>
                       </Grid>
                     </Grid>
-                  </Grid>
-                </>
-              )}
-            </Grid>
-          ))}
+                    <Grid item md={2} sx={profileRightStyle}>
+                      <Avatar src={mes.image} />
+                    </Grid>
+                  </>
+                ) : (
+                  <>
+                    <Grid item md={2} sx={profileLeftStyle}>
+                      <Avatar src={mes.image} />
+                    </Grid>
+                    <Grid item md={12} sx={leftListStyle}>
+                      <Grid item sx={chatLeftStyle}>
+                        <Typography>{mes.nickname}</Typography>
+                        <Grid container>
+                          <Grid item sx={bubbleLeftStyle}>
+                            {mes.message}
+                          </Grid>
+                          <Grid item sx={dateLeftStyle}>
+                            <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            ),
+          )}
         </Box>
       </Box>
       <Box sx={chatInputStyle}>
@@ -141,9 +145,11 @@ export default function ALTA_Chat({ stompClient }: Props) {
           fullWidth
           placeholder="메세지를 입력하세요"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(ev) => {
-            if (ev.key === 'Enter') handleEnter();
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => setMessage(e.target.value)}
+          onKeyDown={(ev: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
+            if (ev.key === 'Enter') {
+              handleEnter();
+            }
           }}
         />
         <Button onClick={handleEnter}>입력</Button>

@@ -5,7 +5,7 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
 export default function ALTA_StudyBoard() {
-  const socketJS = new SockJS(`http://localhost:8000/chat`);
+  const socketJS = new SockJS(`${process.env.REACT_APP_BUTTON_URL}:8000/chat`);
   const stompClient: Stomp.Client = Stomp.over(socketJS);
   return (
     <Box sx={wrapper}>
