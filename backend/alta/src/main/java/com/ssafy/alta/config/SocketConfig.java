@@ -2,6 +2,7 @@ package com.ssafy.alta.config;
 
 import com.ssafy.alta.socketutil.StompHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -30,7 +31,7 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat").setAllowedOriginPatterns("http://localhost:3000").withSockJS();
+        registry.addEndpoint("/chat").setAllowedOriginPatterns("http://localhost:3000", "https://algorithmtime.com").withSockJS();
     }
     
     @Override
@@ -40,6 +41,7 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Override
+    @Order(Ordered.HIGHEST_PRECEDENCE + 99)
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(stompHandler);
     }
