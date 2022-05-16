@@ -1,10 +1,12 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
 import styled from '@emotion/styled';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { Button, Grid, LinearProgress, Typography, Alert } from '@mui/material';
 
+import { generateError } from '../../modules/generateAlert';
 import { StudyMember, Problem } from '../../types';
 import { blackColor, subColor } from '../../modules/colorChart';
 import { problemBarFrontBuilder } from './builder/ALTA_ProblemBarBuilder';
@@ -22,6 +24,7 @@ type Props = {
 };
 
 export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table }: Props) {
+  const navigate = useNavigate();
   const { members, maxPeople, editSchedule } = useContext(StudyDetailStore);
 
   const [scheduleEditing, setScheduleEditing] = useState<boolean>(false);
@@ -35,10 +38,16 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
       setTimeout(() => {
         setIsError(false);
       }, 2500);
+    } else {
+      setLoading(true);
+
+      const editApiStatue = await editSchedule(studyId, scheduleId, dateString);
+
+      if (editApiStatue.status === -1) navigate('/');
+      else if (editApiStatue.status === -2) generateError('일정을 수정하지 못했습니다', editApiStatue.message);
+
+      setLoading(false);
     }
-    setLoading(true);
-    await editSchedule(studyId, scheduleId, dateString);
-    setLoading(false);
   };
 
   return (

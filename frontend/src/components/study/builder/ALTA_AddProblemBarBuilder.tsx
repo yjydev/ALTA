@@ -35,7 +35,7 @@ export const addProblemBarBackBuilder = (
   id?: number,
 ) =>
   function Back({ fliper }: FliperProps) {
-    const { getStudyDetail } = useContext(StudyDetailStore);
+    const { getReadmeDetail } = useContext(StudyDetailStore);
     const navigate = useNavigate();
 
     const [problemId, _] = useState<number>(id ? id : -1);
@@ -58,7 +58,7 @@ export const addProblemBarBackBuilder = (
 
       setPropblemName('');
       setPropblemLink('');
-      getStudyDetail(studyId);
+      getReadmeDetail(studyId);
     };
 
     const editProblem = async (): Promise<void> => {
@@ -73,7 +73,7 @@ export const addProblemBarBackBuilder = (
       try {
         await editProblemApi(studyId, problemId, problemName, problemLink);
         fliper();
-        getStudyDetail(studyId);
+        getReadmeDetail(studyId);
       } catch (error) {
         generateError('문제를 수정할 수 없습니다', '');
       } finally {

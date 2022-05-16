@@ -39,10 +39,10 @@ export default function ALTA_UserData() {
 
       img.append('profileImage', files[0]);
 
-      const userStatus = await changeProfile(img);
+      const changeApiStatue = await changeProfile(img);
 
-      if (userStatus.status === -1) navigate('/');
-      else if (userStatus.status === -2) generateError('프로필을 수정할 수 없습니다', '');
+      if (changeApiStatue.status === -1) navigate('/');
+      else if (changeApiStatue.status === -2) generateError('프로필을 수정할 수 없습니다', changeApiStatue);
     }
   };
 

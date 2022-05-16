@@ -23,21 +23,23 @@ type Params = {
 export default function ALTA_StudyDetailContents() {
   const { studyId } = useParams<Params>();
   const navigate = useNavigate();
-  const { readmeData, getStudyDetail, getStudyMembers } = useContext(StudyDetailStore);
+  const { readmeData, getReadmeDetail, getStudyMembers } = useContext(StudyDetailStore);
 
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async function () {
       if (studyId) {
-        const [DetailStatus, MemberStatus] = await Promise.all([
-          getStudyDetail(Number(studyId)),
+        const [readmeApiStatue, memberApiStatus] = await Promise.all([
+          getReadmeDetail(Number(studyId)),
           getStudyMembers(Number(studyId)),
         ]);
 
-        if (DetailStatus.status === -1 || MemberStatus.status === -1) navigate('/');
-        else if (DetailStatus.status === -2) generateError('스터디 진행 정보를 불러올 수 없습니다', '');
-        else if (MemberStatus.status === -2) generateError('스터디 멤버 정보를 불러올 수 없습니다', '');
+        if (readmeApiStatue.status === -1 || memberApiStatus.status === -1) navigate('/');
+        else if (readmeApiStatue.status === -2)
+          generateError('스터디 진행 정보를 불러올 수 없습니다', readmeApiStatue.message);
+        else if (memberApiStatus.status === -2)
+          generateError('스터디 멤버 정보를 불러올 수 없습니다', memberApiStatus.message);
         else setLoading(false);
       }
     })();
@@ -60,7 +62,7 @@ export default function ALTA_StudyDetailContents() {
                   <ALTA_FlipBar
                     height="80px"
                     Front={addTableBarFrontBuilder()}
-                    Back={addTableBarBackBuilder(Number(studyId), getStudyDetail)}
+                    Back={addTableBarBackBuilder(Number(studyId), getReadmeDetail)}
                   />
                 </Box>
                 <Box sx={{ position: 'relative', marginTop: '150px' }}>
