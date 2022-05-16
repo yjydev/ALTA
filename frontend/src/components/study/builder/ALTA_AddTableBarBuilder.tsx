@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
+import { Box, Typography, TextField, Button, LinearProgress } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import styled from '@emotion/styled';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -32,6 +32,7 @@ export const addTableBarBackBuilder = (studyId: number, getReadmeContents: (stud
 
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(new Date());
+    const [addLoading, setAddLoading] = useState<boolean>(false);
 
     const addProblemTable = async (): Promise<void> => {
       if (!(await checkLogin())) () => navigate('/');
@@ -48,8 +49,12 @@ export const addTableBarBackBuilder = (studyId: number, getReadmeContents: (stud
       }
 
       try {
+        setAddLoading(true);
+
         await addScheduleApi(studyId, startDate, endDate);
         fliper();
+
+        setAddLoading(false);
       } catch (err: any) {
         if (err.response.data.code === 'S001') generateError('같은 날짜로 시작하는 회차가 존재합니다', '');
         else generateError('새로운 회차를 생성할 수 없습니다', '');
@@ -72,30 +77,34 @@ export const addTableBarBackBuilder = (studyId: number, getReadmeContents: (stud
             width: '100%',
           }}
         >
-          <Box sx={{ display: 'flex' }}>
-            <Box sx={{ margin: '0 20px' }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  views={['day']}
-                  label="시작 날짜"
-                  value={startDate}
-                  onChange={(newValue) => setStartDate(newValue)}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
+          {addLoading && <LinearProgress sx={{ width: '100%', height: '10px', margin: '10px' }} color="secondary" />}
+          {!addLoading && (
+            <Box sx={{ display: 'flex' }}>
+              <Box sx={{ margin: '0 20px' }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    views={['day']}
+                    label="시작 날짜"
+                    value={startDate}
+                    onChange={(newValue) => setStartDate(newValue)}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </Box>
+              <Box sx={{ margin: '0 20px' }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    views={['day']}
+                    label="마감 날짜"
+                    value={endDate}
+                    onChange={(newValue) => setEndDate(newValue)}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </Box>
             </Box>
-            <Box sx={{ margin: '0 20px' }}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  views={['day']}
-                  label="마감 날짜"
-                  value={endDate}
-                  onChange={(newValue) => setEndDate(newValue)}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-            </Box>
-          </Box>
+          )}
+
           <Box>
             <Button
               onClick={(e) => {

@@ -42,7 +42,7 @@ public class Chat {
     private Date writeDate;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_study_id")
     private Study study;
 

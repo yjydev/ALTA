@@ -3,19 +3,19 @@ package com.ssafy.alta.controller;
 import com.ssafy.alta.dto.request.ChatRequest;
 import com.ssafy.alta.dto.response.ChatResponse;
 import com.ssafy.alta.service.ChatService;
-import com.ssafy.alta.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
 
 /**
  * packageName 	: com.ssafy.alta.controller
@@ -35,8 +35,8 @@ public class ChatController {
     private final SimpMessagingTemplate template;
 
     @MessageMapping("/chat/{studyId}")
-    public void message(@DestinationVariable("studyId") Long studyId, ChatRequest chatRequest) {
-        ChatResponse chat = chatService.insertMessage(studyId, chatRequest);
+    public void message(@DestinationVariable("studyId") Long studyId, ChatRequest chatRequest, Principal user) {
+        ChatResponse chat = chatService.insertMessage(studyId, chatRequest, user);
         template.convertAndSend("/topic/"+studyId, chat);
     }
 

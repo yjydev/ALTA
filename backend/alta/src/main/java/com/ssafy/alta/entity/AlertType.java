@@ -18,15 +18,18 @@ import java.util.Arrays;
 
 @Getter
 public enum AlertType {
-    CODE(1, "%s님이 %s문제에 풀이를 등록했습니다."),
-    COMMENT(2, "%s님이 %s문제의 코드에 댓글을 달았습니다.");
+    CODE(1, "%s님이 %s문제에 풀이를 등록했습니다.", "/study/%s/%s/code/%s"),
+    COMMENT(2, "%s님이 %s문제의 코드에 댓글을 달았습니다.", "/study/%s/%s/code/%s"),
+    SCHEDULE(3, "%s스터디의 문제 마감시간이 12시간 남았습니다!", "/study/%s/detail");
 
     private Integer code;
     private String message;
+    private String urlFormat;
 
-    AlertType(Integer code, String message) {
+    AlertType(Integer code, String message, String urlFormat) {
         this.code = code;
         this.message = message;
+        this.urlFormat = urlFormat;
     }
 
     // 해당 code에 해당하는 AlertType를 가져옴

@@ -8,6 +8,7 @@ import com.ssafy.alta.dto.request.ScheduleRequest;
 import com.ssafy.alta.service.ScheduleAndProblemService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,9 @@ import java.text.ParseException;
 @Api("회차, 문제 관련 기능 (상세조회, 회차, 문제)")
 @RestController
 @RequestMapping("/api/study/{study_id}")
+@RequiredArgsConstructor
 public class ScheduleAndProblemController {
-    @Autowired
-    ScheduleAndProblemService scheduleAndProblemService;
+    private final ScheduleAndProblemService scheduleAndProblemService;
 
     @GetMapping
     @ApiOperation(value = "스터디 상세 조회", notes = "스터디 상세를 조회합니다. 회차, 문제, 코드")
