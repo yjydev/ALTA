@@ -117,7 +117,7 @@ export default function ALTA_Alert() {
           <TabPanel value={value} index={0}>
             {badgeCnt ? (
               <Box>
-                전체 읽음
+                <p>전체 읽음</p>
                 {allRead ? (
                   <IconButton>{<CheckCircleRoundedIcon sx={resolvedStyle} />}</IconButton>
                 ) : (
@@ -170,11 +170,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }

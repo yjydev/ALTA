@@ -22,31 +22,31 @@ export default function ALTA_Header() {
 
   return (
     <Box sx={wrapperStyle}>
-      <AppBar sx={navStyle}>
-        <StyledImg src={Logo} alt="" />
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <StyledA>
-            <AlertContext>
+      <AlertContext>
+        <AppBar sx={navStyle}>
+          <StyledImg src={Logo} alt="" />
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <StyledA>
               <ALTA_Alert />
-            </AlertContext>
-          </StyledA>
-          <ALTA_Tooltip title="마이 페이지">
-            <StyledA onClick={() => navigate('/mypage')}>
-              <AccountBoxIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
             </StyledA>
-          </ALTA_Tooltip>
-          <ALTA_Tooltip title="로그아웃">
-            <StyledA onClick={logout}>
-              <LogoutIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
-            </StyledA>
-          </ALTA_Tooltip>
-        </Box>
-      </AppBar>
+            <ALTA_Tooltip title="마이 페이지">
+              <StyledA onClick={() => navigate('/mypage')}>
+                <AccountBoxIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
+              </StyledA>
+            </ALTA_Tooltip>
+            <ALTA_Tooltip title="로그아웃">
+              <StyledA onClick={logout}>
+                <LogoutIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
+              </StyledA>
+            </ALTA_Tooltip>
+          </Box>
+        </AppBar>
+      </AlertContext>
     </Box>
   );
 }
