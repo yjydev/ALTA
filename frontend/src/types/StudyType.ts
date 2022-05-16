@@ -8,13 +8,10 @@ export type OrganizeStudyRequset = {
   repositoryName: string;
 };
 
-export type Member = {
+export type StudyMember = {
   [index: string]: string;
   nickname: string;
-  email: string;
-  state: string;
   position: string;
-  resistrationData: string;
 };
 
 export type Code = {
@@ -30,7 +27,7 @@ export type Problem = {
   codes: Code[];
 };
 
-export type StudyData = {
+export type TableData = {
   id: number;
   startDate: string;
   endDate: string;

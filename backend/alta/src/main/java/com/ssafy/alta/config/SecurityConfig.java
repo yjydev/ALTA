@@ -48,9 +48,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/webjars/**",
                         "/swagger/**",   // swagger
                         "/favicon.ico",
-                        "/images/**"
+                        "/images/**",
+                        "/chat/**"
                 );
-//                .antMatchers("/githubLogin"); // 여기다가 선언안하면 404 에러 발생..
     }
 
     @Override
@@ -66,9 +66,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .httpBasic().disable()
 
-//                    .exceptionHandling()//exception 핸들링할 때, 우리가 만든 두 클래스를 사용하겠서요.
-//                .authenticationEntryPoint()
-                //                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .exceptionHandling()//exception 핸들링할 때, 우리가 만든 두 클래스를 사용하겠서요.
+//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
 //                .and()
 
                 // 모든 요청은 인증이 되어야 하지만, 로그인관련하여 요청은 다 권한은 허락해주어야 한다.

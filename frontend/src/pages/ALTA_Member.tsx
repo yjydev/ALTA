@@ -1,6 +1,4 @@
-import { Box } from '@mui/material';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import MemberContext from '../context/MemberContext';
 
 import ALTA_Template from '../components/common/ALTA_Template';
@@ -9,12 +7,11 @@ import ALTA_Header from '../components/common/ALTA_Header';
 import ALTA_MemberContents from '../components/member/ALTA_MemberContents';
 
 export default function ALTA_Member() {
-  const studyId = JSON.parse(JSON.stringify(useLocation().state)).studyId;
   const Header = () => <ALTA_Header></ALTA_Header>;
   const Contents = () => (
     <MemberContext>
       <ALTA_Inner>
-        <ALTA_MemberContents studyId={studyId} />
+        <ALTA_MemberContents />
       </ALTA_Inner>
     </MemberContext>
   );
