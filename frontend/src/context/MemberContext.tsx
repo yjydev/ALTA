@@ -16,6 +16,8 @@ const defaultValue: defaultValueType = {
   setInvitable: () => null,
   columns: [],
   setColumns: () => null,
+  isRefresh: false,
+  setIsRefresh: () => null,
 };
 export const MemberStore = React.createContext(defaultValue);
 
@@ -34,6 +36,8 @@ export default function MemberProvider({ children }: ContextProps) {
     // { id: 'score', label: '점수', width: 15 },
     // { id: 'out', label: '강퇴', width: 30 }
   ]);
+
+  const [isRefresh, setIsRefresh] = useState<boolean>(false);
 
   const getMembers = async (studyId: number) => {
     const loginStatus = await checkLogin();
@@ -62,6 +66,8 @@ export default function MemberProvider({ children }: ContextProps) {
     setInvitable,
     columns,
     setColumns,
+    isRefresh,
+    setIsRefresh,
   };
   return <MemberStore.Provider value={value}>{children}</MemberStore.Provider>;
 }
@@ -78,4 +84,6 @@ type defaultValueType = {
   setInvitable: (newData: boolean) => void;
   columns: Column[];
   setColumns: (newData: Column[]) => void;
+  isRefresh: boolean;
+  setIsRefresh: (newData: boolean) => void;
 };

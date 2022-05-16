@@ -18,12 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.mail.MessagingException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -44,6 +43,7 @@ public class CodeService {
     private final CodeRepository codeRepository;
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
+    private final ScheduleRepository scheduleRepository;
     private final StudyRepository studyRepository;
     private final StudyJoinInfoRepository studyJoinInfoRepository;
     private final CommentService commentService;
@@ -51,6 +51,9 @@ public class CodeService {
     private final RedisService redisService;
     private final ActivityScoreService activityScoreService;
     private final ReadmeService readmeService;
+    private final AlertService alertService;
+    private final NotificationService notificationService;
+    private final MailService mailService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -86,12 +89,26 @@ public class CodeService {
         // 성실점수 추가
         activityScoreService.addScoreForCommentOrCode(userId, studyId, code.getId(), ActivityType.CODE.getActivityIdx());
 
+        // 알림 발생 - 해당 스터디의 팀원들 모두에게
+        List<StudyJoinInfo> sjiList = studyJoinInfoRepository.findByStudyStudyIdWhereState(studyId, "가입");
+        List<Alert> alertList = new LinkedList<>();
+        for(StudyJoinInfo sji : sjiList) {
+            // 코드 작성자에게는 알림 발생 X
+            if(sji.getUser().getId().equals(code.getUser().getId())) continue;
+            Alert alert = alertService.processAlert(sji.getUser(), code.getUser(), AlertType.CODE, code);
+            alertList.add(alert);
+        }
 
 //        중복 부분 호출 - 코드 github에 업로드
         this.createCodeInGithub(token, study, code, codeRequest);
 
         // 리드미 업데이트
         readmeService.updateReadme(studyId);
+
+        // 프론트로 알림 발생시키기(DB조작, Git조작 다 끝나고 보내도록 마지막에 호출)
+        for(Alert alert : alertList) {
+            notificationService.sendAlertEvent(alert);
+        }
     }
 
 
@@ -211,11 +228,16 @@ public class CodeService {
             System.out.println("조회할 파일이 github에 없음");
             e.printStackTrace();
         }
-//        같은 파일이 이미 Git에 업로도 되어 있으면 -> Exception 발생
+        // 같은 파일이 이미 Git에 업로도 되어 있으면
+        // 문제명_유저명_시간-분.java -> 이런식으로 파일명 수정되서 올라가도록!
         if(gitCodeResponse != null) {
-            throw new DuplicateFileInGithubException();
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            String nowTime = formatter.format(new Date());
+            String newFileName = String.format("%s_%s_%s", code.getProblem().getName(), code.getUser().getName(), nowTime);
+            fullFileName = fileLanguageUtil.getFullFileName(newFileName, study.getLanguage());
+            path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
+            url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
         }
-
         String base64Content = Base64.getEncoder().encodeToString(code.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeUpdateRequest request = GitCodeUpdateRequest.builder()
                 .content(base64Content)
@@ -309,6 +331,25 @@ public class CodeService {
         }
     }
 
+    // 오늘 마감인데 코드 미제출한 사람에게 메일 보냄
+    public void sendAlertMailCodeDeadline() throws ParseException, MessagingException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowDate = formatter.parse(formatter.format(new Date()));
+
+        // nowDate까지인 일정들 가져오고
+        List<Schedule> scheduleList = scheduleRepository.findBySameEndDate(nowDate);
+        // 이 스터디의 유저들 가져와서
+        for(Schedule schedule : scheduleList) {
+            List<StudyJoinInfo>  sjtList = studyJoinInfoRepository.findByStudyStudyIdWhereState(schedule.getStudy().getStudyId(), "가입");
+            // 일단 보냄
+            String message = String.format(AlertType.SCHEDULE.getMessage(), schedule.getStudy().getName());
+            for(StudyJoinInfo studyJoinInfo : sjtList) {
+                mailService.sendAlertMail(studyJoinInfo.getUser().getEmail(), message);
+            }
+        }
+
+    }
+
     private void checkUserId(String userId, String id) {
         if(!userId.equals(id))
             throw new WriterNotMatchException();
@@ -326,7 +367,7 @@ public class CodeService {
             throw new DuplicateFileException();
     }
 
-    public String getPath(String problemName, String userName, String fileName) {
+    private String getPath(String problemName, String userName, String fileName) {
         return "/풀이모음/" + problemName + "/" + userName + "/" + fileName;
     }
 
@@ -334,7 +375,7 @@ public class CodeService {
         return "https://api.github.com/repos/" + owner + "/" + repo + "/contents" + path;
     }
 
-    public String getCommitMessage(String commitMessage) {
+    private String getCommitMessage(String commitMessage) {
         if(commitMessage == null || commitMessage.equals("")) {
             commitMessage = CREATE_MESSAGE;
         }

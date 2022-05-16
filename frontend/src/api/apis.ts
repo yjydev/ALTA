@@ -109,7 +109,8 @@ export async function addProblemApi(studyId: number, scheduleId: number, name: s
     ],
     scheduleId,
   };
-  return await await postRequest(`/api/study/${studyId}/problem`, requestBody);
+  console.log(requestBody);
+  return await postRequest(`/api/study/${studyId}/problem`, requestBody);
 }
 
 //코드 제출 요청

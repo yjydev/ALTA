@@ -49,7 +49,9 @@ public enum ErrorCode {
     GIT_COLLABORATOR_APPROVEL_ERROR("A005", HttpStatus.NOT_FOUND, "Git 초대 승인을 해주세요."),
 
     WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "작성자만 수정/삭제할 수 있습니다."),
-    DUPLICATE_FILE_ERROR("C002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다.");
+    DUPLICATE_FILE_ERROR("C002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다."),
+
+    SSE_SEND_MESSAGE_FAIL("SSE001", HttpStatus.INTERNAL_SERVER_ERROR, "알림 송신이 실패했습니다.");
 
     private final String code;         // 에러 키(관리하기 위함)
     private final HttpStatus status;  // 상태 코드
