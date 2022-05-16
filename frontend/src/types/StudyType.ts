@@ -36,7 +36,6 @@ export type TableData = {
 };
 
 export type chat = {
-  userId: string;
   content: string;
 };
 

@@ -98,11 +98,12 @@ export default function ALTA_StudyDetailContents() {
               </Box>
             </ALTA_Inner>
           </Grid>
-          {/* <Grid item xl={0.5} lg={6}>
+          {/* <Grid item xl={0.5} lg={6}> */}
+          <Grid item>
             <ALTA_StudySideContents>
               <ALTA_StudyBoard />
             </ALTA_StudySideContents>
-          </Grid> */}
+          </Grid>
         </Grid>
       )}
     </>
