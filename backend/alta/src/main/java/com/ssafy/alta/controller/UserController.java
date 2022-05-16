@@ -1,5 +1,6 @@
 package com.ssafy.alta.controller;
 
+import com.ssafy.alta.dto.request.UserAlertRequest;
 import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.repository.UserRepository;
 import com.ssafy.alta.service.ActivityScoreService;
@@ -61,7 +62,7 @@ public class UserController {
 
     @PatchMapping("/alert")
     @ApiOperation(value = "알람 수신 여부 수정", notes = "user 알람 수신 여부 수정")
-    public ResponseEntity patchUserAlert(@RequestBody String alertSetting) {
+    public ResponseEntity patchUserAlert(@RequestBody UserAlertRequest alertSetting) {
         return new ResponseEntity<>(userService.updateAlert(alertSetting), HttpStatus.OK);
     }
 }
