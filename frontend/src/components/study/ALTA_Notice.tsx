@@ -26,18 +26,18 @@ export default function ALTA_Notice() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const edit = async (): Promise<void> => {
-    if (notice === noticeContent) {
-      return;
-    }
+    if (notice !== noticeContent) {
+      setLoading(true);
+      const noticeApiStatus = await editNoticeContent(Number(studyId), notice.replaceAll('\n', '<br />'));
 
-    setLoading(true);
-    const noticeStatus = await editNoticeContent(Number(studyId), notice.replaceAll('\n', '<br />'));
-    if (noticeStatus.status === -1) navigate('/');
-    else if (noticeStatus.status === -2) generateError('공지사항을 변경할 수 없습니다', '');
-    else {
-      setNoticeEditing(false);
+      if (noticeApiStatus.status === -1) navigate('/');
+      else if (noticeApiStatus.status === -2) generateError('공지사항을 변경할 수 없습니다', noticeApiStatus.message);
+      else {
+        setNoticeEditing(false);
+      }
+
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

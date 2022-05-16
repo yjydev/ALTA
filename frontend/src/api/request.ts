@@ -33,6 +33,12 @@ export const putRequest = async (url: string, body: any, headers = makeHeaders()
   return response.data;
 };
 
+export const patchRequest = async (url: string, body: any, headers = makeHeaders()): Promise<any> => {
+  const response = await axiosInstance.patch(url, body, headers);
+
+  return response.data;
+};
+
 export const refreshToken = async (): Promise<any> => {
   const headers = {
     headers: {

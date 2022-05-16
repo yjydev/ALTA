@@ -35,7 +35,7 @@ export const addProblemBarBackBuilder = (
   id?: number,
 ) =>
   function Back({ fliper }: FliperProps) {
-    const { getStudyDetail } = useContext(StudyDetailStore);
+    const { getReadmeDetail } = useContext(StudyDetailStore);
     const navigate = useNavigate();
 
     const [problemId, _] = useState<number>(id ? id : -1);
@@ -50,15 +50,21 @@ export const addProblemBarBackBuilder = (
         generateError('문제 이름과 링크를 모두 입력해주세요', '');
         return;
       }
+
+      setEditProblemLoading(true);
+
       try {
         await addProblemApi(studyId, scheduleId, problemName, problemLink);
-      } catch {
-        generateError('문제를 추가할 수 없습니다', '');
+      } catch (err: any) {
+        console.log(err);
+        generateError('문제를 추가할 수 없습니다', err.response.data.message);
+      } finally {
+        setEditProblemLoading(false);
       }
 
       setPropblemName('');
       setPropblemLink('');
-      getStudyDetail(studyId);
+      getReadmeDetail(studyId);
     };
 
     const editProblem = async (): Promise<void> => {
@@ -70,12 +76,13 @@ export const addProblemBarBackBuilder = (
       }
 
       setEditProblemLoading(true);
+
       try {
         await editProblemApi(studyId, problemId, problemName, problemLink);
         fliper();
-        getStudyDetail(studyId);
-      } catch (error) {
-        generateError('문제를 수정할 수 없습니다', '');
+        getReadmeDetail(studyId);
+      } catch (err: any) {
+        generateError('문제를 수정할 수 없습니다', err.response.data.message);
       } finally {
         setEditProblemLoading(false);
       }
@@ -92,7 +99,9 @@ export const addProblemBarBackBuilder = (
             width: '100%',
           }}
         >
-          {editProblemLoading && <LinearProgress sx={{ width: '100%', margin: '10px' }} color="secondary" />}
+          {editProblemLoading && (
+            <LinearProgress sx={{ width: '100%', height: '5px', margin: '10px' }} color="secondary" />
+          )}
           {!editProblemLoading && (
             <Box sx={{ display: 'flex' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 20px' }}>

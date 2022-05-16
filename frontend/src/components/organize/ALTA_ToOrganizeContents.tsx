@@ -96,8 +96,8 @@ export default function ALTA_ToOrganizeContents() {
         `${requestData.repositoryName} 레포지토리가 Github에 생성되었습니다`,
         () => navigate('/mypage'),
       );
-    } catch (err) {
-      generateError('스터디를 생성할 수 없습니다', ``);
+    } catch (err: any) {
+      generateError('스터디를 생성할 수 없습니다', err.response.data.message);
     }
   };
 

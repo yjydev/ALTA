@@ -17,14 +17,14 @@ export default function ALTA_MypageContents() {
 
   useEffect(() => {
     (async function () {
-      const Userstatus = await getUserData();
+      const UserStatus = await getUserData();
 
-      if (Userstatus.status === -1) navigate('/');
-      else if (Userstatus.status === -2) {
+      if (UserStatus.status === -1) navigate('/');
+      else if (UserStatus.status === -2) {
         localStorage.removeItem('jwt');
         localStorage.removeItem('refresh');
         localStorage.removeItem('userData');
-        generateError('유저 정보를 불러올 수 없습니다', '', () => navigate('/'));
+        generateError('유저 정보를 불러올 수 없습니다', UserStatus.message, () => navigate('/'));
       } else setLoading(false);
     })();
   }, []);

@@ -17,24 +17,29 @@ export function loginTokenChecker(): number {
   return 1;
 }
 
-export async function checkLogin() {
+type CheckLoginType = {
+  status: boolean;
+  message: string;
+};
+
+export async function checkLogin(): Promise<CheckLoginType> {
   const loginStatus: number = loginTokenChecker();
 
-  if (loginStatus === -1) return { status: false, message: 'no jwt' };
+  if (loginStatus === -1) return { status: false, message: 'JWT002' };
   else if (loginStatus === 0) {
     try {
       const response = await refreshToken();
 
       localStorage.setItem('jwt', response.jwtAt);
-      return { status: true, message: 'success refresh' };
-    } catch (err) {
+      return { status: true, message: '인증되었습니다' };
+    } catch (err: any) {
       localStorage.removeItem('jwt');
       localStorage.removeItem('refresh');
       localStorage.removeItem('userData');
 
-      return { status: false, message: 'refresh token expired' };
+      return { status: false, message: err.code };
     }
   }
 
-  return { status: true, message: 'jwt is ok' };
+  return { status: true, message: '인증되었습니다' };
 }

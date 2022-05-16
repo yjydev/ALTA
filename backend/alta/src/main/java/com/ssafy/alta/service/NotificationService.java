@@ -36,8 +36,12 @@ public class NotificationService {
 
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);  // sse 연결 요청에 응답하기 위해 sseEmitter 객체 생성(유호시간)
 
-//        String dummyData = "EventStream Created! userId : " + userId;
-//        this.sendToClient(emitter, userId, dummyData);
+        // 클라이언트로 더미 데이터 한번 보내줌! -> 프론트에서 open 열기 위함!
+        AlertResponse alertResponse = AlertResponse.builder()
+                                    .alertId(-1L)
+                                    .content("sse연결 성공!")
+                                    .build();
+        this.sendToClient(emitter, userId, alertResponse);
         emitters.put(userId, emitter);  // 생성된 emitters를 저장해둠
 
         emitter.onCompletion(() -> emitters.remove(userId));  // 네트워크 에러
@@ -62,7 +66,7 @@ public class NotificationService {
         try {
             emitter.send(SseEmitter.event()
                     .id(userId)
-                    .data(data), MediaType.APPLICATION_JSON);
+                    .data(data));
         } catch (IOException e) {
             emitters.remove(userId);
             throw new SseSendMessageFail();
