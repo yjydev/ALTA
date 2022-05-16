@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { UserData, defaultUserData } from '../types';
 import { ContextProps } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
-import { userDataApi, editUserDataApi, changeProfileImgApi } from '../api/apis';
+import { userDataApi, editUserDataApi, changeProfileImgApi, editAlertStatusApi } from '../api/apis';
 
 //Context 인스턴스 생성
 export const defaultValue: defaultValueType = {
   userData: defaultUserData,
   getUserData: () => null,
+  editAlertStatus: () => null,
   changeProfile: () => null,
   editUserData: () => null,
 };
@@ -17,7 +18,6 @@ type PromiseType = {
   status: number;
   message: string;
 };
-
 //Context Provider 컴포넌트
 export default function UserDataProvider({ children }: ContextProps) {
   const [userData, setUserData] = useState<UserData>(defaultUserData);
@@ -33,6 +33,22 @@ export default function UserDataProvider({ children }: ContextProps) {
       setUserData(response.userData);
 
       return { status: 1, message: '유저 정보를 불러왔습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
+    }
+  };
+
+  const editAlertStatus = async (alertSetting: string): Promise<PromiseType> => {
+    const loginStatus = await checkLogin();
+    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+
+    try {
+      const response = await editAlertStatusApi(alertSetting);
+
+      localStorage.setItem('UserData', JSON.stringify(response.userData));
+      setUserData(response.userData);
+
+      return { status: 1, message: '알림 상태를 불러왔습니다' };
     } catch (err: any) {
       return { status: -2, message: err.response.data.message };
     }
@@ -64,7 +80,7 @@ export default function UserDataProvider({ children }: ContextProps) {
     }
   };
 
-  const value = { userData, getUserData, editUserData, changeProfile };
+  const value = { userData, editAlertStatus, getUserData, editUserData, changeProfile };
 
   return <UserDataStore.Provider value={value}>{children}</UserDataStore.Provider>;
 }
@@ -73,6 +89,7 @@ export default function UserDataProvider({ children }: ContextProps) {
 type defaultValueType = {
   userData: UserData;
   getUserData: () => any;
+  editAlertStatus: (alertSetting: string) => any;
   changeProfile: (img: FormData) => any;
   editUserData: (nickname: string, email: string, introduction: string, languageList: string[] | null) => any;
 };

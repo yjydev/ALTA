@@ -17,6 +17,7 @@ const defaultValue: defaultValueType = {
   noticeContent: '',
   maxPeople: 0,
   isLeader: false,
+  studyName: '',
   getReadmeDetail: () => null,
   getStudyMembers: () => null,
   getNoticeContent: () => null,
@@ -32,6 +33,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const [noticeContent, setNoticeContent] = useState<string>('');
   const [maxPeople, setMaxPeople] = useState<number>(0);
   const [isLeader, setIsLeader] = useState<boolean>(false);
+  const [studyName, setStudyName] = useState<string>('');
 
   const getReadmeDetail = async (studyId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
@@ -42,6 +44,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       const response = await studyDetailDataApi(studyId);
 
       setReadmeData(response.readme);
+      setStudyName(response.studyName);
       return { status: 1, message: '스터디 리드미를 불러왔습니다' };
     } catch (err: any) {
       return { status: -2, message: err.response.data.message };
@@ -135,6 +138,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     noticeContent,
     maxPeople,
     isLeader,
+    studyName,
     getReadmeDetail,
     getStudyMembers,
     getNoticeContent,
@@ -151,6 +155,7 @@ type defaultValueType = {
   noticeContent: string;
   maxPeople: number;
   isLeader: boolean;
+  studyName: string;
   getReadmeDetail: (studyId: number) => any;
   getStudyMembers: (studyId: number) => any;
   getNoticeContent: (studyId: number) => any;

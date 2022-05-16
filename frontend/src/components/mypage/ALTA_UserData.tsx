@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Button } from '@mui/material';
-import { useContext, useState } from 'react';
+import { Box, Button, Grid, Typography } from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import styled from '@emotion/styled';
@@ -10,21 +10,50 @@ import { mainColor } from '../../modules/colorChart';
 import { UserDataStore } from '../../context/UserDataContext';
 import { generateError } from '../../modules/generateAlert';
 
-import ALTA_AlertSetting from './ALTA_AlertSetting';
+import ALTA_ToggleBtn from './ALTA_ToggleBtn';
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 import ALTA_UserDataEdit from './ALTA_UserDataEdit';
 import ALTA_UserDataDisplay from './ALTA_UserDataDisplay';
 import ALTA_Tooltip from '../common/ALTA_Tooltip';
 
+type AlertStatus = {
+  [index: string]: boolean;
+  siteSolutionAlert: boolean;
+  siteCommentAlert: boolean;
+  mailSolutionAlert: boolean;
+  mailScheduleAlert: boolean;
+};
+
 export default function ALTA_UserData() {
-  const { userData, changeProfile } = useContext(UserDataStore);
+  const { userData, changeProfile, editAlertStatus } = useContext(UserDataStore);
   const navigate = useNavigate();
 
-  const [alertFold, setAlertFold] = useState<boolean>(false);
   const [isEditPage, setIsEditPage] = useState<boolean>(false);
+  const [alertFold, setAlertFold] = useState<boolean>(false);
+  const [alertStatus, setAlertStatus] = useState<AlertStatus>({
+    // siteSolutionAlert: userData.alertSetting.slice(0, 1) === '1' ? true : false,
+    // siteCommentAlert: userData.alertSetting.slice(1, 2) === '1' ? true : false,
+    // mailSolutionAlert: userData.alertSetting.slice(2, 3) === '1' ? true : false,
+    // mailScheduleAlert: userData.alertSetting.slice(3, 4) === '1' ? true : false,
+    siteSolutionAlert: '1110'.slice(0, 1) === '1' ? true : false,
+    siteCommentAlert: '1110'.slice(1, 2) === '1' ? true : false,
+    mailSolutionAlert: '1110'.slice(2, 3) === '1' ? true : false,
+    mailScheduleAlert: '1110'.slice(3, 4) === '1' ? true : false,
+  });
+
+  const editAlertSetting = (key: string): void => {
+    const tmp = { ...alertStatus };
+    tmp[key] = !tmp[key];
+
+    setAlertStatus(tmp);
+  };
+
+  useEffect(() => {
+    console.log(alertStatus);
+  }, [alertStatus]);
 
   const openEditPage = (): void => {
-    setAlertFold(true);
+    setAlertFold(false);
     setIsEditPage(!isEditPage);
   };
 
@@ -46,12 +75,22 @@ export default function ALTA_UserData() {
     }
   };
 
+  const save = async () => {
+    let result = '';
+    for (const key in alertStatus) result += alertStatus[key] ? '1' : '0';
+
+    const saveStatus = editAlertStatus(result);
+
+    if (saveStatus.status === -1) navigate('/');
+    else if (saveStatus.status === -2) generateError('알림 설정을 수정하지 못했습니다', saveStatus.message);
+  };
+
   return (
     <Box sx={wrapper}>
       <Input id="file" type="file" accept="image/*" onChange={(e) => changeProfileImage(e.target.files)} />
       <ALTA_ContentsTitle>내 정보</ALTA_ContentsTitle>
       <Box sx={[userDataStyle, alertFold && unfold]}>
-        {isEditPage && (
+        {!isEditPage && (
           <ALTA_Tooltip title="내 정보 수정">
             <EditIcon sx={[editButtonStyle, inTop]} onClick={openEditPage} />
           </ALTA_Tooltip>
@@ -72,14 +111,54 @@ export default function ALTA_UserData() {
           </Box>
         </Box>
         <Box>
-          <ALTA_AlertSetting />
+          <Grid container>
+            <Grid item xs={6} sx={itemStyle}>
+              <Typography sx={itemTitleStyle}>알림 수신</Typography>
+              <ALTA_ToggleBtn
+                targetStatus={alertStatus.siteSolutionAlert}
+                setTarget={() => editAlertSetting('siteSolutionAlert')}
+              >
+                풀이
+              </ALTA_ToggleBtn>
+              <ALTA_ToggleBtn
+                targetStatus={alertStatus.siteCommentAlert}
+                setTarget={() => editAlertSetting('siteCommentAlert')}
+              >
+                코멘트
+              </ALTA_ToggleBtn>
+            </Grid>
+            <Grid item xs={6} sx={itemStyle}>
+              <Typography sx={itemTitleStyle}>이메일 수신</Typography>
+              <ALTA_ToggleBtn
+                targetStatus={alertStatus.mailSolutionAlert}
+                setTarget={() => editAlertSetting('mailSolutionAlert')}
+              >
+                코멘트
+              </ALTA_ToggleBtn>
+              <ALTA_ToggleBtn
+                targetStatus={alertStatus.mailScheduleAlert}
+                setTarget={() => editAlertSetting('mailScheduleAlert')}
+              >
+                일정
+              </ALTA_ToggleBtn>
+            </Grid>
+          </Grid>
         </Box>
         {isEditPage ? (
           <></>
         ) : (
-          <Button sx={[editButtonStyle, inBottom]} onClick={() => setAlertFold(!alertFold)}>
-            {alertFold ? '알림 설정' : '설정 완료'}
-          </Button>
+          <>
+            {!alertFold && (
+              <Button sx={[editButtonStyle, inBottom]} onClick={() => setAlertFold(!alertFold)}>
+                알림 설정
+              </Button>
+            )}
+            {alertFold && (
+              <Button sx={[editButtonStyle, inBottom]} onClick={() => save()}>
+                설정 완료
+              </Button>
+            )}
+          </>
         )}
       </Box>
     </Box>
@@ -144,6 +223,17 @@ const inTop = {
 const inBottom = {
   bottom: '10px',
   right: '10px',
+};
+
+const itemTitleStyle = {
+  fontSize: '20px',
+  marginBottom: '20px',
+};
+
+const itemStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '20px',
 };
 
 const PhotoButton = styled.button`

@@ -1,5 +1,5 @@
 import { OrganizeStudyRequset } from '../types';
-import { getRequest, postRequest, putRequest, deleteRequest } from './request';
+import { getRequest, patchRequest, postRequest, putRequest, deleteRequest } from './request';
 
 //GET
 //유저 정보 요청
@@ -240,4 +240,14 @@ export async function deleteInvitationApi(studyId: number, sjiId: number) {
 // 일정테이블 삭제 요청
 export async function deleteTableApi(studyId: number, scheduleId: number) {
   return await deleteRequest(`/api/study/${studyId}/schedule/${scheduleId}`);
+}
+
+//PATCH
+//유저 알림 상태 변경 요청
+
+export async function editAlertStatusApi(alertSetting: string) {
+  const requsetBody = {
+    alertSetting,
+  };
+  return await patchRequest('api/user/alert', requsetBody);
 }
