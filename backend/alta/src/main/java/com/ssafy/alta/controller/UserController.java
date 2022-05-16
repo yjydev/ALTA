@@ -61,7 +61,7 @@ public class UserController {
 
     @PatchMapping("/alert")
     @ApiOperation(value = "알람 수신 여부 수정", notes = "user 알람 수신 여부 수정")
-    public ResponseEntity patchUserAlert(@RequestBody int alertSetting) {
+    public ResponseEntity patchUserAlert(@RequestBody String alertSetting) {
         return new ResponseEntity<>(userService.updateAlert(alertSetting), HttpStatus.OK);
     }
 }
