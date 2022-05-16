@@ -3,6 +3,7 @@ package com.ssafy.alta.service;
 import com.ssafy.alta.entity.UserRedis;
 import com.ssafy.alta.repository.UserRedisRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -24,7 +25,7 @@ import java.util.Optional;
  */
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RedisService {
     private final UserRedisRepository userRedisRepository;
 
