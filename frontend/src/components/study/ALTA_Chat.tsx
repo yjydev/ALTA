@@ -1,10 +1,12 @@
 import { useEffect, useState, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Input, Button } from '@mui/material';
+import { Box, Input, Button, Avatar, Grid, Typography } from '@mui/material';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { chat, chatResponse } from '../../types';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
+import { generateError } from '../../modules/generateAlert';
+import { displayAt } from '../../modules/displayAt';
 
 // socket.io 가 아닌 sock js를 사용하는 이유는 spring 서버와 통신하기 때문
 // node.js 를 사용한다면 socket.io를 주로 사용
@@ -33,7 +35,12 @@ export default function ALTA_Chat({ stompClient }: Props) {
   const { studyId } = useParams<Params>();
   const navigate = useNavigate();
   const { chatContents, setChatContents, getChatContent } = useContext(StudyDetailStore);
-  const chatInput = useRef<any>();
+  const chatInput = useRef<any>(null);
+  let name = '';
+  const userData = localStorage.getItem('UserData');
+  if (userData) {
+    name = JSON.parse(userData)['nickname'];
+  }
 
   const [message, setMessage] = useState<string>('');
   stompClient.debug = () => {
@@ -64,33 +71,81 @@ export default function ALTA_Chat({ stompClient }: Props) {
 
   const scrollBottom = () => {
     if (chatInput.current) {
-      const { scrollHeight, clientHeight } = chatInput.current;
-      chatInput.current.scrollTop = scrollHeight - clientHeight;
+      chatInput.current.scrollTo({
+        top: chatInput.current.scrollHeight,
+      });
     }
   };
 
   const handleEnter = () => {
-    const newMessage: chat = { content: message };
-    stompClient.send(`/chat/${studyId}`, headers, JSON.stringify(newMessage));
-    setMessage('');
+    if (message === '') generateError('채팅을 입력해주세요', '');
+    else {
+      const newMessage: chat = { content: message };
+      stompClient.send(`/chat/${studyId}`, headers, JSON.stringify(newMessage));
+      setMessage('');
+    }
   };
 
   return (
     <>
       <Box sx={titleStyle}>소통창구</Box>
-      <Box sx={[chatBoxStyle, scrollStyle]}>
+      <Box sx={[chatBoxStyle, scrollStyle]} ref={chatInput}>
         <Box>
-          <div className="chatList" ref={chatInput}>
-            {chatContents.map((mes, idx) => (
-              <div key={idx} id="">
-                {mes.nickname} : {mes.message}
-              </div>
-            ))}
-          </div>
+          {chatContents.map((mes, idx) => (
+            <Grid container key={idx} sx={infoStyle} columns={14}>
+              {name === mes.nickname ? (
+                <>
+                  <Grid item md={12} sx={rightListStyle}>
+                    <Grid item sx={chatRightStyle}>
+                      <Typography sx={nameRightStyle}>{mes.nickname}</Typography>
+                      <Grid container>
+                        <Grid item sx={dateRightStyle}>
+                          <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+                        </Grid>
+                        <Grid item sx={bubbleRightStyle}>
+                          {mes.message}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item md={2} sx={profileRightStyle}>
+                    <Avatar src={mes.image} />
+                  </Grid>
+                </>
+              ) : (
+                <>
+                  <Grid item md={2} sx={profileLeftStyle}>
+                    <Avatar src={mes.image} />
+                  </Grid>
+                  <Grid item md={12} sx={leftListStyle}>
+                    <Grid item sx={chatLeftStyle}>
+                      <Typography>{mes.nickname}</Typography>
+                      <Grid container>
+                        <Grid item sx={bubbleLeftStyle}>
+                          {mes.message}
+                        </Grid>
+                        <Grid item sx={dateLeftStyle}>
+                          <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </>
+              )}
+            </Grid>
+          ))}
         </Box>
       </Box>
       <Box sx={chatInputStyle}>
-        <Input placeholder="메세지를 입력하세요" value={message} onChange={(e) => setMessage(e.target.value)} />
+        <Input
+          fullWidth
+          placeholder="메세지를 입력하세요"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(ev) => {
+            if (ev.key === 'Enter') handleEnter();
+          }}
+        />
         <Button onClick={handleEnter}>입력</Button>
       </Box>
     </>
@@ -108,9 +163,9 @@ const titleStyle = {
 };
 
 const chatBoxStyle = {
-  display: 'flex',
   minHeight: '300px',
   maxHeight: '300px',
+  width: '100%',
   marginBottom: '10px',
   padding: '10px',
   boxSizing: 'border-box',
@@ -122,4 +177,72 @@ const chatBoxStyle = {
 const chatInputStyle = {
   display: 'flex',
   marginBottom: '10px',
+  marginLeft: '5px',
+};
+
+const infoStyle = {
+  alignItems: 'center',
+  display: 'flex',
+  marginBottom: '13px',
+};
+
+const profileRightStyle = {
+  justifyContent: 'center',
+};
+
+const nameRightStyle = {
+  marginBottom: '5px',
+  marginRight: '5px',
+};
+
+const profileLeftStyle = {
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
+const leftListStyle = {
+  display: 'flex',
+  justifyContent: 'start',
+};
+
+const bubbleLeftStyle = {
+  border: '0.5px solid black',
+  borderRadius: '10px',
+  padding: '10px',
+  display: 'inline-block',
+};
+
+const chatLeftStyle = {
+  textAlign: 'left',
+};
+
+const rightListStyle = {
+  display: 'flex',
+  justifyContent: 'end',
+};
+
+const bubbleRightStyle = {
+  border: '0.5px solid black',
+  borderRadius: '10px',
+  padding: '10px',
+  display: 'inline-block',
+};
+
+const chatRightStyle = {
+  marginRight: '10px',
+  textAlign: 'right',
+};
+
+const dateRightStyle = {
+  display: 'flex',
+  flexDirection: 'column-reverse',
+  marginRight: '5px',
+  color: 'gray',
+};
+
+const dateLeftStyle = {
+  display: 'flex',
+  flexDirection: 'column-reverse',
+  marginLeft: '5px',
+  color: 'gray',
 };
