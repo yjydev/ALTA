@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StudyMember, TableData } from '../types';
 import { ContextProps, ContextPromiseType } from '../types';
 import {
+  deleteTableApi,
   editNoticeContentApi,
   editScheduleApi,
   memberListApi,
@@ -21,6 +22,7 @@ const defaultValue: defaultValueType = {
   getNoticeContent: () => null,
   editNoticeContent: () => null,
   editSchedule: () => null,
+  deleteSchedule: () => null,
 };
 export const StudyDetailStore = React.createContext(defaultValue);
 
@@ -42,7 +44,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       setReadmeData(response.readme);
       return { status: 1, message: '스터디 리드미를 불러왔습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
     }
   };
 
@@ -70,7 +72,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       setIsLeader(response.isLeader);
       return { status: 1, message: '스터디 참여자 정보를 불러왔습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
     }
   };
 
@@ -85,7 +87,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       setNoticeContent(response.content);
       return { status: 1, message: '공지사항을 불러왔습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
     }
   };
 
@@ -98,7 +100,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       await getReadmeDetail(studyId);
       return { status: 1, message: '일정을 수정했습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
     }
   };
 
@@ -111,7 +113,20 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       await getNoticeContent(studyId);
       return { status: 1, message: '공지사항을 수정했습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
+    }
+  };
+
+  const deleteSchedule = async (studyId: number, scheduleId: number): Promise<ContextPromiseType> => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
+    try {
+      await deleteTableApi(studyId, scheduleId);
+      await getReadmeDetail(studyId);
+      return { status: 1, message: '일정을 삭제했습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
     }
   };
   const value = {
@@ -125,6 +140,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     getNoticeContent,
     editNoticeContent,
     editSchedule,
+    deleteSchedule,
   };
   return <StudyDetailStore.Provider value={value}>{children}</StudyDetailStore.Provider>;
 }
@@ -140,4 +156,5 @@ type defaultValueType = {
   getNoticeContent: (studyId: number) => any;
   editNoticeContent: (studyId: number, content: string) => any;
   editSchedule: (studyId: number, scheduleId: number, dateString: string) => any;
+  deleteSchedule: (studyId: number, scheduleId: number) => any;
 };

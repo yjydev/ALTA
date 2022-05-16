@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import { OrganizeStudyRequset } from '../types';
 import { getRequest, postRequest, putRequest, deleteRequest } from './request';
 
@@ -236,4 +235,9 @@ export async function deleteReviewApi(reviewId: number) {
 // 초대 대기 삭제 요청
 export async function deleteInvitationApi(studyId: number, sjiId: number) {
   return await deleteRequest(`/api/study/${studyId}/invitation/${sjiId}`);
+}
+
+// 일정테이블 삭제 요청
+export async function deleteTableApi(studyId: number, scheduleId: number) {
+  return await deleteRequest(`/api/study/${studyId}/schedule/${scheduleId}`);
 }

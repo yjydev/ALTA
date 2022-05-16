@@ -97,7 +97,7 @@ export default function ALTA_ToOrganizeContents() {
         () => navigate('/mypage'),
       );
     } catch (err: any) {
-      generateError('스터디를 생성할 수 없습니다', err.message);
+      generateError('스터디를 생성할 수 없습니다', err.response.data.message);
     }
   };
 

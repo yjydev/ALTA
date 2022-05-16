@@ -34,7 +34,7 @@ export default function UserDataProvider({ children }: ContextProps) {
 
       return { status: 1, message: '유저 정보를 불러왔습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
     }
   };
 
@@ -47,7 +47,7 @@ export default function UserDataProvider({ children }: ContextProps) {
       await getUserData();
       return { status: 1, message: '유저 정보를 수정했습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
     }
   };
 
@@ -60,7 +60,7 @@ export default function UserDataProvider({ children }: ContextProps) {
       await getUserData();
       return { status: 1, message: '프로필을 변경했습니다' };
     } catch (err: any) {
-      return { status: -2, message: err.message };
+      return { status: -2, message: err.response.data.message };
     }
   };
 
