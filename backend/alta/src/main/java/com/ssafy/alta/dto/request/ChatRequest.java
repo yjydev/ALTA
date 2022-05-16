@@ -23,7 +23,6 @@ import java.util.Date;
 @ToString
 @NoArgsConstructor
 public class ChatRequest {
-    private String userid;
     private String content;
 
     public Chat toChat(User user, Study study, Date date) {

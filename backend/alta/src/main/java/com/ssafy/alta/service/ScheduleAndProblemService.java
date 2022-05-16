@@ -177,7 +177,7 @@ public class ScheduleAndProblemService {
         List<Problem> problems = new ArrayList<>();
         for(Problem problem : preProblems) {
             if( problemRepository.findByDuplicateProblemInSchedule(optSchedule.get(), problem.getName()) != null ) {
-                throw new DuplicateFolderException();
+                throw new DuplicateProroblemException();
             }
             problems.add(new Problem(problem.getName(),problem.getLink(), false, optSchedule.get()));
         }
@@ -211,7 +211,7 @@ public class ScheduleAndProblemService {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
 
         if(problemRepository.findByDuplicateProblem(optProblem.get().getSchedule(), problemUpdateRequest.getName(), problemUpdateRequest.getId()) != null)
-            throw new DuplicateFolderException();
+            throw new DuplicateProroblemException();
 
         problemRepository.updateProblemById(problemUpdateRequest.getId(), problemUpdateRequest.getName(), problemUpdateRequest.getLink());
 

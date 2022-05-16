@@ -8,6 +8,7 @@ import com.ssafy.alta.service.StudyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,9 @@ import java.net.http.HttpResponse;
 
 @RestController
 @RequestMapping("/api/study")
+@RequiredArgsConstructor
 public class StudyController {
-    @Autowired
-    StudyService studyService;
+    private final StudyService studyService;
 
     @PostMapping
     @ApiOperation(value = "스터디 그룹 생성", notes = "신규 스터디 그룹을 생성합니다.")

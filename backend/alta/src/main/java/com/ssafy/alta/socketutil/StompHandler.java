@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,9 +43,8 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message preSend(Message message, MessageChannel channel) {
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-
-        if (StompCommand.CONNECT == accessor.getCommand() || StompCommand.SEND == accessor.getCommand()) {
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        if(StompCommand.CONNECT == accessor.getCommand()){
             String at = accessor.getFirstNativeHeader(AT_HEADER);
             String rt = accessor.getFirstNativeHeader(RT_HEADER);
             if (StringUtils.hasText(at) && at.startsWith("Bearer")) {
@@ -55,22 +55,24 @@ public class StompHandler implements ChannelInterceptor {
                 rt = rt.substring(7);
             }
 
+            Authentication authentication = null;
+
             if(at != null && rt == null){
                 if (StringUtils.hasText(at) && tokenProvider.validateToken(at)) { // JWT ACCESS TOKEN이 정상이면
-                    Authentication authentication = tokenProvider.getAuthentication(at); // 토큰안에 authentication 객체를 받는다.
+                    authentication = tokenProvider.getAuthentication(at); // 토큰안에 authentication 객체를 받는다.
                     SecurityContextHolder.getContext().setAuthentication(authentication); // authentication 객체를 securitycontext에 set한다.
                 }
             }
-            // af가 만료되었을 때
             else if(at != null && rt != null){
                 if (StringUtils.hasText(rt) && tokenProvider.validateToken(rt)) { // JWT Refresh TOKEN이 정상이면
-                    Authentication authentication = tokenProvider.getAuthentication(rt); // 토큰안에 authentication 객체를 받는다.
+                    authentication = tokenProvider.getAuthentication(rt); // 토큰안에 authentication 객체를 받는다.
                     SecurityContextHolder.getContext().setAuthentication(authentication); // authentication 객체를 securitycontext에 set한다.
 
                     if(!tokenProvider.compareWithRedisData(rt)) // Redis에 저장한 RT와 비교 후, 틀리다면 JWT ERROR반환
                         throw new JwtException("JWT error");
                 }
             }
+            accessor.setUser(authentication);
         }
 
         return message;
