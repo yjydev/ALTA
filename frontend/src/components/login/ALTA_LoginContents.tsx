@@ -14,7 +14,7 @@ export default function ALTA_LoginContents() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (loginTokenChecker() === 2) navigate('/mypage');
+    if (loginTokenChecker() === 1) navigate('/mypage');
   }, []);
 
   return (

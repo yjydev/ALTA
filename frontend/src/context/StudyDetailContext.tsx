@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StudyMember, TableData } from '../types';
 import { ContextProps, ContextPromiseType } from '../types';
 import {
+  deleteTableApi,
   editNoticeContentApi,
   editScheduleApi,
   memberListApi,
@@ -16,11 +17,13 @@ const defaultValue: defaultValueType = {
   noticeContent: '',
   maxPeople: 0,
   isLeader: false,
-  getStudyDetail: () => null,
+  studyName: '',
+  getReadmeDetail: () => null,
   getStudyMembers: () => null,
   getNoticeContent: () => null,
   editNoticeContent: () => null,
   editSchedule: () => null,
+  deleteSchedule: () => null,
 };
 export const StudyDetailStore = React.createContext(defaultValue);
 
@@ -30,26 +33,28 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const [noticeContent, setNoticeContent] = useState<string>('');
   const [maxPeople, setMaxPeople] = useState<number>(0);
   const [isLeader, setIsLeader] = useState<boolean>(false);
+  const [studyName, setStudyName] = useState<string>('');
 
-  const getStudyDetail = async (studyId: number): Promise<ContextPromiseType> => {
+  const getReadmeDetail = async (studyId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
 
-    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
 
     try {
       const response = await studyDetailDataApi(studyId);
 
       setReadmeData(response.readme);
-      return { status: 1, message: 'success get study detail data' };
-    } catch (err) {
-      return { status: -2, message: 'fail get study detail data' };
+      setStudyName(response.studyName);
+      return { status: 1, message: '스터디 리드미를 불러왔습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
     }
   };
 
   const getStudyMembers = async (studyId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
 
-    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
 
     try {
       const response = await memberListApi(studyId);
@@ -68,50 +73,63 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       setMembers(tmpMember);
       setMaxPeople(response.studyMaxPeople);
       setIsLeader(response.isLeader);
-      return { status: 1, message: 'success get member data' };
-    } catch (err) {
-      return { status: -2, message: 'fail get member data' };
+      return { status: 1, message: '스터디 참여자 정보를 불러왔습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
     }
   };
 
   const getNoticeContent = async (studyId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
 
-    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
 
     try {
       const response = await noticeContentApi(studyId);
 
       setNoticeContent(response.content);
-      return { status: 1, message: 'success get notice data' };
-    } catch (err) {
-      return { status: -2, message: 'fail get notice data' };
+      return { status: 1, message: '공지사항을 불러왔습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
     }
   };
 
   const editSchedule = async (studyId: number, scheduleId: number, dateString: string): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
 
-    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
     try {
       await editScheduleApi(studyId, scheduleId, dateString);
-      await getStudyDetail(studyId);
-      return { status: 1, message: 'success edit schedule' };
-    } catch (err) {
-      return { status: -2, message: 'fail get schedule' };
+      await getReadmeDetail(studyId);
+      return { status: 1, message: '일정을 수정했습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
     }
   };
 
   const editNoticeContent = async (studyId: number, content: string): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
 
-    if (!loginStatus.status) return { status: -1, message: 'login token error' };
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
     try {
       await editNoticeContentApi(studyId, content);
       await getNoticeContent(studyId);
-      return { status: 1, message: 'success edit notice' };
-    } catch (err) {
-      return { status: -2, message: 'fail get notice' };
+      return { status: 1, message: '공지사항을 수정했습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
+    }
+  };
+
+  const deleteSchedule = async (studyId: number, scheduleId: number): Promise<ContextPromiseType> => {
+    const loginStatus = await checkLogin();
+
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
+    try {
+      await deleteTableApi(studyId, scheduleId);
+      await getReadmeDetail(studyId);
+      return { status: 1, message: '일정을 삭제했습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
     }
   };
   const value = {
@@ -120,11 +138,13 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     noticeContent,
     maxPeople,
     isLeader,
-    getStudyDetail,
+    studyName,
+    getReadmeDetail,
     getStudyMembers,
     getNoticeContent,
     editNoticeContent,
     editSchedule,
+    deleteSchedule,
   };
   return <StudyDetailStore.Provider value={value}>{children}</StudyDetailStore.Provider>;
 }
@@ -135,9 +155,11 @@ type defaultValueType = {
   noticeContent: string;
   maxPeople: number;
   isLeader: boolean;
-  getStudyDetail: (studyId: number) => any;
+  studyName: string;
+  getReadmeDetail: (studyId: number) => any;
   getStudyMembers: (studyId: number) => any;
   getNoticeContent: (studyId: number) => any;
   editNoticeContent: (studyId: number, content: string) => any;
   editSchedule: (studyId: number, scheduleId: number, dateString: string) => any;
+  deleteSchedule: (studyId: number, scheduleId: number) => any;
 };

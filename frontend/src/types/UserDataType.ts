@@ -17,7 +17,7 @@ export type UserData = {
   nickname: string;
   githubMail: string;
   email: string;
-  alertList: Alert[];
+  alertSetting: string;
   introduction: string;
   time: string;
   languageList: string[] | null;
@@ -29,7 +29,7 @@ export const defaultUserData = {
   nickname: '',
   githubMail: '',
   email: '',
-  alertList: [],
+  alertSetting: '',
   introduction: '',
   time: '',
   languageList: null,
