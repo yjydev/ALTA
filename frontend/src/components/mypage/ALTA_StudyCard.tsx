@@ -1,6 +1,10 @@
 import { Grid, Typography } from '@mui/material';
 
-import { Study } from '../../types/UserDataType';
+import { Study } from '../../types';
+
+type Props = {
+  study: Study;
+};
 
 export default function ALTA_StudyCard({ study }: Props) {
   return (
@@ -22,10 +26,6 @@ export default function ALTA_StudyCard({ study }: Props) {
     </Grid>
   );
 }
-
-type Props = {
-  study: Study;
-};
 
 const studyNameStyle = {
   marginRight: '5px',

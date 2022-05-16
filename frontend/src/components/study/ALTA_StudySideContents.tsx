@@ -2,26 +2,31 @@ import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { throttle } from 'lodash';
 
-import { ContextProps as Props } from '../../types/ContextPropsType';
+import { ContextProps as Props } from '../../types';
 
 export default function ALTA_StudyMembers({ children }: Props) {
   const [visibility, setVisibility] = useState<boolean>(true);
 
   useEffect(() => {
     const currentWidth = window.innerWidth;
-    setVisibility(currentWidth < 1700 ? false : true);
+
+    setVisibility(currentWidth < 1700);
     window.addEventListener(
       'resize',
       throttle((e) => {
-        setVisibility(e.target.innerWidth < 1700 ? false : true);
+        setVisibility(e.target.innerWidth < 1700);
       }, 200),
     );
   });
 
-  return <Box sx={[wrapper, visibility ? null : hide]}>{children}</Box>;
+  return (
+    <Box className="studyMembers" sx={[wrapperStyle, visibility && wapperHideStyle]}>
+      {children}
+    </Box>
+  );
 }
 
-const wrapper = {
+const wrapperStyle = {
   width: '80%',
   margin: '0 auto',
   padding: '10px',
@@ -30,6 +35,6 @@ const wrapper = {
   backgroundColor: '#d9cab3',
 };
 
-const hide = {
+const wapperHideStyle = {
   display: 'none',
 };

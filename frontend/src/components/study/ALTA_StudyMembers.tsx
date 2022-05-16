@@ -1,39 +1,43 @@
 import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { Member } from '../../types/StudyType';
+import { StudyMember } from '../../types';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 import ALTA_StudyMemberCard from './ALTA_StudyMemberCard';
 
-export default function ALTA_StudyMembers({ studyId }: { studyId: number }) {
+type Params = {
+  studyId: string | undefined;
+};
+
+export default function ALTA_StudyMembers() {
+  const { studyId } = useParams<Params>();
   const { members, isLeader } = useContext(StudyDetailStore);
   const navigate = useNavigate();
 
-  const goToManagement = (studyId: number) => {
-    navigate('/study/member', { state: { studyId } });
+  const goMemberManagement = (): void => {
+    navigate(`/study/${studyId}/member`);
   };
 
   return (
     <div>
-      {members.map((member: Member, i: number) => (
-        <ALTA_StudyMemberCard
-          key={`${i}-${member.nickname}-${member.email}`}
-          member={member}
-        />
-      ))}
+      {members.map(
+        (member: StudyMember, i: number): JSX.Element => (
+          <ALTA_StudyMemberCard key={`${i}-${member.nickname}-${member.email}`} member={member} />
+        ),
+      )}
       {isLeader && (
-        <Link onClick={() => goToManagement(studyId)}>
+        <StyledLink onClick={(): void => goMemberManagement()}>
           <Button sx={btnStyle}>멤버 관리</Button>
-        </Link>
+        </StyledLink>
       )}
     </div>
   );
 }
 
-const Link = styled.a`
+const StyledLink = styled.a`
   float: right;
   margin-top: 10px;
   cursor: pointer;

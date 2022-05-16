@@ -21,9 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * packageName 	: com.ssafy.alta.service
@@ -51,6 +49,8 @@ public class CodeService {
     private final RedisService redisService;
     private final ActivityScoreService activityScoreService;
     private final ReadmeService readmeService;
+    private final AlertService alertService;
+    private final NotificationService notificationService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -86,12 +86,26 @@ public class CodeService {
         // 성실점수 추가
         activityScoreService.addScoreForCommentOrCode(userId, studyId, code.getId(), ActivityType.CODE.getActivityIdx());
 
+        // 알림 발생 - 해당 스터디의 팀원들 모두에게
+        List<StudyJoinInfo> sjiList = studyJoinInfoRepository.findByStudyStudyIdWhereState(studyId, "가입");
+        List<Alert> alertList = new LinkedList<>();
+        for(StudyJoinInfo sji : sjiList) {
+            // 코드 작성자에게는 알림 발생 X
+            if(sji.getUser().getId().equals(code.getUser().getId())) continue;
+            Alert alert = alertService.processAlert(sji.getUser(), code.getUser(), AlertType.CODE, code);
+            alertList.add(alert);
+        }
 
 //        중복 부분 호출 - 코드 github에 업로드
         this.createCodeInGithub(token, study, code, codeRequest);
 
         // 리드미 업데이트
         readmeService.updateReadme(studyId);
+
+        // 프론트로 알림 발생시키기(DB조작, Git조작 다 끝나고 보내도록 마지막에 호출)
+        for(Alert alert : alertList) {
+            notificationService.sendAlertEvent(alert);
+        }
     }
 
 
@@ -211,11 +225,16 @@ public class CodeService {
             System.out.println("조회할 파일이 github에 없음");
             e.printStackTrace();
         }
-//        같은 파일이 이미 Git에 업로도 되어 있으면 -> Exception 발생
+        // 같은 파일이 이미 Git에 업로도 되어 있으면
+        // 문제명_유저명_시간-분.java -> 이런식으로 파일명 수정되서 올라가도록!
         if(gitCodeResponse != null) {
-            throw new DuplicateFileInGithubException();
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            String nowTime = formatter.format(new Date());
+            String newFileName = String.format("%s_%s_%s", code.getProblem().getName(), code.getUser().getName(), nowTime);
+            fullFileName = fileLanguageUtil.getFullFileName(newFileName, study.getLanguage());
+            path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
+            url = getUrl(studyLeaderUserName, study.getRepositoryName(), path);
         }
-
         String base64Content = Base64.getEncoder().encodeToString(code.getContent().getBytes(StandardCharsets.UTF_8));
         GitCodeUpdateRequest request = GitCodeUpdateRequest.builder()
                 .content(base64Content)

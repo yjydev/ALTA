@@ -18,9 +18,9 @@ export default function ALTA_Header() {
     navigate('/');
   };
   return (
-    <Box sx={wrapper}>
+    <Box sx={wrapperStyle}>
       <AppBar sx={navStyle}>
-        <Img src={Logo} alt="" />
+        <StyledImg src={Logo} alt="" />
         <Box
           sx={{
             display: 'flex',
@@ -28,14 +28,14 @@ export default function ALTA_Header() {
           }}
         >
           <ALTA_Tooltip title="마이 페이지">
-            <A onClick={() => navigate('/mypage')}>
+            <StyledA onClick={() => navigate('/mypage')}>
               <AccountBoxIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
-            </A>
+            </StyledA>
           </ALTA_Tooltip>
           <ALTA_Tooltip title="로그아웃">
-            <A onClick={logout}>
+            <StyledA onClick={logout}>
               <LogoutIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
-            </A>
+            </StyledA>
           </ALTA_Tooltip>
         </Box>
       </AppBar>
@@ -43,7 +43,7 @@ export default function ALTA_Header() {
   );
 }
 
-const wrapper = {
+const wrapperStyle = {
   height: '55px',
 };
 
@@ -56,11 +56,11 @@ const navStyle = {
   padding: '0 20px',
 };
 
-const Img = styled.img`
+const StyledImg = styled.img`
   width: 100px;
 `;
 
-const A = styled.a`
+const StyledA = styled.a`
   display: flex;
   align-items: center;
   justify-content: space-around;
