@@ -1,9 +1,10 @@
-import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState, useContext, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Input, Button } from '@mui/material';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { chat, chatResponse } from '../../types';
+import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 // socket.io 가 아닌 sock js를 사용하는 이유는 spring 서버와 통신하기 때문
 // node.js 를 사용한다면 socket.io를 주로 사용
@@ -30,21 +31,43 @@ type Props = {
 
 export default function ALTA_Chat({ stompClient }: Props) {
   const { studyId } = useParams<Params>();
-  const [contents, setContents] = useState<chatResponse[]>([]);
+  const navigate = useNavigate();
+  const { chatContents, setChatContents, getChatContent } = useContext(StudyDetailStore);
+  const chatInput = useRef<any>();
 
   const [message, setMessage] = useState<string>('');
   stompClient.debug = () => {
     'blank';
   };
 
-  useEffect(() => {
+  useEffect((): void => {
+    (async function (): Promise<void> {
+      if (studyId) {
+        const chatStatus = await getChatContent(Number(studyId));
+        // console.log(chatStatus);
+        if (chatStatus.status === -1) navigate('/');
+      }
+    })();
+  }, [studyId]);
+
+  useEffect((): void => {
     stompClient.connect(headers, () => {
+      // console.log('접속');
       stompClient.subscribe(`/topic/${studyId}`, (data) => {
+        // console.log('구독');
         const newMessage: chatResponse = JSON.parse(data.body);
-        setContents((prev) => [...prev, newMessage]);
+        setChatContents([...chatContents, newMessage]);
       });
     });
-  }, [contents]);
+    scrollBottom();
+  }, [chatContents]);
+
+  const scrollBottom = () => {
+    if (chatInput.current) {
+      const { scrollHeight, clientHeight } = chatInput.current;
+      chatInput.current.scrollTop = scrollHeight - clientHeight;
+    }
+  };
 
   const handleEnter = () => {
     const newMessage: chat = { content: message };
@@ -57,16 +80,19 @@ export default function ALTA_Chat({ stompClient }: Props) {
       <Box sx={titleStyle}>소통창구</Box>
       <Box sx={[chatBoxStyle, scrollStyle]}>
         <Box>
-          {contents.map((mes, idx) => (
-            <div key={idx}>
-              {mes.nickname} : {mes.message}
-            </div>
-          ))}
+          <div className="chatList" ref={chatInput}>
+            {chatContents.map((mes, idx) => (
+              <div key={idx} id="">
+                {mes.nickname} : {mes.message}
+              </div>
+            ))}
+          </div>
         </Box>
       </Box>
-      <Input placeholder="메세지를 입력하세요" value={message} onChange={(e) => setMessage(e.target.value)} />
-      <Button onClick={handleEnter}>입력</Button>
-      <Box>채팅창</Box>
+      <Box sx={chatInputStyle}>
+        <Input placeholder="메세지를 입력하세요" value={message} onChange={(e) => setMessage(e.target.value)} />
+        <Button onClick={handleEnter}>입력</Button>
+      </Box>
     </>
   );
 }
@@ -84,9 +110,16 @@ const titleStyle = {
 const chatBoxStyle = {
   display: 'flex',
   minHeight: '300px',
+  maxHeight: '300px',
   marginBottom: '10px',
   padding: '10px',
   boxSizing: 'border-box',
   backgroundColor: '#fff',
   borderRadius: '5px',
+  overflowY: 'scroll',
+};
+
+const chatInputStyle = {
+  display: 'flex',
+  marginBottom: '10px',
 };

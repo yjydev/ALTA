@@ -54,11 +54,12 @@ export default function ALTA_StudyDetailContents() {
       {loading && <ALTA_Loading />}
       {!loading && (
         <Grid sx={gridContainerStyle} container justifyContent="center">
-          {/* <Grid item xl={0.5} lg={6}>
+          {/* <Grid item xl={0.5} lg={6}> */}
+          <Grid item xl={3} lg={6}>
             <ALTA_StudySideContents>
               <ALTA_StudyMembers />
             </ALTA_StudySideContents>
-          </Grid> */}
+          </Grid>
           <Grid item xl={6}>
             <ALTA_Inner>
               <Box sx={[addTableWrapperBarStyle, scrollStyle]}>
@@ -99,7 +100,7 @@ export default function ALTA_StudyDetailContents() {
             </ALTA_Inner>
           </Grid>
           {/* <Grid item xl={0.5} lg={6}> */}
-          <Grid item>
+          <Grid item xl={3} lg={6}>
             <ALTA_StudySideContents>
               <ALTA_StudyBoard />
             </ALTA_StudySideContents>
