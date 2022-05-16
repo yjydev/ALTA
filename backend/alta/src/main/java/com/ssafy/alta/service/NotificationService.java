@@ -62,7 +62,7 @@ public class NotificationService {
         try {
             emitter.send(SseEmitter.event()
                     .id(userId)
-                    .data(data), MediaType.APPLICATION_JSON);
+                    .data(data));
         } catch (IOException e) {
             emitters.remove(userId);
             throw new SseSendMessageFail();
