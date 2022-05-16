@@ -32,9 +32,9 @@ export default function UserDataProvider({ children }: ContextProps) {
       localStorage.setItem('UserData', JSON.stringify(response.userData));
       setUserData(response.userData);
 
-      return { status: 1, message: 'success get user data' };
-    } catch (err) {
-      return { status: -2, message: 'fail get user data' };
+      return { status: 1, message: '유저 정보를 불러왔습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.message };
     }
   };
 
@@ -45,9 +45,9 @@ export default function UserDataProvider({ children }: ContextProps) {
     try {
       await editUserDataApi(nickname, email, introduction, languageList);
       await getUserData();
-      return { status: 1, message: 'success edit user data' };
-    } catch (err) {
-      return { status: -2, message: 'fail get user data' };
+      return { status: 1, message: '유저 정보를 수정했습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.message };
     }
   };
 
@@ -58,9 +58,9 @@ export default function UserDataProvider({ children }: ContextProps) {
     try {
       await changeProfileImgApi(img);
       await getUserData();
-      return { status: 1, message: 'success edit user data' };
-    } catch (err) {
-      return { status: -2, message: 'fail get user data' };
+      return { status: 1, message: '프로필을 변경했습니다' };
+    } catch (err: any) {
+      return { status: -2, message: err.message };
     }
   };
 
