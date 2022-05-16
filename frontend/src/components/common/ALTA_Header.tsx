@@ -85,15 +85,22 @@ export default function ALTA_Header() {
         >
           <StyledA>
             <ALTA_Tooltip title="알림">
-              <NotificationsIcon
-                ref={anchorRef}
-                sx={{ fontSize: '40px', cursor: 'pointer' }}
-                id="basic-button"
-                aria-controls={open ? 'basic-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={() => setOpen(!open)}
-              />
+              <Badge
+                badgeContent={data.length}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                overlap="circular"
+                sx={badgeStyle}
+              >
+                <NotificationsIcon
+                  ref={anchorRef}
+                  sx={{ fontSize: '40px', cursor: 'pointer' }}
+                  id="basic-button"
+                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={() => setOpen(!open)}
+                />
+              </Badge>
             </ALTA_Tooltip>
             <Menu
               id="basic-menu"
@@ -106,7 +113,15 @@ export default function ALTA_Header() {
             >
               {data.map((d) => (
                 <Box sx={menuStyle} key={d.alertId}>
-                  <MenuItem onClick={() => navigate(`${d.url}`)}>{d.content}</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate(`${d.url}`);
+                      setOpen(!open);
+                    }}
+                  >
+                    {d.content}
+                  </MenuItem>
+                  <hr />
                 </Box>
               ))}
             </Menu>
@@ -154,4 +169,11 @@ const StyledA = styled.a`
 const menuStyle = {
   width: '100%',
   backgroundColor: 'inherit',
+};
+
+const badgeStyle = {
+  '& .MuiBadge-badge': {
+    color: 'text.primary',
+    backgroundColor: 'secondary.main',
+  },
 };
