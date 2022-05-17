@@ -107,7 +107,6 @@ export default function StudyDetailProvider({ children }: ContextProps) {
       setChatContents(res);
       return { status: 1, message: '채팅 내역을 성공적으로 로드하였습니다!' };
     } catch (err: any) {
-      console.log(err);
       return { status: -2, message: err.response.data.message };
     }
   };
