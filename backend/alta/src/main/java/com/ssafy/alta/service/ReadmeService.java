@@ -137,7 +137,7 @@ public class ReadmeService {
         }
 
         String token = redisService.getAccessToken(userId);
-        String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), study.getRepositoryName());
+        String sha = gitReadmeAPI.selectReadmeSHA(token, study.getUser().getName(), study.getRepositoryName());
         HashMap<String, String> committer = new HashMap<>();
         committer.put("name", user.getName());
         committer.put("email", gitEmailAPI.selectGithubEmail(token));
@@ -149,7 +149,7 @@ public class ReadmeService {
 
         String returnCode = null;
         try {
-            returnCode = gitReadmeAPI.updateReadme(token, user.getName(), study.getRepositoryName(), readmeUpdateRequest).toString();
+            returnCode = gitReadmeAPI.updateReadme(token, study.getUser().getName(), study.getRepositoryName(), readmeUpdateRequest).toString();
             System.out.println(returnCode);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
