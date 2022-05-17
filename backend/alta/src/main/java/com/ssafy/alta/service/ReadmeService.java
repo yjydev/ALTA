@@ -149,7 +149,7 @@ public class ReadmeService {
 
         String returnCode = null;
         try {
-            returnCode = gitReadmeAPI.updateReadme(token, user.getName(), study.getRepositoryName(), readmeUpdateRequest).toString();
+            returnCode = gitReadmeAPI.updateReadme(token, study.getUser().getName(), study.getRepositoryName(), readmeUpdateRequest).toString();
             System.out.println(returnCode);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
