@@ -38,13 +38,11 @@ public class StompHandler implements ChannelInterceptor {
     private TokenProvider tokenProvider;
     public static final String AT_HEADER = "ACCESS_TOKEN";
     public static final String RT_HEADER = "REFRESH_TOKEN";
-    @Autowired
-    private UserService userService;
 
     @Override
     public Message preSend(Message message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        if(StompCommand.CONNECT == accessor.getCommand()){
+        if(StompCommand.CONNECT == accessor.getCommand() || StompCommand.SEND == accessor.getCommand()){
             String at = accessor.getFirstNativeHeader(AT_HEADER);
             String rt = accessor.getFirstNativeHeader(RT_HEADER);
             if (StringUtils.hasText(at) && at.startsWith("Bearer")) {
