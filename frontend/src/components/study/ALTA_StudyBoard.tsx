@@ -1,8 +1,6 @@
 import { Fragment, useContext, useState } from 'react';
 import { Box, Drawer, Button, Typography } from '@mui/material';
 import MoreIcon from '@mui/icons-material/More';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
 
 import { blackColor } from '../../modules/colorChart';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
@@ -15,10 +13,6 @@ import ALTA_StudyMembers from './ALTA_StudyMembers';
 export default function ALTA_StudyBoard() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { studyName } = useContext(StudyDetailStore);
-
-  const socketJS = new SockJS(`${process.env.REACT_APP_BASE_URL}:8000/chat`);
-  const stompClient: Stomp.Client = Stomp.over(socketJS);
-
   const toggleDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (
       event.type === 'keydown' &&
@@ -44,7 +38,7 @@ export default function ALTA_StudyBoard() {
           <Box>
             <Box sx={wrapper}>
               <ALTA_StudyMembers />
-              <ALTA_Chat stompClient={stompClient} />
+              <ALTA_Chat />
             </Box>
             <Box>
               <ALTA_Notice />
