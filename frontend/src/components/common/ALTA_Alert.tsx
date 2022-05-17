@@ -35,6 +35,7 @@ export default function ALTA_Alert() {
   const newAlert: AlertData[] = alertData.filter((d: AlertData): boolean => d.isChecked === false);
 
   useEffect((): void => {
+    console.log('2');
     setAllRead(false);
     (async function (): Promise<void> {
       const status = await getAlertData();
