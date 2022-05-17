@@ -36,11 +36,13 @@ public class NotificationService {
 
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);  // sse 연결 요청에 응답하기 위해 sseEmitter 객체 생성(유호시간)
 
+        System.out.println("SSE 연결 성공");
+
         // 클라이언트로 더미 데이터 한번 보내줌! -> 프론트에서 open 열기 위함!
         AlertResponse alertResponse = AlertResponse.builder()
-                                    .alertId(-1L)
-                                    .content("sse연결 성공!")
-                                    .build();
+                .alertId(-1L)
+                .content("sse연결 성공!")
+                .build();
         this.sendToClient(emitter, userId, alertResponse);
         emitters.put(userId, emitter);  // 생성된 emitters를 저장해둠
 
@@ -49,13 +51,13 @@ public class NotificationService {
 
         return emitter;
     }
-    
+
     public void sendAlertEvent(Alert alert) {  // 이벤트 발생
         AlertResponse alertResponse = alert.toDto();
         String userId = alert.getReceiver().getId();  // 받을 사람에게 알림 발생할거라
 
         if (emitters.containsKey(userId)) {   // sse가 연결된 유저이면
-            SseEmitter emitter = emitters.get(userId); 
+            SseEmitter emitter = emitters.get(userId);
             this.sendToClient(emitter, userId, alertResponse);  // 알림 객체 보내줌
         }
 
@@ -64,6 +66,7 @@ public class NotificationService {
     // 알림 전송
     private void sendToClient(SseEmitter emitter, String userId, Object data) {
         try {
+            System.out.println("SSE 보내는 중 : " + userId + " " + data.toString());
             emitter.send(SseEmitter.event()
                     .id(userId)
                     .data(data));
