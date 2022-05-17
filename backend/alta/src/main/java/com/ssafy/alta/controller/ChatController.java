@@ -34,10 +34,10 @@ public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
 
-    @MessageMapping("/chat/{studyId}")
+    @MessageMapping("/api/ws/{studyId}")
     public void message(@DestinationVariable("studyId") Long studyId, ChatRequest chatRequest, Principal user) {
         ChatResponse chat = chatService.insertMessage(studyId, chatRequest, user);
-        template.convertAndSend("/topic/"+studyId, chat);
+        template.convertAndSend("/api/topic/"+studyId, chat);
     }
 
     @GetMapping("/api/chat/{studyId}")
