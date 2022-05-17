@@ -42,7 +42,7 @@ export default function ALTA_Alert() {
     })();
     setBadgeCnt(alertData.filter((d: AlertData): boolean => d.isChecked === false).length);
     if (!listening) {
-      const eventSource = new EventSource(`${process.env.REACT_APP_BUTTON_URL}:8000/api/user/alert/subscribe`, {
+      const eventSource = new EventSource(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
         headers: {
           ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
           heartbeatTimeout: '300 * 1000',

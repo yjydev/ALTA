@@ -15,7 +15,7 @@ export default function ALTA_StudyBoard() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { studyName } = useContext(StudyDetailStore);
 
-  const socketJS = new SockJS(`${process.env.REACT_APP_BUTTON_URL}:8000/chat`);
+  const socketJS = new SockJS(`${process.env.REACT_APP_BASE_URL}:8000/chat`);
   const stompClient: Stomp.Client = Stomp.over(socketJS);
 
   const toggleDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
