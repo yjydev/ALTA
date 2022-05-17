@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import javax.swing.text.html.Option;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,6 +49,7 @@ public class ScheduleAndProblemService {
     private final GitDirectoryAPI gitDirectoryAPI = new GitDirectoryAPI();
     private final UserRepository userRepository;
     private final ReadmeService readmeService;
+    private final MailService mailService;
     private final ActivityScoreService activityScoreService;
 
     @Transactional
@@ -308,5 +310,27 @@ public class ScheduleAndProblemService {
 
         problemRepository.deleteById(problemId);
         readmeService.updateReadme(studyId);
+    }
+
+    // 오늘 스터디 일정 마감일 때 스터디원들에게 보냄
+    public void sendAlertMailCodeDeadline() throws ParseException, MessagingException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowDate = formatter.parse(formatter.format(new Date()));
+
+        // nowDate까지인 일정들 가져오고
+        List<Schedule> scheduleList = scheduleRepository.findBySameEndDate(nowDate);
+        // 이 스터디의 유저들 가져와서
+        for(Schedule schedule : scheduleList) {
+            List<StudyJoinInfo>  sjtList = sjiRepository.findByStudyStudyIdWhereState(schedule.getStudy().getStudyId(), "가입");
+            // 메일 보냄
+            String message = String.format(AlertType.MAIL_SCHEDULE.getMessage(), schedule.getStudy().getName());
+            for(StudyJoinInfo studyJoinInfo : sjtList) {
+                int alertStatus = userRepository.findAlertStatusByUserId(studyJoinInfo.getUser().getId());
+                // 유저가 메일 일정 알림 수신을 체크했다면 보냄
+                if(AlertType.isAlertTrue(alertStatus, AlertType.MAIL_SCHEDULE)) {
+                    mailService.sendAlertMail(studyJoinInfo.getUser().getEmail(), message);
+                }
+            }
+        }
     }
 }

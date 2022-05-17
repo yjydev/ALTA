@@ -1,5 +1,6 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.request.UserAlertRequest;
 import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.dto.response.UserResponse;
 import com.ssafy.alta.dto.response.UserSearchResponse;
@@ -86,17 +87,17 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateAlert(String alertSetting) {
+    public UserResponse updateAlert(UserAlertRequest alertSetting) {
         String user_id = this.getCurrentUserId();
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id).orElseThrow(DataNotFoundException::new));
         User exUser = optUser.get();
 
-        char[] nums = alertSetting.toCharArray();
-        System.out.println(Arrays.toString(nums)+"-----------------------");
-        int emailSum = (nums[0] == '1' ? 2 : 0) + (nums[1] == '1' ? 1 : 0);
-        int alertSum = (nums[2] == '1' ? 2 : 0) + (nums[3] == '1' ? 1 : 0);
+        char[] nums = alertSetting.getAlertSetting().toCharArray();
+        System.out.println(Arrays.toString(nums) + "-----------------------");
+        int emailSum = (nums[2] == '1' ? 2 : 0) + (nums[3] == '1' ? 1 : 0);
+        int alertSum = (nums[0] == '1' ? 2 : 0) + (nums[1] == '1' ? 1 : 0);
 
-        exUser.updateAlert( emailSum, alertSum);
+        exUser.updateAlert(emailSum, alertSum);
 
         return this.selectUser();
 
@@ -163,11 +164,10 @@ public class UserService {
         }
 
         if (langStringList.size() == 0) langStringList = null;
-        System.out.println("합 : " + (user.getEmailAlert() * 4 + user.getSiteAlert()));
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
         userResponse.getUserData().put("email", user.getEmail());
-        userResponse.getUserData().put("alertSetting ", fourString(Integer.toBinaryString(user.getEmailAlert() * 4 + user.getSiteAlert())));
+        userResponse.getUserData().put("alertSetting", fourString(Integer.toBinaryString(user.getEmailAlert() + user.getSiteAlert() * 4)));
         userResponse.getUserData().put("introduction", user.getIntroduction() == null ? "" : user.getIntroduction());
         userResponse.getUserData().put("time", user.getActivityTime());
         userResponse.getUserData().put("languageList", langStringList);

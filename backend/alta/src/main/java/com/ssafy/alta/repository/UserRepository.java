@@ -23,4 +23,10 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("select u.id as id, u.nickname as nickname, u.email as email from User u where u.nickname like concat('%', :nickname, '%') order by u.nickname")
     List<UserSearchResponse> findByNickNameOrderByNickName(@Param("nickname") String nickname);
+
+    // 둘이 합쳐서 int로 반환해줌 -> 비트 사용하려구
+    @Query("select u.siteAlert * 4 + u.emailAlert " +
+            "from User u " +
+            "where u.id = :userId")
+    Integer findAlertStatusByUserId(@Param(("id")) String userId);
 }
