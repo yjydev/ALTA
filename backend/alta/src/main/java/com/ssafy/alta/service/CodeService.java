@@ -43,7 +43,6 @@ public class CodeService {
     private final CodeRepository codeRepository;
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
-    private final ScheduleRepository scheduleRepository;
     private final StudyRepository studyRepository;
     private final StudyJoinInfoRepository studyJoinInfoRepository;
     private final CommentService commentService;
@@ -53,7 +52,6 @@ public class CodeService {
     private final ReadmeService readmeService;
     private final AlertService alertService;
     private final NotificationService notificationService;
-    private final MailService mailService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -95,8 +93,13 @@ public class CodeService {
         for(StudyJoinInfo sji : sjiList) {
             // 코드 작성자에게는 알림 발생 X
             if(sji.getUser().getId().equals(code.getUser().getId())) continue;
-            Alert alert = alertService.processAlert(sji.getUser(), code.getUser(), AlertType.CODE, code);
-            alertList.add(alert);
+
+            int alertStatus = userRepository.findAlertStatusByUserId(sji.getUser().getId());
+            // 유저가 사이트 코드 알림 수신을 체크했다면 알림 리스트에 추가
+            if(AlertType.isAlertTrue(alertStatus, AlertType.SITE_CODE)) {
+                Alert alert = alertService.processAlert(sji.getUser(), code.getUser(), AlertType.SITE_CODE, code);
+                alertList.add(alert);
+            }
         }
 
 //        중복 부분 호출 - 코드 github에 업로드
@@ -329,25 +332,6 @@ public class CodeService {
         } else {
             this.selectCodeInGithub(token, study, code, true);
         }
-    }
-
-    // 오늘 마감인데 코드 미제출한 사람에게 메일 보냄
-    public void sendAlertMailCodeDeadline() throws ParseException, MessagingException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date nowDate = formatter.parse(formatter.format(new Date()));
-
-        // nowDate까지인 일정들 가져오고
-        List<Schedule> scheduleList = scheduleRepository.findBySameEndDate(nowDate);
-        // 이 스터디의 유저들 가져와서
-        for(Schedule schedule : scheduleList) {
-            List<StudyJoinInfo>  sjtList = studyJoinInfoRepository.findByStudyStudyIdWhereState(schedule.getStudy().getStudyId(), "가입");
-            // 일단 보냄
-            String message = String.format(AlertType.SCHEDULE.getMessage(), schedule.getStudy().getName());
-            for(StudyJoinInfo studyJoinInfo : sjtList) {
-                mailService.sendAlertMail(studyJoinInfo.getUser().getEmail(), message);
-            }
-        }
-
     }
 
     private void checkUserId(String userId, String id) {
