@@ -164,11 +164,10 @@ public class UserService {
         }
 
         if (langStringList.size() == 0) langStringList = null;
-        System.out.println("합 : " + (user.getEmailAlert() * 4 + user.getSiteAlert()));
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
         userResponse.getUserData().put("email", user.getEmail());
-        userResponse.getUserData().put("alertSetting ", fourString(Integer.toBinaryString(user.getEmailAlert() + user.getSiteAlert() * 4)));
+        userResponse.getUserData().put("alertSetting", fourString(Integer.toBinaryString(user.getEmailAlert() + user.getSiteAlert() * 4)));
         userResponse.getUserData().put("introduction", user.getIntroduction() == null ? "" : user.getIntroduction());
         userResponse.getUserData().put("time", user.getActivityTime());
         userResponse.getUserData().put("languageList", langStringList);

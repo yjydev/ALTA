@@ -21,7 +21,7 @@ import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlin
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 
 import { toggleSolved, editReviewApi, deleteReviewApi } from '../../api/apis';
-import { ReviewData, UserData } from '../../types';
+import { ReviewData } from '../../types';
 import { CodeStore } from '../../context/CodeContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
@@ -38,12 +38,11 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const [commentValue, setCommentValue] = useState<string>(review.comment);
-  const userData: string | null = localStorage.getItem('UserData');
-  const profile: string = userData ? JSON.parse(userData)['profileUrl'] : 'profile_default.png';
+  const profile: string = review.imageUrl ? review.imageUrl : 'profile_default.png';
 
   const changeResolved = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
-    if (user !== code.writer || user !== review.reviewerName)
+    if (user !== code.writer && user !== review.reviewerName)
       generateError('변경 불가', '코드 작성자 혹은 리뷰 작성자만 변경할 수 있습니다');
     else {
       try {

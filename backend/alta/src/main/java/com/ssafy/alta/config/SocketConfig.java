@@ -31,12 +31,12 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat").setAllowedOriginPatterns("http://localhost:3000", "https://algorithmtime.com").withSockJS();
+        registry.addEndpoint("/api/ws").setAllowedOriginPatterns("http://localhost:3000", "https://algorithmtime.com").withSockJS();
     }
     
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/queue");
+        registry.enableSimpleBroker("/api/topic", "/api/queue");
         registry.setApplicationDestinationPrefixes("/");
     }
 
