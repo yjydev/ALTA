@@ -41,7 +41,11 @@ export default function ALTA_UserDataEdit({
 
       if (editApiStatus.status === -1) navigate('/');
       else if (editApiStatus.status === -2) generateError('유저 정보를 수정할 수 없습니다', editApiStatus.message);
-      else setLoading(false);
+
+      setIsEditPage(false);
+      setLoading(false);
+
+      return;
     }
   };
 
