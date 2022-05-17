@@ -2,11 +2,11 @@ import { Box } from '@mui/material';
 
 export default function ALTA_Chat() {
   return (
-    <>
+    <Box>
       <Box sx={titleStyle}>소통창구</Box>
       <Box>채팅란</Box>
       <Box>채팅창</Box>
-    </>
+    </Box>
   );
 }
 
