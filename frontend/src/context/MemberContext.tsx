@@ -12,8 +12,6 @@ const defaultValue: defaultValueType = {
   maxPeople: 0,
   setMaxPeople: () => null,
   getMembers: () => null,
-  invitable: true,
-  setInvitable: () => null,
   columns: [],
   setColumns: () => null,
   isRefresh: false,
@@ -26,7 +24,6 @@ export default function MemberProvider({ children }: ContextProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [studyCode, setStudyCode] = useState<string>('');
   const [maxPeople, setMaxPeople] = useState<number>(0);
-  const [invitable, setInvitable] = useState<boolean>(true);
   const [columns, setColumns] = useState<Column[]>([
     // gmail 은 도메인 제외 최대 30자 제한 + 기본적으론 도메인 제외 최대 64자
     { id: 'nickname', label: '닉네임', width: 30 },
@@ -62,8 +59,6 @@ export default function MemberProvider({ children }: ContextProps) {
     maxPeople,
     setMaxPeople,
     getMembers,
-    invitable,
-    setInvitable,
     columns,
     setColumns,
     isRefresh,
@@ -80,8 +75,6 @@ type defaultValueType = {
   studyCode: string;
   setStudyCode: (newData: string) => void;
   getMembers: (studyId: number) => any;
-  invitable: boolean;
-  setInvitable: (newData: boolean) => void;
   columns: Column[];
   setColumns: (newData: Column[]) => void;
   isRefresh: boolean;
