@@ -137,7 +137,7 @@ public class ReadmeService {
         }
 
         String token = redisService.getAccessToken(userId);
-        String sha = gitReadmeAPI.selectReadmeSHA(token, user.getName(), study.getRepositoryName());
+        String sha = gitReadmeAPI.selectReadmeSHA(token, study.getUser().getName(), study.getRepositoryName());
         HashMap<String, String> committer = new HashMap<>();
         committer.put("name", user.getName());
         committer.put("email", gitEmailAPI.selectGithubEmail(token));
