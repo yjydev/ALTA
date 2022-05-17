@@ -10,6 +10,7 @@ import { StudyDetailStore } from '../../context/StudyDetailContext';
 import ALTA_Notice from './ALTA_Notice';
 import ALTA_Chat from './ALTA_Chat';
 import ALTA_Tooltip from '../common/ALTA_Tooltip';
+import ALTA_StudyMembers from './ALTA_StudyMembers';
 
 export default function ALTA_StudyBoard() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -30,19 +31,24 @@ export default function ALTA_StudyBoard() {
   };
 
   return (
-    <div>
+    <Box>
       <Fragment key={'drawer'}>
         <Drawer
           anchor={'top'}
           open={isDrawerOpen}
           onClose={toggleDrawer()}
           PaperProps={{
-            sx: { minWidth: '900px', maxWidth: '900px', margin: '100px auto 0' },
+            sx: { minWidth: '900px', maxWidth: '900px', margin: '30px auto 0' },
           }}
         >
-          <Box sx={wrapper}>
-            <ALTA_Notice />
-            <ALTA_Chat stompClient={stompClient} />
+          <Box>
+            <Box sx={wrapper}>
+              <ALTA_StudyMembers />
+              <ALTA_Chat stompClient={stompClient} />
+            </Box>
+            <Box>
+              <ALTA_Notice />
+            </Box>
           </Box>
         </Drawer>
       </Fragment>
@@ -56,13 +62,13 @@ export default function ALTA_StudyBoard() {
           </ALTA_Tooltip>
         </Typography>
       </Box>
-    </div>
+    </Box>
   );
 }
 
 const wrapper = {
   display: 'flex',
-  // flexDirection: 'column',
+  boxSizing: 'border-box',
 };
 
 const studyNameStyle = {
