@@ -11,9 +11,7 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -38,6 +36,12 @@ public class ChatController {
     public void message(@DestinationVariable("studyId") Long studyId, ChatRequest chatRequest, Principal user) {
         ChatResponse chat = chatService.insertMessage(studyId, chatRequest, user);
         template.convertAndSend("/api/topic/"+studyId, chat);
+    }
+
+    @PostMapping("/api/chat/{studyId}")
+    public void insertMessage(@PathVariable("studyId") Long studyId, @RequestBody ChatRequest chatRequest) {
+        ChatResponse chat = chatService.insertMessageSend(studyId, chatRequest);
+        template.convertAndSend("/api/topic/" + studyId, chat);
     }
 
     @GetMapping("/api/chat/{studyId}")
