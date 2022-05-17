@@ -47,6 +47,11 @@ export async function codeTreeApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/tree`);
 }
 
+// 채팅 리스트 요청
+export async function chatDataApi(studyId: number) {
+  return await getRequest(`/api/chat/${studyId}`);
+}
+
 //POST
 //스터디 생성 요청
 export async function organizeStudyApi(requestBody: OrganizeStudyRequset) {

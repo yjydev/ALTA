@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StudyMember, TableData } from '../types';
+import { StudyMember, TableData, chatResponse } from '../types';
 import { ContextProps, ContextPromiseType } from '../types';
 import {
   deleteTableApi,
@@ -8,6 +8,7 @@ import {
   memberListApi,
   noticeContentApi,
   studyDetailDataApi,
+  chatDataApi,
 } from '../api/apis';
 import { checkLogin } from '../modules/LoginTokenChecker';
 
@@ -24,6 +25,9 @@ const defaultValue: defaultValueType = {
   editNoticeContent: () => null,
   editSchedule: () => null,
   deleteSchedule: () => null,
+  chatContents: [],
+  getChatContent: () => null,
+  setChatContents: () => null,
 };
 export const StudyDetailStore = React.createContext(defaultValue);
 
@@ -34,6 +38,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const [maxPeople, setMaxPeople] = useState<number>(0);
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [studyName, setStudyName] = useState<string>('');
+  const [chatContents, setChatContents] = useState<chatResponse[]>([]);
 
   const getReadmeDetail = async (studyId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
@@ -94,6 +99,18 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     }
   };
 
+  const getChatContent = async (studyId: number): Promise<ContextPromiseType> => {
+    const loginStatus = await checkLogin();
+    if (!loginStatus.status) return { status: -1, message: loginStatus.message };
+    try {
+      const res = await chatDataApi(studyId);
+      setChatContents(res);
+      return { status: 1, message: '채팅 내역을 성공적으로 로드하였습니다!' };
+    } catch (err: any) {
+      return { status: -2, message: err.response.data.message };
+    }
+  };
+
   const editSchedule = async (studyId: number, scheduleId: number, dateString: string): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
 
@@ -145,6 +162,9 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     editNoticeContent,
     editSchedule,
     deleteSchedule,
+    chatContents,
+    getChatContent,
+    setChatContents,
   };
   return <StudyDetailStore.Provider value={value}>{children}</StudyDetailStore.Provider>;
 }
@@ -162,4 +182,7 @@ type defaultValueType = {
   editNoticeContent: (studyId: number, content: string) => any;
   editSchedule: (studyId: number, scheduleId: number, dateString: string) => any;
   deleteSchedule: (studyId: number, scheduleId: number) => any;
+  chatContents: chatResponse[];
+  getChatContent: (studyId: number) => any;
+  setChatContents: (newData: chatResponse[]) => void;
 };
