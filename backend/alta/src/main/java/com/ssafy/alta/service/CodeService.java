@@ -43,7 +43,6 @@ public class CodeService {
     private final CodeRepository codeRepository;
     private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
-    private final ScheduleRepository scheduleRepository;
     private final StudyRepository studyRepository;
     private final StudyJoinInfoRepository studyJoinInfoRepository;
     private final CommentService commentService;
@@ -53,7 +52,6 @@ public class CodeService {
     private final ReadmeService readmeService;
     private final AlertService alertService;
     private final NotificationService notificationService;
-    private final MailService mailService;
     private final GitCodeAPI gitCodeAPI = new GitCodeAPI();
     private static final String DELETE_MESSAGE = "파일 삭제";
     private static final String CREATE_MESSAGE = "파일 생성";
@@ -334,29 +332,6 @@ public class CodeService {
         } else {
             this.selectCodeInGithub(token, study, code, true);
         }
-    }
-
-    // 오늘 스터디 일정 마감일 때 스터디원들에게 보냄
-    public void sendAlertMailCodeDeadline() throws ParseException, MessagingException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date nowDate = formatter.parse(formatter.format(new Date()));
-
-        // nowDate까지인 일정들 가져오고
-        List<Schedule> scheduleList = scheduleRepository.findBySameEndDate(nowDate);
-        // 이 스터디의 유저들 가져와서
-        for(Schedule schedule : scheduleList) {
-            List<StudyJoinInfo>  sjtList = studyJoinInfoRepository.findByStudyStudyIdWhereState(schedule.getStudy().getStudyId(), "가입");
-            // 일단 보냄
-            String message = String.format(AlertType.MAIL_SCHEDULE.getMessage(), schedule.getStudy().getName());
-            for(StudyJoinInfo studyJoinInfo : sjtList) {
-                int alertStatus = userRepository.findAlertStatusByUserId(studyJoinInfo.getUser().getId());
-                // 유저가 메일 일정 알림 수신을 체크했다면 보냄
-                if(AlertType.isAlertTrue(alertStatus, AlertType.MAIL_SCHEDULE)) {
-                    mailService.sendAlertMail(studyJoinInfo.getUser().getEmail(), message);
-                }
-            }
-        }
-
     }
 
     private void checkUserId(String userId, String id) {
