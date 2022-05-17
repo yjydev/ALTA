@@ -1,5 +1,6 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.request.UserAlertRequest;
 import com.ssafy.alta.dto.request.UserUpdateRequest;
 import com.ssafy.alta.dto.response.UserResponse;
 import com.ssafy.alta.dto.response.UserSearchResponse;
@@ -86,26 +87,17 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateAlert(int alertSetting) {
+    public UserResponse updateAlert(UserAlertRequest alertSetting) {
         String user_id = this.getCurrentUserId();
         Optional<User> optUser = Optional.ofNullable(userRepository.findById(user_id).orElseThrow(DataNotFoundException::new));
         User exUser = optUser.get();
-        String tmpLen = Integer.toBinaryString(alertSetting);
-        while (tmpLen.length() != 4) tmpLen = "0" + tmpLen;
-        char[] list = tmpLen.toCharArray();
-        System.out.println(tmpLen);
-        boolean[] alertList = new boolean[4];
-        for (int i = 3; i >= 0; i--) {
-            if (list[i] == '1') alertList[i] = true;
-        }
 
-        int emailSum = 0;
-        int alertSum = 0;
-        for (int i = 0; i < 2; i++) {
-            if (alertList[1 - i]) emailSum += (int) Math.pow(2, i);
-            if (alertList[3 - i]) alertSum += (int) Math.pow(2, i);
-        }
-        exUser.updateAlert(alertSum, emailSum);
+        char[] nums = alertSetting.getAlertSetting().toCharArray();
+        System.out.println(Arrays.toString(nums) + "-----------------------");
+        int emailSum = (nums[2] == '1' ? 2 : 0) + (nums[3] == '1' ? 1 : 0);
+        int alertSum = (nums[0] == '1' ? 2 : 0) + (nums[1] == '1' ? 1 : 0);
+
+        exUser.updateAlert(emailSum, alertSum);
 
         return this.selectUser();
 
@@ -172,12 +164,11 @@ public class UserService {
         }
 
         if (langStringList.size() == 0) langStringList = null;
-
+        System.out.println("합 : " + (user.getEmailAlert() * 4 + user.getSiteAlert()));
         userResponse.getUserData().put("nickname", user.getNickname());
         userResponse.getUserData().put("githubMail", gitEmailData); // 유저 github 정보로부터 이메일 가져오기
         userResponse.getUserData().put("email", user.getEmail());
-        userResponse.getUserData().put("emailAlert", user.getEmailAlert());
-        userResponse.getUserData().put("siteAlert", user.getSiteAlert());
+        userResponse.getUserData().put("alertSetting ", fourString(Integer.toBinaryString(user.getEmailAlert() + user.getSiteAlert() * 4)));
         userResponse.getUserData().put("introduction", user.getIntroduction() == null ? "" : user.getIntroduction());
         userResponse.getUserData().put("time", user.getActivityTime());
         userResponse.getUserData().put("languageList", langStringList);
@@ -186,5 +177,13 @@ public class UserService {
         userResponse.getUserData().put("id", userId);
 
         return userResponse;
+    }
+
+    public String fourString(String binary) {
+        String s = binary;
+        while (s.length() != 4) {
+            s = "0" + s;
+        }
+        return s;
     }
 }

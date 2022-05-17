@@ -102,7 +102,7 @@ export default function ALTA_CodeSubmitContents() {
         </ALTA_Tooltip>
       </ALTA_InputItem>
       <ALTA_CodeBlock code={code} language="javascript" />
-      <Box sx={submitBtnGroupStyle}>
+      <Box sx={{ marginTop: 10, textAlign: 'right' }}>
         <Button variant="contained" sx={btnStyle} onClick={summitCode}>
           제 출
         </Button>
