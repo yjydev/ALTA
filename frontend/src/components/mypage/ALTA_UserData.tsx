@@ -48,10 +48,6 @@ export default function ALTA_UserData() {
     setAlertStatus(tmp);
   };
 
-  useEffect(() => {
-    console.log(alertStatus);
-  }, [alertStatus]);
-
   const openEditPage = (): void => {
     setAlertFold(false);
     setIsEditPage(!isEditPage);
@@ -79,11 +75,12 @@ export default function ALTA_UserData() {
     let result = '';
     for (const key in alertStatus) result += alertStatus[key] ? '1' : '0';
 
-    const saveStatus = editAlertStatus(result);
+    if (result !== userData.alertSetting) {
+      const saveStatus = editAlertStatus(result);
 
-    if (saveStatus.status === -1) navigate('/');
-    else if (saveStatus.status === -2) generateError('알림 설정을 수정하지 못했습니다', saveStatus.message);
-
+      if (saveStatus.status === -1) navigate('/');
+      else if (saveStatus.status === -2) generateError('알림 설정을 수정하지 못했습니다', saveStatus.message);
+    }
     setAlertFold(false);
   };
 

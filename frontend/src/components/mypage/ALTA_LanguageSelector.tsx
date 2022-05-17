@@ -28,13 +28,6 @@ export default function ALTA_LanguageSelector({
 }) {
   const [personName, setPersonName] = React.useState<string[]>([]);
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(typeof value === 'string' ? value.split(',') : value);
-  };
-
   return (
     <div>
       <FormControl sx={{ width: '93.5%' }} size="small">
@@ -43,7 +36,7 @@ export default function ALTA_LanguageSelector({
           labelId="label"
           id="demo-multiple-checkbox"
           multiple
-          value={languageList}
+          value={languageList === null ? [] : languageList}
           onChange={(e) => setLanguageList(e.target.value)}
           input={<OutlinedInput label="사용 언어" />}
           renderValue={(selected) => selected && selected.join(', ')}
