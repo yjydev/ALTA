@@ -89,7 +89,7 @@ export default function ALTA_Chat({ stompClient }: Props) {
   };
 
   return (
-    <>
+    <Box>
       <Box sx={titleStyle}>소통창구</Box>
       <Box sx={[chatBoxStyle, scrollStyle]} ref={chatInput}>
         <Box>
@@ -154,7 +154,7 @@ export default function ALTA_Chat({ stompClient }: Props) {
         />
         <Button onClick={handleEnter}>입력</Button>
       </Box>
-    </>
+    </Box>
   );
 }
 
