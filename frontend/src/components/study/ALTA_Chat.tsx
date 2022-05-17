@@ -93,50 +93,56 @@ export default function ALTA_Chat({ stompClient }: Props) {
       <Box sx={titleStyle}>소통창구</Box>
       <Box sx={[chatBoxStyle, scrollStyle]} ref={chatInput}>
         <Box>
-          {chatContents.map(
-            (mes: chatResponse, idx: number): JSX.Element => (
-              <Grid container key={idx} sx={infoStyle} columns={14}>
-                {name === mes.nickname ? (
-                  <>
-                    <Grid item md={12} sx={rightListStyle}>
-                      <Grid item sx={chatRightStyle}>
-                        <Typography sx={nameRightStyle}>{mes.nickname}</Typography>
-                        <Grid container>
-                          <Grid item sx={dateRightStyle}>
-                            <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
-                          </Grid>
-                          <Grid item sx={bubbleRightStyle}>
-                            {mes.message}
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid item md={2} sx={profileRightStyle}>
-                      <Avatar src={mes.image} />
-                    </Grid>
-                  </>
-                ) : (
-                  <>
-                    <Grid item md={2} sx={profileLeftStyle}>
-                      <Avatar src={mes.image} />
-                    </Grid>
-                    <Grid item md={12} sx={leftListStyle}>
-                      <Grid item sx={chatLeftStyle}>
-                        <Typography>{mes.nickname}</Typography>
-                        <Grid container>
-                          <Grid item sx={bubbleLeftStyle}>
-                            {mes.message}
-                          </Grid>
-                          <Grid item sx={dateLeftStyle}>
-                            <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+          {chatContents ? (
+            <>
+              {chatContents.map(
+                (mes: chatResponse, idx: number): JSX.Element => (
+                  <Grid container key={idx} sx={infoStyle} columns={14}>
+                    {name === mes.nickname ? (
+                      <>
+                        <Grid item md={12} sx={rightListStyle}>
+                          <Grid item sx={chatRightStyle}>
+                            <Typography sx={nameRightStyle}>{mes.nickname}</Typography>
+                            <Grid container>
+                              <Grid item sx={dateRightStyle}>
+                                <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+                              </Grid>
+                              <Grid item sx={bubbleRightStyle}>
+                                {mes.message}
+                              </Grid>
+                            </Grid>
                           </Grid>
                         </Grid>
-                      </Grid>
-                    </Grid>
-                  </>
-                )}
-              </Grid>
-            ),
+                        <Grid item md={2} sx={profileRightStyle}>
+                          <Avatar src={mes.image} />
+                        </Grid>
+                      </>
+                    ) : (
+                      <>
+                        <Grid item md={2} sx={profileLeftStyle}>
+                          <Avatar src={mes.image} />
+                        </Grid>
+                        <Grid item md={12} sx={leftListStyle}>
+                          <Grid item sx={chatLeftStyle}>
+                            <Typography>{mes.nickname}</Typography>
+                            <Grid container>
+                              <Grid item sx={bubbleLeftStyle}>
+                                {mes.message}
+                              </Grid>
+                              <Grid item sx={dateLeftStyle}>
+                                <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </>
+                    )}
+                  </Grid>
+                ),
+              )}
+            </>
+          ) : (
+            <>채팅내역이 없습니다</>
           )}
         </Box>
       </Box>
