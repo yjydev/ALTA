@@ -41,7 +41,7 @@ export default function ALTA_Notice() {
   };
 
   return (
-    <>
+    <Box>
       <Box sx={titleStyle}>
         공지사항
         <Button sx={btnStyle} onClick={(): void => setNoticeEditing(!noticeEditing)}>
@@ -80,7 +80,7 @@ export default function ALTA_Notice() {
           />
         )}
       </Box>
-    </>
+    </Box>
   );
 }
 const titleStyle = {

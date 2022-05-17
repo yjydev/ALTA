@@ -27,14 +27,15 @@ import javax.mail.MessagingException;
 public class MailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
-    private final String SERVICE_URL = "https://algorithmtime.com";
+    private final String MAIL = "alta.invitation@gmail.com";
+    private final String SUBJECT = "ALTA에서 알림이 도착했습니다.";
 
     @Async("mailExecutor")
     public void sendAlertMail(String email, String message) throws MessagingException {
         MailHandler mailHandler = new MailHandler(mailSender);
         mailHandler.setTo(email);
-        mailHandler.setFrom("alta.invitation@gmail.com");
-        mailHandler.setSubject("ALTA에서 알림이 도착했습니다.");
+        mailHandler.setFrom(MAIL);
+        mailHandler.setSubject(SUBJECT);
 
         Context context = new Context();
         context.setVariable("message", message);

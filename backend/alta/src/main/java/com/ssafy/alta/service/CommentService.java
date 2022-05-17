@@ -74,13 +74,21 @@ public class CommentService {
 
         // 알림 발생 + 프론트로 알림 발생시키기
         // 피드백 등록 메일 보내기
-        //if(!code.getUser().getId().equals(comment.getUser().getId())) {       // 본인이 코드 작성자이면서 댓글 작성자이면 알림 발생 X
-            Alert alert = alertService.processAlert(code.getUser(), comment.getUser(), AlertType.COMMENT, code);
-            notificationService.sendAlertEvent(alert);
+        if(!code.getUser().getId().equals(comment.getUser().getId())) {       // 본인이 코드 작성자이면서 댓글 작성자이면 알림 발생 X
+            int alertStatus = userRepository.findAlertStatusByUserId(code.getUser().getId());
 
-            // 메일 보냄
-            mailService.sendAlertMail(code.getUser().getEmail(), alert.getContent());
-        //}
+            Alert alert = alertService.makeAlert(code.getUser(), comment.getUser(), AlertType.SITE_COMMENT, code);
+            if(AlertType.isAlertTrue(alertStatus, AlertType.SITE_COMMENT)) {
+                // 유저가 사이트 댓글 알림 수신을 체크했다면
+                alertService.insertAlert(alert);
+                notificationService.sendAlertEvent(alert);
+            }
+
+            // 유저가 메일 댓글 알림 수신을 체크했다면 + 메일 보냄
+            if(AlertType.isAlertTrue(alertStatus, AlertType.MAIL_COMMENT)) {
+                mailService.sendAlertMail(code.getUser().getEmail(), alert.getContent());
+            }
+        }
     }
 
     @Transactional

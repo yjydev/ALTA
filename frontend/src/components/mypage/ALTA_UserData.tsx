@@ -31,14 +31,14 @@ export default function ALTA_UserData() {
   const [isEditPage, setIsEditPage] = useState<boolean>(false);
   const [alertFold, setAlertFold] = useState<boolean>(false);
   const [alertStatus, setAlertStatus] = useState<AlertStatus>({
-    // siteSolutionAlert: userData.alertSetting.slice(0, 1) === '1' ? true : false,
-    // siteCommentAlert: userData.alertSetting.slice(1, 2) === '1' ? true : false,
-    // mailSolutionAlert: userData.alertSetting.slice(2, 3) === '1' ? true : false,
-    // mailScheduleAlert: userData.alertSetting.slice(3, 4) === '1' ? true : false,
-    siteSolutionAlert: '1110'.slice(0, 1) === '1' ? true : false,
-    siteCommentAlert: '1110'.slice(1, 2) === '1' ? true : false,
-    mailSolutionAlert: '1110'.slice(2, 3) === '1' ? true : false,
-    mailScheduleAlert: '1110'.slice(3, 4) === '1' ? true : false,
+    siteSolutionAlert: userData.alertSetting.slice(0, 1) === '1' ? true : false,
+    siteCommentAlert: userData.alertSetting.slice(1, 2) === '1' ? true : false,
+    mailSolutionAlert: userData.alertSetting.slice(2, 3) === '1' ? true : false,
+    mailScheduleAlert: userData.alertSetting.slice(3, 4) === '1' ? true : false,
+    // siteSolutionAlert: '1110'.slice(0, 1) === '1' ? true : false,
+    // siteCommentAlert: '1110'.slice(1, 2) === '1' ? true : false,
+    // mailSolutionAlert: '1110'.slice(2, 3) === '1' ? true : false,
+    // mailScheduleAlert: '1110'.slice(3, 4) === '1' ? true : false,
   });
 
   const editAlertSetting = (key: string): void => {
