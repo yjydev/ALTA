@@ -47,6 +47,11 @@ export async function codeTreeApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/tree`);
 }
 
+// 알림 목록 조회 요청
+export async function alertDataApi() {
+  return await getRequest(`/api/user/alert`);
+}
+
 // 채팅 리스트 요청
 export async function chatDataApi(studyId: number) {
   return await getRequest(`/api/chat/${studyId}`);
@@ -225,6 +230,16 @@ export async function confirmInvitationApi(inviteCode: string) {
     code: inviteCode,
   };
   return await putRequest(`/api/study/invitation`, requestBody);
+}
+
+// 알림 읽음 요청
+export async function readAlertApi(alertId: number) {
+  return await putRequest(`/api/user/alert/${alertId}/checked`, '');
+}
+
+// 알림 전체 읽음 요청
+export async function readAlertAllApi() {
+  return await putRequest(`/api/user/alert/checked`, '');
 }
 
 // delete

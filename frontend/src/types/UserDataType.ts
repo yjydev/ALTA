@@ -36,3 +36,13 @@ export const defaultUserData = {
   profileUrl: '',
   studyList: [],
 };
+
+export type AlertData = {
+  alertId: number;
+  senderNickName: string;
+  type: string;
+  content: string;
+  time: Date;
+  url: string;
+  isChecked: boolean;
+};
