@@ -95,8 +95,13 @@ public class CodeService {
         for(StudyJoinInfo sji : sjiList) {
             // 코드 작성자에게는 알림 발생 X
             if(sji.getUser().getId().equals(code.getUser().getId())) continue;
-            Alert alert = alertService.processAlert(sji.getUser(), code.getUser(), AlertType.CODE, code);
-            alertList.add(alert);
+
+            int alertStatus = userRepository.findAlertStatusByUserId(sji.getUser().getId());
+            // 유저가 사이트 코드 알림 수신을 체크했다면 알림 리스트에 추가
+            if(AlertType.isAlertTrue(alertStatus, AlertType.SITE_CODE)) {
+                Alert alert = alertService.processAlert(sji.getUser(), code.getUser(), AlertType.SITE_CODE, code);
+                alertList.add(alert);
+            }
         }
 
 //        중복 부분 호출 - 코드 github에 업로드
@@ -331,7 +336,7 @@ public class CodeService {
         }
     }
 
-    // 오늘 마감인데 코드 미제출한 사람에게 메일 보냄
+    // 오늘 스터디 일정 마감일 때 스터디원들에게 보냄
     public void sendAlertMailCodeDeadline() throws ParseException, MessagingException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date nowDate = formatter.parse(formatter.format(new Date()));
@@ -342,9 +347,13 @@ public class CodeService {
         for(Schedule schedule : scheduleList) {
             List<StudyJoinInfo>  sjtList = studyJoinInfoRepository.findByStudyStudyIdWhereState(schedule.getStudy().getStudyId(), "가입");
             // 일단 보냄
-            String message = String.format(AlertType.SCHEDULE.getMessage(), schedule.getStudy().getName());
+            String message = String.format(AlertType.MAIL_SCHEDULE.getMessage(), schedule.getStudy().getName());
             for(StudyJoinInfo studyJoinInfo : sjtList) {
-                mailService.sendAlertMail(studyJoinInfo.getUser().getEmail(), message);
+                int alertStatus = userRepository.findAlertStatusByUserId(studyJoinInfo.getUser().getId());
+                // 유저가 메일 일정 알림 수신을 체크했다면 보냄
+                if(AlertType.isAlertTrue(alertStatus, AlertType.MAIL_SCHEDULE)) {
+                    mailService.sendAlertMail(studyJoinInfo.getUser().getEmail(), message);
+                }
             }
         }
 
