@@ -117,7 +117,7 @@ export default function ALTA_Alert() {
           <TabPanel value={value} index={0}>
             {badgeCnt ? (
               <Box>
-                <p>전체 읽음</p>
+                전체 읽음
                 {allRead ? (
                   <IconButton>{<CheckCircleRoundedIcon sx={resolvedStyle} />}</IconButton>
                 ) : (
