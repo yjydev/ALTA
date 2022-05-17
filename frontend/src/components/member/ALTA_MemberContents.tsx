@@ -20,7 +20,7 @@ export default function ALTA_MemberContents() {
   const navigate: NavigateFunction = useNavigate();
 
   const { studyId } = useParams<ParamType>();
-  const { members, getMembers, isRefresh, setIsRefresh, studyCode, maxPeople, setInvitable } = useContext(MemberStore);
+  const { members, getMembers, isRefresh, setIsRefresh, studyCode, maxPeople } = useContext(MemberStore);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -32,8 +32,7 @@ export default function ALTA_MemberContents() {
       else if (status.status === -2) generateError('멤버 정보를 불러오는데 실패하였습니다', '');
       else setLoading(false);
     })();
-    setInvitable(members.length < maxPeople);
-  }, [isRefresh]);
+  }, [isRefresh, studyId]);
 
   return (
     <>
@@ -54,12 +53,12 @@ export default function ALTA_MemberContents() {
                 <ALTA_ContentsTitle> 멤버 관리 </ALTA_ContentsTitle>
                 <ALTA_MemberTable studyId={Number(studyId)} />
                 <Grid container>
-                  <Typography sx={studyCodeStyle}>
+                  <Box sx={studyCodeStyle}>
                     스터디 고유 코드 :<Typography sx={studyCodeTextStyle}>{studyCode}</Typography>
                     {/* <Button variant="contained" sx={refreshBtnStyle}>
                 코드 갱신
               </Button> */}
-                  </Typography>
+                  </Box>
                 </Grid>
               </Grid>
             </Grid>

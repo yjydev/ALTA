@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 
 import {
@@ -23,7 +23,7 @@ import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
 export default function ALTA_MemberList({ studyId }: { studyId: number }) {
   const navigate: NavigateFunction = useNavigate();
-  const { invitable, setIsRefresh } = useContext(MemberStore);
+  const { setIsRefresh, members, maxPeople } = useContext(MemberStore);
 
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>('');
@@ -50,7 +50,6 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
 
   const handleInvite = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
-    if (!invitable) generateError('초대가 불가합니다', '스터디 최대 인원에 도달하였습니다');
     else {
       generateTimer('잠시 기다려 주세요', `${selectUser?.nickname} 님에게 보낼 초대메일을 작성중입니다`);
       if (inputValue) {
@@ -78,69 +77,65 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
     <Box sx={inviteBoxStyle}>
       <ALTA_ContentsTitle> 멤버 초대 </ALTA_ContentsTitle>
       <Box sx={inputBoxStyle}>
-        {invitable ? (
-          <Grid container columns={14} spacing={2}>
-            <Grid item xs={11}>
-              <Autocomplete
-                open={searchOpen}
-                onOpen={(): void => {
-                  setSearchOpen(true);
-                }}
-                onClose={(): void => {
-                  setSearchOpen(false);
-                }}
-                isOptionEqualToValue={(option, value): boolean => option === value}
-                // 자동완성 기능으로 특정 옵션을 선택한 경우
-                onChange={(e: React.SyntheticEvent<Element, Event>, obj: userList | null): void => {
-                  if (obj) {
-                    setSelectUser(obj);
-                    setInputValue(obj.nickname);
-                  }
-                }}
-                onInputChange={(e: React.SyntheticEvent<Element, Event>): void => {
-                  if (e) searchName((e.target as HTMLInputElement).value);
-                }}
-                inputValue={inputValue}
-                getOptionLabel={(option: userList): string => option.nickname}
-                options={[selectUser, ...userList]}
-                noOptionsText={'일치하는 데이터가 없습니다'}
-                loading={loading}
-                renderInput={(params: AutocompleteRenderInputParams): JSX.Element => (
-                  <Grid container alignItems="center">
-                    <Grid item xs={2} sx={labelStyle}>
-                      <InputLabel htmlFor="nickname-input" sx={nameLabelStyle}>
-                        닉네임
-                      </InputLabel>
-                    </Grid>
-                    <Grid item xs={10}>
-                      <TextField
-                        {...params}
-                        id="nickname-input"
-                        placeholder="초대할 사람의 닉네임을 입력해주세요"
-                        size="small"
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <React.Fragment>
-                              {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                            </React.Fragment>
-                          ),
-                        }}
-                      />
-                    </Grid>
+        <Grid container columns={14} spacing={2}>
+          <Grid item xs={11}>
+            <Autocomplete
+              open={searchOpen}
+              onOpen={(): void => {
+                setSearchOpen(true);
+              }}
+              onClose={(): void => {
+                setSearchOpen(false);
+              }}
+              isOptionEqualToValue={(option, value): boolean => option === value}
+              // 자동완성 기능으로 특정 옵션을 선택한 경우
+              onChange={(e: React.SyntheticEvent<Element, Event>, obj: userList | null): void => {
+                if (obj) {
+                  setSelectUser(obj);
+                  setInputValue(obj.nickname);
+                }
+              }}
+              onInputChange={(e: React.SyntheticEvent<Element, Event>): void => {
+                if (e) searchName((e.target as HTMLInputElement).value);
+              }}
+              inputValue={inputValue}
+              getOptionLabel={(option: userList): string => option.nickname}
+              options={[selectUser, ...userList]}
+              noOptionsText={'일치하는 데이터가 없습니다'}
+              loading={loading}
+              renderInput={(params: AutocompleteRenderInputParams): JSX.Element => (
+                <Grid container alignItems="center">
+                  <Grid item xs={2} sx={labelStyle}>
+                    <InputLabel htmlFor="nickname-input" sx={nameLabelStyle}>
+                      닉네임
+                    </InputLabel>
                   </Grid>
-                )}
-              />
-            </Grid>
-            <Grid item xs={3} sx={btnStyle}>
-              <Button variant="contained" sx={inviteBtnStyle} onClick={handleInvite}>
-                초대
-              </Button>
-            </Grid>
+                  <Grid item xs={10}>
+                    <TextField
+                      {...params}
+                      id="nickname-input"
+                      placeholder="초대할 사람의 닉네임을 입력해주세요"
+                      size="small"
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <React.Fragment>
+                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                          </React.Fragment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              )}
+            />
           </Grid>
-        ) : (
-          <Typography sx={messageStyle}>더이상 초대할 수 없습니다</Typography>
-        )}
+          <Grid item xs={3} sx={btnStyle}>
+            <Button variant="contained" sx={inviteBtnStyle} onClick={handleInvite}>
+              초대
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
     </Box>
   );
