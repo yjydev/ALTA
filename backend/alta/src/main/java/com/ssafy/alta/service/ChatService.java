@@ -59,6 +59,25 @@ public class ChatService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public ChatResponse insertMessageSend(Long studyId, ChatRequest chatRequest) {
+        String userId = userService.getCurrentUserId();
+
+        if (chatRequest.getContent().length() == 0) {
+            throw new BadRequestMessage();
+        }
+
+        Optional<User> optUser = Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(DataNotFoundException::new));
+        Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
+                .orElseThrow(DataNotFoundException::new));
+
+        Chat chat = chatRequest.toChat(optUser.get(), optSJI.get().getStudy(), new Date());
+        Chat chatResponse = chatRepository.save(chat);
+
+        return chatResponse.toChatSubResponse();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public List<ChatResponse> selectChatList(Long studyId) {
         String userId = userService.getCurrentUserId();
 

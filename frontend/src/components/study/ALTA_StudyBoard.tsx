@@ -1,8 +1,6 @@
 import { Fragment, useContext, useState } from 'react';
 import { Box, Drawer, Button, Typography } from '@mui/material';
 import MoreIcon from '@mui/icons-material/More';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
 
 import { blackColor } from '../../modules/colorChart';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
@@ -10,14 +8,11 @@ import { StudyDetailStore } from '../../context/StudyDetailContext';
 import ALTA_Notice from './ALTA_Notice';
 import ALTA_Chat from './ALTA_Chat';
 import ALTA_Tooltip from '../common/ALTA_Tooltip';
+import ALTA_StudyMembers from './ALTA_StudyMembers';
 
 export default function ALTA_StudyBoard() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { studyName } = useContext(StudyDetailStore);
-
-  const socketJS = new SockJS(`${process.env.REACT_APP_BASE_URL}:8000/chat`);
-  const stompClient: Stomp.Client = Stomp.over(socketJS);
-
   const toggleDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (
       event.type === 'keydown' &&
@@ -30,19 +25,24 @@ export default function ALTA_StudyBoard() {
   };
 
   return (
-    <div>
+    <Box>
       <Fragment key={'drawer'}>
         <Drawer
           anchor={'top'}
           open={isDrawerOpen}
           onClose={toggleDrawer()}
           PaperProps={{
-            sx: { minWidth: '900px', maxWidth: '900px', margin: '100px auto 0' },
+            sx: { minWidth: '900px', maxWidth: '900px', margin: '30px auto 0' },
           }}
         >
-          <Box sx={wrapper}>
-            <ALTA_Notice />
-            <ALTA_Chat stompClient={stompClient} />
+          <Box>
+            <Box sx={wrapper}>
+              <ALTA_StudyMembers />
+              <ALTA_Chat />
+            </Box>
+            <Box>
+              <ALTA_Notice />
+            </Box>
           </Box>
         </Drawer>
       </Fragment>
@@ -56,13 +56,13 @@ export default function ALTA_StudyBoard() {
           </ALTA_Tooltip>
         </Typography>
       </Box>
-    </div>
+    </Box>
   );
 }
 
 const wrapper = {
   display: 'flex',
-  // flexDirection: 'column',
+  boxSizing: 'border-box',
 };
 
 const studyNameStyle = {

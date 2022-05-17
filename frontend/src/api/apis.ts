@@ -168,6 +168,14 @@ export async function editNoticeContentApi(studyId: number, content: string) {
   return await postRequest(`/api/study/${studyId}/notice`, requestBody);
 }
 
+// 채팅 입력 요청
+export async function addChatApi(studyId: number, content: string) {
+  const requestBody = {
+    content,
+  };
+  return await postRequest(`/api/chat/${studyId}`, requestBody);
+}
+
 //PUT
 //스터디 회차 일정 수정 요청
 export async function editScheduleApi(studyId: number, scheduleId: number, dateString: string) {

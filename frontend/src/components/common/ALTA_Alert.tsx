@@ -26,6 +26,7 @@ export default function ALTA_Alert() {
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<number>(0);
   const [allRead, setAllRead] = useState<boolean>(false);
+  const [buffer, setBuffer] = useState<any>('');
 
   const anchorRef = useRef<SVGSVGElement>(null);
 
@@ -34,28 +35,38 @@ export default function ALTA_Alert() {
 
   const newAlert: AlertData[] = alertData.filter((d: AlertData): boolean => d.isChecked === false);
 
+  useEffect(() => {
+    if (buffer !== '') {
+      setAlertData([...alertData, buffer]);
+      setBuffer('');
+    }
+  }, [buffer]);
+
   useEffect((): void => {
-    setAllRead(false);
     (async function (): Promise<void> {
       const status = await getAlertData();
       if (status.status === -1) navigate('/');
     })();
+  }, []);
+
+  useEffect((): void => {
+    setAllRead(false);
     setBadgeCnt(alertData.filter((d: AlertData): boolean => d.isChecked === false).length);
     if (!listening) {
       const eventSource = new EventSource(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
+        heartbeatTimeout: 600 * 1000,
         headers: {
           ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
-          heartbeatTimeout: '300 * 1000',
         },
       }); //구독
 
-      eventSource.onmessage = (event) => {
-        const result = JSON.parse(event.data);
+      eventSource.addEventListener('message', function (event) {
+        const result = event.data;
         if (result['alertId'] !== -1) {
-          setAlertData([...alertData, result]);
+          const d = JSON.parse(result);
+          setBuffer(d);
         }
-      };
-
+      });
       setListening(true);
     }
   }, []);
