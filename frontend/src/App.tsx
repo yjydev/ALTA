@@ -15,7 +15,6 @@ import ALTA_StudyDetail from './pages/ALTA_StudyDetail';
 import ALTA_Member from './pages/ALTA_Member';
 import ALTA_Mypage from './pages/ALTA_Mypage';
 import ALTA_Error from './components/common/ALTA_Error';
-import ALTA_Header from './components/common/ALTA_Header';
 
 function App() {
   LicenseInfo.setLicenseKey(
@@ -25,7 +24,6 @@ function App() {
     <UserDataProvider>
       <ThemeProvider theme={theme}>
         <BrowserRouter>
-          <ALTA_Header />
           <Routes>
             <Route path="/" element={<ALTA_Login />} />
             <Route path="/study/:studyId/:problem/code/:codeId" element={<ALTA_Code />} />
