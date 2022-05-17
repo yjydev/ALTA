@@ -69,8 +69,9 @@ public class ChatService {
 
         List<Chat> chatList = chatRepository.findByStudyStudyIdOrderByWriteDate(studyId);
         List<ChatResponse> chatResponses = new ArrayList<>();
+
         if (chatList.size() == 0) {
-            chatResponses.add(new ChatResponse());
+            chatResponses = null;
         } else {
             for (Chat c : chatList) {
                 chatResponses.add(c.toChatSubResponse());
