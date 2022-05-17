@@ -67,7 +67,10 @@ public class ChatService {
         Optional<StudyJoinInfo> optSJI = Optional.ofNullable(sjiRepository.findByStudyStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
 
-        List<Chat> chatList = chatRepository.findByStudyStudyIdOrderByWriteDate(studyId);
+        List<Chat> chatAll = chatRepository.findByStudyStudyIdOrderByWriteDate(studyId);
+
+        List<Chat> chatList = new ArrayList<>(
+                chatAll.size()> 300 ? chatAll.subList(chatAll.size()-300, chatAll.size()) : chatAll);
         List<ChatResponse> chatResponses = new ArrayList<>();
 
         if (chatList.size() == 0) {

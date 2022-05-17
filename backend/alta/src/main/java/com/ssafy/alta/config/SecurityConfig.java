@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger/**",   // swagger
                         "/favicon.ico",
                         "/images/**",
-                        "/chat/**"
+                        "/api/ws/**"
                 );
     }
 
