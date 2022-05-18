@@ -108,6 +108,7 @@ export default function ALTA_Chat() {
   };
   return (
     <Box>
+      <h1>스터디 소통 창구</h1>
       <Box sx={titleStyle}>소통창구</Box>
       <Box sx={[chatBoxStyle, scrollStyle]} ref={chatInput}>
         <Box>

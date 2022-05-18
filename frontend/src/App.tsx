@@ -1,6 +1,6 @@
 import { Suspense, lazy, useContext, useEffect } from 'react';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
-import { createTheme } from '@mui/material';
+import { Box, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { LicenseInfo } from '@mui/x-license-pro';
 import { EventSourcePolyfill } from 'event-source-polyfill';
@@ -9,6 +9,9 @@ import UserDataProvider from './context/UserDataContext';
 import './App.css';
 import { AlertDataStore } from './context/AlertContext';
 import { defaultAlertData } from './types';
+
+import ALTA_Loading from './components/common/ALTA_Loading';
+import ALTA_Inner from './components/common/ALTA_Inner';
 
 const LoginPage = lazy(() => import('./pages/ALTA_Login'));
 const AuthPage = lazy(() => import('./pages/ALTA_AuthPage'));
@@ -64,7 +67,13 @@ function App() {
     <UserDataProvider>
       <ThemeProvider theme={theme}>
         <Router>
-          <Suspense fallback={<div>로딩중</div>}>
+          <Suspense
+            fallback={
+              <Box sx={{ height: '100vh' }}>
+                <ALTA_Loading />
+              </Box>
+            }
+          >
             <Routes>
               <Route path="/" element={<LoginPage />} />
               <Route path="/study/:studyId/:problem/code/:codeId" element={<CodePage />} />

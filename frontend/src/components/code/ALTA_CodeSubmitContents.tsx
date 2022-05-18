@@ -79,6 +79,7 @@ export default function ALTA_CodeSubmitContents() {
 
   return (
     <Box sx={wrapperStyle}>
+      <h1>커밋 메세지 입력란</h1>
       <ALTA_InputItem label="커밋 메세지" focused={false} focusHandler={(): null => null}>
         <TextField
           id="스터디 이름"
@@ -89,6 +90,7 @@ export default function ALTA_CodeSubmitContents() {
           sx={{ width: '100%' }}
         />
       </ALTA_InputItem>
+      <h1>코드 파일 업로드란</h1>
       <ALTA_InputItem label="코드 업로드" focused={false} focusHandler={(): null => null}>
         <FileInput id="file" type="file" onChange={uploadFile} />
         <ALTA_Tooltip title="PC에서 파일 찾기">
@@ -101,6 +103,7 @@ export default function ALTA_CodeSubmitContents() {
           </Button>
         </ALTA_Tooltip>
       </ALTA_InputItem>
+      <h1>코드 미리보기</h1>
       <ALTA_CodeBlock code={code} language="javascript" />
       <Box sx={{ marginTop: 10, textAlign: 'right' }}>
         <Button variant="contained" sx={btnStyle} onClick={summitCode}>
