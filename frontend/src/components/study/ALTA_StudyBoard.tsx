@@ -1,5 +1,5 @@
 import { Fragment, useContext, useState } from 'react';
-import { Box, Drawer, Button, Typography } from '@mui/material';
+import { Box, Drawer, Button, Typography, Grid } from '@mui/material';
 import MoreIcon from '@mui/icons-material/More';
 
 import { blackColor } from '../../modules/colorChart';
@@ -26,14 +26,18 @@ export default function ALTA_StudyBoard() {
             sx: { minWidth: '900px', maxWidth: '900px', margin: '30px auto 0' },
           }}
         >
-          <Box>
-            <Box sx={wrapper}>
-              <ALTA_StudyMembers />
-              <ALTA_Chat />
-            </Box>
-            <Box>
-              <ALTA_Notice />
-            </Box>
+          <Box sx={wrapper}>
+            <Grid container sx={topBoxStyle}>
+              <Grid item xs={6}>
+                <ALTA_StudyMembers />
+              </Grid>
+              <Grid item xs={6}>
+                <ALTA_Chat />
+              </Grid>
+            </Grid>
+          </Box>
+          <Box sx={bottomBoxStyle}>
+            <ALTA_Notice />
           </Box>
         </Drawer>
       </Fragment>
@@ -52,8 +56,22 @@ export default function ALTA_StudyBoard() {
 }
 
 const wrapper = {
+  width: '90%',
   display: 'flex',
   boxSizing: 'border-box',
+  justifyContent: 'center',
+};
+
+const topBoxStyle = {
+  display: 'flex',
+  boxSizing: 'border-box',
+};
+
+const bottomBoxStyle = {
+  marginTop: '2rem',
+  width: '90%',
+  display: 'flex',
+  justifyContent: 'center',
 };
 
 const studyNameStyle = {

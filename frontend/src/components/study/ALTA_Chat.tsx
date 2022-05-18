@@ -101,7 +101,7 @@ export default function ALTA_Chat() {
     }
   };
   return (
-    <Box>
+    <Box sx={wrapperStyle}>
       <h1>스터디 소통 창구</h1>
       <Box sx={titleStyle}>소통창구</Box>
       <Box sx={[chatBoxStyle, scrollStyle]} ref={chatInput}>
@@ -176,6 +176,10 @@ export default function ALTA_Chat() {
     </Box>
   );
 }
+
+const wrapperStyle = {
+  width: '90%',
+};
 
 const titleStyle = {
   position: 'relative',
