@@ -46,3 +46,13 @@ export type AlertData = {
   url: string;
   isChecked: boolean;
 };
+
+export const defaultAlertData = {
+  alertId: 0,
+  senderNickName: '',
+  type: '',
+  content: '',
+  time: new Date(),
+  url: '',
+  isChecked: false,
+};

@@ -1,11 +1,15 @@
+import { useContext, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { LicenseInfo } from '@mui/x-license-pro';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 import './App.css';
 
 import UserDataProvider from './context/UserDataContext';
+import { AlertDataStore } from './context/AlertContext';
+import { defaultAlertData } from './types';
 import ALTA_Login from './pages/ALTA_Login';
 import ALTA_AuthPage from './pages/ALTA_AuthPage';
 import ALTA_Code from './pages/ALTA_Code';
@@ -20,6 +24,42 @@ function App() {
   LicenseInfo.setLicenseKey(
     '2aa4db8a29be7f642c457d8df41c7e3eT1JERVI6NDMwODIsRVhQSVJZPTE2ODMyNzgzNTcwMDAsS0VZVkVSU0lPTj0x',
   );
+  const { alertData, getAlertData, setAlertData, buffer, setBuffer, listening, setListening } =
+    useContext(AlertDataStore);
+  let eventSource: EventSourcePolyfill;
+  useEffect(() => {
+    if (!listening) {
+      eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
+        heartbeatTimeout: 600 * 1000,
+        headers: {
+          ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
+        },
+      });
+      eventSource.addEventListener('message', function (event) {
+        const result = event.data;
+        if (result['alertId'] !== -1) {
+          const d = JSON.parse(result);
+          setBuffer(d);
+        }
+      });
+      setListening(true);
+    }
+  });
+  window.onbeforeunload = function () {
+    setListening(false);
+    eventSource.close();
+  };
+  useEffect(() => {
+    if (buffer.alertId !== 0) {
+      setAlertData([...alertData, buffer]);
+      setBuffer(defaultAlertData);
+    }
+  }, [buffer]);
+  useEffect((): void => {
+    (async function (): Promise<void> {
+      await getAlertData();
+    })();
+  }, []);
   return (
     <UserDataProvider>
       <ThemeProvider theme={theme}>
