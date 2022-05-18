@@ -42,6 +42,7 @@ export default function ALTA_Notice() {
 
   return (
     <Box>
+      <h1>스터디 공지사항</h1>
       <Box sx={titleStyle}>
         공지사항
         <Button sx={btnStyle} onClick={(): void => setNoticeEditing(!noticeEditing)}>

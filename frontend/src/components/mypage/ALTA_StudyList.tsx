@@ -20,16 +20,20 @@ export default function ALTA_StudyList({ studyList }: Props) {
   return (
     <Box sx={wrapper}>
       <ALTA_ContentsTitle>스터디 그룹 목록</ALTA_ContentsTitle>
+      <h3>스터디 생성하기</h3>
       <Box sx={Btns}>
         <Button variant="contained" onClick={goOrganize}>
           스터디 생성하기
         </Button>
+        <h3>초대코드 입력하기</h3>
         <ALTA_inviteInput />
       </Box>
+      <h3>참여 스터디 목록</h3>
       <Grid sx={[studyListStyle, scrollStyle]} container spacing={3} mb={3}>
         {studyList &&
           studyList.map((study: Study) => (
             <Grid key={study.id} item xs={6}>
+              <h4>{`${study.name}`}</h4>
               <Box onClick={() => goStudyDetail(study.id)}>
                 <ALTA_StudyCard study={study} />
               </Box>

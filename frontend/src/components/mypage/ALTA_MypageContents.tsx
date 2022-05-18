@@ -31,8 +31,11 @@ export default function ALTA_MypageContents() {
   return (
     <>
       {loading && <ALTA_Loading />}
+      <h1>마이 페이지</h1>
       <Box sx={{ position: 'relative' }}>
+        <h2>내 정보</h2>
         {!loading && <ALTA_UserData />}
+        <h2>스터디 관리</h2>
         {!loading && <ALTA_StudyList studyList={userData.studyList} />}
       </Box>
     </>
