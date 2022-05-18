@@ -157,7 +157,6 @@ public class StudyService {
     public void inviteUser(Long studyId, StudyUserIdRequest studyUserIdRequest) throws MessagingException, JsonProcessingException {
         String userId = userService.getCurrentUserId();
         String token = redisService.getAccessToken(userId);
-        System.out.println(userId);
 
         Optional<Study> optStudy = Optional.of(studyRepository.findByStudyIdAndUserId(studyId, userId)
                 .orElseThrow(DataNotFoundException::new));
