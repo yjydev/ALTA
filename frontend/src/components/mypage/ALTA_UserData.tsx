@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import styled from '@emotion/styled';
 
-import defaultProfile from '../../images/user.png';
+import defaultProfile from '../../images/user.webp';
 import { mainColor } from '../../modules/colorChart';
 import { UserDataStore } from '../../context/UserDataContext';
 import { generateError } from '../../modules/generateAlert';

@@ -4,7 +4,7 @@ import { AppBar, Box } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import Logo from '../../images/logo.png';
+import Logo from '../../images/logo.webp';
 
 import ALTA_Tooltip from './ALTA_Tooltip';
 import ALTA_Alert from './ALTA_Alert';

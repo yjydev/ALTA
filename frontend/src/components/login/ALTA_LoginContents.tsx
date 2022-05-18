@@ -6,7 +6,7 @@ import GithubButton from 'react-github-login-button';
 
 import { loginTokenChecker } from '../../modules/LoginTokenChecker';
 
-import Logo from '../../images/logo.png';
+import Logo from '../../images/logo.webp';
 
 export default function ALTA_LoginContents() {
   const navigate = useNavigate();
