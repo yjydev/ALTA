@@ -56,7 +56,6 @@ export const addProblemBarBackBuilder = (
       try {
         await addProblemApi(studyId, scheduleId, problemName, problemLink);
       } catch (err: any) {
-        console.log(err);
         generateError('문제를 추가할 수 없습니다', err.response.data.message);
       } finally {
         setEditProblemLoading(false);

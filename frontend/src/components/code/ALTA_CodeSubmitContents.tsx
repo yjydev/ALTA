@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useParams, useNavigate, NavigateFunction } from 'react-router-dom';
 
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import styled from '@emotion/styled';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-import { blackColor } from '../../modules/colorChart';
-import { generateError } from '../../modules/generateAlert';
+import { blackColor, whiteColor } from '../../modules/colorChart';
+import { generateError, generateTimer } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { editCodeApi, submitCodeApi } from '../../api/apis';
 
@@ -29,6 +29,7 @@ export default function ALTA_CodeSubmitContents() {
   const [commitMessage, setCommitMessage] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const files: FileList | null = e.target.files;
@@ -60,14 +61,27 @@ export default function ALTA_CodeSubmitContents() {
     if (!(await checkLogin())) navigate('/');
 
     if (problemId && problemId !== '0') {
+      setLoading(true);
       if (studyId) {
-        await submitCodeApi(parseInt(studyId), parseInt(problemId), commitMessage, fileName, code);
-        goStudyDetail();
+        try {
+          await submitCodeApi(parseInt(studyId), parseInt(problemId), commitMessage, fileName, code);
+        } catch (err: any) {
+          generateError('코드를 업로드하지 못했습니다', err.message);
+        } finally {
+          setLoading(false);
+          goStudyDetail();
+        }
       }
     } else {
       if (codeId && studyId) {
-        await editCodeApi(parseInt(studyId), parseInt(codeId), commitMessage, fileName, code);
-        goCodeDetail();
+        try {
+          await editCodeApi(parseInt(studyId), parseInt(codeId), commitMessage, fileName, code);
+        } catch (err: any) {
+          generateError('코드를 업로드하지 못했습니다', err.message);
+        } finally {
+          setLoading(false);
+          goCodeDetail();
+        }
       }
     }
   };
@@ -79,6 +93,7 @@ export default function ALTA_CodeSubmitContents() {
 
   return (
     <Box sx={wrapperStyle}>
+      <h1>커밋 메세지 입력란</h1>
       <ALTA_InputItem label="커밋 메세지" focused={false} focusHandler={(): null => null}>
         <TextField
           id="스터디 이름"
@@ -89,6 +104,7 @@ export default function ALTA_CodeSubmitContents() {
           sx={{ width: '100%' }}
         />
       </ALTA_InputItem>
+      <h1>코드 파일 업로드란</h1>
       <ALTA_InputItem label="코드 업로드" focused={false} focusHandler={(): null => null}>
         <FileInput id="file" type="file" onChange={uploadFile} />
         <ALTA_Tooltip title="PC에서 파일 찾기">
@@ -101,10 +117,11 @@ export default function ALTA_CodeSubmitContents() {
           </Button>
         </ALTA_Tooltip>
       </ALTA_InputItem>
+      <h1>코드 미리보기</h1>
       <ALTA_CodeBlock code={code} language="javascript" />
       <Box sx={{ marginTop: 10, textAlign: 'right' }}>
         <Button variant="contained" sx={btnStyle} onClick={summitCode}>
-          제 출
+          {loading ? <CircularProgress sx={{ color: whiteColor }} size={30} /> : '제 출'}
         </Button>
         <Button variant="contained" color="error" sx={btnStyle} onClick={handleCancel}>
           취 소

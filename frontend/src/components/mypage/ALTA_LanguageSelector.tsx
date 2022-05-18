@@ -19,15 +19,12 @@ const MenuProps = {
   },
 };
 
-export default function ALTA_LanguageSelector({
-  setLanguageList,
-  languageList,
-}: {
+type Props = {
   setLanguageList: any;
   languageList: string[] | null;
-}) {
-  const [personName, setPersonName] = React.useState<string[]>([]);
+};
 
+export default function ALTA_LanguageSelector({ setLanguageList, languageList }: Props) {
   return (
     <div>
       <FormControl sx={{ width: '93.5%' }} size="small">

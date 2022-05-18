@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AlertData, ContextProps } from '../types';
+
+import { AlertData, ContextProps, defaultAlertData } from '../types';
 import { checkLogin } from '../modules/LoginTokenChecker';
 import { alertDataApi } from '../api/apis';
 
@@ -10,6 +11,10 @@ export const defaultValue: defaultValueType = {
   getAlertData: () => null,
   badgeCnt: 0,
   setBadgeCnt: () => null,
+  buffer: defaultAlertData,
+  setBuffer: () => null,
+  listening: false,
+  setListening: () => null,
 };
 export const AlertDataStore = React.createContext(defaultValue);
 
@@ -24,6 +29,8 @@ export default function AlertDataProvider({ children }: ContextProps) {
   const [badgeCnt, setBadgeCnt] = useState<number>(
     alertData.filter((d: AlertData): boolean => d.isChecked === false).length,
   );
+  const [listening, setListening] = useState<boolean>(false);
+  const [buffer, setBuffer] = useState<AlertData>(defaultAlertData);
 
   const getAlertData = async (): Promise<PromiseType> => {
     const loginStatus = await checkLogin();
@@ -31,13 +38,24 @@ export default function AlertDataProvider({ children }: ContextProps) {
     try {
       const response = await alertDataApi();
       setAlertData(response);
+      setBadgeCnt(alertData.filter((d: AlertData): boolean => d.isChecked === false).length);
       return { status: 1, message: 'success get alert data' };
     } catch (err) {
       return { status: -2, message: 'fail get alert data' };
     }
   };
 
-  const value = { alertData, setAlertData, getAlertData, badgeCnt, setBadgeCnt };
+  const value = {
+    alertData,
+    setAlertData,
+    getAlertData,
+    badgeCnt,
+    setBadgeCnt,
+    buffer,
+    setBuffer,
+    listening,
+    setListening,
+  };
 
   return <AlertDataStore.Provider value={value}>{children}</AlertDataStore.Provider>;
 }
@@ -49,4 +67,8 @@ type defaultValueType = {
   getAlertData: () => any;
   badgeCnt: number;
   setBadgeCnt: (newCnt: number) => void;
+  buffer: AlertData;
+  setBuffer: (newAlert: AlertData) => void;
+  listening: boolean;
+  setListening: (newData: boolean) => void;
 };

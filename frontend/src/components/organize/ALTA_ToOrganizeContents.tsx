@@ -41,11 +41,9 @@ export default function ALTA_ToOrganizeContents() {
     const newData: OrganizeStudyRequset = { ...requestData };
     newData[key] = String(eventValue);
 
-    if (!Object.values(newData).includes('') && checkEmpty() && checkRepoName()) {
-      setSumitBtn(true);
-    } else {
-      setSumitBtn(false);
-    }
+    if (!Object.values(newData).includes('') && checkEmpty() && checkRepoName()) setSumitBtn(true);
+    else setSumitBtn(false);
+
     setReqeustData(newData);
   };
 
@@ -68,19 +66,15 @@ export default function ALTA_ToOrganizeContents() {
   };
 
   const checkEmpty = (): boolean => {
-    for (const key in requestData) {
-      if (requestData[key] === '') {
-        return false;
-      }
-    }
+    for (const key in requestData) if (requestData[key] === '') return false;
+
     return true;
   };
 
   const checkRepoName = (): boolean => {
     const regx = new RegExp(/[ㄱ-힣]|\s/g);
-    if (regx.test(requestData.repositoryName)) {
-      return false;
-    }
+    if (regx.test(requestData.repositoryName)) return false;
+
     return true;
   };
 
@@ -105,7 +99,9 @@ export default function ALTA_ToOrganizeContents() {
 
   return (
     <Box sx={wrapperStyle}>
+      <h1>스터디 생성</h1>
       <Box sx={organizationCardStyle}>
+        <h2>스터디 이름 입력란</h2>
         <ALTA_InputItem label="스터디 이름" focused={focusedItem === '스터디 이름'} focusHandler={changeFocus}>
           <TextField
             id="스터디 이름"
@@ -122,6 +118,7 @@ export default function ALTA_ToOrganizeContents() {
             <span>{requestData.name && `"${requestData.name}" 가 스터디 이름으로 등록됩니다.`}</span>
           </Typography>
         </ALTA_InputItem>
+        <h2>풀이 언어 선택란</h2>
         <ALTA_InputItem label="풀이 언어" focused={focusedItem === '풀이 언어'} focusHandler={changeFocus}>
           <Select
             variant="standard"
@@ -137,6 +134,7 @@ export default function ALTA_ToOrganizeContents() {
             )}
           </Select>
         </ALTA_InputItem>
+        <h2>참여 인원 수 입력란</h2>
         <ALTA_InputItem label="인원 수" focused={focusedItem === '인원 수'} focusHandler={changeFocus}>
           <TextField
             id="인원 수"
@@ -146,12 +144,18 @@ export default function ALTA_ToOrganizeContents() {
             onChange={(e) => handleMaxPeople(Number(e.target.value))}
           />
         </ALTA_InputItem>
+        <h2>스터디 이름 선택란</h2>
         <ALTA_InputItem label="공개 여부" focused={focusedItem === '공개 여부'} focusHandler={changeFocus}>
-          <RadioGroup row value={requestData.isPublic} onChange={(e) => handleRequestData(e.target.value, 'isPublic')}>
+          <RadioGroup
+            row
+            value={Boolean(requestData.isPublic)}
+            onChange={(e) => handleRequestData(e.target.value, 'isPublic')}
+          >
             <FormControlLabel value="true" control={<Radio id="공개 여부" />} label="공개" />
             <FormControlLabel value="false" control={<Radio id="공개 여부" />} label="비공개" />
           </RadioGroup>
         </ALTA_InputItem>
+        <h2>레포지토리 이름 입력란</h2>
         <ALTA_InputItem label="Repo 이름" focused={focusedItem === 'Repo 이름'} focusHandler={changeFocus}>
           <TextField
             id="Repo 이름"
@@ -168,6 +172,7 @@ export default function ALTA_ToOrganizeContents() {
             <span>{requestData.repositoryName && checkRepoName() && '레포지토리 이름으로 사용 가능합니다'}</span>
           </Typography>
         </ALTA_InputItem>
+        <h2>스터디 소개 입력란</h2>
         <ALTA_InputItem label="스터디 소개" focused={focusedItem === '스터디 소개'} focusHandler={changeFocus}>
           <StyledTextArea
             id="스터디 소개"

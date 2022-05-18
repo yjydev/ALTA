@@ -18,12 +18,11 @@ export default function ALTA_StudyMembers() {
   const { members, isLeader } = useContext(StudyDetailStore);
   const navigate = useNavigate();
 
-  const goMemberManagement = (): void => {
-    navigate(`/study/${studyId}/member`);
-  };
+  const goMemberManagement = (): void => navigate(`/study/${studyId}/member`);
 
   return (
     <Box sx={wrapper}>
+      <h1>스터디 멤버 목록</h1>
       <Box sx={listStyle}>
         {members.map(
           (member: StudyMember, i: number): JSX.Element => (
