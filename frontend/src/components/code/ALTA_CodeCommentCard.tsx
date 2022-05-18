@@ -113,7 +113,7 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
           <Grid item md={15}>
             <Grid sx={infoStyle}>
               <Box sx={editStyle}>
-                <h4>{review.reviewerName}</h4>
+                <p>{review.reviewerName}</p>
                 {user === review.reviewerName ? (
                   <>
                     {isEdit ? (

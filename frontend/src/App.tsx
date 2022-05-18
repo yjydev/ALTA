@@ -11,7 +11,6 @@ import { AlertDataStore } from './context/AlertContext';
 import { defaultAlertData } from './types';
 
 import ALTA_Loading from './components/common/ALTA_Loading';
-import ALTA_Inner from './components/common/ALTA_Inner';
 
 const LoginPage = lazy(() => import('./pages/ALTA_Login'));
 const AuthPage = lazy(() => import('./pages/ALTA_AuthPage'));
@@ -33,7 +32,7 @@ function App() {
   useEffect(() => {
     if (!listening) {
       eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
-        heartbeatTimeout: 600 * 1000,
+        heartbeatTimeout: 60 * 1000,
         headers: {
           ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
         },
