@@ -63,6 +63,13 @@ public class NotificationService {
 
     }
 
+    public void deleteAlertEvent() {
+        String userId = userService.getCurrentUserId();
+        if(emitters.containsKey(userId)) {
+            emitters.remove(userId);
+        }
+    }
+
     // 알림 전송
     private void sendToClient(SseEmitter emitter, String userId, Object data) {
         try {
