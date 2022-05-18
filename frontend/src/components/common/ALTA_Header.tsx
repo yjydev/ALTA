@@ -68,7 +68,8 @@ const StyledImg = styled.img`
   width: 100px;
 `;
 
-const StyledA = styled.a`
+const StyledA = styled.button`
+  all: unset;
   display: flex;
   align-items: center;
   justify-content: space-around;
