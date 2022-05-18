@@ -146,11 +146,7 @@ export default function ALTA_ToOrganizeContents() {
         </ALTA_InputItem>
         <h2>스터디 이름 선택란</h2>
         <ALTA_InputItem label="공개 여부" focused={focusedItem === '공개 여부'} focusHandler={changeFocus}>
-          <RadioGroup
-            row
-            value={Boolean(requestData.isPublic)}
-            onChange={(e) => handleRequestData(e.target.value, 'isPublic')}
-          >
+          <RadioGroup row value={requestData.isPublic} onChange={(e) => handleRequestData(e.target.value, 'isPublic')}>
             <FormControlLabel value="true" control={<Radio id="공개 여부" />} label="공개" />
             <FormControlLabel value="false" control={<Radio id="공개 여부" />} label="비공개" />
           </RadioGroup>
