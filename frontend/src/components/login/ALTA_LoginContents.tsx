@@ -31,17 +31,13 @@ export default function ALTA_LoginContents() {
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
           <Box sx={loginFormStyle}>
             {loading ? (
-              <>
-                <StyledButton disabled>
-                  <CircularProgress sx={{ color: '#fff' }} />
-                </StyledButton>
-              </>
+              <StyledButton disabled>
+                <CircularProgress sx={{ color: '#fff' }} />
+              </StyledButton>
             ) : (
-              <>
-                <StyledA href={`${process.env.REACT_APP_BUTTON_URL}:8000/githubLogin`} onClick={() => setLoading(true)}>
-                  <GithubButton label="Github 계정으로 로그인하기" style={{ width: '100%' }} />
-                </StyledA>
-              </>
+              <StyledA href={`${process.env.REACT_APP_BUTTON_URL}:8000/githubLogin`} onClick={() => setLoading(true)}>
+                <GithubButton label="Github 계정으로 로그인하기" style={{ width: '100%' }} />
+              </StyledA>
             )}
             <Typography sx={[userInputStyle, signUpGuideStyle]}>
               Github 계정이 없으신가요?

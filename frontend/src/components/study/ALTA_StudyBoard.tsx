@@ -13,16 +13,7 @@ import ALTA_StudyMembers from './ALTA_StudyMembers';
 export default function ALTA_StudyBoard() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { studyName } = useContext(StudyDetailStore);
-  const toggleDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (
-      event.type === 'keydown' &&
-      ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')
-    ) {
-      return;
-    }
-
-    setIsDrawerOpen(!isDrawerOpen);
-  };
+  const toggleDrawer = () => () => setIsDrawerOpen(!isDrawerOpen);
 
   return (
     <Box>

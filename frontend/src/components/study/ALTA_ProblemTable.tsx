@@ -37,9 +37,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
   const edit = async (studyId: number, scheduleId: number, dateString: string): Promise<void> => {
     if (schedule === `${table.startDate} ~ ${table.endDate}`) {
       setIsError(true);
-      setTimeout(() => {
-        setIsError(false);
-      }, 2500);
+      setTimeout(() => setIsError(false), 2500);
     } else {
       setEditLoading(true);
 
@@ -56,9 +54,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
     setRemoveLoading(true);
     const editApiStatue = await deleteSchedule(studyId, scheduleId);
 
-    setTimeout(() => {
-      setRemoveLoading(false);
-    }, 1000);
+    setTimeout(() => setRemoveLoading(false), 1000);
     if (editApiStatue.status === -1) navigate('/');
     else if (editApiStatue.status === -2) generateError('일정을 삭제하지 못했습니다', editApiStatue.message);
 

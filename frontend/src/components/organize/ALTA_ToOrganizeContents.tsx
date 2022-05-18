@@ -41,11 +41,9 @@ export default function ALTA_ToOrganizeContents() {
     const newData: OrganizeStudyRequset = { ...requestData };
     newData[key] = String(eventValue);
 
-    if (!Object.values(newData).includes('') && checkEmpty() && checkRepoName()) {
-      setSumitBtn(true);
-    } else {
-      setSumitBtn(false);
-    }
+    if (!Object.values(newData).includes('') && checkEmpty() && checkRepoName()) setSumitBtn(true);
+    else setSumitBtn(false);
+
     setReqeustData(newData);
   };
 
@@ -68,19 +66,15 @@ export default function ALTA_ToOrganizeContents() {
   };
 
   const checkEmpty = (): boolean => {
-    for (const key in requestData) {
-      if (requestData[key] === '') {
-        return false;
-      }
-    }
+    for (const key in requestData) if (requestData[key] === '') return false;
+
     return true;
   };
 
   const checkRepoName = (): boolean => {
     const regx = new RegExp(/[ㄱ-힣]|\s/g);
-    if (regx.test(requestData.repositoryName)) {
-      return false;
-    }
+    if (regx.test(requestData.repositoryName)) return false;
+
     return true;
   };
 
