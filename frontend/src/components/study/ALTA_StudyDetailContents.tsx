@@ -21,7 +21,7 @@ type Params = {
 export default function ALTA_StudyDetailContents() {
   const { studyId } = useParams<Params>();
   const navigate = useNavigate();
-  const { readmeData, getReadmeDetail, getStudyMembers } = useContext(StudyDetailStore);
+  const { readmeData, getReadmeDetail, getStudyMembers, getChatContent } = useContext(StudyDetailStore);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -31,6 +31,7 @@ export default function ALTA_StudyDetailContents() {
         const [readmeApiStatue, memberApiStatus] = await Promise.all([
           getReadmeDetail(Number(studyId)),
           getStudyMembers(Number(studyId)),
+          getChatContent(Number(studyId)),
         ]);
 
         if (readmeApiStatue.status === -1 || memberApiStatus.status === -1) navigate('/');

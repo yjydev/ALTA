@@ -32,7 +32,7 @@ function App() {
   useEffect(() => {
     if (!listening) {
       eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
-        heartbeatTimeout: 600 * 1000,
+        heartbeatTimeout: 60 * 1000,
         headers: {
           ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
         },
