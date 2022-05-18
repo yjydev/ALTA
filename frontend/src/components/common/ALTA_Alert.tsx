@@ -35,7 +35,7 @@ export default function ALTA_Alert() {
 
   useEffect(() => {
     setBadgeCnt(newAlert.length);
-  }, [newAlert]);
+  }, [alertData]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
