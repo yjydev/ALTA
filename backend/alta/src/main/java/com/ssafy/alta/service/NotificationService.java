@@ -62,6 +62,15 @@ public class NotificationService {
         }
 
     }
+    public void sendDummyData() {
+        for(String userId : emitters.keySet()) {
+            AlertResponse alertResponse = AlertResponse.builder()
+                    .alertId(-1L)
+                    .content("주기적으로 보내는 더미 데이터")
+                    .build();
+            this.sendToClient(emitters.get(userId), userId, alertResponse);
+        }
+    }
 
     public void deleteAlertEvent() {
         String userId = userService.getCurrentUserId();
