@@ -38,10 +38,7 @@ export default function ALTA_Notice() {
   }, []);
 
   useEffect(() => {
-    console.log('change');
-    console.log(noticeContent);
-    console.log(noticeContent.replaceAll('<br />', '\n'));
-    setNotice(noticeContent.replaceAll('<br />', '\n'));
+    setNotice(noticeContent ? noticeContent.replaceAll('<br />', '\n') : '');
   }, [noticeContent]);
 
   const edit = async (): Promise<void> => {

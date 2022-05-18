@@ -91,7 +91,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 
     try {
       const response = await noticeContentApi(studyId);
-      console.log(response.content);
+
       setNoticeContent(response.content);
       return { status: 1, message: '공지사항을 불러왔습니다' };
     } catch (err: any) {
