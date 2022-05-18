@@ -3,6 +3,7 @@ import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
+import { generateError } from '../modules/generateAlert';
 import { whiteColor } from '../modules/colorChart';
 
 export default function ALTA_AuthPage() {
@@ -10,6 +11,10 @@ export default function ALTA_AuthPage() {
 
   useEffect(() => {
     const params = new URL(String(window.location)).searchParams;
+    const error = params.get('error');
+
+    if (error) generateError('로그인에 실패했습니다', '', () => navigate('/'));
+
     const jwt = String(params.get('jwtAT'));
     const refresh = String(params.get('jwtRT'));
 
