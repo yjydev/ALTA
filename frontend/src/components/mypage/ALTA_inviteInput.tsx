@@ -24,10 +24,10 @@ export default function ALTA_inviteInput() {
       generateTimer('잠시 기다려 주세요', `초대코드 검증 중입니다.`);
       try {
         const studyName = await confirmInvitationApi(inviteCode);
+
         generateCheck('가입 완료', `${studyName}스터디에 가입되었습니다`, async () => getStudy());
         setInviteCode('');
       } catch (err: any) {
-        // console.log(err);
         generateError('이미 가입된 스터디거나 초대 코드가 유효하지 않습니다', `${err.response.data.message}`);
       }
     }

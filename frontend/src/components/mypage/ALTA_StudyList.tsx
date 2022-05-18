@@ -14,12 +14,8 @@ type Props = {
 export default function ALTA_StudyList({ studyList }: Props) {
   const navigate = useNavigate();
 
-  const goOrganize = (): void => {
-    navigate('/organize');
-  };
-  const goStudyDetail = (studyId: number): void => {
-    navigate(`/study/${studyId}/detail`);
-  };
+  const goOrganize = (): void => navigate('/organize');
+  const goStudyDetail = (studyId: number): void => navigate(`/study/${studyId}/detail`);
 
   return (
     <Box sx={wrapper}>

@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import styled from '@emotion/styled';
 
-import defaultProfile from '../../images/user.png';
+import defaultProfile from '../../images/user.webp';
 import { mainColor } from '../../modules/colorChart';
 import { UserDataStore } from '../../context/UserDataContext';
 import { generateError } from '../../modules/generateAlert';
@@ -35,10 +35,6 @@ export default function ALTA_UserData() {
     siteCommentAlert: userData.alertSetting.slice(1, 2) === '1' ? true : false,
     mailSolutionAlert: userData.alertSetting.slice(2, 3) === '1' ? true : false,
     mailScheduleAlert: userData.alertSetting.slice(3, 4) === '1' ? true : false,
-    // siteSolutionAlert: '1110'.slice(0, 1) === '1' ? true : false,
-    // siteCommentAlert: '1110'.slice(1, 2) === '1' ? true : false,
-    // mailSolutionAlert: '1110'.slice(2, 3) === '1' ? true : false,
-    // mailScheduleAlert: '1110'.slice(3, 4) === '1' ? true : false,
   });
 
   const editAlertSetting = (key: string): void => {

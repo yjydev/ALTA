@@ -1,20 +1,21 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
+import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { LicenseInfo } from '@mui/x-license-pro';
 
+import UserDataProvider from './context/UserDataContext';
 import './App.css';
 
-import UserDataProvider from './context/UserDataContext';
-import ALTA_Login from './pages/ALTA_Login';
-import ALTA_AuthPage from './pages/ALTA_AuthPage';
-import ALTA_Code from './pages/ALTA_Code';
-import ALTA_CodeSubmit from './pages/ALTA_CodeSubmit';
-import ALTA_ToOrganize from './pages/ALTA_ToOrganize';
-import ALTA_StudyDetail from './pages/ALTA_StudyDetail';
-import ALTA_Member from './pages/ALTA_Member';
-import ALTA_Mypage from './pages/ALTA_Mypage';
-import ALTA_Error from './components/common/ALTA_Error';
+const LoginPage = lazy(() => import('./pages/ALTA_Login'));
+const AuthPage = lazy(() => import('./pages/ALTA_AuthPage'));
+const CodePage = lazy(() => import('./pages/ALTA_Code'));
+const SubmitPage = lazy(() => import('./pages/ALTA_CodeSubmit'));
+const OrganizePage = lazy(() => import('./pages/ALTA_ToOrganize'));
+const DetailPage = lazy(() => import('./pages/ALTA_StudyDetail'));
+const MemberPage = lazy(() => import('./pages/ALTA_Member'));
+const MyPage = lazy(() => import('./pages/ALTA_Mypage'));
+const ErrorPage = lazy(() => import('./components/common/ALTA_Error'));
 
 function App() {
   LicenseInfo.setLicenseKey(
@@ -23,19 +24,21 @@ function App() {
   return (
     <UserDataProvider>
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<ALTA_Login />} />
-            <Route path="/study/:studyId/:problem/code/:codeId" element={<ALTA_Code />} />
-            <Route path="/code/404-not-found" element={<ALTA_Error />} />
-            <Route path="/auth" element={<ALTA_AuthPage />} />
-            <Route path="/study/:studyId/:problemId/:problem/:codeId/code-submit" element={<ALTA_CodeSubmit />} />
-            <Route path="/organize" element={<ALTA_ToOrganize />} />
-            <Route path="/study/:studyId/detail" element={<ALTA_StudyDetail />} />
-            <Route path="/study/:studyId/member" element={<ALTA_Member />} />
-            <Route path="/mypage" element={<ALTA_Mypage />} />
-          </Routes>
-        </BrowserRouter>
+        <Router>
+          <Suspense fallback={<div>로딩중</div>}>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/study/:studyId/:problem/code/:codeId" element={<CodePage />} />
+              <Route path="/code/404-not-found" element={<ErrorPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/study/:studyId/:problemId/:problem/:codeId/code-submit" element={<SubmitPage />} />
+              <Route path="/organize" element={<OrganizePage />} />
+              <Route path="/study/:studyId/detail" element={<DetailPage />} />
+              <Route path="/study/:studyId/member" element={<MemberPage />} />
+              <Route path="/mypage" element={<MyPage />} />
+            </Routes>
+          </Suspense>
+        </Router>
       </ThemeProvider>
     </UserDataProvider>
   );

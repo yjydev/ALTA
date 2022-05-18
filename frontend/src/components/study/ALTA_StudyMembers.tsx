@@ -18,9 +18,7 @@ export default function ALTA_StudyMembers() {
   const { members, isLeader } = useContext(StudyDetailStore);
   const navigate = useNavigate();
 
-  const goMemberManagement = (): void => {
-    navigate(`/study/${studyId}/member`);
-  };
+  const goMemberManagement = (): void => navigate(`/study/${studyId}/member`);
 
   return (
     <Box sx={wrapper}>

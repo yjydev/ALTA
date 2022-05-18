@@ -41,11 +41,9 @@ export default function ALTA_ToOrganizeContents() {
     const newData: OrganizeStudyRequset = { ...requestData };
     newData[key] = String(eventValue);
 
-    if (!Object.values(newData).includes('') && checkEmpty() && checkRepoName()) {
-      setSumitBtn(true);
-    } else {
-      setSumitBtn(false);
-    }
+    if (!Object.values(newData).includes('') && checkEmpty() && checkRepoName()) setSumitBtn(true);
+    else setSumitBtn(false);
+
     setReqeustData(newData);
   };
 
@@ -68,19 +66,15 @@ export default function ALTA_ToOrganizeContents() {
   };
 
   const checkEmpty = (): boolean => {
-    for (const key in requestData) {
-      if (requestData[key] === '') {
-        return false;
-      }
-    }
+    for (const key in requestData) if (requestData[key] === '') return false;
+
     return true;
   };
 
   const checkRepoName = (): boolean => {
     const regx = new RegExp(/[ㄱ-힣]|\s/g);
-    if (regx.test(requestData.repositoryName)) {
-      return false;
-    }
+    if (regx.test(requestData.repositoryName)) return false;
+
     return true;
   };
 
@@ -147,7 +141,11 @@ export default function ALTA_ToOrganizeContents() {
           />
         </ALTA_InputItem>
         <ALTA_InputItem label="공개 여부" focused={focusedItem === '공개 여부'} focusHandler={changeFocus}>
-          <RadioGroup row value={requestData.isPublic} onChange={(e) => handleRequestData(e.target.value, 'isPublic')}>
+          <RadioGroup
+            row
+            value={Boolean(requestData.isPublic)}
+            onChange={(e) => handleRequestData(e.target.value, 'isPublic')}
+          >
             <FormControlLabel value="true" control={<Radio id="공개 여부" />} label="공개" />
             <FormControlLabel value="false" control={<Radio id="공개 여부" />} label="비공개" />
           </RadioGroup>
