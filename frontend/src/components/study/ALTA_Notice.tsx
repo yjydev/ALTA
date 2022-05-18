@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Box, Button, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -17,13 +17,32 @@ type Params = {
 };
 
 export default function ALTA_Notice() {
-  const { noticeContent, editNoticeContent } = useContext(StudyDetailStore);
+  const { noticeContent, getNoticeContent, editNoticeContent } = useContext(StudyDetailStore);
   const navigate = useNavigate();
   const { studyId } = useParams<Params>();
 
-  const [notice, setNotice] = useState<string>(noticeContent.replaceAll('<br />', '\n'));
+  const [notice, setNotice] = useState<string>('');
   const [noticeEditing, setNoticeEditing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async function () {
+      if (studyId) {
+        const noticeStatus = await getNoticeContent(Number(studyId));
+
+        if (noticeStatus.status === -1) navigate('/');
+        else if (noticeStatus.status === -2)
+          generateError('스터디 진행 정보를 불러올 수 없습니다', noticeStatus.message);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    console.log('change');
+    console.log(noticeContent);
+    console.log(noticeContent.replaceAll('<br />', '\n'));
+    setNotice(noticeContent.replaceAll('<br />', '\n'));
+  }, [noticeContent]);
 
   const edit = async (): Promise<void> => {
     if (notice !== noticeContent) {
