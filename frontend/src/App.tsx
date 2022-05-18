@@ -11,7 +11,6 @@ import { AlertDataStore } from './context/AlertContext';
 import { defaultAlertData } from './types';
 
 import ALTA_Loading from './components/common/ALTA_Loading';
-import ALTA_Inner from './components/common/ALTA_Inner';
 
 const LoginPage = lazy(() => import('./pages/ALTA_Login'));
 const AuthPage = lazy(() => import('./pages/ALTA_AuthPage'));
