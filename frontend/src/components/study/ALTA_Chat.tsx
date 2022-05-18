@@ -32,7 +32,7 @@ type Params = {
 export default function ALTA_Chat() {
   const { studyId } = useParams<Params>();
   const navigate: NavigateFunction = useNavigate();
-  const { chatContents, setChatContents, getChatContent } = useContext(StudyDetailStore);
+  const { chatContents, setChatContents } = useContext(StudyDetailStore);
   const chatInput: React.MutableRefObject<any> = useRef<any>(null);
   const [buffer, setBuffer] = useState<any>('');
 
@@ -44,7 +44,6 @@ export default function ALTA_Chat() {
 
   const [message, setMessage] = useState<string>('');
   const [connect, setConnect] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect((): void => {
     if (buffer !== '') {
@@ -52,23 +51,11 @@ export default function ALTA_Chat() {
       setBuffer('');
     }
   }, [buffer]);
-
-  useEffect((): void => {
-    (async function (): Promise<void> {
-      setLoading(true);
-      if (studyId) {
-        const chatStatus = await getChatContent(Number(studyId));
-        if (chatStatus.status === -1) navigate('/');
-        setLoading(false);
-        scrollBottom();
-      }
-    })();
-  }, [studyId]);
-
-  useEffect((): void => {
+  let stompClient: Stomp.Client;
+  useEffect(() => {
     if (!connect) {
       const socketJS = new SockJS(`${process.env.REACT_APP_BASE_URL}/api/ws`);
-      const stompClient: Stomp.Client = Stomp.over(socketJS);
+      stompClient = Stomp.over(socketJS);
       stompClient.debug = (): void => {
         '1';
       };
@@ -82,7 +69,14 @@ export default function ALTA_Chat() {
         setConnect(true);
       });
     }
+    return () => {
+      stompClient.disconnect(() => setConnect(false));
+    };
   }, []);
+
+  window.onbeforeunload = function () {
+    stompClient.disconnect(() => setConnect(false));
+  };
 
   useEffect((): void => {
     scrollBottom();
@@ -112,61 +106,56 @@ export default function ALTA_Chat() {
       <Box sx={titleStyle}>소통창구</Box>
       <Box sx={[chatBoxStyle, scrollStyle]} ref={chatInput}>
         <Box>
-          {loading && <ALTA_Loading />}
-          {!loading && (
+          {chatContents ? (
             <>
-              {chatContents ? (
-                <>
-                  {chatContents.map(
-                    (mes: chatResponse, idx: number): JSX.Element => (
-                      <Grid container key={idx} sx={infoStyle} columns={14}>
-                        {name === mes.nickname ? (
-                          <>
-                            <Grid item md={12} sx={rightListStyle}>
-                              <Grid item sx={chatRightStyle}>
-                                <Typography sx={nameRightStyle}>{mes.nickname}</Typography>
-                                <Grid container>
-                                  <Grid item sx={dateRightStyle}>
-                                    <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
-                                  </Grid>
-                                  <Grid item sx={bubbleRightStyle}>
-                                    {mes.message}
-                                  </Grid>
-                                </Grid>
+              {chatContents.map(
+                (mes: chatResponse, idx: number): JSX.Element => (
+                  <Grid container key={idx} sx={infoStyle} columns={14}>
+                    {name === mes.nickname ? (
+                      <>
+                        <Grid item md={12} sx={rightListStyle}>
+                          <Grid item sx={chatRightStyle}>
+                            <Typography sx={nameRightStyle}>{mes.nickname}</Typography>
+                            <Grid container>
+                              <Grid item sx={dateRightStyle}>
+                                <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
+                              </Grid>
+                              <Grid item sx={bubbleRightStyle}>
+                                {mes.message}
                               </Grid>
                             </Grid>
-                            <Grid item md={2} sx={profileRightStyle}>
-                              <Avatar src={mes.image} />
-                            </Grid>
-                          </>
-                        ) : (
-                          <>
-                            <Grid item md={2} sx={profileLeftStyle}>
-                              <Avatar src={mes.image} />
-                            </Grid>
-                            <Grid item md={12} sx={leftListStyle}>
-                              <Grid item sx={chatLeftStyle}>
-                                <Typography>{mes.nickname}</Typography>
-                                <Grid container>
-                                  <Grid item sx={bubbleLeftStyle}>
-                                    {mes.message}
-                                  </Grid>
-                                  <Grid item sx={dateLeftStyle}>
-                                    <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
-                                  </Grid>
-                                </Grid>
+                          </Grid>
+                        </Grid>
+                        <Grid item md={2} sx={profileRightStyle}>
+                          <Avatar src={mes.image} />
+                        </Grid>
+                      </>
+                    ) : (
+                      <>
+                        <Grid item md={2} sx={profileLeftStyle}>
+                          <Avatar src={mes.image} />
+                        </Grid>
+                        <Grid item md={12} sx={leftListStyle}>
+                          <Grid item sx={chatLeftStyle}>
+                            <Typography>{mes.nickname}</Typography>
+                            <Grid container>
+                              <Grid item sx={bubbleLeftStyle}>
+                                {mes.message}
+                              </Grid>
+                              <Grid item sx={dateLeftStyle}>
+                                <Typography>{displayAt(new Date(mes.writeDate))}</Typography>
                               </Grid>
                             </Grid>
-                          </>
-                        )}
-                      </Grid>
-                    ),
-                  )}
-                </>
-              ) : (
-                <>채팅내역이 없습니다</>
+                          </Grid>
+                        </Grid>
+                      </>
+                    )}
+                  </Grid>
+                ),
               )}
             </>
+          ) : (
+            <>채팅내역이 없습니다</>
           )}
         </Box>
       </Box>

@@ -29,7 +29,7 @@ public class NotificationService {
     private final UserService userService;
     private static Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();  // multi-thread에서 동시에 작업하기 위한 map 클래스
 
-    private static final Long DEFAULT_TIMEOUT = 60L * 60 * 1000;  // 타임아웃 시간 - 1시간(ms)
+    private static final Long DEFAULT_TIMEOUT = 30L * 60 * 1000;  // 타임아웃 시간 - 30분(ms)
 
     public SseEmitter subscribe() {
         String userId = userService.getCurrentUserId();
@@ -61,6 +61,15 @@ public class NotificationService {
             this.sendToClient(emitter, userId, alertResponse);  // 알림 객체 보내줌
         }
 
+    }
+    public void sendDummyData() {
+        for(String userId : emitters.keySet()) {
+            AlertResponse alertResponse = AlertResponse.builder()
+                    .alertId(-1L)
+                    .content("주기적으로 보내는 더미 데이터")
+                    .build();
+            this.sendToClient(emitters.get(userId), userId, alertResponse);
+        }
     }
 
     public void deleteAlertEvent() {
