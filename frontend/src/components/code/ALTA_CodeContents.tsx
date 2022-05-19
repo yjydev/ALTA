@@ -21,12 +21,13 @@ type ParamType = {
   studyId: string | undefined;
   codeId: string | undefined;
   problem: string | undefined;
+  language: string | undefined;
 };
 
 export default function ALTA_CodeContents() {
   const navigate: NavigateFunction = useNavigate();
 
-  const { studyId, codeId, problem } = useParams<ParamType>();
+  const { studyId, codeId, problem, language } = useParams<ParamType>();
   const { code, getCode, user, getCodeTree } = useContext(CodeStore);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -61,7 +62,7 @@ export default function ALTA_CodeContents() {
 
   const goToDetail = (): void => navigate(`/study/${studyId}/detail`);
 
-  const goToresubmit = (): void => navigate(`/study/${studyId}/0/${problem}/${codeId}/code-submit`);
+  const goToresubmit = (): void => navigate(`/study/${studyId}/0/${problem}/${codeId}/code-submit/${language}`);
 
   useEffect((): void => {
     setLoading(true);

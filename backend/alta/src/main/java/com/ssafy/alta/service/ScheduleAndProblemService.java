@@ -87,6 +87,7 @@ public class ScheduleAndProblemService {
         }
         map.put("readme", schedules);
         map.put("studyName", study.getName());
+        map.put("studyLanguage", study.getLanguage());
         return map;
     }
 

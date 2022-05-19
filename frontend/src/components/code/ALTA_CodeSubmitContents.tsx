@@ -19,12 +19,21 @@ type ParamType = {
   studyId: string | undefined;
   codeId: string | undefined;
   problem: string | undefined;
+  language: string | undefined;
 };
+
+const map = new Map();
+map.set('Java', 'java');
+map.set('C', 'c');
+map.set('C++', 'cpp');
+map.set('C#', 'c#');
+map.set('Python', 'python');
+map.set('Java Script', 'javascript');
 
 export default function ALTA_CodeSubmitContents() {
   const navigate: NavigateFunction = useNavigate();
 
-  const { problemId, studyId, codeId, problem } = useParams<ParamType>();
+  const { problemId, studyId, codeId, problem, language } = useParams<ParamType>();
 
   const [commitMessage, setCommitMessage] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
@@ -44,8 +53,8 @@ export default function ALTA_CodeSubmitContents() {
     }
   };
 
-  const goStudyDetail = (): void => navigate(`/study/${studyId}/detail`);
-  const goCodeDetail = (): void => navigate(`/study/${studyId}/${problem}/code/${codeId}`);
+  const goStudyDetail = (): void => navigate(`/study/${studyId}/detail/`);
+  const goCodeDetail = (): void => navigate(`/study/${studyId}/${problem}/code/${codeId}/${language}`);
 
   const summitCode = async (): Promise<void> => {
     if (code === '코드를 업로드 해주세요.') {
@@ -118,7 +127,7 @@ export default function ALTA_CodeSubmitContents() {
         </ALTA_Tooltip>
       </ALTA_InputItem>
       <h1>코드 미리보기</h1>
-      <ALTA_CodeBlock code={code} language="javascript" />
+      <ALTA_CodeBlock code={code} language={map.get(language)} />
       <Box sx={{ marginTop: 10, textAlign: 'right' }}>
         <Button variant="contained" sx={btnStyle} onClick={summitCode}>
           {loading ? <CircularProgress sx={{ color: whiteColor }} size={30} /> : '제 출'}

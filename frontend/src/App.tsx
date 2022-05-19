@@ -82,10 +82,13 @@ function App() {
           >
             <Routes>
               <Route path="/" element={<LoginPage />} />
-              <Route path="/study/:studyId/:problem/code/:codeId" element={<CodePage />} />
+              <Route path="/study/:studyId/:problem/code/:codeId/:language" element={<CodePage />} />
               <Route path="/code/404-not-found" element={<ErrorPage />} />
               <Route path="/auth" element={<AuthPage />} />
-              <Route path="/study/:studyId/:problemId/:problem/:codeId/code-submit" element={<SubmitPage />} />
+              <Route
+                path="/study/:studyId/:problemId/:problem/:codeId/code-submit/:language"
+                element={<SubmitPage />}
+              />
               <Route path="/organize" element={<OrganizePage />} />
               <Route path="/study/:studyId/detail" element={<DetailPage />} />
               <Route path="/study/:studyId/member" element={<MemberPage />} />
