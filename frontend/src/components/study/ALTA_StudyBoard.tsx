@@ -52,17 +52,12 @@ export default function ALTA_StudyBoard() {
 }
 
 const wrapper = {
-  width: '90%',
+  width: '100%',
   display: 'flex',
   boxSizing: 'border-box',
   justifyContent: 'center',
 };
 
-const topBoxStyle = {
-  display: 'flex',
-  boxSizing: 'border-box',
-  backgroundColor: whiteColor,
-};
 const left = {
   display: 'flex',
   flexDirection: 'column',
@@ -73,13 +68,6 @@ const right = {
   display: 'flex',
   width: '50%',
   boxSizing: 'border-box',
-};
-
-const bottomBoxStyle = {
-  marginTop: '2rem',
-  width: '90%',
-  display: 'flex',
-  justifyContent: 'center',
 };
 
 const studyNameStyle = {
