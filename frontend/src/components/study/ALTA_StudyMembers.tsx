@@ -56,6 +56,7 @@ export default function ALTA_StudyMembers() {
 
 const membersWrapper = {
   width: '100%',
+};
 
 const titleStyle = {
   position: 'relative',
