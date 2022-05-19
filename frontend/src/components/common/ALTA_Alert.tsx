@@ -32,6 +32,8 @@ export default function ALTA_Alert() {
 
   useEffect((): void => {
     setAllRead(false);
+    newAlert = alertData.filter((d: AlertData): boolean => d.isChecked === false);
+    setBadgeCnt(newAlert.length);
   }, []);
 
   useEffect(() => {

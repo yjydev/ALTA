@@ -75,7 +75,7 @@ function SellBtn({ codeId, problem, memberName, studyId }: SellBtnProps) {
 
   const goCodeSumbit = (): void => {
     if (userData && JSON.parse(userData).nickname !== memberName) {
-      generateError('다른 사람의 제출 버튼을 누르셨습니다', '');
+      generateError('', '다른 사람의 제출 버튼을 누르셨습니다');
     } else {
       const problemId = problem.id;
       navigate(`/study/${studyId}/${problemId}/${problem.name}/0/code-submit`);
@@ -93,11 +93,17 @@ function SellBtn({ codeId, problem, memberName, studyId }: SellBtnProps) {
           <Button onClick={goCodeDetail}>코드 보기</Button>
         </a>
       ) : (
-        <a>
-          <Button sx={omisstionBtnStyle} onClick={goCodeSumbit}>
-            코드 제출
-          </Button>
-        </a>
+        <>
+          {userData && JSON.parse(userData).nickname === memberName ? (
+            <a>
+              <Button sx={omisstionBtnStyle} onClick={goCodeSumbit}>
+                코드 제출
+              </Button>
+            </a>
+          ) : (
+            <p style={{ cursor: 'default' }}>-</p>
+          )}
+        </>
       )}
     </>
   );
