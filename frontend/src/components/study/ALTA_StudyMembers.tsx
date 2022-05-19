@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { Box, Button, Typography } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import { Box, Button } from '@mui/material';
+import { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 

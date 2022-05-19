@@ -54,9 +54,7 @@ export default function ALTA_Chat() {
         '1';
       };
       stompClient.connect(headers, (): void => {
-        // console.log('접속');
         stompClient.subscribe(`/api/topic/${studyId}`, (data: Stomp.Message): void => {
-          // console.log('구독');
           const newMessage: chatResponse = JSON.parse(data.body);
           setBuffer(newMessage);
         });
