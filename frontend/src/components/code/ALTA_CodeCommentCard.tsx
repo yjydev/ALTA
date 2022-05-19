@@ -101,7 +101,11 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
   return (
     <Box sx={codeCommentBoxStyle}>
       <Paper style={paperBoxStyle}>
-        <Button startIcon={<CloseIcon />} disableRipple sx={delBtnStyle} onClick={handleDelComment} />
+        {user === review.reviewerName ? (
+          <Button startIcon={<CloseIcon />} disableRipple sx={delBtnStyle} onClick={handleDelComment} />
+        ) : (
+          <></>
+        )}
         <Grid container direction="row" sx={infoGridStyle} columns={16}>
           <Grid item md={1} sx={profileStyle}>
             <Avatar src={profile} />
