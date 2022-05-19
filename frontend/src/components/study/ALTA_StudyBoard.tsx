@@ -2,7 +2,7 @@ import { Fragment, useContext, useState } from 'react';
 import { Box, Drawer, Button, Typography, Grid } from '@mui/material';
 import MoreIcon from '@mui/icons-material/More';
 
-import { blackColor } from '../../modules/colorChart';
+import { blackColor, whiteColor } from '../../modules/colorChart';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 
 import ALTA_Notice from './ALTA_Notice';
@@ -27,17 +27,13 @@ export default function ALTA_StudyBoard() {
           }}
         >
           <Box sx={wrapper}>
-            <Grid container sx={topBoxStyle}>
-              <Grid item xs={6}>
-                <ALTA_StudyMembers />
-              </Grid>
-              <Grid item xs={6}>
-                <ALTA_Chat />
-              </Grid>
-            </Grid>
-          </Box>
-          <Box sx={bottomBoxStyle}>
-            <ALTA_Notice />
+            <Box sx={left}>
+              <ALTA_Notice />
+              <ALTA_StudyMembers />
+            </Box>
+            <Box sx={right}>
+              <ALTA_Chat />
+            </Box>
           </Box>
         </Drawer>
       </Fragment>
@@ -64,6 +60,18 @@ const wrapper = {
 
 const topBoxStyle = {
   display: 'flex',
+  boxSizing: 'border-box',
+  backgroundColor: whiteColor,
+};
+const left = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '50%',
+  boxSizing: 'border-box',
+};
+const right = {
+  display: 'flex',
+  width: '50%',
   boxSizing: 'border-box',
 };
 
