@@ -56,15 +56,6 @@ export default function ALTA_StudyMembers() {
 
 const membersWrapper = {
   width: '100%',
-
-const titleStyle = {
-  position: 'relative',
-  marginBottom: '10px',
-  padding: '5px 10px',
-  boxSizing: 'border-box',
-  borderBottom: '1px solid black',
-  fontSize: '20px',
-  textAlign: 'center',
 };
 
 const listStyle = {
