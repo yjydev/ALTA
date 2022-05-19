@@ -28,7 +28,7 @@ import { displayAt } from '../../modules/displayAt';
 
 type Props = {
   review: ReviewData;
-  codeId: string | undefined;
+  codeId: number;
 };
 
 export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
@@ -58,16 +58,14 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
     if (!(await checkLogin()).status) navigate('/');
     if (commentValue === review.comment) generateError('변경 내역이 없습니다', '');
     else {
-      if (codeId) {
-        if (commentValue === '') generateError('내용을 작성해주세요', '');
-        else {
-          try {
-            await editReviewApi(review.reviewId, commentValue, review.codeNumber);
-            setIsEdit(false);
-            getReview(parseInt(codeId));
-          } catch (err: any) {
-            generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
-          }
+      if (commentValue === '') generateError('내용을 작성해주세요', '');
+      else {
+        try {
+          await editReviewApi(review.reviewId, commentValue, review.codeNumber);
+          setIsEdit(false);
+          getReview(codeId);
+        } catch (err: any) {
+          generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
         }
       }
     }
@@ -85,13 +83,11 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
   };
 
   const delComment = async (): Promise<void> => {
-    if (codeId) {
-      try {
-        await deleteReviewApi(review.reviewId);
-        getReview(parseInt(codeId));
-      } catch (err: any) {
-        generateError('리뷰 삭제에 실패하였습니다', `${err.response.data.message}`);
-      }
+    try {
+      await deleteReviewApi(review.reviewId);
+      getReview(codeId);
+    } catch (err: any) {
+      generateError('리뷰 삭제에 실패하였습니다', `${err.response.data.message}`);
     }
   };
 

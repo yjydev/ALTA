@@ -15,28 +15,19 @@ import { checkLogin } from '../../modules/LoginTokenChecker';
 import ALTA_CodeCommentCard from './ALTA_CodeCommentCard';
 
 type Props = {
-  codeId: string | undefined;
+  codeId: number;
 };
 
 export default function ALTA_CodeCommentList({ codeId }: Props) {
   const navigate: NavigateFunction = useNavigate();
-  const [isCompleted, setisCompleted] = useState<boolean>(false);
+
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [newReview, setNewReview] = useState<string>('');
 
-  const { codeLine, reviews, getReview } = useContext(CodeStore);
-
-  const reviews_data: ReviewData[] = isCompleted
-    ? reviews
-    : reviews?.filter((rev: ReviewData): boolean => rev.completed === false);
-
-  const getReviewList = async (codeId: number): Promise<void> => {
-    const status: ContextPromiseType = await getReview(codeId);
-    if (status.status === -1) navigate('/');
-  };
+  const { codeLine, reviews, getReview, isCompleted, setIsCompleted } = useContext(CodeStore);
 
   useEffect((): void => {
-    if (codeId) getReviewList(parseInt(codeId));
+    getReview(codeId);
   }, [isCompleted]);
 
   useEffect((): void => {
@@ -49,16 +40,12 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
 
   const handleNewReview = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
-    if (codeId) {
-      try {
-        await addReviewApi(parseInt(codeId), newReview, codeLine);
-        setNewReview('');
-        generateCheck('리뷰 생성', `리뷰가 성공적으로 생성되었습니다`, (): void => {
-          getReviewList(parseInt(codeId));
-        });
-      } catch (err: any) {
-        generateError('리뷰 생성에 실패하였습니다', `${err.response.data.message}`);
-      }
+    try {
+      await addReviewApi(codeId, newReview, codeLine);
+      setNewReview('');
+      generateCheck('리뷰 생성', `리뷰가 성공적으로 생성되었습니다`, (): void => getReview(codeId));
+    } catch (err: any) {
+      generateError('리뷰 생성에 실패하였습니다', `${err.response.data.message}`);
     }
   };
 
@@ -70,7 +57,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
             <Typography sx={codeCommentTitleStyle}>Comments</Typography>
           </Grid>
           <Grid item>
-            <Switch checked={isCompleted} onChange={(): void => setisCompleted(!isCompleted)} name="isCompleted" />
+            <Switch checked={isCompleted} onChange={(): void => setIsCompleted(!isCompleted)} name="isCompleted" />
             <Typography sx={codeCommentToggleTitleStyle}>전체 댓글 보기</Typography>
           </Grid>
         </Grid>
@@ -109,7 +96,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
         </Box>
       </Grid>
       <Grid item>
-        {reviews_data?.map(
+        {reviews.map(
           (review: ReviewData): JSX.Element => (
             <ALTA_CodeCommentCard key={review.reviewId} review={review} codeId={codeId} />
           ),
