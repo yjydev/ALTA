@@ -65,6 +65,16 @@ const listStyle = {
   backgroundColor: subColor,
 };
 
+const titleStyle = {
+  position: 'relative',
+  marginBottom: '10px',
+  padding: '5px 10px',
+  boxSizing: 'border-box',
+  borderBottom: '1px solid black',
+  fontSize: '20px',
+  textAlign: 'center',
+};
+
 const btnStyle = {
   'position': 'absolute',
   'right': 5,
