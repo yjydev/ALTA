@@ -11,22 +11,18 @@ export default function ALTA_StudyMemberCard({ member }: Props) {
   return (
     <>
       {member && (
-        <Card
-          className="memberCard"
-          variant="outlined"
-          sx={[memberCardStyle, member.position === '' && { opacity: '.5' }]}
-        >
-          <Box className="profileImg" sx={profileStyle}>
+        <Card variant="outlined" sx={[memberCardStyle, member.position === '' && { opacity: '.5' }]}>
+          <Box sx={profileStyle}>
             <img src={member.profileImg ? defaultProfile : member.profileImg} alt="" />
           </Box>
-          <Typography className="nickname" sx={nicknameStyle}>
+          <Typography sx={nicknameStyle}>
             <span>{member.nickname}</span>
             {member.position === '그룹장' ? <StarIcon sx={LeaderIconStyle} /> : null}
           </Typography>
         </Card>
       )}
       {!member && (
-        <Card className="memberCard" variant="outlined" sx={[memberCardStyle, memberCardStyle_Empty]}>
+        <Card variant="outlined" sx={[memberCardStyle, memberCardStyle_Empty]}>
           <DoNotDisturbAltIcon />
         </Card>
       )}
@@ -52,10 +48,17 @@ const memberCardStyle_Empty = {
 };
 
 const profileStyle = {
-  width: '40px',
-  height: '40px',
-  borderRadius: '50px',
-  backgroundColor: 'black',
+  'display': 'flex',
+  'justifyContent': 'center',
+  'alignItems': 'center',
+  'width': '40px',
+  'height': '40px',
+  'borderRadius': '50px',
+  'backgroundColor': 'black',
+  'overflow': 'hidden',
+  '> img': {
+    width: '100%',
+  },
 };
 
 const nicknameStyle = {
