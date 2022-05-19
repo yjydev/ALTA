@@ -30,23 +30,30 @@ function App() {
     useContext(AlertDataStore);
   let eventSource: EventSourcePolyfill;
   useEffect(() => {
-    if (!listening) {
-      eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
-        heartbeatTimeout: 60 * 1000,
-        headers: {
-          ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
-        },
-      });
-      eventSource.addEventListener('message', function (event) {
-        const result = event.data;
-        if (result['alertId'] !== -1) {
-          const d = JSON.parse(result);
-          setBuffer(d);
-        }
-      });
-      setListening(true);
+    if (localStorage.getItem('jwt')) {
+      if (!listening) {
+        eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
+          heartbeatTimeout: 70 * 1000,
+          headers: {
+            ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+        });
+        eventSource.addEventListener('message', function (event) {
+          const result = event.data;
+          if (JSON.parse(result)['alertId'] !== -1) {
+            const d = JSON.parse(result);
+            setBuffer(d);
+          }
+        });
+        setListening(true);
+      }
     }
-  });
+    return () => {
+      setListening(false);
+      eventSource.close();
+    };
+  }, []);
+
   window.onbeforeunload = function () {
     setListening(false);
     eventSource.close();

@@ -154,7 +154,7 @@ export default function ALTA_CodeContents() {
                 </Grid>
                 <Grid item sx={codeCommentStyle}>
                   <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-                  <ALTA_CodeCommentList codeId={codeId} />
+                  <ALTA_CodeCommentList codeId={Number(codeId)} />
                 </Grid>
               </Grid>
             </Box>

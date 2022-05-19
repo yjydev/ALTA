@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { StudyDetailStore } from '../../context/StudyDetailContext';
-import { blackColor } from '../../modules/colorChart';
+import { blackColor, subColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
 import scrollStyle from '../../modules/scrollStyle';
 
@@ -57,13 +57,13 @@ export default function ALTA_Notice() {
   };
 
   return (
-    <Box>
+    <Box sx={noticeWrapper}>
       <h1>스터디 공지사항</h1>
       <Box sx={titleStyle}>
         공지사항
         <Button sx={btnStyle} onClick={(): void => setNoticeEditing(!noticeEditing)}>
           {!noticeEditing && (
-            <ALTA_Tooltip title="일정 수정하기">
+            <ALTA_Tooltip title="공지사항 수정하기">
               <EditIcon />
             </ALTA_Tooltip>
           )}
@@ -100,6 +100,15 @@ export default function ALTA_Notice() {
     </Box>
   );
 }
+
+const noticeWrapper = {
+  padding: 2,
+  margin: 2,
+  boxSizing: 'border-box',
+  borderRadius: '5px',
+  backgroundColor: subColor,
+};
+
 const titleStyle = {
   position: 'relative',
   marginBottom: '10px',

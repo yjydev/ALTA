@@ -28,14 +28,15 @@ export default function ALTA_Alert() {
 
   const anchorRef = useRef<SVGSVGElement>(null);
 
-  const newAlert: AlertData[] = alertData.filter((d: AlertData): boolean => d.isChecked === false);
+  let newAlert: AlertData[] = alertData.filter((d: AlertData): boolean => d.isChecked === false);
+
   useEffect((): void => {
     setAllRead(false);
   }, []);
 
   useEffect(() => {
     setBadgeCnt(newAlert.length);
-  }, [alertData]);
+  }, [newAlert]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -47,6 +48,7 @@ export default function ALTA_Alert() {
     await readAlertAllApi();
     setOpen(false);
     setBadgeCnt(0);
+    newAlert = alertData.filter((d: AlertData): boolean => d.isChecked === false);
   };
 
   return (

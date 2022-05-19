@@ -64,16 +64,8 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     try {
       const response = await memberListApi(studyId);
 
-      //최대 인원 수까지 빈 멤버 추가
       const tmpMember = [...response.members];
-      while (tmpMember.length < response.studyMaxPeople)
-        tmpMember.push({
-          nickname: '',
-          email: '',
-          state: '',
-          position: '',
-          resistrationData: '',
-        });
+      while (tmpMember.length < response.studyMaxPeople) tmpMember.push({ nickname: '', position: '' });
 
       setMembers(tmpMember);
       setMaxPeople(response.studyMaxPeople);

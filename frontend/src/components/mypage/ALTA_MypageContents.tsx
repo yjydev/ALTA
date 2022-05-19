@@ -1,9 +1,11 @@
 import { Box } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 import { generateError } from '../../modules/generateAlert';
 import { UserDataStore } from '../../context/UserDataContext';
+import { AlertDataStore } from '../../context/AlertContext';
 
 import ALTA_UserData from './ALTA_UserData';
 import ALTA_StudyList from './ALTA_StudyList';
@@ -12,6 +14,7 @@ import ALTA_Loading from '../common/ALTA_Loading';
 export default function ALTA_MypageContents() {
   const { userData, getUserData } = useContext(UserDataStore);
   const navigate = useNavigate();
+  const { getAlertData, setBuffer, setListening, listening } = useContext(AlertDataStore);
 
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +31,29 @@ export default function ALTA_MypageContents() {
       } else setLoading(false);
     })();
   }, []);
+
+  useEffect(() => {
+    if (!listening) {
+      (async function (): Promise<void> {
+        await getAlertData();
+      })();
+      const eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
+        heartbeatTimeout: 70 * 1000,
+        headers: {
+          ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
+        },
+      });
+      eventSource.addEventListener('message', function (event) {
+        const result = event.data;
+        if (JSON.parse(result)['alertId'] !== -1) {
+          const d = JSON.parse(result);
+          setBuffer(d);
+        }
+      });
+      setListening(true);
+    }
+  }, []);
+
   return (
     <>
       {loading && <ALTA_Loading />}
