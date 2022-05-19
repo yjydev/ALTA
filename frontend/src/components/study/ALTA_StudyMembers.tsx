@@ -36,6 +36,7 @@ export default function ALTA_StudyMembers() {
   return (
     <Box sx={membersWrapper}>
       <h1>스터디 멤버 목록</h1>
+      <Box sx={titleStyle}>멤버 목록</Box>
       <Box sx={listStyle}>
         <Box sx={titleStyle}>
           멤버 목록
@@ -55,6 +56,15 @@ export default function ALTA_StudyMembers() {
 
 const membersWrapper = {
   width: '100%',
+
+const titleStyle = {
+  position: 'relative',
+  marginBottom: '10px',
+  padding: '5px 10px',
+  boxSizing: 'border-box',
+  borderBottom: '1px solid black',
+  fontSize: '20px',
+  textAlign: 'center',
 };
 
 const listStyle = {
