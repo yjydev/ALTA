@@ -78,6 +78,7 @@ public class StudyJoinInfo {
         return StudyJoinInfoMemberResponse.builder()
                 .nickname(user.getNickname())
                 .position(position)
+                .profileImg(user.getImage())
                 .build();
     }
 }
