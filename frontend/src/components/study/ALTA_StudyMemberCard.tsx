@@ -13,7 +13,7 @@ export default function ALTA_StudyMemberCard({ member }: Props) {
       {member && (
         <Card variant="outlined" sx={[memberCardStyle, member.position === '' && { opacity: '.5' }]}>
           <Box sx={profileStyle}>
-            <img src={member.profileImg ? defaultProfile : member.profileImg} alt="" />
+            <img src={member.profileImg ? member.profileImg : defaultProfile} alt="" />
           </Box>
           <Typography sx={nicknameStyle}>
             <span>{member.nickname}</span>
@@ -54,7 +54,6 @@ const profileStyle = {
   'width': '40px',
   'height': '40px',
   'borderRadius': '50px',
-  'backgroundColor': 'black',
   'overflow': 'hidden',
   '> img': {
     width: '100%',
