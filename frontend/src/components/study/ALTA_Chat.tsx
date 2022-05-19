@@ -194,7 +194,7 @@ const titleStyle = {
 };
 
 const chatBoxStyle = {
-  height: '85%',
+  height: '88%',
   boxSizing: 'border-box',
   backgroundColor: '#fff',
   borderRadius: '5px',
