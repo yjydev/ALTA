@@ -63,9 +63,10 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 
     try {
       const response = await memberListApi(studyId);
+      console.log(response);
 
       const tmpMember = [...response.members];
-      while (tmpMember.length < response.studyMaxPeople) tmpMember.push({ nickname: '', position: '' });
+      while (tmpMember.length < response.studyMaxPeople) tmpMember.push({ nickname: '', position: '', profileImg: '' });
 
       setMembers(tmpMember);
       setMaxPeople(response.studyMaxPeople);

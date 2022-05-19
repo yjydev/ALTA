@@ -176,6 +176,7 @@ export default function ALTA_Chat() {
 
 const chatWrapper = {
   width: '100%',
+  height: '860px',
   padding: 2,
   margin: 2,
   boxSizing: 'border-box',
