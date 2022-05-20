@@ -89,7 +89,7 @@ export default function ALTA_CodeContents() {
         <Grid className="codeContentGrid" container sx={codeContentStyle} spacing={8}>
           <Grid item sx={codeTreeStyle} md={3}>
             <Box className="codeTreeBox" sx={codeTreeBoxStyle}>
-              <ALTA_CodeTree studyId={studyId} />
+              <ALTA_CodeTree studyId={studyId} language={language} />
             </Box>
           </Grid>
           <Grid item md={9}>

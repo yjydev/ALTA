@@ -72,7 +72,7 @@ public class AlertService {
 
         String content = String.format(type.getMessage(), sender.getNickname(), problem.getName());
         Date nowTime = new Date();
-        String url = String.format(type.getUrlFormat(), study.getStudyId(), problem.getName(), code.getId(), FileLanguageUtil.getInstanse().getEditorFormat(study.getLanguage()));
+        String url = String.format(type.getUrlFormat(), study.getStudyId(), problem.getName(), code.getId(), study.getLanguage());
         return Alert.builder()
                 .receiver(receiver)
                 .sender(sender)

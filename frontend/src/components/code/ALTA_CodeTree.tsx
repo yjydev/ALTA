@@ -20,9 +20,10 @@ import { CodeTree } from '../../types';
 
 type Props = {
   studyId: string | undefined;
+  language: string | undefined;
 };
 
-export default function ALTA_CodeTree({ studyId }: Props) {
+export default function ALTA_CodeTree({ studyId, language }: Props) {
   const navigate: NavigateFunction = useNavigate();
   const { codeTree } = useContext(CodeStore);
 
@@ -82,7 +83,7 @@ export default function ALTA_CodeTree({ studyId }: Props) {
       const codeId: number = row.codeId;
       const problem: string = row.path[1];
       try {
-        navigate(`/study/${studyId}/${problem}/code/${codeId}`);
+        navigate(`/study/${studyId}/${problem}/code/${codeId}/${language}`);
       } catch (err: any) {
         generateError('코드 이동에 실패하였습니다', `${err.response.message}`);
       }
