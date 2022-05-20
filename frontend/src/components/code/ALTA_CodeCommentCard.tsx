@@ -25,6 +25,7 @@ import { ReviewData } from '../../types';
 import { CodeStore } from '../../context/CodeContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { displayAt } from '../../modules/displayAt';
+import defaultProfile from '../../images/user.webp';
 
 type Props = {
   review: ReviewData;
@@ -38,7 +39,7 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const [commentValue, setCommentValue] = useState<string>(review.comment);
-  const profile: string = review.imageUrl ? review.imageUrl : 'profile_default.png';
+  const profile: string = review.imageUrl ? review.imageUrl : defaultProfile;
 
   const changeResolved = async (): Promise<void> => {
     if (!(await checkLogin()).status) navigate('/');
