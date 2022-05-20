@@ -19,6 +19,7 @@ const defaultValue: defaultValueType = {
   maxPeople: 0,
   isLeader: false,
   studyName: '',
+  language: '',
   getReadmeDetail: () => null,
   getStudyMembers: () => null,
   getNoticeContent: () => null,
@@ -39,6 +40,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [studyName, setStudyName] = useState<string>('');
   const [chatContents, setChatContents] = useState<chatResponse[]>([]);
+  const [language, setLanguage] = useState<string>('');
 
   const getReadmeDetail = async (studyId: number): Promise<ContextPromiseType> => {
     const loginStatus = await checkLogin();
@@ -48,6 +50,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     try {
       const response = await studyDetailDataApi(studyId);
 
+      setLanguage(response.studyLanguage);
       setReadmeData(response.readme);
       setStudyName(response.studyName);
       return { status: 1, message: '스터디 리드미를 불러왔습니다' };
@@ -63,7 +66,6 @@ export default function StudyDetailProvider({ children }: ContextProps) {
 
     try {
       const response = await memberListApi(studyId);
-      console.log(response);
 
       const tmpMember = [...response.members];
       while (tmpMember.length < response.studyMaxPeople) tmpMember.push({ nickname: '', position: '', profileImg: '' });
@@ -149,6 +151,7 @@ export default function StudyDetailProvider({ children }: ContextProps) {
     maxPeople,
     isLeader,
     studyName,
+    language,
     getReadmeDetail,
     getStudyMembers,
     getNoticeContent,
@@ -169,6 +172,7 @@ type defaultValueType = {
   maxPeople: number;
   isLeader: boolean;
   studyName: string;
+  language: string;
   getReadmeDetail: (studyId: number) => any;
   getStudyMembers: (studyId: number) => any;
   getNoticeContent: (studyId: number) => any;

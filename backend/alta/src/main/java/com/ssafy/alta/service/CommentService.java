@@ -74,7 +74,7 @@ public class CommentService {
 
         // 알림 발생 + 프론트로 알림 발생시키기
         // 피드백 등록 메일 보내기
-//        if(!code.getUser().getId().equals(comment.getUser().getId())) {       // 본인이 코드 작성자이면서 댓글 작성자이면 알림 발생 X
+        if(!code.getUser().getId().equals(comment.getUser().getId())) {       // 본인이 코드 작성자이면서 댓글 작성자이면 알림 발생 X
             int alertStatus = userRepository.findAlertStatusByUserId(code.getUser().getId());
 
             Alert alert = alertService.makeAlert(code.getUser(), comment.getUser(), AlertType.SITE_COMMENT, code);
@@ -88,7 +88,7 @@ public class CommentService {
             if(AlertType.isAlertTrue(alertStatus, AlertType.MAIL_COMMENT)) {
                 mailService.sendAlertMail(code.getUser().getEmail(), alert.getContent());
             }
-//        }
+        }
     }
 
     @Transactional

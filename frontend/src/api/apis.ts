@@ -119,7 +119,6 @@ export async function addProblemApi(studyId: number, scheduleId: number, name: s
     ],
     scheduleId,
   };
-  console.log(requestBody);
   return await postRequest(`/api/study/${studyId}/problem`, requestBody);
 }
 
@@ -186,7 +185,6 @@ export async function editScheduleApi(studyId: number, scheduleId: number, dateS
     endDate: tmp[1],
   };
 
-  console.log(requestBody);
   return await putRequest(`/api/study/${studyId}/schedule/${scheduleId}`, requestBody);
 }
 //코드 수정 요청
