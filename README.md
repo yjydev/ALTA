@@ -124,7 +124,7 @@
 | 우정연 |     Back-end     | 코드 업로드 <br /> 코멘트 작성 <br /> 알림 기능 <br /> 일정 관리 <br /> Github API 통신 <br /> 데이터 베이스 설계                                                                                     |
 | 윤지영 |    Front-end     | UI/UX 설계 <br /> 코드 상세 페이지 조작 기능 <br /> 채팅 기능 <br /> 알림 기능 <br /> 코드 데이터 상태 관리 <br /> 스터디 참여 인원 관리 기능 <br /> SEO 최적화                                      |
 | 이주현 |     Front-end     | UI/UX 설계 <br /> 로그인 및 로그인 만료 처리 기능 <br /> 유저 데이터 상태 관리 <br /> 스터디 데이터 상태 관리 <br /> 스터디 생성 기능 <br /> 스터디 상세 페이지 조작 기능 <br /> 성능 개선 <br />  SEO 최적화 <br /> |
-| 이지순 |     Back-end     | 스터디 상세 페이지 조작 API <br /> 메일링 시스템 <br /> 소켓 통신(채팅) <br /> Github API 통신 <br /> 데이터 베이스 설계                                                                 |
+| 이지순 |     Back-end     | 스터디 CRUD API<br /> 문제 CRUD API<br /> 일정 생성<br /> 메일링 시스템 <br /> 소켓 통신(채팅) <br /> Github API 통신 <br /> 데이터 베이스 설계                                                                 |
 
 <br />
 
