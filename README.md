@@ -93,18 +93,18 @@
 ## 🎥 ALTA 서비스 화면
 ---
 
-|                                                             |                                                          |
-|-------------------------------------------------------------|-----------------------------------------------------------|
-| Repo 생성                                                     | readme 자동 업데이트                                            |
-| <img src="./readme_assets/Repo 생성.gif"/>                    | <img src="./readme_assets/문제 생성 및 코드 업로드시 readme 업데이트.gif"/> |
-| 문제 및 회차 생성                                                  | 문제 및 회차 삭제                                                |
-| <img src="./readme_assets/문제 및 회차 생성.gif"/>                 | <img src="./readme_assets/문제 및 회차 삭제.gif"/>               |
-| 알림                                                          | 코드 업로드                                                |
-| <img src="./readme_assets/알림.gif"/>                         | <img src="./readme_assets/코드 업로드.gif"/>                 |
-| 코드 트리                                                       |      라인 별 코멘트 작성                                         |
-| <img src="./readme_assets/코드 트리.gif"/>                      |  <img src="./readme_assets/line_comment.gif"/>  |
-| 채팅 기능                                                       |                         |
-| <img src="./readme_assets/녹화_2022_05_19_12_02_44_600.gif"/> |   |
+|                                            |                                                |
+|--------------------------------------------|------------------------------------------------|
+| Repo 생성                                    | readme 자동 업데이트                                 |
+| <img src="./readme_assets/Repo.gif"/>      | <img src="./readme_assets/readme_update.gif"/> |
+| 문제 및 회차 생성                                 | 문제 및 회차 삭제                                     |
+| <img src="./readme_assets/table.gif"/>     | <img src="./readme_assets/table2.gif"/>        |
+| 알림                                         | 코드 업로드                                         |
+| <img src="./readme_assets/alert.gif"/>     | <img src="./readme_assets/code_upload.gif"/>   |
+| 코드 트리                                      | 라인 별 코멘트 작성                                    |
+| <img src="./readme_assets/code_tree.gif"/> | <img src="./readme_assets/line_comment.gif"/>  |
+| 채팅 기능                                      |                                                |
+| <img src="./readme_assets/chat.gif"/>      |                                                |
 
 
 <br />
