@@ -18,9 +18,9 @@ import java.util.Arrays;
 
 @Getter
 public enum AlertType {
-    SITE_CODE(1, 3, "%s님이 %s문제에 풀이를 등록했습니다.", "/study/%s/%s/code/%s"),
-    SITE_COMMENT(2, 2, "%s님이 %s문제의 코드에 댓글을 달았습니다.", "/study/%s/%s/code/%s"),
-    MAIL_COMMENT(3, 1, "%s님이 %s문제의 코드에 댓글을 달았습니다.", "/study/%s/%s/code/%s"),
+    SITE_CODE(1, 3, "%s님이 %s문제에 풀이를 등록했습니다.", "/study/%s/%s/code/%s/%s"),
+    SITE_COMMENT(2, 2, "%s님이 %s문제의 코드에 댓글을 달았습니다.", "/study/%s/%s/code/%s/%s"),
+    MAIL_COMMENT(3, 1, "%s님이 %s문제의 코드에 댓글을 달았습니다.", "/study/%s/%s/code/%s/%s"),
     MAIL_SCHEDULE(4, 0, "%s스터디의 문제 마감시간이 12시간 남았습니다!", "/study/%s/detail");
 
     private Integer code;

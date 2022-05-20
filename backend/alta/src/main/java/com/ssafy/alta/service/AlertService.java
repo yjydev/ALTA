@@ -4,6 +4,7 @@ import com.ssafy.alta.dto.response.AlertResponse;
 import com.ssafy.alta.entity.*;
 import com.ssafy.alta.exception.DataNotFoundException;
 import com.ssafy.alta.repository.AlertRepository;
+import com.ssafy.alta.util.FileLanguageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +72,7 @@ public class AlertService {
 
         String content = String.format(type.getMessage(), sender.getNickname(), problem.getName());
         Date nowTime = new Date();
-        String url = String.format(type.getUrlFormat(), study.getStudyId(), problem.getName(), code.getId());
+        String url = String.format(type.getUrlFormat(), study.getStudyId(), problem.getName(), code.getId(), study.getLanguage());
         return Alert.builder()
                 .receiver(receiver)
                 .sender(sender)
