@@ -2,7 +2,6 @@ import { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { Box, Menu, Badge, Tabs, Tab, Typography, IconButton } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 
@@ -22,53 +21,19 @@ interface TabPanelProps {
 
 export default function ALTA_Alert() {
   const navigate: NavigateFunction = useNavigate();
-  const { alertData, getAlertData, setAlertData, badgeCnt, setBadgeCnt } = useContext(AlertDataStore);
+  const { alertData, badgeCnt, setBadgeCnt } = useContext(AlertDataStore);
   const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<number>(0);
+  const [tab, setTab] = useState<number>(0);
   const [allRead, setAllRead] = useState<boolean>(false);
-  const [buffer, setBuffer] = useState<any>('');
 
   const anchorRef = useRef<SVGSVGElement>(null);
 
-  const [listening, setListening] = useState<boolean>(false);
-  const EventSource = EventSourcePolyfill;
-
-  const newAlert: AlertData[] = alertData.filter((d: AlertData): boolean => d.isChecked === false);
-
-  useEffect(() => {
-    if (buffer !== '') {
-      setAlertData([...alertData, buffer]);
-      setBuffer('');
-    }
-  }, [buffer]);
-
-  useEffect((): void => {
-    (async function (): Promise<void> {
-      const status = await getAlertData();
-      if (status.status === -1) navigate('/');
-    })();
-  }, []);
+  let newAlert: AlertData[] = alertData.filter((d: AlertData): boolean => d.isChecked === false);
 
   useEffect((): void => {
     setAllRead(false);
-    setBadgeCnt(alertData.filter((d: AlertData): boolean => d.isChecked === false).length);
-    if (!listening) {
-      const eventSource = new EventSource(`${process.env.REACT_APP_BASE_URL}/api/user/alert/subscribe`, {
-        heartbeatTimeout: 600 * 1000,
-        headers: {
-          ACCESS_TOKEN: `Bearer ${localStorage.getItem('jwt')}`,
-        },
-      }); //구독
-
-      eventSource.addEventListener('message', function (event) {
-        const result = event.data;
-        if (result['alertId'] !== -1) {
-          const d = JSON.parse(result);
-          setBuffer(d);
-        }
-      });
-      setListening(true);
-    }
+    newAlert = alertData.filter((d: AlertData): boolean => d.isChecked === false);
+    setBadgeCnt(newAlert.length);
   }, []);
 
   useEffect(() => {
@@ -76,7 +41,7 @@ export default function ALTA_Alert() {
   }, [newAlert]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setTab(newValue);
   };
 
   const allChecked = async (): Promise<void> => {
@@ -84,9 +49,8 @@ export default function ALTA_Alert() {
     setAllRead(true);
     await readAlertAllApi();
     setOpen(false);
-    const status = await getAlertData();
-    if (status.status === -1) navigate('/');
     setBadgeCnt(0);
+    newAlert = alertData.filter((d: AlertData): boolean => d.isChecked === false);
   };
 
   return (
@@ -119,13 +83,13 @@ export default function ALTA_Alert() {
         }}
       >
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tabs value={tab} onChange={handleChange} aria-label="basic tabs example">
             <Tab label="안읽은 알림만 보기" {...a11yProps(0)} />
             <Tab label="전체 알림 보기" {...a11yProps(1)} />
           </Tabs>
         </Box>
         <Box sx={menuStyle}>
-          <TabPanel value={value} index={0}>
+          <TabPanel value={tab} index={0}>
             {badgeCnt ? (
               <Box>
                 전체 읽음
@@ -140,7 +104,7 @@ export default function ALTA_Alert() {
               <Typography sx={{ color: 'error.main', fontSize: '20px' }}>새로운 알림이 없습니다</Typography>
             )}
           </TabPanel>
-          <TabPanel value={value} index={1}>
+          <TabPanel value={tab} index={1}>
             <ALTA_AlertMenu data={alertData} setOpen={setOpen} />
           </TabPanel>
         </Box>

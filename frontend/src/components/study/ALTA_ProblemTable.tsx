@@ -26,7 +26,7 @@ type Props = {
 
 export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table }: Props) {
   const navigate = useNavigate();
-  const { members, maxPeople, editSchedule, deleteSchedule } = useContext(StudyDetailStore);
+  const { members, maxPeople, language, editSchedule, deleteSchedule } = useContext(StudyDetailStore);
 
   const [scheduleEditing, setScheduleEditing] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
@@ -37,9 +37,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
   const edit = async (studyId: number, scheduleId: number, dateString: string): Promise<void> => {
     if (schedule === `${table.startDate} ~ ${table.endDate}`) {
       setIsError(true);
-      setTimeout(() => {
-        setIsError(false);
-      }, 2500);
+      setTimeout(() => setIsError(false), 2500);
     } else {
       setEditLoading(true);
 
@@ -56,9 +54,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
     setRemoveLoading(true);
     const editApiStatue = await deleteSchedule(studyId, scheduleId);
 
-    setTimeout(() => {
-      setRemoveLoading(false);
-    }, 1000);
+    setTimeout(() => setRemoveLoading(false), 1000);
     if (editApiStatue.status === -1) navigate('/');
     else if (editApiStatue.status === -2) generateError('일정을 삭제하지 못했습니다', editApiStatue.message);
 
@@ -135,7 +131,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
                 <Box sx={{ height: '40px' }} key={problem.id}>
                   <ALTA_FlipBar
                     height="40px"
-                    Front={problemBarFrontBuilder(problem, members, maxPeople, studyId)}
+                    Front={problemBarFrontBuilder(problem, members, language, maxPeople, studyId)}
                     Back={addProblemBarBackBuilder(studyId, scheduleId, problem.name, problem.link, problem.id)}
                   />
                 </Box>

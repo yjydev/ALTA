@@ -104,7 +104,7 @@ public class CommentService {
         Comment comment = optComment.get();
         if(!userId.equals(comment.getUser().getId())) // 댓글 작성자가 맞는지를 확인 -> 아니라면 exception 발생
             throw new WriterNotMatchException();
-            
+
         commentRepository.deleteById(commentId);
     }
 

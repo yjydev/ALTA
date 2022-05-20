@@ -71,7 +71,7 @@ export default function ALTA_CodeTree({ studyId }: Props) {
     {
       field: '__tree_data_group__',
       headerName: 'id',
-      width: 320,
+      flex: 1,
     },
   ];
 

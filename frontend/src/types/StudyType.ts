@@ -12,6 +12,7 @@ export type StudyMember = {
   [index: string]: string;
   nickname: string;
   position: string;
+  profileImg: string;
 };
 
 export type Code = {

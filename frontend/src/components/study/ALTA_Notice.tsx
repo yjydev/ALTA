@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Box, Button, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { StudyDetailStore } from '../../context/StudyDetailContext';
-import { blackColor } from '../../modules/colorChart';
+import { blackColor, subColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
 import scrollStyle from '../../modules/scrollStyle';
 
@@ -17,13 +17,29 @@ type Params = {
 };
 
 export default function ALTA_Notice() {
-  const { noticeContent, editNoticeContent } = useContext(StudyDetailStore);
+  const { noticeContent, getNoticeContent, editNoticeContent } = useContext(StudyDetailStore);
   const navigate = useNavigate();
   const { studyId } = useParams<Params>();
 
-  const [notice, setNotice] = useState<string>(noticeContent.replaceAll('<br />', '\n'));
+  const [notice, setNotice] = useState<string>('');
   const [noticeEditing, setNoticeEditing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async function () {
+      if (studyId) {
+        const noticeStatus = await getNoticeContent(Number(studyId));
+
+        if (noticeStatus.status === -1) navigate('/');
+        else if (noticeStatus.status === -2)
+          generateError('스터디 진행 정보를 불러올 수 없습니다', noticeStatus.message);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    setNotice(noticeContent ? noticeContent.replaceAll('<br />', '\n') : '');
+  }, [noticeContent]);
 
   const edit = async (): Promise<void> => {
     if (notice !== noticeContent) {
@@ -41,12 +57,13 @@ export default function ALTA_Notice() {
   };
 
   return (
-    <Box>
+    <Box sx={noticeWrapper}>
+      <h1>스터디 공지사항</h1>
       <Box sx={titleStyle}>
         공지사항
         <Button sx={btnStyle} onClick={(): void => setNoticeEditing(!noticeEditing)}>
           {!noticeEditing && (
-            <ALTA_Tooltip title="일정 수정하기">
+            <ALTA_Tooltip title="공지사항 수정하기">
               <EditIcon />
             </ALTA_Tooltip>
           )}
@@ -83,6 +100,15 @@ export default function ALTA_Notice() {
     </Box>
   );
 }
+
+const noticeWrapper = {
+  padding: 2,
+  margin: 2,
+  boxSizing: 'border-box',
+  borderRadius: '5px',
+  backgroundColor: subColor,
+};
+
 const titleStyle = {
   position: 'relative',
   marginBottom: '10px',

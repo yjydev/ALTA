@@ -49,7 +49,7 @@ const delBtnStyle = {
   'marginBottom': 3,
   'marginRight': 4,
   'fontSize': '16px',
-  'padding': '11px',
+  'padding': '5px',
 };
 
 const submitBtnStyle = {
@@ -58,5 +58,5 @@ const submitBtnStyle = {
   marginBottom: 3,
   marginRight: 1,
   fontSize: '16px',
-  padding: '11px',
+  padding: '5px',
 };

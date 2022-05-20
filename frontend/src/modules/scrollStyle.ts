@@ -1,11 +1,13 @@
+import { mainColor, subColor } from './colorChart';
+
 const scrollStyle = {
   '&::-webkit-scrollbar': {
-    width: '5px',
-    backgroundColor: '#D9CAB3',
+    width: '3px',
+    backgroundColor: mainColor,
     borderRadius: '10px',
   },
   '&::-webkit-scrollbar-thumb': {
-    backgroundColor: '#6D9886',
+    backgroundColor: subColor,
     borderRadius: '10px',
   },
 };

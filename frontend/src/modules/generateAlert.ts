@@ -71,20 +71,17 @@ export function generateConfirm(
     background: whiteColor,
   }).then((result) => {
     if (result.isConfirmed) {
-      generateTimer('로딩중', '잠시만 기다려주세요');
-      callback()?.then((result) => {
-        if (result) {
-          Swal.fire({
-            title: `${subTitle}`,
-            text: `${subText}`,
-            icon: 'success',
-            showConfirmButton: true,
-            confirmButtonColor: mainColor,
-            confirmButtonText: '확인',
-            color: blackColor,
-            background: whiteColor,
-          });
-        }
+      Swal.fire({
+        title: `${subTitle}`,
+        text: `${subText}`,
+        icon: 'success',
+        showConfirmButton: true,
+        confirmButtonColor: mainColor,
+        confirmButtonText: '확인',
+        color: blackColor,
+        background: whiteColor,
+      }).then(() => {
+        if (callback) callback();
       });
     }
   });

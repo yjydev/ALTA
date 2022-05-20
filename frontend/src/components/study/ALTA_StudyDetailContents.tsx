@@ -21,7 +21,7 @@ type Params = {
 export default function ALTA_StudyDetailContents() {
   const { studyId } = useParams<Params>();
   const navigate = useNavigate();
-  const { readmeData, getReadmeDetail, getStudyMembers } = useContext(StudyDetailStore);
+  const { readmeData, getReadmeDetail, getStudyMembers, getChatContent } = useContext(StudyDetailStore);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -31,6 +31,7 @@ export default function ALTA_StudyDetailContents() {
         const [readmeApiStatue, memberApiStatus] = await Promise.all([
           getReadmeDetail(Number(studyId)),
           getStudyMembers(Number(studyId)),
+          getChatContent(Number(studyId)),
         ]);
 
         if (readmeApiStatue.status === -1 || memberApiStatus.status === -1) navigate('/');
@@ -51,6 +52,7 @@ export default function ALTA_StudyDetailContents() {
           <Grid item xl={6}>
             <ALTA_Inner>
               <Box sx={[addTableWrapperBarStyle, scrollStyle]}>
+                <h1>스터디 상세</h1>
                 <ALTA_StudyBoard />
                 <Box sx={addTableBarWrapperStyle}>
                   <ALTA_FlipBar
@@ -64,6 +66,7 @@ export default function ALTA_StudyDetailContents() {
                     .map(
                       (table: TableData, i: number): JSX.Element => (
                         <Box sx={tableWrapperStyle} key={`${i}-${table.id}`}>
+                          <h2>{`${table.round}회차 문제 테이블`}</h2>
                           <ALTA_ProblemTable
                             studyId={Number(studyId)}
                             scheduleId={table.id}
