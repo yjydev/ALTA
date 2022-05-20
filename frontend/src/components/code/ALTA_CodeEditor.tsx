@@ -41,7 +41,7 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
         await editCodeApi(parseInt(studyId), parseInt(codeId), commitMessage, fileName, content);
         setIsCodeEdit(false);
         generateCheck('수정 완료', `${fileName} 을(를) 성공적으로 수정하였습니다`, (): void =>
-          navigate(`/study/${studyId}/${problem}/code/${codeId}`),
+          navigate(`/study/${studyId}/${problem}/code/${codeId}/${code.language}`),
         );
       } catch (err: any) {
         generateError(`수정에 실패하였습니다`, `${err.response.data.message}`);
