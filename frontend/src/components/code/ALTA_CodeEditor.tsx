@@ -1,7 +1,7 @@
 import React, { useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 
-import { Box, Grid, Typography, Divider, Button, TextField } from '@mui/material';
+import { Box, Grid, Typography, Divider, Button, TextField, InputLabel } from '@mui/material';
 
 import MonacoEditor from '@uiw/react-monacoeditor';
 
@@ -58,8 +58,9 @@ export default function ALTA_CodeEditor({ setIsCodeEdit, studyId, codeId, proble
     <>
       <ALTA_Dialog open={open} setOpen={setOpen} title="커밋 메세지" handleComplete={handleEditCode}>
         <Box sx={commitStyle}>
+          <InputLabel htmlFor="code-edit">커밋메세지 :</InputLabel>
           <TextField
-            id="코드 수정"
+            id="code-edit"
             variant="standard"
             placeholder="커밋 메세지를 입력해주세요"
             value={commitMessage}
@@ -125,7 +126,8 @@ const codeBlockStyle = {
 };
 
 const commitStyle = {
-  marginBottom: 4,
+  marginBottom: 3,
+  marginTop: 5,
 };
 
 const messageStyle = {
