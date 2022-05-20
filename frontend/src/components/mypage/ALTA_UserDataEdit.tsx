@@ -37,11 +37,15 @@ export default function ALTA_UserDataEdit({
       generateError('모든 항목을 채워주세요', '');
     } else {
       setLoading(true);
-      const userStatus = await editUserData(nickname, email, introduction, languageList);
+      const editApiStatus = await editUserData(nickname, email, introduction, languageList);
 
-      if (userStatus.status === -1) navigate('/');
-      else if (userStatus.status === -2) generateError('유저 정보를 수정할 수 없습니다', '');
-      else setLoading(false);
+      if (editApiStatus.status === -1) navigate('/');
+      else if (editApiStatus.status === -2) generateError('유저 정보를 수정할 수 없습니다', editApiStatus.message);
+
+      setIsEditPage(false);
+      setLoading(false);
+
+      return;
     }
   };
 

@@ -23,4 +23,5 @@ import lombok.ToString;
 public class StudyJoinInfoMemberResponse {
     private String nickname;
     private String position;
+    private String profileImg;
 }

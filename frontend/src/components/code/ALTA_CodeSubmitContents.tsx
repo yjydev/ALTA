@@ -1,50 +1,62 @@
-import { Box, Button, TextField } from '@mui/material';
 import { useState } from 'react';
+import { useParams, useNavigate, NavigateFunction } from 'react-router-dom';
+
+import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import styled from '@emotion/styled';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useParams, useNavigate } from 'react-router-dom';
 
-import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
-import ALTA_InputItem from '../common/ALTA_InputItem';
-import { blackColor } from '../../modules/colorChart';
-import { generateError } from '../../modules/generateAlert';
+import { blackColor, whiteColor } from '../../modules/colorChart';
+import { generateError, generateTimer } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { editCodeApi, submitCodeApi } from '../../api/apis';
+
 import ALTA_Tooltip from '../common/ALTA_Tooltip';
+import ALTA_InputItem from '../common/ALTA_InputItem';
+import ALTA_CodeBlock from '../common/ALTA_CodeBlock';
 
 type ParamType = {
   problemId: string | undefined;
   studyId: string | undefined;
   codeId: string | undefined;
   problem: string | undefined;
+  language: string | undefined;
 };
 
-export default function ALTA_CodeSubmitContents() {
-  const navigate = useNavigate();
+const map = new Map();
+map.set('Java', 'java');
+map.set('C', 'c');
+map.set('C++', 'cpp');
+map.set('C#', 'c#');
+map.set('Python', 'python');
+map.set('Java Script', 'javascript');
 
-  const { problemId, studyId, codeId, problem } = useParams<ParamType>();
+export default function ALTA_CodeSubmitContents() {
+  const navigate: NavigateFunction = useNavigate();
+
+  const { problemId, studyId, codeId, problem, language } = useParams<ParamType>();
 
   const [commitMessage, setCommitMessage] = useState<string>('');
-  const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
   const [fileName, setFileName] = useState<string>('');
+  const [code, setCode] = useState<string>('코드를 업로드 해주세요.');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const files = e.target.files;
+    const files: FileList | null = e.target.files;
     if (files) {
-      const tmp = files[0].name.split('.');
+      const tmp: string[] = files[0].name.split('.');
       setFileName(tmp.slice(0, tmp.length - 1).join(''));
 
-      const reader = new FileReader();
+      const reader: FileReader = new FileReader();
 
-      reader.onload = () => setCode(String(reader.result));
+      reader.onload = (): void => setCode(String(reader.result));
       reader.readAsText(files[0]);
     }
   };
 
-  const goStudyDetail = () => navigate(`/study/${studyId}/detail`);
-  const goCodeDetail = () => navigate(`/study/${studyId}/${problem}/code/${codeId}`);
+  const goStudyDetail = (): void => navigate(`/study/${studyId}/detail/`);
+  const goCodeDetail = (): void => navigate(`/study/${studyId}/${problem}/code/${codeId}/${language}`);
 
-  const summitCode = async () => {
+  const summitCode = async (): Promise<void> => {
     if (code === '코드를 업로드 해주세요.') {
       generateError('코드를 업로드 해주세요', '');
       return;
@@ -58,26 +70,40 @@ export default function ALTA_CodeSubmitContents() {
     if (!(await checkLogin())) navigate('/');
 
     if (problemId && problemId !== '0') {
+      setLoading(true);
       if (studyId) {
-        await submitCodeApi(parseInt(studyId), parseInt(problemId), commitMessage, fileName, code);
-        goStudyDetail();
+        try {
+          await submitCodeApi(parseInt(studyId), parseInt(problemId), commitMessage, fileName, code);
+        } catch (err: any) {
+          generateError('코드를 업로드하지 못했습니다', err.message);
+        } finally {
+          setLoading(false);
+          goStudyDetail();
+        }
       }
     } else {
       if (codeId && studyId) {
-        await editCodeApi(parseInt(studyId), parseInt(codeId), commitMessage, fileName, code);
-        goCodeDetail();
+        try {
+          await editCodeApi(parseInt(studyId), parseInt(codeId), commitMessage, fileName, code);
+        } catch (err: any) {
+          generateError('코드를 업로드하지 못했습니다', err.message);
+        } finally {
+          setLoading(false);
+          goCodeDetail();
+        }
       }
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     if (problemId && problemId !== '0') goStudyDetail();
     else goCodeDetail();
   };
 
   return (
     <Box sx={wrapperStyle}>
-      <ALTA_InputItem label="커밋 메세지" focused={false} focusHandler={() => null}>
+      <h1>커밋 메세지 입력란</h1>
+      <ALTA_InputItem label="커밋 메세지" focused={false} focusHandler={(): null => null}>
         <TextField
           id="스터디 이름"
           variant="standard"
@@ -87,22 +113,24 @@ export default function ALTA_CodeSubmitContents() {
           sx={{ width: '100%' }}
         />
       </ALTA_InputItem>
-      <ALTA_InputItem label="코드 업로드" focused={false} focusHandler={() => null}>
+      <h1>코드 파일 업로드란</h1>
+      <ALTA_InputItem label="코드 업로드" focused={false} focusHandler={(): null => null}>
         <FileInput id="file" type="file" onChange={uploadFile} />
         <ALTA_Tooltip title="PC에서 파일 찾기">
           <Button variant="contained" sx={uploadBtnStyle}>
             <Label htmlFor="file">
               <Box sx={uploadBtnStyle}>
-                <AddCircleIcon sx={{ color: blackColor, opacity: '0.5', fontSize: '25px' }} />
+                <AddCircleIcon sx={uploadIconStyle} />
               </Box>
             </Label>
           </Button>
         </ALTA_Tooltip>
       </ALTA_InputItem>
-      <ALTA_CodeBlock code={code} language="javascript" />
-      <Box sx={{ textAlign: 'right' }}>
+      <h1>코드 미리보기</h1>
+      <ALTA_CodeBlock code={code} language={map.get(language)} />
+      <Box sx={{ marginTop: 10, textAlign: 'right' }}>
         <Button variant="contained" sx={btnStyle} onClick={summitCode}>
-          제 출
+          {loading ? <CircularProgress sx={{ color: whiteColor }} size={30} /> : '제 출'}
         </Button>
         <Button variant="contained" color="error" sx={btnStyle} onClick={handleCancel}>
           취 소
@@ -125,6 +153,16 @@ const uploadBtnStyle = {
   width: '100%',
   height: '30px',
   padding: 0,
+};
+
+const uploadIconStyle = {
+  color: blackColor,
+  opacity: '0.5',
+  fontSize: '25px',
+};
+
+const submitBtnGroupStyle = {
+  textAlign: 'right',
 };
 
 const btnStyle = {

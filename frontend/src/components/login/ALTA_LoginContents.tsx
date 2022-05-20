@@ -6,7 +6,7 @@ import GithubButton from 'react-github-login-button';
 
 import { loginTokenChecker } from '../../modules/LoginTokenChecker';
 
-import Logo from '../../images/logo.png';
+import Logo from '../../images/logo.webp';
 
 export default function ALTA_LoginContents() {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ export default function ALTA_LoginContents() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (loginTokenChecker() === 2) navigate('/mypage');
+    if (loginTokenChecker() === 1) navigate('/mypage');
   }, []);
 
   return (
@@ -31,17 +31,13 @@ export default function ALTA_LoginContents() {
         <Grid item xs={5} sx={{ marginTop: '100px', minWidth: '480px' }}>
           <Box sx={loginFormStyle}>
             {loading ? (
-              <>
-                <StyledButton disabled>
-                  <CircularProgress sx={{ color: '#fff' }} />
-                </StyledButton>
-              </>
+              <StyledButton disabled>
+                <CircularProgress sx={{ color: '#fff' }} />
+              </StyledButton>
             ) : (
-              <>
-                <StyledA href={`${process.env.REACT_APP_BUTTON_URL}:8000/githubLogin`} onClick={() => setLoading(true)}>
-                  <GithubButton label="Github 계정으로 로그인하기" style={{ width: '100%' }} />
-                </StyledA>
-              </>
+              <StyledA href={`${process.env.REACT_APP_BUTTON_URL}:8000/githubLogin`} onClick={() => setLoading(true)}>
+                <GithubButton label="Github 계정으로 로그인하기" style={{ width: '100%' }} />
+              </StyledA>
             )}
             <Typography sx={[userInputStyle, signUpGuideStyle]}>
               Github 계정이 없으신가요?

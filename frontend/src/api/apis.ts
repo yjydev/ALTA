@@ -1,6 +1,5 @@
-import { AxiosResponse } from 'axios';
 import { OrganizeStudyRequset } from '../types';
-import { getRequest, postRequest, putRequest, deleteRequest } from './request';
+import { getRequest, patchRequest, postRequest, putRequest, deleteRequest } from './request';
 
 //GET
 //유저 정보 요청
@@ -46,6 +45,16 @@ export async function reivewDataApi(codeId: number) {
 // 코드 트리 정보 요청
 export async function codeTreeApi(studyId: number) {
   return await getRequest(`/api/study/${studyId}/tree`);
+}
+
+// 알림 목록 조회 요청
+export async function alertDataApi() {
+  return await getRequest(`/api/user/alert`);
+}
+
+// 채팅 리스트 요청
+export async function chatDataApi(studyId: number) {
+  return await getRequest(`/api/chat/${studyId}`);
 }
 
 //POST
@@ -110,7 +119,7 @@ export async function addProblemApi(studyId: number, scheduleId: number, name: s
     ],
     scheduleId,
   };
-  return await await postRequest(`/api/study/${studyId}/problem`, requestBody);
+  return await postRequest(`/api/study/${studyId}/problem`, requestBody);
 }
 
 //코드 제출 요청
@@ -158,6 +167,14 @@ export async function editNoticeContentApi(studyId: number, content: string) {
   return await postRequest(`/api/study/${studyId}/notice`, requestBody);
 }
 
+// 채팅 입력 요청
+export async function addChatApi(studyId: number, content: string) {
+  const requestBody = {
+    content,
+  };
+  return await postRequest(`/api/chat/${studyId}`, requestBody);
+}
+
 //PUT
 //스터디 회차 일정 수정 요청
 export async function editScheduleApi(studyId: number, scheduleId: number, dateString: string) {
@@ -168,7 +185,6 @@ export async function editScheduleApi(studyId: number, scheduleId: number, dateS
     endDate: tmp[1],
   };
 
-  console.log(requestBody);
   return await putRequest(`/api/study/${studyId}/schedule/${scheduleId}`, requestBody);
 }
 //코드 수정 요청
@@ -222,6 +238,16 @@ export async function confirmInvitationApi(inviteCode: string) {
   return await putRequest(`/api/study/invitation`, requestBody);
 }
 
+// 알림 읽음 요청
+export async function readAlertApi(alertId: number) {
+  return await putRequest(`/api/user/alert/${alertId}/checked`, '');
+}
+
+// 알림 전체 읽음 요청
+export async function readAlertAllApi() {
+  return await putRequest(`/api/user/alert/checked`, '');
+}
+
 // delete
 // 코드 삭제 요청
 export async function deleteCodeApi(studyId: number, codeId: number) {
@@ -236,4 +262,19 @@ export async function deleteReviewApi(reviewId: number) {
 // 초대 대기 삭제 요청
 export async function deleteInvitationApi(studyId: number, sjiId: number) {
   return await deleteRequest(`/api/study/${studyId}/invitation/${sjiId}`);
+}
+
+// 일정테이블 삭제 요청
+export async function deleteTableApi(studyId: number, scheduleId: number) {
+  return await deleteRequest(`/api/study/${studyId}/schedule/${scheduleId}`);
+}
+
+//PATCH
+//유저 알림 상태 변경 요청
+
+export async function editAlertStatusApi(alertSetting: string) {
+  const requsetBody = {
+    alertSetting,
+  };
+  return await patchRequest('api/user/alert', requsetBody);
 }

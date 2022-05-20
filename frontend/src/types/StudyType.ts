@@ -12,6 +12,7 @@ export type StudyMember = {
   [index: string]: string;
   nickname: string;
   position: string;
+  profileImg: string;
 };
 
 export type Code = {
@@ -33,4 +34,15 @@ export type TableData = {
   endDate: string;
   round: number;
   problems: Problem[];
+};
+
+export type chat = {
+  content: string;
+};
+
+export type chatResponse = {
+  nickname: string;
+  image: string;
+  message: string;
+  writeDate: string;
 };

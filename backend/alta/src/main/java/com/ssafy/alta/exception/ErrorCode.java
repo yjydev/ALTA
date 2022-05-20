@@ -35,6 +35,9 @@ public enum ErrorCode {
     STUDY_OVER_MAX_PEOPLE("T002", HttpStatus.BAD_REQUEST, "최대 인원수를 초과했습니다."),
 
     IMPOSSIBLE_DELETE_PROBLEM("P001", HttpStatus.BAD_REQUEST, "코드가 존재해 삭제 불가능한 문제입니다."),
+    DUPLICATED_PROBLEM("P002", HttpStatus.BAD_REQUEST, "문제가 중복됩니다."),
+
+    BAD_REQUEST_MESSAGE("M001", HttpStatus.BAD_REQUEST, "채팅을 입력해주세요"),
 
     /* JWT REFRESH TOKEN 기간 만료 에러 */
     EXPIRED_REFRESH_TOKEN("JWT001", HttpStatus.FORBIDDEN, "리프레시 토큰 기한이 만료되어 재로그인이 필요합니다."),
@@ -49,7 +52,9 @@ public enum ErrorCode {
     GIT_COLLABORATOR_APPROVEL_ERROR("A005", HttpStatus.NOT_FOUND, "Git 초대 승인을 해주세요."),
 
     WRITER_NOT_MATCH("C001", HttpStatus.UNAUTHORIZED, "작성자만 수정/삭제할 수 있습니다."),
-    DUPLICATE_FILE_ERROR("C002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다.");
+    DUPLICATE_FILE_ERROR("C002", HttpStatus.BAD_REQUEST, "파일 이름이 중복됩니다."),
+
+    SSE_SEND_MESSAGE_FAIL("SSE001", HttpStatus.INTERNAL_SERVER_ERROR, "알림 송신이 실패했습니다.");
 
     private final String code;         // 에러 키(관리하기 위함)
     private final HttpStatus status;  // 상태 코드

@@ -4,9 +4,10 @@ import { AppBar, Box } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import Logo from '../../images/logo.png';
+import Logo from '../../images/logo.webp';
 
 import ALTA_Tooltip from './ALTA_Tooltip';
+import ALTA_Alert from './ALTA_Alert';
 
 export default function ALTA_Header() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function ALTA_Header() {
     localStorage.removeItem('userData');
     navigate('/');
   };
+
   return (
     <Box sx={wrapperStyle}>
       <AppBar sx={navStyle}>
@@ -27,6 +29,9 @@ export default function ALTA_Header() {
             alignItems: 'center',
           }}
         >
+          <StyledA>
+            <ALTA_Alert />
+          </StyledA>
           <ALTA_Tooltip title="마이 페이지">
             <StyledA onClick={() => navigate('/mypage')}>
               <AccountBoxIcon sx={{ fontSize: '40px', cursor: 'pointer' }} />
@@ -60,7 +65,8 @@ const StyledImg = styled.img`
   width: 100px;
 `;
 
-const StyledA = styled.a`
+const StyledA = styled.button`
+  all: unset;
   display: flex;
   align-items: center;
   justify-content: space-around;

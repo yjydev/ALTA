@@ -1,6 +1,6 @@
-import { Box, Grid } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Box, Grid } from '@mui/material';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { StudyDetailStore } from '../../context/StudyDetailContext';
@@ -12,8 +12,6 @@ import ALTA_ProblemTable from './ALTA_ProblemTable';
 import ALTA_FlipBar from '../common/ALTA_FlipBar';
 import ALTA_Loading from '../common/ALTA_Loading';
 import ALTA_Inner from '../../components/common/ALTA_Inner';
-import ALTA_StudySideContents from '../../components/study/ALTA_StudySideContents';
-import ALTA_StudyMembers from '../../components/study/ALTA_StudyMembers';
 import ALTA_StudyBoard from '../../components/study/ALTA_StudyBoard';
 
 type Params = {
@@ -23,21 +21,24 @@ type Params = {
 export default function ALTA_StudyDetailContents() {
   const { studyId } = useParams<Params>();
   const navigate = useNavigate();
-  const { readmeData, getStudyDetail, getStudyMembers } = useContext(StudyDetailStore);
+  const { readmeData, getReadmeDetail, getStudyMembers, getChatContent } = useContext(StudyDetailStore);
 
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     (async function () {
       if (studyId) {
-        const [DetailStatus, MemberStatus] = await Promise.all([
-          getStudyDetail(Number(studyId)),
+        const [readmeApiStatue, memberApiStatus] = await Promise.all([
+          getReadmeDetail(Number(studyId)),
           getStudyMembers(Number(studyId)),
+          getChatContent(Number(studyId)),
         ]);
 
-        if (DetailStatus.status === -1 || MemberStatus.status === -1) navigate('/');
-        else if (DetailStatus.status === -2) generateError('스터디 진행 정보를 불러올 수 없습니다', '');
-        else if (MemberStatus.status === -2) generateError('스터디 멤버 정보를 불러올 수 없습니다', '');
+        if (readmeApiStatue.status === -1 || memberApiStatus.status === -1) navigate('/');
+        else if (readmeApiStatue.status === -2)
+          generateError('스터디 진행 정보를 불러올 수 없습니다', readmeApiStatue.message);
+        else if (memberApiStatus.status === -2)
+          generateError('스터디 멤버 정보를 불러올 수 없습니다', memberApiStatus.message);
         else setLoading(false);
       }
     })();
@@ -48,19 +49,16 @@ export default function ALTA_StudyDetailContents() {
       {loading && <ALTA_Loading />}
       {!loading && (
         <Grid sx={gridContainerStyle} container justifyContent="center">
-          <Grid item xl={3} lg={6}>
-            <ALTA_StudySideContents>
-              <ALTA_StudyMembers />
-            </ALTA_StudySideContents>
-          </Grid>
           <Grid item xl={6}>
             <ALTA_Inner>
               <Box sx={[addTableWrapperBarStyle, scrollStyle]}>
+                <h1>스터디 상세</h1>
+                <ALTA_StudyBoard />
                 <Box sx={addTableBarWrapperStyle}>
                   <ALTA_FlipBar
                     height="80px"
                     Front={addTableBarFrontBuilder()}
-                    Back={addTableBarBackBuilder(Number(studyId), getStudyDetail)}
+                    Back={addTableBarBackBuilder(Number(studyId), getReadmeDetail)}
                   />
                 </Box>
                 <Box sx={{ position: 'relative', marginTop: '150px' }}>
@@ -68,6 +66,7 @@ export default function ALTA_StudyDetailContents() {
                     .map(
                       (table: TableData, i: number): JSX.Element => (
                         <Box sx={tableWrapperStyle} key={`${i}-${table.id}`}>
+                          <h2>{`${table.round}회차 문제 테이블`}</h2>
                           <ALTA_ProblemTable
                             studyId={Number(studyId)}
                             scheduleId={table.id}
@@ -81,11 +80,6 @@ export default function ALTA_StudyDetailContents() {
                 </Box>
               </Box>
             </ALTA_Inner>
-          </Grid>
-          <Grid item xl={3} lg={6}>
-            <ALTA_StudySideContents>
-              <ALTA_StudyBoard />
-            </ALTA_StudySideContents>
           </Grid>
         </Grid>
       )}

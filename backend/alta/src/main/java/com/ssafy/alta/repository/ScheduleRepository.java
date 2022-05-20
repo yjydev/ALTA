@@ -35,6 +35,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     @Query("select s from Schedule s where s.study.studyId = :studyId and s.startDate = :startDate")
     Optional<Schedule> findByStudyStudyIdSameStartDate(@Param("studyId") Long studyId, @Param("startDate") Date startDate);
 
+    @Query("select s from Schedule s where s.endDate = :endDate")
+    List<Schedule> findBySameEndDate( @Param("endDate") Date endDate);
+
     Optional<Schedule> findByStudyStudyIdAndId(Long studyId, Long scheduleId);
 
     Optional<Schedule> findTop1ByStudyStudyIdOrderByStartDateDesc(Long studyId);

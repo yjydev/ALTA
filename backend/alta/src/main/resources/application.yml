@@ -19,7 +19,7 @@ spring:
       max-wait: -1
 
   jpa:
-    show-sql: true
+#    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
@@ -80,3 +80,13 @@ image:
   #  basePath: C:\Github\altaImage\
   basePath: /home/ubuntu/images/
   urlBasePath : https://algorithmtime.com/api/images/
+
+
+
+  # jpa query, parameter 로그
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
+    datasource-proxy:
+      multiline: false

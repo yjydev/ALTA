@@ -1,6 +1,7 @@
 export type ReviewData = {
   reviewId: number;
   reviewerName: string;
+  imageUrl: string;
   comment: string;
   commentDate: Date;
   codeNumber: number;
