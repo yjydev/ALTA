@@ -109,7 +109,7 @@ function SellBtn({ codeId, problem, memberName, studyId, language }: SellBtnProp
               </Button>
             </a>
           ) : (
-            <p style={{ cursor: 'default' }}>-</p>
+            <Typography style={{ cursor: 'default' }}>-</Typography>
           )}
         </>
       )}
