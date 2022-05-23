@@ -309,8 +309,6 @@ public class StudyService {
             idx++;
         }
 
-        Set<List> set = new HashSet<>();
-
         // 2. 리스트 정렬
         // Depth -> 정렬(오름차순)
         //  `일정` -> 시작 날짜로 정렬(내림차순)
