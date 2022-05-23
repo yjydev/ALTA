@@ -130,7 +130,7 @@ export default function ALTA_CodeSubmitContents() {
       <h1>코드 미리보기</h1>
       <ALTA_CodeBlock code={code} language={map.get(language)} />
       <Box sx={{ marginTop: 10, textAlign: 'right' }}>
-        <Button variant="contained" sx={btnStyle} onClick={_.debounce(summitCode, 700)}>
+        <Button variant="contained" sx={btnStyle} onClick={_.debounce(summitCode, 500)}>
           {loading ? <CircularProgress sx={{ color: whiteColor }} size={30} /> : '제 출'}
         </Button>
         <Button variant="contained" color="error" sx={btnStyle} onClick={handleCancel}>

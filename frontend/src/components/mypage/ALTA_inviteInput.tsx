@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Typography, TextField, Box } from '@mui/material';
+import _ from 'lodash';
 
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -68,7 +69,7 @@ export default function ALTA_inviteInput() {
         </Box>
         <Box sx={completeBtnStyle}>
           {isToggle && (
-            <Button variant="outlined" onClick={handleInvite}>
+            <Button variant="outlined" onClick={_.debounce(handleInvite, 200)}>
               입력
             </Button>
           )}

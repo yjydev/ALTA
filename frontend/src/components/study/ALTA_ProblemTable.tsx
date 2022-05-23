@@ -7,6 +7,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, Grid, LinearProgress, Typography, Alert, CircularProgress } from '@mui/material';
 
+import _ from 'lodash';
+
 import { generateError } from '../../modules/generateAlert';
 import { StudyMember, Problem } from '../../types';
 import { blackColor, subColor } from '../../modules/colorChart';
@@ -87,7 +89,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
             )}
             {scheduleEditing && (
               <ALTA_Tooltip title="저장하기">
-                <SaveIcon onClick={() => edit(studyId, table.id, schedule)} />
+                <SaveIcon onClick={_.debounce(() => edit(studyId, table.id, schedule), 500)} />
               </ALTA_Tooltip>
             )}
           </Button>
@@ -96,7 +98,7 @@ export default function ALTA_ProblemTable({ problems, studyId, scheduleId, table
           {!removeLoading && (
             <ALTA_Tooltip title="테이블 삭제">
               <Button sx={btnStyle}>
-                <DeleteIcon onClick={() => remove(studyId, scheduleId)} />
+                <DeleteIcon onClick={_.debounce(() => remove(studyId, scheduleId), 500)} />
               </Button>
             </ALTA_Tooltip>
           )}

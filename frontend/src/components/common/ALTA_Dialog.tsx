@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import _ from 'lodash';
 
 import { mainColor, errorColor, whiteColor } from '../../modules/colorChart';
 
@@ -18,7 +19,7 @@ export default function ALTA_Dialog({ title, children, open, setOpen, handleComp
         <DialogTitle sx={titleStyle}>{title}</DialogTitle>
         <DialogContent sx={childrenStyle}>{children}</DialogContent>
         <DialogActions>
-          <Button onClick={handleComplete} variant="contained" sx={submitBtnStyle}>
+          <Button onClick={_.debounce(handleComplete, 400)} variant="contained" sx={submitBtnStyle}>
             완 료
           </Button>
           <Button onClick={(): void => setOpen(false)} sx={delBtnStyle}>
