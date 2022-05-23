@@ -88,7 +88,7 @@ public class NotificationService {
                     .data(data));
         } catch (IOException e) {
             emitters.remove(userId);
-            throw new RuntimeException("연결 오류");
+            e.printStackTrace();
         }
     }
 }

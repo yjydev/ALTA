@@ -4,6 +4,7 @@ import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { Grid, Typography, Box, TextField, Switch, InputAdornment } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
+import _ from 'lodash';
 
 import { addReviewApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
@@ -88,7 +89,7 @@ export default function ALTA_CodeCommentList({ codeId }: Props) {
               />
             </Grid>
             <Grid item xs={1}>
-              <IconButton onClick={handleNewReview} disabled={isDisabled}>
+              <IconButton onClick={_.debounce(handleNewReview, 400)} disabled={isDisabled}>
                 <AddCircleIcon style={addButtonStyle} />
               </IconButton>
             </Grid>
