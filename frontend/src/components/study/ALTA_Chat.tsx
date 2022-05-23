@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams, useNavigate, NavigateFunction } from 'react-router-dom';
 import { Box, Input, Button, Avatar, Grid, Typography } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import _ from 'lodash';
 
 import scrollStyle from '../../modules/scrollStyle';
 import { chatResponse } from '../../types';
@@ -165,7 +164,7 @@ export default function ALTA_Chat() {
             }
           }}
         />
-        <Button variant="contained" sx={sendBtnStyle} onClick={_.debounce(handleEnter, 400)}>
+        <Button variant="contained" sx={sendBtnStyle} onClick={handleEnter}>
           <SendIcon />
         </Button>
       </Box>

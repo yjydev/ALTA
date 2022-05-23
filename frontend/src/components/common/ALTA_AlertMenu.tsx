@@ -3,7 +3,6 @@ import { useNavigate, NavigateFunction } from 'react-router-dom';
 
 import { Grid, Paper, Box, Typography, Button, MenuItem } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import _ from 'lodash';
 
 import { readAlertApi } from '../../api/apis';
 import { AlertData } from '../../types';
@@ -37,9 +36,9 @@ export default function ALTA_AlertMenu({ data, setOpen }: Props) {
       {data.map((d) => (
         <MenuItem
           key={d.alertId}
-          onClick={_.debounce(() => {
+          onClick={() => {
             handleClick(d);
-          }, 300)}
+          }}
         >
           <Box sx={codeCommentBoxStyle}>
             <Paper style={paperBoxStyle} elevation={1}>

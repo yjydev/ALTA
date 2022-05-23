@@ -3,7 +3,6 @@ import { useNavigate, useParams, NavigateFunction } from 'react-router-dom';
 
 import { Box, Grid, Divider, Typography, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import _ from 'lodash';
 
 import { deleteCodeApi } from '../../api/apis';
 import { CodeStore } from '../../context/CodeContext';
@@ -131,7 +130,7 @@ export default function ALTA_CodeContents() {
                                 >
                                   수정
                                 </Button>
-                                <Button sx={delBtnStyle} variant="contained" onClick={_.debounce(handleDelete, 700)}>
+                                <Button sx={delBtnStyle} variant="contained" onClick={handleDelete}>
                                   삭제
                                 </Button>
                               </Box>
