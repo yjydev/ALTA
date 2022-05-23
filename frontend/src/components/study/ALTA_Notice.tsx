@@ -5,8 +5,6 @@ import SaveIcon from '@mui/icons-material/Save';
 import styled from '@emotion/styled';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import _ from 'lodash';
-
 import { StudyDetailStore } from '../../context/StudyDetailContext';
 import { blackColor, subColor } from '../../modules/colorChart';
 import { generateError } from '../../modules/generateAlert';
@@ -63,7 +61,7 @@ export default function ALTA_Notice() {
       <h1>스터디 공지사항</h1>
       <Box sx={titleStyle}>
         공지사항
-        <Button sx={btnStyle} onClick={_.debounce((): void => setNoticeEditing(!noticeEditing), 300)}>
+        <Button sx={btnStyle} onClick={(): void => setNoticeEditing(!noticeEditing)}>
           {!noticeEditing && (
             <ALTA_Tooltip title="공지사항 수정하기">
               <EditIcon />
@@ -71,7 +69,7 @@ export default function ALTA_Notice() {
           )}
           {noticeEditing && (
             <ALTA_Tooltip title="저장하기">
-              <SaveIcon onClick={_.debounce(edit, 500)} />
+              <SaveIcon onClick={edit} />
             </ALTA_Tooltip>
           )}
         </Button>

@@ -12,7 +12,6 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import _ from 'lodash';
 
 import { languages } from '../../modules/languageSources';
 import { OrganizeStudyRequset } from '../../types';
@@ -184,7 +183,7 @@ export default function ALTA_ToOrganizeContents() {
           </Typography>
         </ALTA_InputItem>
         <Box sx={btnGroupStyle}>
-          <Button variant="contained" sx={btnStyle} disabled={!sumitBtn} onClick={_.debounce(organize, 300)}>
+          <Button variant="contained" sx={btnStyle} disabled={!sumitBtn} onClick={organize}>
             {sumitBtn ? (
               <>
                 <span>생</span>

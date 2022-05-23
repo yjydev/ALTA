@@ -18,7 +18,6 @@ import { userList, defaultUser } from '../../types';
 import { MemberStore } from '../../context/MemberContext';
 import { checkLogin } from '../../modules/LoginTokenChecker';
 import { generateCheck, generateError, generateTimer } from '../../modules/generateAlert';
-import _ from 'lodash';
 
 import ALTA_ContentsTitle from '../common/ALTA_ContentsTitle';
 
@@ -132,7 +131,7 @@ export default function ALTA_MemberList({ studyId }: { studyId: number }) {
             />
           </Grid>
           <Grid item xs={3} sx={btnStyle}>
-            <Button variant="contained" sx={inviteBtnStyle} onClick={_.debounce(handleInvite, 500)}>
+            <Button variant="contained" sx={inviteBtnStyle} onClick={handleInvite}>
               초대
             </Button>
           </Grid>

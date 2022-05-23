@@ -3,8 +3,6 @@ import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import _ from 'lodash';
-
 import { UserDataStore } from '../../context/UserDataContext';
 import { generateError } from '../../modules/generateAlert';
 import { checkLogin } from '../../modules/LoginTokenChecker';
@@ -75,7 +73,7 @@ export default function ALTA_UserDataEdit({
         </Box>
       </Box>
       <Box sx={editButtonStyle}>
-        <Button onClick={_.debounce(edit, 300)}>{loading ? <CircularProgress size={20} /> : '수정 완료'}</Button>
+        <Button onClick={edit}>{loading ? <CircularProgress size={20} /> : '수정 완료'}</Button>
         <Button color="error" onClick={() => setIsEditPage(false)}>
           수정 취소
         </Button>

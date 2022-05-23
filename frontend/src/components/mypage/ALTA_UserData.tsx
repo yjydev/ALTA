@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import styled from '@emotion/styled';
-import _ from 'lodash';
 
 import defaultProfile from '../../images/user.webp';
 import { mainColor } from '../../modules/colorChart';
@@ -150,7 +149,7 @@ export default function ALTA_UserData() {
               </Button>
             )}
             {alertFold && (
-              <Button sx={[editButtonStyle, inBottom]} onClick={_.debounce(() => save(), 300)}>
+              <Button sx={[editButtonStyle, inBottom]} onClick={() => save()}>
                 설정 완료
               </Button>
             )}

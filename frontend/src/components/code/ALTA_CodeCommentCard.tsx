@@ -17,7 +17,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
-import _ from 'lodash';
 
 import { generateError, generateConfirm } from '../../modules/generateAlert';
 
@@ -120,11 +119,7 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
                   <>
                     {isEdit ? (
                       <Box sx={editBtnGroupStyle}>
-                        <Button
-                          disableRipple
-                          sx={[btnStyle, completeBtnStyle]}
-                          onClick={_.debounce(handleEditComment, 300)}
-                        >
+                        <Button disableRipple sx={[btnStyle, completeBtnStyle]} onClick={handleEditComment}>
                           수정 완료
                         </Button>
                         <Button
@@ -188,11 +183,9 @@ export default function ALTA_CodeCommentCard({ review, codeId }: Props) {
                 )}
               </Grid>
               {isResolved ? (
-                <IconButton onClick={_.debounce(changeResolved, 300)}>
-                  {<CheckCircleRoundedIcon sx={resolvedStyle} />}
-                </IconButton>
+                <IconButton onClick={changeResolved}>{<CheckCircleRoundedIcon sx={resolvedStyle} />}</IconButton>
               ) : (
-                <IconButton onClick={_.debounce(changeResolved, 300)}>
+                <IconButton onClick={changeResolved}>
                   {<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}
                 </IconButton>
               )}
