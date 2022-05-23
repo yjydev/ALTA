@@ -10,6 +10,7 @@ import ALTA_Tooltip from './ALTA_Tooltip';
 import ALTA_AlertMenu from './ALTA_AlertMenu';
 import { readAlertAllApi } from '../../api/apis';
 import { checkLogin } from '../../modules/LoginTokenChecker';
+import _ from 'lodash';
 
 import { AlertDataStore } from '../../context/AlertContext';
 
@@ -96,7 +97,9 @@ export default function ALTA_Alert() {
                 {allRead ? (
                   <IconButton>{<CheckCircleRoundedIcon sx={resolvedStyle} />}</IconButton>
                 ) : (
-                  <IconButton onClick={allChecked}>{<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}</IconButton>
+                  <IconButton onClick={_.debounce(allChecked, 300)}>
+                    {<CheckCircleOutlineRoundedIcon sx={unresolvedStyle} />}
+                  </IconButton>
                 )}
                 <ALTA_AlertMenu data={newAlert} setOpen={setOpen} />
               </Box>
