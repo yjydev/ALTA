@@ -212,6 +212,9 @@ public class CodeService {
         commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
 
         this.updateCodeInGithub(token, study, code, codeRequest, lastFileName);
+
+        // 리드미 업데이트
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -234,7 +237,7 @@ public class CodeService {
         // 같은 파일이 이미 Git에 업로도 되어 있으면
         // 문제명_유저명_시간-분.java -> 이런식으로 파일명 수정되서 올라가도록!
         if(gitCodeResponse != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("HHmmss");
             String nowTime = formatter.format(new Date());
             String newFileName = String.format("%s_%s_%s", code.getProblem().getName(), code.getUser().getName(), nowTime);
             fullFileName = fileLanguageUtil.getFullFileName(newFileName, study.getLanguage());

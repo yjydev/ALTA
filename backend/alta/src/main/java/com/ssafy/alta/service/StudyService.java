@@ -329,13 +329,36 @@ public class StudyService {
             return p1.size() - o2.getPath().size();     // depth 오름차순 정렬
         });
 
-        // 3. 정렬된 객체들에 대해 1번부터 번호 매기기
-        idx = 1;
+        // 3. 중복 제거(일정 - 문제명 - 유저명 - 파일이름 모두 겹칠경우 대비)
+        LinkedList<PathResponse> newPathResponseList = new LinkedList<>();
+        List<String> last = new LinkedList<>();
         for(PathResponse pathResponse : pathResponseList) {
-            pathResponse.setId(idx++);
+            boolean isOverlap = true;
+            if(last.size() == pathResponse.getPath().size()) {
+                for(int i = 0 ; i < last.size() ; i++) {
+                    if(!last.get(i).equals(pathResponse.getPath().get(i))) {
+                        isOverlap = false;
+                        break;
+                    }
+                }
+            } else {
+                isOverlap = false;
+            }
+            if(isOverlap)
+                continue;
+
+            newPathResponseList.offer(pathResponse);
+            last = pathResponse.getPath();
         }
 
-        return pathResponseList;
+        // 4. 정렬된 객체들에 대해 1번부터 번호 매기기
+        idx = 1;
+        for(PathResponse pathResponse : newPathResponseList) {
+            pathResponse.setId(idx++);
+        }
+        System.out.println();
+
+        return newPathResponseList;
     }
 
     // list 복사
