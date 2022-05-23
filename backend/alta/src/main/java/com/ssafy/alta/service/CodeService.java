@@ -212,6 +212,9 @@ public class CodeService {
         commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
 
         this.updateCodeInGithub(token, study, code, codeRequest, lastFileName);
+
+        // 리드미 업데이트
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional(rollbackFor = Exception.class)
