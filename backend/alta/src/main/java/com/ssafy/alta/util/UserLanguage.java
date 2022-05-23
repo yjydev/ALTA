@@ -14,7 +14,7 @@ import java.util.HashMap;
  * 2022-05-05	        김유진  		        최초 생성
  */
 public enum UserLanguage {
-    JAVA("Java", 1), Python("Python", 2), C("C", 4), CPlus("C++", 8), CSharp("C#", 16), JS("Java script", 32);
+    JAVA("Java", 1), Python("Python", 2), C("C", 4), CPlus("C++", 8), CSharp("C#", 16), JS("Java Script", 32);
     private String langString;
     private int langIdx;
     static private UserLanguage[] list = UserLanguage.values();
