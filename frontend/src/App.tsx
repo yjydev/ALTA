@@ -1,4 +1,4 @@
-import { Suspense, lazy, useContext, useEffect } from 'react';
+import { Suspense, lazy, useContext, useEffect, memo } from 'react';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { Box, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
@@ -14,11 +14,11 @@ import ALTA_Loading from './components/common/ALTA_Loading';
 
 const LoginPage = lazy(() => import('./pages/ALTA_Login'));
 const AuthPage = lazy(() => import('./pages/ALTA_AuthPage'));
-const CodePage = lazy(() => import('./pages/ALTA_Code'));
-const SubmitPage = lazy(() => import('./pages/ALTA_CodeSubmit'));
-const OrganizePage = lazy(() => import('./pages/ALTA_ToOrganize'));
-const DetailPage = lazy(() => import('./pages/ALTA_StudyDetail'));
-const MemberPage = lazy(() => import('./pages/ALTA_Member'));
+const CodePage = memo(lazy(() => import('./pages/ALTA_Code')));
+const SubmitPage = memo(lazy(() => import('./pages/ALTA_CodeSubmit')));
+const OrganizePage = memo(lazy(() => import('./pages/ALTA_ToOrganize')));
+const DetailPage = memo(lazy(() => import('./pages/ALTA_StudyDetail')));
+const MemberPage = memo(lazy(() => import('./pages/ALTA_Member')));
 const MyPage = lazy(() => import('./pages/ALTA_Mypage'));
 const ErrorPage = lazy(() => import('./components/common/ALTA_Error'));
 
