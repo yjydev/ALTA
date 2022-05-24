@@ -30,7 +30,6 @@ public class MailService {
     private final SpringTemplateEngine templateEngine;
     private final String MAIL = "alta.invitation@gmail.com";
     private final String SUBJECT = "ALTA에서 알림이 도착했습니다.";
-    private final String REVIEW = "페이지에서 피드백이 도착했습니다.";
 
     @Async("mailExecutor")
     public void sendAlertMail(String email, String message) throws MessagingException {
@@ -53,7 +52,7 @@ public class MailService {
         MailHandler mailHandler = new MailHandler(mailSender);
         mailHandler.setTo(MAIL);
         mailHandler.setFrom(MAIL);
-        mailHandler.setSubject(REVIEW);
+        mailHandler.setSubject(mailRequest.getType());
         mailHandler.setText(mailRequest.getContent(), false);
 
         mailHandler.send();
