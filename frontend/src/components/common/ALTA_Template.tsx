@@ -69,7 +69,7 @@ export default function ALTA_Template({ header, contents }: Props) {
             variant="standard"
             // placeholder="내용을 입력해주세요"
             multiline
-            rows="2"
+            rows="4"
             value={content}
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setContent(e.target.value)}
             sx={messageStyle}
@@ -101,7 +101,7 @@ const StyledA = styled.button`
   all: unset;
   float: right;
   position: absolute;
-  bottom: 50px;
+  bottom: 30px;
   right: 40px;
 `;
 
