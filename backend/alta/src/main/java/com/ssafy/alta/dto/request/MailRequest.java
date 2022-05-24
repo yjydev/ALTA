@@ -17,5 +17,6 @@ import lombok.ToString;
 @Getter
 @ToString
 public class MailRequest {
+    private String type;
     private String content;
 }
