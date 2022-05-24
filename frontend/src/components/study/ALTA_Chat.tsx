@@ -161,7 +161,7 @@ export default function ALTA_Chat() {
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => setMessage(e.target.value)}
           onKeyDown={(ev: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
             if (ev.key === 'Enter') {
-              handleEnter();
+              _.debounce(handleEnter, 400);
             }
           }}
         />
