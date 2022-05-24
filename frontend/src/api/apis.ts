@@ -175,6 +175,15 @@ export async function addChatApi(studyId: number, content: string) {
   return await postRequest(`/api/chat/${studyId}`, requestBody);
 }
 
+// 피드백 메일링
+export async function feedbackApi(content: string, type: string) {
+  const requestBody = {
+    content,
+    type,
+  };
+  return await postRequest('/api/report', requestBody);
+}
+
 //PUT
 //스터디 회차 일정 수정 요청
 export async function editScheduleApi(studyId: number, scheduleId: number, dateString: string) {
