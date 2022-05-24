@@ -1,4 +1,4 @@
-import { useState, useContext, Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 
 import { Grid, Paper, Box, Typography, Button, MenuItem } from '@mui/material';
@@ -14,6 +14,10 @@ type Props = {
   data: AlertData[];
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
+
+const map = new Map();
+map.set('SITE_CODE', '풀이 등록');
+map.set('SITE_COMMENT', '리뷰 등록');
 
 export default function ALTA_AlertMenu({ data, setOpen }: Props) {
   const navigate: NavigateFunction = useNavigate();
@@ -42,13 +46,15 @@ export default function ALTA_AlertMenu({ data, setOpen }: Props) {
           }, 300)}
         >
           <Box sx={codeCommentBoxStyle}>
-            <Paper style={paperBoxStyle} elevation={1}>
+            <Paper sx={paperBoxStyle}>
               <Button startIcon={<CloseIcon />} disableRipple sx={delBtnStyle} />
               <Grid container direction="row" sx={infoGridStyle}>
                 <Grid item sx={d.isChecked ? readStyle : null}>
                   <Grid sx={infoStyle}>
                     <Box>
-                      <h4>{d.senderNickName}</h4>
+                      <p style={{ color: '#6d9886' }}>
+                        {d.senderNickName} - {map.get(d.type)}
+                      </p>
                     </Box>
                     <Typography sx={dateStyle}>{displayAt(d.time)}</Typography>
                   </Grid>
@@ -69,8 +75,9 @@ const codeCommentBoxStyle = {
 };
 
 const paperBoxStyle = {
-  width: '100%',
-  margin: '10px 0',
+  width: '30rem',
+  whiteSpace: 'normal',
+  wordBreak: 'normal',
 };
 
 const infoGridStyle = {
