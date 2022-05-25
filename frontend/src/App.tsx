@@ -62,7 +62,7 @@ function App() {
   };
   useEffect(() => {
     if (buffer.alertId !== 0) {
-      setAlertData([...alertData, buffer]);
+      setAlertData([buffer, ...alertData]);
       setBuffer(defaultAlertData);
     }
   }, [buffer]);
