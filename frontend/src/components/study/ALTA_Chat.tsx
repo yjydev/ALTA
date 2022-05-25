@@ -39,6 +39,7 @@ export default function ALTA_Chat() {
 
   const [message, setMessage] = useState<string>('');
   const [connect, setConnect] = useState<boolean>(false);
+  const [check, setCheck] = useState<boolean>(false);
 
   useEffect((): void => {
     if (buffer !== '') {
@@ -91,6 +92,7 @@ export default function ALTA_Chat() {
         await addChatApi(Number(studyId), message);
         setMessage('');
       }
+      setCheck(false);
     }
   };
   return (
@@ -160,8 +162,9 @@ export default function ALTA_Chat() {
           sx={{ padding: '0 5px', marginRight: '5px' }}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => setMessage(e.target.value)}
           onKeyDown={(ev: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
-            if (ev.key === 'Enter') {
-              _.debounce(handleEnter, 400);
+            if (ev.key === 'Enter' && !check) {
+              handleEnter();
+              setCheck(true);
             }
           }}
         />
