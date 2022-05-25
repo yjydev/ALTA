@@ -8,7 +8,7 @@ import { EventSourcePolyfill } from 'event-source-polyfill';
 import UserDataProvider from './context/UserDataContext';
 import './App.css';
 import { AlertDataStore } from './context/AlertContext';
-import { defaultAlertData } from './types';
+import { defaultAlertData, AlertData } from './types';
 
 import ALTA_Loading from './components/common/ALTA_Loading';
 
@@ -26,7 +26,7 @@ function App() {
   LicenseInfo.setLicenseKey(
     '2aa4db8a29be7f642c457d8df41c7e3eT1JERVI6NDMwODIsRVhQSVJZPTE2ODMyNzgzNTcwMDAsS0VZVkVSU0lPTj0x',
   );
-  const { alertData, getAlertData, setAlertData, buffer, setBuffer, listening, setListening } =
+  const { alertData, getAlertData, setAlertData, buffer, setBuffer, listening, setListening, setBadgeCnt } =
     useContext(AlertDataStore);
   let eventSource: EventSourcePolyfill;
   useEffect(() => {
@@ -46,6 +46,8 @@ function App() {
           }
         });
         setListening(true);
+        const newAlert = alertData.filter((d: AlertData): boolean => d.isChecked === false);
+        setBadgeCnt(newAlert.length);
       }
     }
     return () => {
