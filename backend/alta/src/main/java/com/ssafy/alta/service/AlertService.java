@@ -32,7 +32,7 @@ public class AlertService {
 
     public List<AlertResponse> selectAlertUnChecked() {
         String userId = userService.getCurrentUserId();
-        List<Alert> alertList = alertRepository.findByReceiver_IdOrderByIdAsc(userId);
+        List<Alert> alertList = alertRepository.findByReceiver_IdOrderByIdDesc(userId);
         List<AlertResponse> alertResponseList = new LinkedList<>();
 
         for(Alert alert : alertList) {

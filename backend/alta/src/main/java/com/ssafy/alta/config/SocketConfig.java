@@ -31,7 +31,7 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/ws").setAllowedOriginPatterns("http://localhost:3000", "https://algorithmtime.com").withSockJS();
+        registry.addEndpoint("/api/ws").setAllowedOriginPatterns("https://algorithmtime.com").withSockJS();
     }
     
     @Override

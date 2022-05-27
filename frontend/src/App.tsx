@@ -1,4 +1,4 @@
-import { Suspense, lazy, useContext, useEffect } from 'react';
+import { Suspense, lazy, useContext, useEffect, memo } from 'react';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import { Box, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
@@ -8,17 +8,17 @@ import { EventSourcePolyfill } from 'event-source-polyfill';
 import UserDataProvider from './context/UserDataContext';
 import './App.css';
 import { AlertDataStore } from './context/AlertContext';
-import { defaultAlertData } from './types';
+import { defaultAlertData, AlertData } from './types';
 
 import ALTA_Loading from './components/common/ALTA_Loading';
 
 const LoginPage = lazy(() => import('./pages/ALTA_Login'));
 const AuthPage = lazy(() => import('./pages/ALTA_AuthPage'));
-const CodePage = lazy(() => import('./pages/ALTA_Code'));
-const SubmitPage = lazy(() => import('./pages/ALTA_CodeSubmit'));
-const OrganizePage = lazy(() => import('./pages/ALTA_ToOrganize'));
-const DetailPage = lazy(() => import('./pages/ALTA_StudyDetail'));
-const MemberPage = lazy(() => import('./pages/ALTA_Member'));
+const CodePage = memo(lazy(() => import('./pages/ALTA_Code')));
+const SubmitPage = memo(lazy(() => import('./pages/ALTA_CodeSubmit')));
+const OrganizePage = memo(lazy(() => import('./pages/ALTA_ToOrganize')));
+const DetailPage = memo(lazy(() => import('./pages/ALTA_StudyDetail')));
+const MemberPage = memo(lazy(() => import('./pages/ALTA_Member')));
 const MyPage = lazy(() => import('./pages/ALTA_Mypage'));
 const ErrorPage = lazy(() => import('./components/common/ALTA_Error'));
 
@@ -26,7 +26,7 @@ function App() {
   LicenseInfo.setLicenseKey(
     '2aa4db8a29be7f642c457d8df41c7e3eT1JERVI6NDMwODIsRVhQSVJZPTE2ODMyNzgzNTcwMDAsS0VZVkVSU0lPTj0x',
   );
-  const { alertData, getAlertData, setAlertData, buffer, setBuffer, listening, setListening } =
+  const { alertData, getAlertData, setAlertData, buffer, setBuffer, listening, setListening, setBadgeCnt } =
     useContext(AlertDataStore);
   let eventSource: EventSourcePolyfill;
   useEffect(() => {
@@ -46,6 +46,8 @@ function App() {
           }
         });
         setListening(true);
+        const newAlert = alertData.filter((d: AlertData): boolean => d.isChecked === false);
+        setBadgeCnt(newAlert.length);
       }
     }
     return () => {
@@ -60,7 +62,7 @@ function App() {
   };
   useEffect(() => {
     if (buffer.alertId !== 0) {
-      setAlertData([...alertData, buffer]);
+      setAlertData([buffer, ...alertData]);
       setBuffer(defaultAlertData);
     }
   }, [buffer]);

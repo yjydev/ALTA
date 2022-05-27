@@ -1,5 +1,6 @@
 package com.ssafy.alta.service;
 
+import com.ssafy.alta.dto.request.MailRequest;
 import com.ssafy.alta.mailutil.MailHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -42,6 +43,17 @@ public class MailService {
         // context.setVariable("url", SERVICE_URL + url);
         String html = templateEngine.process("alertTemplate", context);
         mailHandler.setText(html, true);
+
+        mailHandler.send();
+    }
+
+    @Async("mailExecutor")
+    public void sendMail(MailRequest mailRequest) throws MessagingException {
+        MailHandler mailHandler = new MailHandler(mailSender);
+        mailHandler.setTo(MAIL);
+        mailHandler.setFrom(MAIL);
+        mailHandler.setSubject(mailRequest.getType());
+        mailHandler.setText(mailRequest.getContent(), false);
 
         mailHandler.send();
     }

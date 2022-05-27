@@ -82,7 +82,7 @@ export default function ALTA_Alert() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', paddingLeft: 3 }}>
           <Tabs value={tab} onChange={handleChange} aria-label="basic tabs example">
             <Tab label="안읽은 알림만 보기" {...a11yProps(0)} />
             <Tab label="전체 알림 보기" {...a11yProps(1)} />

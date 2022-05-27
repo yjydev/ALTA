@@ -134,7 +134,7 @@ public class CodeService {
         Code code = optCode.get();
 
 
-        GitCodeResponse gitCodeResponse = selectCodeInGithub(token, study, code, false);
+        GitCodeResponse gitCodeResponse = selectCodeInGithub(token, study, code, false, "");
 
         if(gitCodeResponse != null && !gitCodeResponse.getSha().equals(code.getSha())) {   // 서버에서 변경이 발생하면
             code.changeShaAndContent(gitCodeResponse.getSha(), gitCodeResponse.getContent());  // sha값과 내용 바꿔주고 저장
@@ -212,6 +212,9 @@ public class CodeService {
         commentService.updateCommentListSolved(code);       // 해당 코드의 해결안된 이전 댓글들 다 해결로 변환
 
         this.updateCodeInGithub(token, study, code, codeRequest, lastFileName);
+
+        // 리드미 업데이트
+        readmeService.updateReadme(studyId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -234,7 +237,7 @@ public class CodeService {
         // 같은 파일이 이미 Git에 업로도 되어 있으면
         // 문제명_유저명_시간-분.java -> 이런식으로 파일명 수정되서 올라가도록!
         if(gitCodeResponse != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("HHmmss");
             String nowTime = formatter.format(new Date());
             String newFileName = String.format("%s_%s_%s", code.getProblem().getName(), code.getUser().getName(), nowTime);
             fullFileName = fileLanguageUtil.getFullFileName(newFileName, study.getLanguage());
@@ -286,7 +289,7 @@ public class CodeService {
 
     }
 
-    public GitCodeResponse selectCodeInGithub(String token, Study study, Code code, boolean isUpdate) throws JsonProcessingException {
+    public GitCodeResponse selectCodeInGithub(String token, Study study, Code code, boolean isUpdate, String message) throws JsonProcessingException {
         String studyLeaderUserName = userRepository.findStudyLeaderUserNameByUserId(study.getUser().getId());
         String fullFileName = fileLanguageUtil.getFullFileName(code.getFileName(), study.getLanguage());
         String path = this.getPath(code.getProblem().getName(), code.getUser().getName(), fullFileName);
@@ -305,9 +308,10 @@ public class CodeService {
         // 조회이면서 조회 결과가 없거나, 업데이트에서 조회했을 때
         if((!isUpdate && gitCodeResponse == null) || (isUpdate)) {
             String base64Content = Base64.getEncoder().encodeToString(code.getContent().getBytes(StandardCharsets.UTF_8));
+            String commitMessage = this.getCommitMessage(message);
             GitCodeUpdateRequest request = GitCodeUpdateRequest.builder()
                     .content(base64Content)
-                    .message(CREATE_MESSAGE)
+                    .message(commitMessage)
                     .branch(BRANCH)
                     .build();
 
@@ -330,7 +334,7 @@ public class CodeService {
             this.deleteCodeInGithub(token, study, code, true, lastFileName);
 
         } else {
-            this.selectCodeInGithub(token, study, code, true);
+            this.selectCodeInGithub(token, study, code, true, codeRequest.getCommitMessage());
         }
     }
 
