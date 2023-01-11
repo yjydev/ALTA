@@ -99,7 +99,7 @@
 | <img src="./readme_assets/Repo.gif"/>     | <img src="./readme_assets/readme_update.gif"/> |
 | 문제 및 회차 생성                                | 문제 및 회차 삭제                                     |
 | <img src="./readme_assets/table.gif"/>    | <img src="./readme_assets/table2.gif"/>        |
-| 알림                                        | 코드 업로드                                         |
+| 코드 업로드                                        | 알림                                         |
 | <img src="./readme_assets/code_upload.gif"/> |  <img src="./readme_assets/alert.gif"/>  |
 |                라인 별 코멘트 작성                      |   코드 트리                                  |
 | <img src="./readme_assets/line_comment.gif"/> | <img src="./readme_assets/code_tree.gif"/>  |
